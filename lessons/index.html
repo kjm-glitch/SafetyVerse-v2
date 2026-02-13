@@ -1,0 +1,1313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="logo.png?v=2">
+    <title>Lessons - SafetyVerse Training Hub</title>
+    <style>
+        :root {
+            --primary: #FFD700;
+            --primary-dark: #E6C200;
+            --secondary: #FF8C00;
+            --secondary-dark: #E67A00;
+            --bg-clay: #F5E6D3;
+            --bg-clay-dark: #E8D5C0;
+            --bg-clay-light: #FAF0E6;
+            --text-dark: #333333;
+            --text-medium: #555555;
+            --text-light: #777777;
+            --accent-black: #1A1A1A;
+            --white: #FFFFFF;
+            --success: #4CAF50;
+            --error: #E53935;
+            --info: #2196F3;
+            --shadow-soft: 0 4px 15px rgba(0,0,0,0.1);
+            --shadow-medium: 0 6px 25px rgba(0,0,0,0.15);
+            --shadow-hard: 0 8px 30px rgba(0,0,0,0.2);
+            --shadow-clay: 4px 4px 0px rgba(0,0,0,0.15), inset 0 2px 4px rgba(255,255,255,0.3);
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 20px;
+            --radius-xl: 28px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --font-heading: 'Segoe UI', 'Arial Black', sans-serif;
+            --font-body: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: var(--font-body);
+            background-color: var(--bg-clay);
+            color: var(--text-dark);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 9999;
+            background-image:
+                radial-gradient(circle at 20% 50%, rgba(139,90,43,0.03) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(139,90,43,0.02) 0%, transparent 50%),
+                radial-gradient(circle at 50% 80%, rgba(139,90,43,0.03) 0%, transparent 50%);
+        }
+
+        /* ═══ HEADER ═══ */
+        .header {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: linear-gradient(180deg, var(--accent-black) 0%, #2A2A2A 100%);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            border-bottom: 4px solid var(--primary);
+        }
+
+        .header-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 64px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            flex-shrink: 0;
+        }
+
+        .logo-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .logo-icon img {
+            display: block;
+            height: 50px;
+            width: auto;
+            image-rendering: -webkit-optimize-contrast;
+            image-rendering: crisp-edges;
+            box-shadow: 4px 4px 0px rgba(0,0,0,0.15);
+            border-radius: 12px;
+            transition: transform 0.2s ease;
+        }
+
+        .logo-text {
+            font-family: var(--font-heading);
+            font-size: 22px; font-weight: 900;
+            color: var(--white);
+            letter-spacing: -0.5px;
+        }
+
+        .logo-text em { color: var(--primary); font-style: normal; }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: rgba(255,255,255,0.7);
+            padding: 8px 16px;
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+            font-size: 14px;
+            transition: var(--transition);
+        }
+
+        .nav-links a:hover { color: var(--white); background: rgba(255,255,255,0.1); }
+        .nav-links a.active { color: var(--accent-black); background: var(--primary); }
+
+        /* ═══ PAGE HERO ═══ */
+        .page-hero {
+            background: linear-gradient(135deg, var(--accent-black) 0%, #2A2A2A 50%, #333 100%);
+            padding: 48px 24px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .page-hero::before {
+            content: '';
+            position: absolute;
+            top: -40%; right: -10%;
+            width: 500px; height: 500px;
+            background: radial-gradient(circle, rgba(255,215,0,0.08) 0%, transparent 65%);
+            pointer-events: none;
+        }
+
+        .page-hero-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 30px;
+        }
+
+        .page-hero-text h1 {
+            font-family: var(--font-heading);
+            font-size: 36px; font-weight: 900;
+            color: var(--white);
+            margin-bottom: 10px;
+        }
+
+        .page-hero-text h1 em { color: var(--primary); font-style: normal; }
+
+        .page-hero-text p {
+            color: rgba(255,255,255,0.6);
+            font-size: 16px;
+            max-width: 550px;
+            line-height: 1.6;
+        }
+
+        .hero-stats {
+            display: flex;
+            gap: 28px;
+            margin-top: 24px;
+        }
+
+        .hero-stat {
+            text-align: center;
+        }
+
+        .hero-stat-num {
+            font-family: var(--font-heading);
+            font-size: 32px; font-weight: 900;
+            color: var(--primary);
+        }
+
+        .hero-stat-label {
+            font-size: 12px; font-weight: 700;
+            color: rgba(255,255,255,0.4);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .hero-katie {
+            width: 120px; height: auto;
+            border-radius: 12px;
+            border: 4px solid var(--primary);
+            background: #fff;
+            padding: 6px;
+            box-shadow: 0 6px 30px rgba(0,0,0,0.4);
+            flex-shrink: 0;
+        }
+
+        /* ═══ OVERALL PROGRESS BAR ═══ */
+        .progress-section {
+            max-width: 1200px;
+            margin: -24px auto 0;
+            padding: 0 24px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .progress-card {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            padding: 20px 28px;
+            box-shadow: var(--shadow-medium);
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .progress-card-label {
+            font-size: 14px; font-weight: 700;
+            color: var(--text-dark);
+            white-space: nowrap;
+        }
+
+        .progress-card-track {
+            flex: 1;
+            height: 10px;
+            background: var(--bg-clay);
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .progress-card-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 5px;
+            transition: width 0.6s ease;
+            width: 0%;
+        }
+
+        .progress-card-pct {
+            font-family: var(--font-heading);
+            font-size: 18px; font-weight: 900;
+            color: var(--primary-dark);
+            min-width: 45px;
+            text-align: right;
+        }
+
+        /* ═══ MODULE GRID ═══ */
+        .modules-section {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 24px 60px;
+        }
+
+        .section-label {
+            font-size: 11px; font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--text-light);
+            margin-bottom: 8px;
+        }
+
+        .section-title {
+            font-family: var(--font-heading);
+            font-size: 24px; font-weight: 900;
+            color: var(--text-dark);
+            margin-bottom: 28px;
+        }
+
+        .modules-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 20px;
+        }
+
+        /* ═══ MODULE CARD ═══ */
+        .module-card {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-soft);
+            overflow: hidden;
+            transition: var(--transition);
+            border: 2px solid transparent;
+            position: relative;
+        }
+
+        .module-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-hard);
+            border-color: var(--primary);
+        }
+
+        .module-card.available { border-color: rgba(255,215,0,0.3); }
+
+        .module-card.completed .module-card-top {
+            background: linear-gradient(135deg, #388E3C, #4CAF50);
+        }
+
+        .module-card-top {
+            background: linear-gradient(135deg, var(--accent-black), #333);
+            padding: 20px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .module-card-top-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .module-num {
+            width: 40px; height: 40px;
+            border-radius: 50%;
+            background: rgba(255,215,0,0.15);
+            border: 2px solid var(--primary);
+            display: flex; align-items: center; justify-content: center;
+            font-family: var(--font-heading);
+            font-size: 16px; font-weight: 900;
+            color: var(--primary);
+            flex-shrink: 0;
+        }
+
+        .module-card.completed .module-num {
+            background: rgba(255,255,255,0.2);
+            border-color: var(--white);
+            color: var(--white);
+        }
+
+        .module-card-top h3 {
+            font-family: var(--font-heading);
+            font-size: 17px; font-weight: 800;
+            color: var(--white);
+        }
+
+        .module-card-top-right {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .module-status-badge {
+            font-size: 11px; font-weight: 700;
+            padding: 4px 12px;
+            border-radius: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .module-status-badge.available {
+            background: rgba(255,215,0,0.2);
+            color: var(--primary);
+        }
+
+        .module-status-badge.completed {
+            background: rgba(255,255,255,0.2);
+            color: var(--white);
+        }
+
+        .module-status-badge.locked {
+            background: rgba(255,255,255,0.1);
+            color: rgba(255,255,255,0.4);
+        }
+
+        .module-card-body {
+            padding: 20px 24px;
+        }
+
+        .module-desc {
+            font-size: 14px;
+            color: var(--text-medium);
+            margin-bottom: 16px;
+            line-height: 1.55;
+        }
+
+        .module-meta {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+
+        .module-meta-item {
+            font-size: 12px;
+            color: var(--text-light);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .module-progress-bar {
+            height: 6px;
+            background: var(--bg-clay);
+            border-radius: 3px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+
+        .module-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 3px;
+            transition: width 0.5s ease;
+        }
+
+        .module-card.completed .module-progress-fill {
+            background: var(--success);
+        }
+
+        .module-card-footer {
+            padding: 0 24px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .module-progress-label {
+            font-size: 12px; font-weight: 700;
+            color: var(--text-light);
+        }
+
+        .module-card.completed .module-progress-label {
+            color: var(--success);
+        }
+
+        .module-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 9px 20px;
+            border-radius: var(--radius-sm);
+            font-size: 13px; font-weight: 700;
+            text-decoration: none;
+            transition: var(--transition);
+            cursor: pointer;
+            border: none;
+        }
+
+        .module-btn.start {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: var(--accent-black);
+            box-shadow: var(--shadow-clay);
+        }
+
+        .module-btn.start:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-medium);
+        }
+
+        .module-btn.review {
+            background: var(--bg-clay-light);
+            color: var(--text-dark);
+            border: 1px solid rgba(0,0,0,0.1);
+        }
+
+        .module-btn.review:hover {
+            border-color: var(--primary);
+            background: #FFFDE7;
+        }
+
+        .module-btn.locked {
+            background: var(--bg-clay);
+            color: var(--text-light);
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        .module-card.locked { opacity: 0.7; }
+        .module-card.locked:hover {
+            transform: none;
+            box-shadow: var(--shadow-soft);
+            border-color: transparent;
+        }
+
+        /* ═══ FOOTER ═══ */
+        .footer {
+            background: var(--accent-black);
+            border-top: 4px solid var(--primary);
+            padding: 30px 24px;
+            text-align: center;
+        }
+
+        .footer p {
+            color: rgba(255,255,255,0.4);
+            font-size: 13px;
+        }
+
+        .footer a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        /* ═══ RESPONSIVE ═══ */
+        @media (max-width: 768px) {
+            .header-inner { height: 56px; }
+            .nav-links { display: none; }
+            .page-hero { padding: 32px 20px; }
+            .page-hero-text h1 { font-size: 28px; }
+            .hero-katie { display: none; }
+            .hero-stats { gap: 18px; }
+            .hero-stat-num { font-size: 24px; }
+            .progress-card { padding: 16px 20px; flex-wrap: wrap; }
+            .modules-grid { grid-template-columns: 1fr; }
+            .modules-section { padding: 30px 16px 40px; }
+        }
+
+        @media (max-width: 480px) {
+            .page-hero-text h1 { font-size: 24px; }
+            .hero-stats { flex-direction: column; gap: 10px; align-items: flex-start; }
+            .module-card-top { flex-direction: column; align-items: flex-start; gap: 10px; }
+        }
+
+        /* Katie Circular Avatar Styles */
+        .katie-avatar-small {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            object-fit: cover;
+            object-position: center 48%;
+            background: white;
+            border: 3px solid #FFD700;
+            padding: 5px;
+            display: block;
+            flex-shrink: 0;
+        }
+        .katie-avatar-medium {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            object-position: center 48%;
+            background: white;
+            border: 3px solid #FFD700;
+            padding: 8px;
+            display: block;
+            flex-shrink: 0;
+        }
+        .katie-avatar-large {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            object-position: center 48%;
+            background: white;
+            border: 4px solid #FFD700;
+            padding: 10px;
+            display: block;
+            flex-shrink: 0;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ═══ HEADER ═══ -->
+    <header class="header" role="banner">
+        <div class="header-inner">
+            <a href="../index.html" class="logo" aria-label="SafetyVerse Home">
+                <div class="logo-icon" aria-hidden="true"><img src="logo.png?v=2" alt="SafetyVerse Logo" style="height: 50px; width: auto;"></div>
+                <div class="logo-text">Safety<em>Verse</em></div>
+            </a>
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="../index.html">Home</a></li>
+                    <li><a href="index.html" class="active">Lessons</a></li>
+                    <li><a href="../games/safety-clue/index.html">Games</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- ═══ PAGE HERO ═══ -->
+    <section class="page-hero">
+        <div class="page-hero-inner">
+            <div class="page-hero-text">
+                <h1>Safety <em>Lessons</em></h1>
+                <p>Work through structured training modules to build your safety expertise. Each module includes slides, Katie's tips, and a knowledge check quiz.</p>
+                <div class="hero-stats">
+                    <div class="hero-stat">
+                        <div class="hero-stat-num" id="completedCount">0</div>
+                        <div class="hero-stat-label">Completed</div>
+                    </div>
+                    <div class="hero-stat">
+                        <div class="hero-stat-num">20</div>
+                        <div class="hero-stat-label">Total Modules</div>
+                    </div>
+                    <div class="hero-stat">
+                        <div class="hero-stat-num" id="quizAvg">-</div>
+                        <div class="hero-stat-label">Avg Quiz Score</div>
+                    </div>
+                </div>
+            </div>
+            <img src="katie.png" alt="Katie" class="katie-avatar-large">
+        </div>
+    </section>
+
+    <!-- ═══ OVERALL PROGRESS ═══ -->
+    <div class="progress-section">
+        <div class="progress-card">
+            <span class="progress-card-label">Overall Lesson Progress</span>
+            <div class="progress-card-track">
+                <div class="progress-card-fill" id="overallFill"></div>
+            </div>
+            <span class="progress-card-pct" id="overallPct">0%</span>
+        </div>
+    </div>
+
+    <!-- ═══ MODULE GRID ═══ -->
+    <section class="modules-section">
+        <div class="section-label">All Modules</div>
+        <h2 class="section-title">Your Training Path</h2>
+
+        <div class="modules-grid" id="modulesGrid">
+
+            <!-- Module 1 -->
+            <div class="module-card available" id="card-intro-to-osha">
+                <div class="module-card-top">
+                    <div class="module-card-top-left">
+                        <div class="module-num">1</div>
+                        <h3>Introduction to OSHA</h3>
+                    </div>
+                    <div class="module-card-top-right">
+                        <span class="module-status-badge available" id="badge-intro-to-osha">Available</span>
+                    </div>
+                </div>
+                <div class="module-card-body">
+                    <p class="module-desc">Learn the foundations of workplace safety: your rights, employer responsibilities, and how OSHA protects workers.</p>
+                    <div class="module-meta">
+                        <span class="module-meta-item">&#128218; 8 Slides</span>
+                        <span class="module-meta-item">&#10067; 3 Questions</span>
+                        <span class="module-meta-item">&#9201; ~15 min</span>
+                    </div>
+                    <div class="module-progress-bar"><div class="module-progress-fill" id="fill-intro-to-osha" style="width:0%"></div></div>
+                </div>
+                <div class="module-card-footer">
+                    <span class="module-progress-label" id="label-intro-to-osha">Not started</span>
+                    <a href="intro-to-osha/index.html" class="module-btn start" id="btn-intro-to-osha">Start Module &#8594;</a>
+                </div>
+            </div>
+
+            <!-- Module 2 -->
+            <div class="module-card available" id="card-hazard-recognition">
+                <div class="module-card-top">
+                    <div class="module-card-top-left">
+                        <div class="module-num">2</div>
+                        <h3>Hazard Recognition</h3>
+                    </div>
+                    <div class="module-card-top-right">
+                        <span class="module-status-badge available" id="badge-hazard-recognition">Available</span>
+                    </div>
+                </div>
+                <div class="module-card-body">
+                    <p class="module-desc">Learn to identify, assess, and report workplace hazards before they cause injuries. Spotting dangers is the first step to prevention.</p>
+                    <div class="module-meta">
+                        <span class="module-meta-item">&#128218; 8 Slides</span>
+                        <span class="module-meta-item">&#10067; 3 Questions</span>
+                        <span class="module-meta-item">&#9201; ~15 min</span>
+                    </div>
+                    <div class="module-progress-bar"><div class="module-progress-fill" id="fill-hazard-recognition" style="width:0%"></div></div>
+                </div>
+                <div class="module-card-footer">
+                    <span class="module-progress-label" id="label-hazard-recognition">Not started</span>
+                    <a href="hazard-recognition/index.html" class="module-btn start" id="btn-hazard-recognition">Start Module &#8594;</a>
+                </div>
+            </div>
+
+            <!-- Module 3 -->
+            <div class="module-card available" id="card-safety-reporting">
+                <div class="module-card-top">
+                    <div class="module-card-top-left">
+                        <div class="module-num">3</div>
+                        <h3>Safety Reporting</h3>
+                    </div>
+                    <div class="module-card-top-right">
+                        <span class="module-status-badge available" id="badge-safety-reporting">Available</span>
+                    </div>
+                </div>
+                <div class="module-card-body">
+                    <p class="module-desc">Learn how to properly report workplace incidents, near misses, and hazards. Understand your rights and protections when reporting.</p>
+                    <div class="module-meta">
+                        <span class="module-meta-item">&#128218; 8 Slides</span>
+                        <span class="module-meta-item">&#10067; 3 Questions</span>
+                        <span class="module-meta-item">&#9201; ~10 min</span>
+                    </div>
+                    <div class="module-progress-bar"><div class="module-progress-fill" id="fill-safety-reporting" style="width:0%"></div></div>
+                </div>
+                <div class="module-card-footer">
+                    <span class="module-progress-label" id="label-safety-reporting">Not started</span>
+                    <a href="safety-reporting/index.html" class="module-btn start" id="btn-safety-reporting">Start Module &#8594;</a>
+                </div>
+            </div>
+
+            <!-- Module 4 -->
+            <div class="module-card available" id="card-emergency-action">
+                <div class="module-card-top">
+                    <div class="module-card-top-left">
+                        <div class="module-num">4</div>
+                        <h3>Emergency Action Plans</h3>
+                    </div>
+                    <div class="module-card-top-right">
+                        <span class="module-status-badge available" id="badge-emergency-action">Available</span>
+                    </div>
+                </div>
+                <div class="module-card-body">
+                    <p class="module-desc">Learn your facility's emergency procedures for fires, severe weather, medical emergencies, and more. Know what to do when every second counts.</p>
+                    <div class="module-meta">
+                        <span class="module-meta-item">&#128218; 8 Slides</span>
+                        <span class="module-meta-item">&#10067; 3 Questions</span>
+                        <span class="module-meta-item">&#9201; ~10 min</span>
+                    </div>
+                    <div class="module-progress-bar"><div class="module-progress-fill" id="fill-emergency-action" style="width:0%"></div></div>
+                </div>
+                <div class="module-card-footer">
+                    <span class="module-progress-label" id="label-emergency-action">Not started</span>
+                    <a href="emergency-action-plans/index.html" class="module-btn start" id="btn-emergency-action">Start Module &#8594;</a>
+                </div>
+            </div>
+
+            <!-- Module 5 -->
+            <div class="module-card available" id="card-first-aid">
+                <div class="module-card-top">
+                    <div class="module-card-top-left">
+                        <div class="module-num">5</div>
+                        <h3>First Aid &amp; AED</h3>
+                    </div>
+                    <div class="module-card-top-right">
+                        <span class="module-status-badge available" id="badge-first-aid">Available</span>
+                    </div>
+                </div>
+                <div class="module-card-body">
+                    <p class="module-desc">Learn essential first aid skills and how to use an AED. When seconds count, your knowledge can save a life.</p>
+                    <div class="module-meta">
+                        <span class="module-meta-item">&#128218; 10 Slides</span>
+                        <span class="module-meta-item">&#10067; 3 Questions</span>
+                        <span class="module-meta-item">&#9201; ~12 min</span>
+                    </div>
+                    <div class="module-progress-bar"><div class="module-progress-fill" id="fill-first-aid" style="width:0%"></div></div>
+                </div>
+                <div class="module-card-footer">
+                    <span class="module-progress-label" id="label-first-aid">Not started</span>
+                    <a href="first-aid/index.html" class="module-btn start" id="btn-first-aid">Start Module &#8594;</a>
+                </div>
+            </div>
+
+            <!-- Module 6 -->
+            <div class="module-card available" id="card-walking-working-surfaces">
+                <div class="module-card-top">
+                    <div class="module-card-top-left">
+                        <div class="module-num">6</div>
+                        <h3>Walking-Working Surfaces</h3>
+                    </div>
+                    <div class="module-card-top-right">
+                        <span class="module-status-badge available" id="badge-walking-working-surfaces">Available</span>
+                    </div>
+                </div>
+                <div class="module-card-body">
+                    <p class="module-desc">Prevent slips, trips, and falls — the leading cause of workplace injuries. Learn about winter hazards and ice traction devices.</p>
+                    <div class="module-meta">
+                        <span class="module-meta-item">&#128218; 10 Slides</span>
+                        <span class="module-meta-item">&#10067; 3 Questions</span>
+                        <span class="module-meta-item">&#9201; ~20 min</span>
+                    </div>
+                    <div class="module-progress-bar"><div class="module-progress-fill" id="fill-walking-working-surfaces" style="width:0%"></div></div>
+                </div>
+                <div class="module-card-footer">
+                    <span class="module-progress-label" id="label-walking-working-surfaces">Not started</span>
+                    <a href="walking-working-surfaces/index.html" class="module-btn start" id="btn-walking-working-surfaces">Start Module &#8594;</a>
+                </div>
+            </div>
+
+            <!-- Module 7 -->
+            <div class="module-card available" id="card-fire-safety">
+                <div class="module-card-top">
+                    <div class="module-card-top-left">
+                        <div class="module-num">7</div>
+                        <h3>Fire Safety &amp; Prevention</h3>
+                    </div>
+                    <div class="module-card-top-right">
+                        <span class="module-status-badge available" id="badge-fire-safety">Available</span>
+                    </div>
+                </div>
+                <div class="module-card-body">
+                    <p class="module-desc">Learn fire prevention techniques, proper extinguisher use (PASS), fire classes, and emergency evacuation procedures.</p>
+                    <div class="module-meta">
+                        <span class="module-meta-item">&#128218; 15 Slides</span>
+                        <span class="module-meta-item">&#10067; 3 Questions</span>
+                        <span class="module-meta-item">&#9201; ~20 min</span>
+                    </div>
+                    <div class="module-progress-bar"><div class="module-progress-fill" id="fill-fire-safety" style="width:0%"></div></div>
+                </div>
+                <div class="module-card-footer">
+                    <span class="module-progress-label" id="label-fire-safety">Not started</span>
+                    <a href="fire-safety/index.html" class="module-btn start" id="btn-fire-safety">Start Module &#8594;</a>
+                </div>
+            </div>
+
+            <!-- Module 8 -->
+            <div class="module-card available" id="card-driving-safety">
+                <div class="module-card-top">
+                    <div class="module-card-top-left">
+                        <div class="module-num">8</div>
+                        <h3>Driving Safety</h3>
+                    </div>
+                    <div class="module-card-top-right">
+                        <span class="module-status-badge available" id="badge-driving-safety">Available</span>
+                    </div>
+                </div>
+                <div class="module-card-body">
+                    <p class="module-desc">Learn pre-trip inspections, defensive driving, the Smith System, distraction elimination, and weather driving techniques.</p>
+                    <div class="module-meta">
+                        <span class="module-meta-item">&#128218; 15 Slides</span>
+                        <span class="module-meta-item">&#10067; 3 Questions</span>
+                        <span class="module-meta-item">&#9201; ~15 min</span>
+                    </div>
+                    <div class="module-progress-bar"><div class="module-progress-fill" id="fill-driving-safety" style="width:0%"></div></div>
+                </div>
+                <div class="module-card-footer">
+                    <span class="module-progress-label" id="label-driving-safety">Not started</span>
+                    <a href="driving-safety/index.html" class="module-btn start" id="btn-driving-safety">Start Module &#8594;</a>
+                </div>
+            </div>
+
+            <!-- Module 9 -->
+            <div class="module-card available" id="card-ppe">
+                <div class="module-card-top">
+                    <div class="module-card-top-left">
+                        <div class="module-num">9</div>
+                        <h3>Personal Protective Equipment</h3>
+                    </div>
+                    <div class="module-card-top-right">
+                        <span class="module-status-badge available" id="badge-ppe">Available</span>
+                    </div>
+                </div>
+                <div class="module-card-body">
+                    <p class="module-desc">Learn about PPE types, the hierarchy of controls, proper selection, fit, inspection, and maintenance of protective equipment.</p>
+                    <div class="module-meta">
+                        <span class="module-meta-item">&#128218; 15 Slides</span>
+                        <span class="module-meta-item">&#10067; 3 Questions</span>
+                        <span class="module-meta-item">&#9201; ~15 min</span>
+                    </div>
+                    <div class="module-progress-bar"><div class="module-progress-fill" id="fill-ppe" style="width:0%"></div></div>
+                </div>
+                <div class="module-card-footer">
+                    <span class="module-progress-label" id="label-ppe">Not started</span>
+                    <a href="ppe/index.html" class="module-btn start" id="btn-ppe">Start Module &#8594;</a>
+                </div>
+            </div>
+
+            <!-- Module 10: Electrical Safety & Arc Flash -->
+            <div class="module-card available" id="card-electrical-safety">
+                <div class="module-card-top">
+                    <div class="module-card-top-left">
+                        <div class="module-num">10</div>
+                        <h3>Electrical Safety &amp; Arc Flash</h3>
+                    </div>
+                    <div class="module-card-top-right">
+                        <span class="module-status-badge available" id="badge-electrical-safety">Available</span>
+                    </div>
+                </div>
+                <div class="module-card-body">
+                    <p class="module-desc">Understand electrical hazards, arc flash dangers, approach boundaries, and safe work practices to prevent shocks and electrocution.</p>
+                    <div class="module-meta">
+                        <span class="module-meta-item">&#128218; 15 Slides</span>
+                        <span class="module-meta-item">&#10067; 3 Questions</span>
+                        <span class="module-meta-item">&#9201; ~15 min</span>
+                    </div>
+                    <div class="module-progress-bar"><div class="module-progress-fill" id="fill-electrical-safety" style="width:0%"></div></div>
+                </div>
+                <div class="module-card-footer">
+                    <span class="module-progress-label" id="label-electrical-safety">Not started</span>
+                    <a href="electrical-safety/index.html" class="module-btn start" id="btn-electrical-safety">Start Module &#8594;</a>
+                </div>
+            </div>
+
+            <!-- Module 11: Lockout/Tagout (LOTO) -->
+            <div class="module-card available" id="card-loto">
+                <div class="module-card-top">
+                    <div class="module-card-top-left">
+                        <div class="module-num">11</div>
+                        <h3>Lockout/Tagout (LOTO)</h3>
+                    </div>
+                    <div class="module-card-top-right">
+                        <span class="module-status-badge available" id="badge-loto">Available</span>
+                    </div>
+                </div>
+                <div class="module-card-body">
+                    <p class="module-desc">Learn about controlling hazardous energy through lockout/tagout procedures, employee roles, the six LOTO steps, and critical safety rules.</p>
+                    <div class="module-meta">
+                        <span class="module-meta-item">&#128218; 15 Slides</span>
+                        <span class="module-meta-item">&#10067; 3 Questions</span>
+                        <span class="module-meta-item">&#9201; ~15 min</span>
+                    </div>
+                    <div class="module-progress-bar"><div class="module-progress-fill" id="fill-loto" style="width:0%"></div></div>
+                </div>
+                <div class="module-card-footer">
+                    <span class="module-progress-label" id="label-loto">Not started</span>
+                    <a href="loto/index.html" class="module-btn start" id="btn-loto">Start Module &#8594;</a>
+                </div>
+            </div>
+
+            <!-- Module 12: Hazard Communication (HazCom) -->
+            <div class="module-card available" id="card-hazcom">
+                <div class="module-card-top">
+                    <div class="module-card-top-left">
+                        <div class="module-num">12</div>
+                        <h3>Hazard Communication (HazCom)</h3>
+                    </div>
+                    <div class="module-card-top-right">
+                        <span class="module-status-badge available" id="badge-hazcom">Available</span>
+                    </div>
+                </div>
+                <div class="module-card-body">
+                    <p class="module-desc">Navigate the Hazard Communication Standard, read Safety Data Sheets, and understand GHS pictograms and labels.</p>
+                    <div class="module-meta">
+                        <span class="module-meta-item">&#128218; 15 Slides</span>
+                        <span class="module-meta-item">&#10067; 3 Questions</span>
+                        <span class="module-meta-item">&#9201; ~20 min</span>
+                    </div>
+                    <div class="module-progress-bar"><div class="module-progress-fill" id="fill-hazcom" style="width:0%"></div></div>
+                </div>
+                <div class="module-card-footer">
+                    <span class="module-progress-label" id="label-hazcom">Not started</span>
+                    <a href="hazcom/index.html" class="module-btn start" id="btn-hazcom">Start Module &#8594;</a>
+                </div>
+            </div>
+
+            <!-- Module 13: Heat Stress -->
+            <div class="module-card available" id="card-heat-stress">
+                <div class="module-card-top">
+                    <div class="module-card-top-left">
+                        <div class="module-num">13</div>
+                        <h3>Heat Stress</h3>
+                    </div>
+                    <div class="module-card-top-right">
+                        <span class="module-status-badge available" id="badge-heat-stress">Available</span>
+                    </div>
+                </div>
+                <div class="module-card-body">
+                    <p class="module-desc">Recognize heat illness symptoms, understand risk factors, learn prevention strategies including hydration and acclimatization, and know emergency response for heat stroke.</p>
+                    <div class="module-meta">
+                        <span class="module-meta-item">&#128218; 15 Slides</span>
+                        <span class="module-meta-item">&#10067; 3 Questions</span>
+                        <span class="module-meta-item">&#9201; ~15 min</span>
+                    </div>
+                    <div class="module-progress-bar"><div class="module-progress-fill" id="fill-heat-stress" style="width:0%"></div></div>
+                </div>
+                <div class="module-card-footer">
+                    <span class="module-progress-label" id="label-heat-stress">Not started</span>
+                    <a href="heat-stress/index.html" class="module-btn start" id="btn-heat-stress">Start Module &#8594;</a>
+                </div>
+            </div>
+
+            <!-- Module 14: Cold Stress -->
+            <div class="module-card available" id="card-cold-stress">
+                <div class="module-card-top">
+                    <div class="module-card-top-left">
+                        <div class="module-num">14</div>
+                        <h3>Cold Stress</h3>
+                    </div>
+                    <div class="module-card-top-right">
+                        <span class="module-status-badge available" id="badge-cold-stress">Available</span>
+                    </div>
+                </div>
+                <div class="module-card-body">
+                    <p class="module-desc">Recognize cold stress illnesses (frostbite, hypothermia, trench foot), understand wind chill dangers, learn the three-layer clothing system, and respond to cold emergencies.</p>
+                    <div class="module-meta">
+                        <span class="module-meta-item">&#128218; 15 Slides</span>
+                        <span class="module-meta-item">&#10067; 3 Questions</span>
+                        <span class="module-meta-item">&#9201; ~15 min</span>
+                    </div>
+                    <div class="module-progress-bar"><div class="module-progress-fill" id="fill-cold-stress" style="width:0%"></div></div>
+                </div>
+                <div class="module-card-footer">
+                    <span class="module-progress-label" id="label-cold-stress">Not started</span>
+                    <a href="cold-stress/index.html" class="module-btn start" id="btn-cold-stress">Start Module &#8594;</a>
+                </div>
+            </div>
+
+            <!-- Module 15: Hearing Conservation -->
+            <div class="module-card available" id="card-hearing-conservation">
+                <div class="module-card-top">
+                    <div class="module-card-top-left">
+                        <div class="module-num">15</div>
+                        <h3>Hearing Conservation</h3>
+                    </div>
+                    <div class="module-card-top-right">
+                        <span class="module-status-badge available" id="badge-hearing-conservation">Available</span>
+                    </div>
+                </div>
+                <div class="module-card-body">
+                    <p class="module-desc">Understand noise hazards, OSHA's 85 dB action level, proper earplug insertion and earmuff use, and how to protect your hearing for life.</p>
+                    <div class="module-meta">
+                        <span class="module-meta-item">&#128218; 15 Slides</span>
+                        <span class="module-meta-item">&#10067; 3 Questions</span>
+                        <span class="module-meta-item">&#9201; ~15 min</span>
+                    </div>
+                    <div class="module-progress-bar"><div class="module-progress-fill" id="fill-hearing-conservation" style="width:0%"></div></div>
+                </div>
+                <div class="module-card-footer">
+                    <span class="module-progress-label" id="label-hearing-conservation">Not started</span>
+                    <a href="hearing-conservation/index.html" class="module-btn start" id="btn-hearing-conservation">Start Module &#8594;</a>
+                </div>
+            </div>
+
+            <!-- Module 16: Ergonomics -->
+            <div class="module-card available" id="card-ergonomics">
+                <div class="module-card-top">
+                    <div class="module-card-top-left">
+                        <div class="module-num">16</div>
+                        <h3>Ergonomics</h3>
+                    </div>
+                    <div class="module-card-top-right">
+                        <span class="module-status-badge available" id="badge-ergonomics">Available</span>
+                    </div>
+                </div>
+                <div class="module-card-body">
+                    <p class="module-desc">Prevent musculoskeletal disorders through proper workstation setup, safe lifting techniques, stretching, and ergonomic best practices.</p>
+                    <div class="module-meta">
+                        <span class="module-meta-item">&#128218; 15 Slides</span>
+                        <span class="module-meta-item">&#10067; 3 Questions</span>
+                        <span class="module-meta-item">&#9201; ~15 min</span>
+                    </div>
+                    <div class="module-progress-bar"><div class="module-progress-fill" id="fill-ergonomics" style="width:0%"></div></div>
+                </div>
+                <div class="module-card-footer">
+                    <span class="module-progress-label" id="label-ergonomics">Not started</span>
+                    <a href="ergonomics/index.html" class="module-btn start" id="btn-ergonomics">Start Module &#8594;</a>
+                </div>
+            </div>
+
+            <!-- Module 17: Bloodborne Pathogens -->
+            <div class="module-card available" id="card-bloodborne-pathogens">
+                <div class="module-card-top">
+                    <div class="module-card-top-left">
+                        <div class="module-num">17</div>
+                        <h3>Bloodborne Pathogens</h3>
+                    </div>
+                    <div class="module-card-top-right">
+                        <span class="module-status-badge available" id="badge-bloodborne-pathogens">Available</span>
+                    </div>
+                </div>
+                <div class="module-card-body">
+                    <p class="module-desc">Learn universal precautions, PPE for blood exposure, the Big Three pathogens (HBV, HCV, HIV), cleanup procedures, and post-exposure protocol.</p>
+                    <div class="module-meta">
+                        <span class="module-meta-item">&#128218; 15 Slides</span>
+                        <span class="module-meta-item">&#10067; 3 Questions</span>
+                        <span class="module-meta-item">&#9201; ~15 min</span>
+                    </div>
+                    <div class="module-progress-bar"><div class="module-progress-fill" id="fill-bloodborne-pathogens" style="width:0%"></div></div>
+                </div>
+                <div class="module-card-footer">
+                    <span class="module-progress-label" id="label-bloodborne-pathogens">Not started</span>
+                    <a href="bloodborne-pathogens/index.html" class="module-btn start" id="btn-bloodborne-pathogens">Start Module &#8594;</a>
+                </div>
+            </div>
+
+            <!-- Module 18: Infectious Disease -->
+            <div class="module-card available" id="card-infectious-disease">
+                <div class="module-card-top">
+                    <div class="module-card-top-left">
+                        <div class="module-num">18</div>
+                        <h3>Infectious Disease</h3>
+                    </div>
+                    <div class="module-card-top-right">
+                        <span class="module-status-badge available" id="badge-infectious-disease">Available</span>
+                    </div>
+                </div>
+                <div class="module-card-body">
+                    <p class="module-desc">Understand disease transmission routes, hand hygiene, respiratory etiquette, isolation vs. quarantine, workplace cleaning, and pandemic preparedness.</p>
+                    <div class="module-meta">
+                        <span class="module-meta-item">&#128218; 17 Slides</span>
+                        <span class="module-meta-item">&#10067; 3 Questions</span>
+                        <span class="module-meta-item">&#9201; ~18 min</span>
+                    </div>
+                    <div class="module-progress-bar"><div class="module-progress-fill" id="fill-infectious-disease" style="width:0%"></div></div>
+                </div>
+                <div class="module-card-footer">
+                    <span class="module-progress-label" id="label-infectious-disease">Not started</span>
+                    <a href="infectious-disease/index.html" class="module-btn start" id="btn-infectious-disease">Start Module &#8594;</a>
+                </div>
+            </div>
+
+            <!-- Module 19: Lone Worker Safety -->
+            <div class="module-card available" id="card-lone-worker-safety">
+                <div class="module-card-top">
+                    <div class="module-card-top-left">
+                        <div class="module-num">19</div>
+                        <h3>Lone Worker Safety</h3>
+                    </div>
+                    <div class="module-card-top-right">
+                        <span class="module-status-badge available" id="badge-lone-worker-safety">Available</span>
+                    </div>
+                </div>
+                <div class="module-card-body">
+                    <p class="module-desc">Learn lone worker hazards, check-in procedures, emergency response when alone, personal safety devices, situational awareness, and night work precautions.</p>
+                    <div class="module-meta">
+                        <span class="module-meta-item">&#128218; 14 Slides</span>
+                        <span class="module-meta-item">&#10067; 3 Questions</span>
+                        <span class="module-meta-item">&#9201; ~15 min</span>
+                    </div>
+                    <div class="module-progress-bar"><div class="module-progress-fill" id="fill-lone-worker-safety" style="width:0%"></div></div>
+                </div>
+                <div class="module-card-footer">
+                    <span class="module-progress-label" id="label-lone-worker-safety">Not started</span>
+                    <a href="lone-worker-safety/index.html" class="module-btn start" id="btn-lone-worker-safety">Start Module &#8594;</a>
+                </div>
+            </div>
+
+            <!-- Module 20: Workplace Violence Prevention -->
+            <div class="module-card available" id="card-workplace-violence-prevention">
+                <div class="module-card-top">
+                    <div class="module-card-top-left">
+                        <div class="module-num">20</div>
+                        <h3>Workplace Violence Prevention</h3>
+                    </div>
+                    <div class="module-card-top-right">
+                        <span class="module-status-badge available" id="badge-workplace-violence-prevention">Available</span>
+                    </div>
+                </div>
+                <div class="module-card-body">
+                    <p class="module-desc">Recognize warning signs of violence, apply de-escalation techniques, understand Run-Hide-Fight protocol, report threats, and build personal safety habits.</p>
+                    <div class="module-meta">
+                        <span class="module-meta-item">&#128218; 12 Slides</span>
+                        <span class="module-meta-item">&#10067; 3 Questions</span>
+                        <span class="module-meta-item">&#9201; ~15 min</span>
+                    </div>
+                    <div class="module-progress-bar"><div class="module-progress-fill" id="fill-workplace-violence-prevention" style="width:0%"></div></div>
+                </div>
+                <div class="module-card-footer">
+                    <span class="module-progress-label" id="label-workplace-violence-prevention">Not started</span>
+                    <a href="workplace-violence-prevention/index.html" class="module-btn start" id="btn-workplace-violence-prevention">Start Module &#8594;</a>
+                </div>
+            </div>
+
+            <!-- Coming Soon: Fall Protection -->
+            <div class="module-card locked">
+                <div class="module-card-top">
+                    <div class="module-card-top-left">
+                        <div class="module-num">21</div>
+                        <h3>Fall Protection</h3>
+                    </div>
+                    <div class="module-card-top-right">
+                        <span class="module-status-badge locked">Coming Soon</span>
+                    </div>
+                </div>
+                <div class="module-card-body">
+                    <p class="module-desc">Learn how to prevent falls from heights using guardrails, safety nets, personal fall arrest systems, and safe work practices.</p>
+                    <div class="module-meta">
+                        <span class="module-meta-item">&#128218; 8 Slides</span>
+                        <span class="module-meta-item">&#10067; 3 Questions</span>
+                        <span class="module-meta-item">&#9201; ~15 min</span>
+                    </div>
+                    <div class="module-progress-bar"><div class="module-progress-fill" style="width:0%"></div></div>
+                </div>
+                <div class="module-card-footer">
+                    <span class="module-progress-label">Coming soon</span>
+                    <span class="module-btn locked">&#128274; Locked</span>
+                </div>
+            </div>
+
+            <!-- Coming Soon: Emergency Procedures -->
+            <div class="module-card locked">
+                <div class="module-card-top">
+                    <div class="module-card-top-left">
+                        <div class="module-num">22</div>
+                        <h3>Emergency Procedures</h3>
+                    </div>
+                    <div class="module-card-top-right">
+                        <span class="module-status-badge locked">Coming Soon</span>
+                    </div>
+                </div>
+                <div class="module-card-body">
+                    <p class="module-desc">Prepare for workplace emergencies: evacuation plans, first aid basics, and how to respond to fires, spills, and medical events.</p>
+                    <div class="module-meta">
+                        <span class="module-meta-item">&#128218; 8 Slides</span>
+                        <span class="module-meta-item">&#10067; 3 Questions</span>
+                        <span class="module-meta-item">&#9201; ~15 min</span>
+                    </div>
+                    <div class="module-progress-bar"><div class="module-progress-fill" style="width:0%"></div></div>
+                </div>
+                <div class="module-card-footer">
+                    <span class="module-progress-label">Coming soon</span>
+                    <span class="module-btn locked">&#128274; Locked</span>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- ═══ FOOTER ═══ -->
+    <footer class="footer">
+        <p>&copy; 2026 SafetyVerse. All rights reserved. | <a href="../user-dashboard/index.html">Back to Dashboard</a></p>
+    </footer>
+
+    <!-- ═══ JAVASCRIPT ═══ -->
+    <script>
+    (function() {
+        'use strict';
+
+        var availableModules = [
+            { key: 'intro-to-osha', totalSlides: 14 },
+            { key: 'hazard-recognition', totalSlides: 14 },
+            { key: 'safety-reporting', totalSlides: 15 },
+            { key: 'emergency-action', totalSlides: 15 },
+            { key: 'first-aid', totalSlides: 17 },
+            { key: 'walking-working-surfaces', totalSlides: 16 },
+            { key: 'fire-safety', totalSlides: 16 },
+            { key: 'driving-safety', totalSlides: 16 },
+            { key: 'ppe', totalSlides: 16 },
+            { key: 'electrical-safety', totalSlides: 16 },
+            { key: 'loto', totalSlides: 16 },
+            { key: 'heat-stress', totalSlides: 16 },
+            { key: 'hazcom', totalSlides: 16 },
+            { key: 'cold-stress', totalSlides: 16 },
+            { key: 'hearing-conservation', totalSlides: 16 },
+            { key: 'ergonomics', totalSlides: 16 },
+            { key: 'bloodborne-pathogens', totalSlides: 16 },
+            { key: 'infectious-disease', totalSlides: 18 },
+            { key: 'lone-worker-safety', totalSlides: 18 },
+            { key: 'workplace-violence-prevention', totalSlides: 16 }
+        ];
+
+        function getModuleData() {
+            try {
+                var d = localStorage.getItem('safetyverse-progress');
+                if (d) {
+                    var parsed = JSON.parse(d);
+                    return (parsed && parsed.modules) ? parsed.modules : {};
+                }
+            } catch(e) {}
+            return {};
+        }
+
+        function updateLessonsUI() {
+            var modules = getModuleData();
+            var completedCount = 0;
+            var totalScore = 0;
+            var scoredCount = 0;
+
+            availableModules.forEach(function(mod) {
+                var data = modules[mod.key];
+                var card = document.getElementById('card-' + mod.key);
+                var fill = document.getElementById('fill-' + mod.key);
+                var label = document.getElementById('label-' + mod.key);
+                var badge = document.getElementById('badge-' + mod.key);
+                var btn = document.getElementById('btn-' + mod.key);
+
+                if (!data || !card) return;
+
+                if (data.completed) {
+                    completedCount++;
+                    card.classList.remove('available');
+                    card.classList.add('completed');
+                    if (fill) fill.style.width = '100%';
+                    if (label) {
+                        label.textContent = '\u2713 Completed' + (data.quizScore ? ' (' + data.quizScore + '/3)' : '');
+                    }
+                    if (badge) {
+                        badge.textContent = '\u2713 Complete';
+                        badge.className = 'module-status-badge completed';
+                    }
+                    if (btn) {
+                        btn.textContent = 'Review Module';
+                        btn.className = 'module-btn review';
+                    }
+                    if (data.quizScore) {
+                        totalScore += data.quizScore;
+                        scoredCount++;
+                    }
+                } else if (data.currentSlide && data.currentSlide > 1) {
+                    var pct = Math.round((data.currentSlide / mod.totalSlides) * 100);
+                    if (fill) fill.style.width = pct + '%';
+                    if (label) label.textContent = pct + '% Complete';
+                    if (btn) btn.textContent = 'Continue \u2192';
+                    if (badge) badge.textContent = 'In Progress';
+                }
+            });
+
+            // Update hero stats
+            var countEl = document.getElementById('completedCount');
+            if (countEl) countEl.textContent = completedCount;
+
+            var avgEl = document.getElementById('quizAvg');
+            if (avgEl && scoredCount > 0) {
+                avgEl.textContent = Math.round((totalScore / (scoredCount * 3)) * 100) + '%';
+            }
+
+            // Overall progress bar
+            var overallPct = Math.round((completedCount / 20) * 100);
+            var overallFill = document.getElementById('overallFill');
+            var overallPctEl = document.getElementById('overallPct');
+            if (overallFill) overallFill.style.width = overallPct + '%';
+            if (overallPctEl) overallPctEl.textContent = overallPct + '%';
+        }
+
+        updateLessonsUI();
+    })();
+    </script>
+
+</body>
+</html>

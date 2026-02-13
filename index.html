@@ -1,0 +1,1208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="logo.png?v=2">
+    <title>SafetyVerse &mdash; OSHA Compliance Partner</title>
+    <style>
+        /* ═══════════════════════════════════════════
+           CSS VARIABLES & RESET
+           ═══════════════════════════════════════════ */
+        :root {
+            --primary: #FFD700;
+            --primary-dark: #E6C200;
+            --primary-glow: rgba(255, 215, 0, 0.25);
+            --secondary: #FF8C00;
+            --bg-clay: #F5E6D3;
+            --bg-clay-dark: #E8D5C0;
+            --bg-clay-light: #FAF0E6;
+            --text-dark: #1A1A1A;
+            --text-medium: #444444;
+            --text-light: #666666;
+            --accent-black: #1A1A1A;
+            --white: #FFFFFF;
+            --success: #4CAF50;
+            --shadow-soft: 0 4px 20px rgba(0,0,0,0.08);
+            --shadow-medium: 0 8px 32px rgba(0,0,0,0.12);
+            --shadow-hard: 0 12px 48px rgba(0,0,0,0.18);
+            --shadow-clay: 4px 4px 0px rgba(0,0,0,0.12), inset 0 2px 4px rgba(255,255,255,0.3);
+            --radius-sm: 8px;
+            --radius-md: 14px;
+            --radius-lg: 22px;
+            --radius-xl: 32px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --font-heading: 'Segoe UI', 'Arial Black', sans-serif;
+            --font-body: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background-color: var(--bg-clay);
+            color: var(--text-dark);
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
+
+        /* Clay texture overlay */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 9999;
+            background-image:
+                radial-gradient(circle at 20% 50%, rgba(139,90,43,0.03) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(139,90,43,0.02) 0%, transparent 50%),
+                radial-gradient(circle at 50% 80%, rgba(139,90,43,0.03) 0%, transparent 50%);
+        }
+
+        /* ═══════════════════════════════════════════
+           HEADER
+           ═══════════════════════════════════════════ */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(0,0,0,0.06);
+            transition: var(--transition);
+        }
+        .header.scrolled {
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+        }
+        .header-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 72px;
+        }
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+        }
+        .logo-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .logo-icon img {
+            display: block;
+            height: 50px;
+            width: auto;
+            image-rendering: -webkit-optimize-contrast;
+            image-rendering: crisp-edges;
+            box-shadow: 4px 4px 0px rgba(0,0,0,0.15);
+            border-radius: 12px;
+            transition: transform 0.2s ease;
+        }
+        .logo-text {
+            font-family: var(--font-heading);
+            font-size: 24px;
+            font-weight: 900;
+            color: var(--text-dark);
+            letter-spacing: -0.5px;
+        }
+        .logo-text em {
+            color: var(--primary-dark);
+            font-style: normal;
+        }
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 32px;
+        }
+        .nav {
+            display: flex;
+            gap: 28px;
+        }
+        .nav a {
+            text-decoration: none;
+            color: var(--text-medium);
+            font-size: 15px;
+            font-weight: 600;
+            transition: var(--transition);
+            position: relative;
+        }
+        .nav a::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary);
+            transition: var(--transition);
+        }
+        .nav a:hover {
+            color: var(--text-dark);
+        }
+        .nav a:hover::after {
+            width: 100%;
+        }
+        .login-button {
+            background: var(--primary);
+            color: var(--accent-black);
+            border: none;
+            padding: 10px 28px;
+            font-size: 15px;
+            font-weight: 800;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 3px 3px 0px rgba(0,0,0,0.15);
+            letter-spacing: 0.3px;
+        }
+        .login-button:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+            box-shadow: 4px 5px 0px rgba(0,0,0,0.15);
+        }
+        .login-button:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Hamburger (mobile) */
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+            padding: 8px;
+            border: none;
+            background: none;
+        }
+        .hamburger span {
+            display: block;
+            width: 24px;
+            height: 2.5px;
+            background: var(--text-dark);
+            border-radius: 2px;
+            transition: var(--transition);
+        }
+
+        /* Mobile nav overlay */
+        .mobile-nav {
+            display: none;
+            position: fixed;
+            top: 72px;
+            left: 0;
+            right: 0;
+            background: var(--white);
+            padding: 24px 32px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            z-index: 999;
+            flex-direction: column;
+            gap: 16px;
+        }
+        .mobile-nav.open {
+            display: flex;
+        }
+        .mobile-nav a {
+            text-decoration: none;
+            color: var(--text-dark);
+            font-size: 17px;
+            font-weight: 600;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(0,0,0,0.06);
+        }
+        .mobile-nav .login-button {
+            width: 100%;
+            text-align: center;
+            padding: 14px;
+            font-size: 16px;
+            margin-top: 8px;
+        }
+
+        /* ═══════════════════════════════════════════
+           SAFETY STRIPE
+           ═══════════════════════════════════════════ */
+        .safety-stripe {
+            height: 6px;
+            background: repeating-linear-gradient(
+                -45deg,
+                var(--primary) 0px,
+                var(--primary) 12px,
+                var(--accent-black) 12px,
+                var(--accent-black) 24px
+            );
+            position: fixed;
+            top: 72px;
+            left: 0;
+            right: 0;
+            z-index: 999;
+        }
+
+        /* ═══════════════════════════════════════════
+           HERO SECTION
+           ═══════════════════════════════════════════ */
+        .hero {
+            margin-top: 78px;
+            padding: 80px 32px 60px;
+            background: linear-gradient(180deg, var(--white) 0%, var(--bg-clay-light) 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -120px;
+            right: -120px;
+            width: 500px;
+            height: 500px;
+            border-radius: 50%;
+            background: var(--primary-glow);
+            filter: blur(80px);
+            pointer-events: none;
+        }
+        .hero-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+        }
+        .hero-left {
+            position: relative;
+            z-index: 2;
+        }
+        .hero-badge {
+            display: inline-block;
+            background: var(--accent-black);
+            color: var(--primary);
+            font-size: 11px;
+            font-weight: 800;
+            padding: 6px 16px;
+            border-radius: 20px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 24px;
+        }
+        .hero-title {
+            font-family: var(--font-heading);
+            font-size: 56px;
+            font-weight: 900;
+            line-height: 1.1;
+            color: var(--text-dark);
+            margin-bottom: 16px;
+            letter-spacing: -1px;
+        }
+        .hero-title em {
+            color: var(--primary-dark);
+            font-style: normal;
+        }
+        .hero-subtitle {
+            font-size: 20px;
+            color: var(--text-medium);
+            font-weight: 500;
+            margin-bottom: 20px;
+            font-style: italic;
+        }
+        .hero-description {
+            font-size: 17px;
+            color: var(--text-light);
+            line-height: 1.8;
+            margin-bottom: 36px;
+            max-width: 520px;
+        }
+        .hero-ctas {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+        .cta-primary {
+            background: var(--primary);
+            color: var(--accent-black);
+            border: none;
+            padding: 16px 36px;
+            font-size: 17px;
+            font-weight: 800;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 4px 4px 0px rgba(0,0,0,0.15);
+            letter-spacing: 0.3px;
+        }
+        .cta-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 5px 6px 0px rgba(0,0,0,0.15);
+        }
+        .cta-secondary {
+            background: transparent;
+            color: var(--text-dark);
+            border: 2.5px solid var(--accent-black);
+            padding: 14px 32px;
+            font-size: 17px;
+            font-weight: 700;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .cta-secondary:hover {
+            background: var(--accent-black);
+            color: var(--white);
+            transform: translateY(-2px);
+        }
+        .hero-right {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            z-index: 2;
+        }
+        .katie-hero-container {
+            position: relative;
+            width: 450px;
+            height: 450px;
+            margin: 0 auto;
+        }
+        .katie-dashed-ring {
+            position: absolute;
+            top: -20px;
+            left: -20px;
+            right: -20px;
+            bottom: -20px;
+            border: 8px dashed #FFD700;
+            border-radius: 50%;
+            animation: rotate-ring 30s linear infinite;
+            opacity: 0.7;
+            z-index: 1;
+        }
+        @keyframes rotate-ring {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        .katie-circle {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 450px;
+            height: 450px;
+            border-radius: 50%;
+            background: white;
+            border: 10px solid #E8DCC8;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+            z-index: 2;
+        }
+        .katie-image {
+            width: 110%;
+            height: 110%;
+            object-fit: cover;
+            object-position: center 48%;
+        }
+        
+        
+
+        /* ═══════════════════════════════════════════
+           STATS BAR
+           ═══════════════════════════════════════════ */
+        .stats-bar {
+            background: var(--accent-black);
+            padding: 32px;
+        }
+        .stats-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 32px;
+            text-align: center;
+        }
+        .stat-item {
+            color: var(--white);
+        }
+        .stat-number {
+            font-family: var(--font-heading);
+            font-size: 36px;
+            font-weight: 900;
+            color: var(--primary);
+            line-height: 1;
+            margin-bottom: 4px;
+        }
+        .stat-label {
+            font-size: 13px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            opacity: 0.7;
+        }
+
+        /* ═══════════════════════════════════════════
+           KATIE'S WELCOME
+           ═══════════════════════════════════════════ */
+        .katie-welcome {
+            padding: 60px 32px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        .welcome-card {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            padding: 40px 44px;
+            display: flex;
+            gap: 28px;
+            align-items: flex-start;
+            box-shadow: var(--shadow-medium);
+            border: 2px solid rgba(255, 215, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+        .welcome-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary), var(--primary));
+        }
+        .katie-avatar {
+            flex-shrink: 0;
+        }
+        .katie-small {
+            width: 100px;
+            height: auto;
+            border-radius: 10px;
+            border: 3px solid var(--primary);
+            background: var(--white);
+            padding: 5px;
+            display: block;
+            box-shadow: 3px 3px 0px rgba(0,0,0,0.1);
+        }
+        .welcome-content {
+            flex: 1;
+        }
+        .katie-label {
+            font-size: 12px;
+            font-weight: 800;
+            color: var(--primary-dark);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+        .welcome-text {
+            font-size: 16px;
+            color: var(--text-medium);
+            line-height: 1.8;
+        }
+
+        /* ═══════════════════════════════════════════
+           FEATURES / DASHBOARD PREVIEW
+           ═══════════════════════════════════════════ */
+        .dashboard-preview {
+            padding: 80px 32px;
+            text-align: center;
+            background: linear-gradient(180deg, var(--bg-clay) 0%, var(--bg-clay-dark) 100%);
+        }
+        .preview-badge {
+            display: inline-block;
+            background: var(--accent-black);
+            color: var(--primary);
+            font-size: 11px;
+            font-weight: 800;
+            padding: 6px 18px;
+            border-radius: 20px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+        }
+        .preview-title {
+            font-family: var(--font-heading);
+            font-size: 38px;
+            font-weight: 900;
+            color: var(--text-dark);
+            margin-bottom: 12px;
+        }
+        .preview-description {
+            font-size: 17px;
+            color: var(--text-light);
+            max-width: 600px;
+            margin: 0 auto 48px;
+        }
+        .features-grid {
+            max-width: 1000px;
+            margin: 0 auto 48px;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+        }
+        .feature {
+            background: var(--white);
+            border-radius: var(--radius-md);
+            padding: 32px 24px;
+            text-align: center;
+            box-shadow: var(--shadow-soft);
+            transition: var(--transition);
+            border: 1px solid rgba(0,0,0,0.04);
+        }
+        .feature:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-medium);
+        }
+        .feature-icon {
+            font-size: 40px;
+            margin-bottom: 16px;
+            display: block;
+        }
+        .feature h3 {
+            font-family: var(--font-heading);
+            font-size: 18px;
+            font-weight: 800;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+        }
+        .feature p {
+            font-size: 14px;
+            color: var(--text-light);
+            line-height: 1.6;
+        }
+        .preview-cta {
+            background: var(--primary);
+            color: var(--accent-black);
+            border: none;
+            padding: 16px 40px;
+            font-size: 17px;
+            font-weight: 800;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 4px 4px 0px rgba(0,0,0,0.15);
+        }
+        .preview-cta:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 5px 6px 0px rgba(0,0,0,0.15);
+        }
+
+        /* ═══════════════════════════════════════════
+           LEARNING PATHS PREVIEW
+           ═══════════════════════════════════════════ */
+        .paths-section {
+            padding: 80px 32px;
+            background: var(--white);
+        }
+        .paths-inner {
+            max-width: 1000px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        .paths-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+            margin-top: 48px;
+        }
+        .path-card {
+            background: var(--bg-clay-light);
+            border-radius: var(--radius-md);
+            padding: 32px;
+            text-align: left;
+            border: 2px solid rgba(0,0,0,0.04);
+            transition: var(--transition);
+        }
+        .path-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+        .path-num {
+            display: inline-block;
+            background: var(--accent-black);
+            color: var(--primary);
+            width: 32px;
+            height: 32px;
+            line-height: 32px;
+            text-align: center;
+            border-radius: 8px;
+            font-weight: 900;
+            font-size: 14px;
+            margin-bottom: 12px;
+        }
+        .path-card h3 {
+            font-family: var(--font-heading);
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--text-dark);
+            margin-bottom: 6px;
+        }
+        .path-card .path-count {
+            font-size: 13px;
+            color: var(--text-light);
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        .path-card p {
+            font-size: 14px;
+            color: var(--text-medium);
+            line-height: 1.6;
+        }
+
+        /* ═══════════════════════════════════════════
+           FOOTER
+           ═══════════════════════════════════════════ */
+        .footer {
+            background: var(--accent-black);
+            color: rgba(255,255,255,0.7);
+            padding: 60px 32px 0;
+        }
+        .footer-content {
+            max-width: 1000px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            gap: 48px;
+            padding-bottom: 48px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .footer-section h4 {
+            color: var(--white);
+            font-family: var(--font-heading);
+            font-size: 16px;
+            font-weight: 800;
+            margin-bottom: 16px;
+        }
+        .footer-section p {
+            font-size: 14px;
+            line-height: 1.7;
+        }
+        .footer-section a {
+            display: block;
+            color: rgba(255,255,255,0.6);
+            text-decoration: none;
+            font-size: 14px;
+            padding: 4px 0;
+            transition: var(--transition);
+        }
+        .footer-section a:hover {
+            color: var(--primary);
+        }
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+        .footer-logo-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .footer-logo-icon img {
+            display: block;
+            height: 40px;
+            width: auto;
+            image-rendering: -webkit-optimize-contrast;
+            image-rendering: crisp-edges;
+            box-shadow: 4px 4px 0px rgba(0,0,0,0.15);
+            border-radius: 10px;
+        }
+        .footer-logo-text {
+            font-family: var(--font-heading);
+            font-size: 20px;
+            font-weight: 900;
+            color: var(--white);
+        }
+        .footer-logo-text em {
+            color: var(--primary);
+            font-style: normal;
+        }
+        .footer-bottom {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px 0;
+            text-align: center;
+            font-size: 13px;
+            color: rgba(255,255,255,0.4);
+        }
+
+        /* ═══════════════════════════════════════════
+           LOGIN MODAL
+           ═══════════════════════════════════════════ */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 10000;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(4px);
+        }
+        .modal-overlay.open {
+            display: flex;
+        }
+        .modal {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            padding: 48px;
+            max-width: 440px;
+            width: 90%;
+            text-align: center;
+            box-shadow: var(--shadow-hard);
+            position: relative;
+            animation: modalIn 0.3s ease;
+        }
+        @keyframes modalIn {
+            from { opacity: 0; transform: scale(0.95) translateY(10px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        .modal-katie {
+            width: 120px;
+            height: auto;
+            border-radius: 12px;
+            border: 4px solid var(--primary);
+            background: var(--white);
+            padding: 8px;
+            margin-bottom: 20px;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            box-shadow: 3px 3px 0px rgba(0,0,0,0.1);
+        }
+        .modal h2 {
+            font-family: var(--font-heading);
+            font-size: 24px;
+            font-weight: 900;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+        }
+        .modal p {
+            font-size: 15px;
+            color: var(--text-light);
+            margin-bottom: 28px;
+            line-height: 1.6;
+        }
+        .modal-primary {
+            background: var(--primary);
+            color: var(--accent-black);
+            border: none;
+            padding: 14px 36px;
+            font-size: 16px;
+            font-weight: 800;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 3px 3px 0px rgba(0,0,0,0.15);
+            width: 100%;
+            margin-bottom: 12px;
+        }
+        .modal-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+        .modal-secondary {
+            background: none;
+            border: none;
+            color: var(--text-light);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            padding: 8px 16px;
+            transition: var(--transition);
+        }
+        .modal-secondary:hover {
+            color: var(--text-dark);
+        }
+
+        /* ═══════════════════════════════════════════
+           RESPONSIVE
+           ═══════════════════════════════════════════ */
+        @media (max-width: 1024px) {
+            .hero-title { font-size: 44px; }
+            .katie-hero-container, .katie-circle { width: 380px; height: 380px; }
+            .features-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        @media (max-width: 768px) {
+            .header-inner { padding: 0 20px; }
+            .nav { display: none; }
+            .header-right .login-button { display: none; }
+            .hamburger { display: flex; }
+            .hero { padding: 60px 20px 40px; }
+            .hero-content {
+                grid-template-columns: 1fr;
+                gap: 40px;
+                text-align: center;
+            }
+            .hero-title { font-size: 38px; }
+            .hero-subtitle { font-size: 17px; }
+            .hero-description { max-width: 100%; margin: 0 auto 28px; }
+            .hero-ctas { justify-content: center; }
+            .hero-right { order: -1; }
+            .katie-hero-container, .katie-circle { width: 300px; height: 300px; } .katie-dashed-ring { border-width: 6px; }
+            .stats-inner { grid-template-columns: repeat(2, 1fr); gap: 20px; }
+            .stat-number { font-size: 28px; }
+            .welcome-card { flex-direction: column; align-items: center; text-align: center; padding: 32px 24px; }
+            .preview-title { font-size: 28px; }
+            .features-grid { grid-template-columns: 1fr; max-width: 400px; }
+            .paths-grid { grid-template-columns: 1fr; }
+            .footer-content { grid-template-columns: 1fr; gap: 32px; }
+        }
+
+        @media (max-width: 480px) {
+            .hero-title { font-size: 32px; }
+            .hero-ctas { flex-direction: column; align-items: stretch; }
+            .cta-primary, .cta-secondary { width: 100%; text-align: center; }
+            .katie-hero-container, .katie-circle { width: 250px; height: 250px; } .katie-dashed-ring { border-width: 5px; }
+        }
+
+        /* Katie Circular Avatar Styles */
+        .katie-avatar-small {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            object-fit: cover;
+            object-position: center 48%;
+            background: white;
+            border: 3px solid #FFD700;
+            padding: 5px;
+            display: block;
+            flex-shrink: 0;
+        }
+        .katie-avatar-medium {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            object-position: center 48%;
+            background: white;
+            border: 3px solid #FFD700;
+            padding: 8px;
+            display: block;
+            flex-shrink: 0;
+        }
+        .katie-avatar-large {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            object-position: center 48%;
+            background: white;
+            border: 4px solid #FFD700;
+            padding: 10px;
+            display: block;
+            flex-shrink: 0;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ═══ HEADER ═══ -->
+    <header class="header" id="header">
+        <div class="header-inner">
+            <div class="header-left">
+                <a href="#" class="logo">
+                    <div class="logo-icon"><img src="logo.png?v=2" alt="SafetyVerse Logo" style="height: 50px; width: auto;"></div>
+                    <span class="logo-text">Safety<em>Verse</em></span>
+                </a>
+            </div>
+            <div class="header-right">
+                <nav class="nav">
+                    <a href="#home">Home</a>
+                    <a href="#about">About</a>
+                    <a href="#features">Features</a>
+                    <a href="#contact">Contact</a>
+                </nav>
+                <button onclick="openLoginModal()" class="login-button">Login</button>
+                <button class="hamburger" onclick="toggleMobileNav()" aria-label="Menu">
+                    <span></span><span></span><span></span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Mobile nav -->
+    <div class="mobile-nav" id="mobileNav">
+        <a href="#home" onclick="toggleMobileNav()">Home</a>
+        <a href="#about" onclick="toggleMobileNav()">About</a>
+        <a href="#features" onclick="toggleMobileNav()">Features</a>
+        <a href="#contact" onclick="toggleMobileNav()">Contact</a>
+        <button onclick="openLoginModal(); toggleMobileNav();" class="login-button">Login</button>
+    </div>
+
+    <!-- Safety stripe -->
+    <div class="safety-stripe"></div>
+
+    <!-- ═══ HERO SECTION ═══ -->
+    <section class="hero" id="home">
+        <div class="hero-content">
+            <div class="hero-left">
+                <div class="hero-badge">&#128736;&#65039; Standards-Aligned Training</div>
+                <h1 class="hero-title">
+                    Welcome to<br>Safety<em>Verse</em>
+                </h1>
+                <p class="hero-subtitle">Making Safety Training Engaging, One Clay Scene at a Time</p>
+                <p class="hero-description">
+                    Interactive safety training modules aligned with OSHA standards, engaging games, and professional certifications &mdash; all in one platform designed to make workplace safety training effective and enjoyable.
+                </p>
+                <div class="hero-ctas">
+                    <button onclick="openLoginModal()" class="cta-primary">&#9654; Start Learning</button>
+                    <button onclick="window.location.href='games/safety-clue/index.html'" class="cta-secondary">&#127918; Play Safety Clue</button>
+                </div>
+            </div>
+            <div class="hero-right">
+                <div class="katie-hero-container">
+                    <div class="katie-dashed-ring"></div>
+                    <div class="katie-circle">
+                        <img src="katie.png" alt="Katie" class="katie-image">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══ STATS BAR ═══ -->
+    <section class="stats-bar">
+        <div class="stats-inner">
+            <div class="stat-item">
+                <div class="stat-number">20</div>
+                <div class="stat-label">Training Modules</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">4</div>
+                <div class="stat-label">Learning Paths</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">5</div>
+                <div class="stat-label">Certifications</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">100%</div>
+                <div class="stat-label">OSHA Compliant</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══ KATIE'S WELCOME ═══ -->
+    <section class="katie-welcome" id="about">
+        <div class="welcome-card">
+            <div class="katie-avatar">
+                <img src="katie.png" alt="Katie" class="katie-avatar-medium">
+            </div>
+            <div class="welcome-content">
+                <h3 class="katie-label">Katie Says...</h3>
+                <p class="welcome-text">
+                    Welcome to SafetyVerse! I'm Katie, your safety training guide.
+                    Whether you're here to brush up on OSHA requirements, test your skills with interactive games, or earn your SafetyVerse certifications &mdash; I'm here to help you every step of the way. Let's make your workplace safer together!
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══ FEATURES / DASHBOARD PREVIEW ═══ -->
+    <section class="dashboard-preview" id="features">
+        <div class="preview-badge">Your Dashboard</div>
+        <h2 class="preview-title">Your Safety Training Journey</h2>
+        <p class="preview-description">
+            Track your progress through comprehensive training modules designed for real-world workplace safety.
+        </p>
+        <div class="features-grid">
+            <div class="feature">
+                <span class="feature-icon">&#128218;</span>
+                <h3>20 Modules</h3>
+                <p>Comprehensive safety training aligned with OSHA standards covering all essential workplace safety topics</p>
+            </div>
+            <div class="feature">
+                <span class="feature-icon">&#127918;</span>
+                <h3>Interactive Games</h3>
+                <p>Reinforce learning through engaging safety scenarios and challenges</p>
+            </div>
+            <div class="feature">
+                <span class="feature-icon">&#128200;</span>
+                <h3>Progress Tracking</h3>
+                <p>Monitor your completion rate and quiz scores across all modules</p>
+            </div>
+            <div class="feature">
+                <span class="feature-icon">&#127942;</span>
+                <h3>Certifications</h3>
+                <p>Earn professional safety certificates upon completing each learning path</p>
+            </div>
+        </div>
+        <button onclick="openLoginModal()" class="preview-cta">Access Your Dashboard &#8594;</button>
+    </section>
+
+    <!-- ═══ LEARNING PATHS ═══ -->
+    <section class="paths-section">
+        <div class="paths-inner">
+            <div class="preview-badge">Structured Learning</div>
+            <h2 class="preview-title">4 Learning Paths</h2>
+            <p class="preview-description">
+                Progress from foundational safety knowledge to specialized expertise through our structured curriculum.
+            </p>
+            <div class="paths-grid">
+                <div class="path-card">
+                    <span class="path-num">1</span>
+                    <h3>Foundation Safety</h3>
+                    <div class="path-count">5 Modules &bull; Start Here</div>
+                    <p>OSHA basics, hazard recognition, safety reporting, emergency plans, and first aid fundamentals.</p>
+                </div>
+                <div class="path-card">
+                    <span class="path-num">2</span>
+                    <h3>Operational Safety</h3>
+                    <div class="path-count">6 Modules</div>
+                    <p>Walking surfaces, fire safety, driving safety, PPE, electrical safety, and lockout/tagout procedures.</p>
+                </div>
+                <div class="path-card">
+                    <span class="path-num">3</span>
+                    <h3>Occupational Health</h3>
+                    <div class="path-count">5 Modules</div>
+                    <p>Hazard communication, heat stress, cold stress, hearing conservation, and ergonomics.</p>
+                </div>
+                <div class="path-card">
+                    <span class="path-num">4</span>
+                    <h3>Specialized Topics</h3>
+                    <div class="path-count">4 Modules</div>
+                    <p>Bloodborne pathogens, infectious disease, lone worker safety, and workplace violence prevention.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══ FOOTER ═══ -->
+    <footer class="footer" id="contact">
+        <div class="footer-content">
+            <div class="footer-section">
+                <div class="footer-logo">
+                    <div class="footer-logo-icon"><img src="logo.png?v=2" alt="SafetyVerse Logo" style="height: 40px; width: auto;"></div>
+                    <span class="footer-logo-text">Safety<em>Verse</em></span>
+                </div>
+                <p>Making workplace safety training engaging, interactive, and effective through immersive learning experiences.</p>
+            </div>
+            <div class="footer-section">
+                <h4>Quick Links</h4>
+                <a href="#home">Home</a>
+                <a href="#about">About</a>
+                <a href="#features">Features</a>
+                <a href="lessons/index.html">Lesson Hub</a>
+            </div>
+            <div class="footer-section">
+                <h4>Resources</h4>
+                <a href="https://www.osha.gov" target="_blank" rel="noopener noreferrer">OSHA.gov</a>
+                <a href="games/safety-clue/index.html">Safety Clue Game</a>
+                <a href="#">Help Center</a>
+                <a href="#">Privacy Policy</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 SafetyVerse &mdash; All rights reserved</p>
+        </div>
+    </footer>
+
+    <!-- ═══ LOGIN MODAL ═══ -->
+    <div class="modal-overlay" id="loginModal">
+        <div class="modal">
+            <img src="katie.png" alt="Katie" class="katie-avatar-medium">
+            <h2>Welcome to SafetyVerse!</h2>
+            <p>Click below to access your safety training dashboard. Track progress, complete modules, and earn certifications.</p>
+            <button onclick="confirmLogin()" class="modal-primary">Enter Dashboard &#8594;</button>
+            <button onclick="closeLoginModal()" class="modal-secondary">Cancel</button>
+        </div>
+    </div>
+
+    <!-- ═══ JAVASCRIPT ═══ -->
+    <script>
+    (function() {
+        'use strict';
+
+        // ─── HEADER SCROLL EFFECT ───
+        var header = document.getElementById('header');
+        window.addEventListener('scroll', function() {
+            if (window.scrollY > 20) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        });
+
+        // ─── MOBILE NAV ───
+        window.toggleMobileNav = function() {
+            var nav = document.getElementById('mobileNav');
+            nav.classList.toggle('open');
+        };
+
+        // ─── LOGIN MODAL ───
+        window.openLoginModal = function() {
+            document.getElementById('loginModal').classList.add('open');
+        };
+
+        window.closeLoginModal = function() {
+            document.getElementById('loginModal').classList.remove('open');
+        };
+
+        // Close modal on overlay click
+        document.getElementById('loginModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeLoginModal();
+            }
+        });
+
+        // Close modal on Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeLoginModal();
+            }
+        });
+
+        // ─── CONFIRM LOGIN ───
+        window.confirmLogin = function() {
+            // Set logged-in flag
+            localStorage.setItem('safetyverse-logged-in', 'true');
+            localStorage.setItem('safetyverse-username', 'Demo User');
+
+            // Loading state
+            var btn = document.querySelector('.modal-primary');
+            btn.textContent = 'Logging in...';
+            btn.disabled = true;
+
+            // Redirect to dashboard
+            setTimeout(function() {
+                window.location.href = 'user-dashboard/index.html';
+            }, 600);
+        };
+
+        // ─── CHECK IF ALREADY LOGGED IN ───
+        if (localStorage.getItem('safetyverse-logged-in') === 'true') {
+            // User is already logged in - show a "Go to Dashboard" option
+            var loginBtns = document.querySelectorAll('.login-button');
+            loginBtns.forEach(function(btn) {
+                btn.textContent = 'Dashboard';
+                btn.onclick = function() {
+                    window.location.href = 'user-dashboard/index.html';
+                };
+            });
+        }
+
+    })();
+    </script>
+
+</body>
+</html>

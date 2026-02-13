@@ -1,0 +1,1896 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="logo.png?v=2">
+    <title>Module 16: Ergonomics - SafetyVerse</title>
+    <style>
+        /* ═══════════════════════════════════════════
+           CSS VARIABLES & RESET
+           ═══════════════════════════════════════════ */
+        :root {
+            --primary: #FFD700;
+            --primary-dark: #E6C200;
+            --secondary: #FF8C00;
+            --secondary-dark: #E67A00;
+            --bg-clay: #F5E6D3;
+            --bg-clay-dark: #E8D5C0;
+            --bg-clay-light: #FAF0E6;
+            --text-dark: #333333;
+            --text-medium: #555555;
+            --text-light: #777777;
+            --accent-black: #1A1A1A;
+            --white: #FFFFFF;
+            --success: #4CAF50;
+            --success-dark: #388E3C;
+            --error: #E53935;
+            --error-dark: #C62828;
+            --info: #2196F3;
+            --warning: #FF9800;
+            --ergo-teal: #00897B;
+            --shadow-soft: 0 4px 15px rgba(0,0,0,0.1);
+            --shadow-medium: 0 6px 25px rgba(0,0,0,0.15);
+            --shadow-hard: 0 8px 30px rgba(0,0,0,0.2);
+            --shadow-clay: 4px 4px 0px rgba(0,0,0,0.15), inset 0 2px 4px rgba(255,255,255,0.3);
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 20px;
+            --radius-xl: 28px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --font-heading: 'Segoe UI', 'Arial Black', sans-serif;
+            --font-body: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body {
+            height: 100%;
+            overflow: hidden;
+        }
+        body {
+            font-family: var(--font-body);
+            background-color: var(--bg-clay);
+            color: var(--text-dark);
+            line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+        }
+        /* Clay texture */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 9999;
+            background-image:
+                radial-gradient(circle at 20% 50%, rgba(139,90,43,0.03) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(139,90,43,0.02) 0%, transparent 50%),
+                radial-gradient(circle at 50% 80%, rgba(139,90,43,0.03) 0%, transparent 50%);
+        }
+        /* ═══════════════════════════════════════════
+           HEADER
+           ═══════════════════════════════════════════ */
+        .header {
+            background: linear-gradient(180deg, var(--accent-black) 0%, #2A2A2A 100%);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            border-bottom: 4px solid var(--primary);
+            z-index: 100;
+            flex-shrink: 0;
+        }
+        .header-inner {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 64px;
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            flex-shrink: 0;
+        }
+        .logo-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .logo-icon img {
+            display: block;
+            height: 50px;
+            width: auto;
+            image-rendering: -webkit-optimize-contrast;
+            image-rendering: crisp-edges;
+            box-shadow: 4px 4px 0px rgba(0,0,0,0.15);
+            border-radius: 12px;
+            transition: transform 0.2s ease;
+        }
+        .logo-text {
+            font-family: var(--font-heading);
+            font-size: 22px; font-weight: 900;
+            color: var(--white);
+            letter-spacing: -0.5px;
+        }
+        .logo-text em {
+            color: var(--primary);
+            font-style: normal;
+        }
+        .header-center {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        .header-module-tag {
+            background: rgba(255,215,0,0.15);
+            color: var(--primary);
+            font-size: 11px; font-weight: 800;
+            padding: 3px 10px;
+            border-radius: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+        }
+        .header-module-title {
+            color: rgba(255,255,255,0.8);
+            font-size: 14px; font-weight: 600;
+        }
+        .back-btn {
+            display: flex; align-items: center; gap: 6px;
+            text-decoration: none;
+            color: rgba(255,255,255,0.7);
+            font-size: 13px; font-weight: 600;
+            padding: 7px 14px;
+            border-radius: var(--radius-sm);
+            transition: var(--transition);
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .back-btn:hover {
+            color: var(--white);
+            background: rgba(255,255,255,0.12);
+            border-color: rgba(255,255,255,0.2);
+        }
+        /* ═══════════════════════════════════════════
+           PROGRESS BAR
+           ═══════════════════════════════════════════ */
+        .progress-bar {
+            background: var(--accent-black);
+            border-bottom: 1px solid rgba(255,215,0,0.15);
+            flex-shrink: 0;
+            z-index: 99;
+        }
+        .progress-bar-inner {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 8px 24px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+        .progress-label {
+            font-size: 12px; font-weight: 700;
+            color: rgba(255,255,255,0.5);
+            white-space: nowrap;
+            min-width: 90px;
+        }
+        .progress-track {
+            flex: 1;
+            height: 6px;
+            background: rgba(255,255,255,0.08);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 3px;
+            transition: width 0.4s ease;
+        }
+        .progress-pct {
+            font-size: 12px; font-weight: 700;
+            color: var(--primary);
+            min-width: 40px;
+            text-align: right;
+        }
+        /* ═══════════════════════════════════════════
+           MAIN CONTENT AREA
+           ═══════════════════════════════════════════ */
+        .content-wrapper {
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 40px 24px 100px;
+        }
+        /* ═══════════════════════════════════════════
+           SLIDES
+           ═══════════════════════════════════════════ */
+        .slide {
+            display: none;
+            animation: slideIn 0.3s ease;
+        }
+        .slide.active { display: block; }
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        /* Intro Card (Slide 1) */
+        .intro-card {
+            background: linear-gradient(135deg, #00897B 0%, #00695C 100%);
+            border-radius: var(--radius-xl);
+            padding: 60px 50px;
+            box-shadow: var(--shadow-hard);
+            color: var(--white);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .intro-card::before {
+            content: '';
+            position: absolute;
+            top: -100px; right: -100px;
+            width: 300px; height: 300px;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+        }
+        .intro-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+            animation: stretch 3s ease-in-out infinite;
+        }
+        @keyframes stretch {
+            0%, 100% { transform: scaleY(1); }
+            50% { transform: scaleY(1.1); }
+        }
+        .intro-title {
+            font-family: var(--font-heading);
+            font-size: 48px; font-weight: 900;
+            margin-bottom: 12px;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.2);
+        }
+        .intro-subtitle {
+            font-size: 20px;
+            margin-bottom: 30px;
+            opacity: 0.95;
+        }
+        .intro-meta {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            flex-wrap: wrap;
+        }
+        .intro-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 15px; font-weight: 600;
+        }
+        .intro-meta-item span:first-child {
+            font-size: 20px;
+        }
+        /* Content Card */
+        .content-card {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            padding: 50px;
+            box-shadow: var(--shadow-medium);
+            margin-bottom: 30px;
+        }
+        .slide-header {
+            margin-bottom: 35px;
+        }
+        .slide-number {
+            font-size: 11px; font-weight: 800;
+            color: var(--text-light);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 10px;
+        }
+        .slide-title {
+            font-family: var(--font-heading);
+            font-size: 36px; font-weight: 900;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+            line-height: 1.2;
+        }
+        .slide-subtitle {
+            font-size: 17px;
+            color: var(--text-medium);
+        }
+        .slide-content {
+            font-size: 17px;
+            line-height: 1.8;
+            color: var(--text-dark);
+        }
+        .slide-content p {
+            margin-bottom: 20px;
+        }
+        .slide-content strong {
+            color: var(--ergo-teal);
+            font-weight: 700;
+        }
+        /* Katie Message */
+        .katie-message {
+            display: flex;
+            align-items: flex-start;
+            gap: 18px;
+            background: linear-gradient(135deg, #FFFDE7 0%, #FFF9C4 100%);
+            border-left: 5px solid var(--primary);
+            padding: 24px;
+            border-radius: var(--radius-md);
+            margin-bottom: 35px;
+            box-shadow: 0 3px 12px rgba(255,215,0,0.15);
+        }
+        .katie-avatar {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            object-fit: cover;
+            object-position: center 48%;
+            background: white;
+            border: 4px solid var(--primary);
+            padding: 6px;
+            flex-shrink: 0;
+            box-shadow: var(--shadow-soft);
+        }
+        .katie-bubble {
+            flex: 1;
+        }
+        .katie-name {
+            font-weight: 800;
+            color: var(--secondary);
+            margin-bottom: 8px;
+            font-size: 15px;
+        }
+        .katie-text {
+            font-size: 16px;
+            color: var(--text-dark);
+            line-height: 1.7;
+        }
+        /* Info Boxes */
+        .info-box {
+            background: linear-gradient(135deg, #E3F2FD 0%, #BBDEFB 100%);
+            border-left: 5px solid var(--info);
+            padding: 22px 24px;
+            border-radius: var(--radius-md);
+            margin: 28px 0;
+        }
+        .info-box.warning {
+            background: linear-gradient(135deg, #FFF3E0 0%, #FFE0B2 100%);
+            border-left-color: var(--warning);
+        }
+        .info-box.danger {
+            background: linear-gradient(135deg, #FFEBEE 0%, #FFCDD2 100%);
+            border-left-color: var(--error);
+        }
+        .info-box.success {
+            background: linear-gradient(135deg, #E8F5E9 0%, #C8E6C9 100%);
+            border-left-color: var(--success);
+        }
+        .info-box-title {
+            font-weight: 800;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 16px;
+        }
+        .info-box-content {
+            font-size: 15px;
+            line-height: 1.7;
+        }
+        .info-box-content ul, .info-box-content ol {
+            margin-top: 10px;
+            padding-left: 20px;
+        }
+        .info-box-content li {
+            margin-bottom: 6px;
+        }
+        /* Lists */
+        .content-list {
+            list-style: none;
+            margin: 28px 0;
+        }
+        .content-list li {
+            padding: 14px 0 14px 36px;
+            position: relative;
+            border-bottom: 1px solid rgba(0,0,0,0.06);
+            font-size: 16px;
+        }
+        .content-list li:last-child {
+            border-bottom: none;
+        }
+        .content-list li::before {
+            content: '&#129681;';
+            position: absolute;
+            left: 8px;
+            font-size: 18px;
+        }
+        /* Risk Factor Grid */
+        .risk-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 18px;
+            margin: 28px 0;
+        }
+        .risk-card {
+            background: linear-gradient(135deg, #FFEBEE 0%, #FFCDD2 100%);
+            border-left: 5px solid var(--error);
+            border-radius: var(--radius-md);
+            padding: 22px;
+            transition: var(--transition);
+        }
+        .risk-card:hover {
+            box-shadow: var(--shadow-soft);
+            transform: translateY(-3px);
+        }
+        .risk-icon {
+            font-size: 36px;
+            margin-bottom: 10px;
+        }
+        .risk-title {
+            font-weight: 800;
+            font-size: 17px;
+            color: var(--error);
+            margin-bottom: 10px;
+        }
+        .risk-desc {
+            font-size: 14px;
+            color: var(--text-dark);
+            line-height: 1.6;
+        }
+        /* Workstation Grid */
+        .workstation-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin: 28px 0;
+        }
+        .workstation-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            background: var(--bg-clay-light);
+            padding: 20px;
+            border-radius: var(--radius-md);
+            border-left: 5px solid var(--ergo-teal);
+        }
+        .workstation-icon {
+            font-size: 40px;
+            flex-shrink: 0;
+        }
+        .workstation-content h5 {
+            font-weight: 800;
+            margin-bottom: 8px;
+            color: var(--text-dark);
+            font-size: 16px;
+        }
+        .workstation-content p {
+            font-size: 14px;
+            color: var(--text-medium);
+            line-height: 1.6;
+            margin: 0;
+        }
+        /* Lifting Steps */
+        .lifting-steps {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin: 28px 0;
+        }
+        .lifting-step {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            background: var(--bg-clay-light);
+            padding: 20px;
+            border-radius: var(--radius-md);
+            border-left: 5px solid var(--success);
+        }
+        .lifting-number {
+            background: var(--success);
+            color: var(--white);
+            min-width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+        .lifting-content h5 {
+            font-weight: 800;
+            margin-bottom: 6px;
+            color: var(--text-dark);
+            font-size: 16px;
+        }
+        .lifting-content p {
+            font-size: 14px;
+            color: var(--text-medium);
+            line-height: 1.6;
+            margin: 0;
+        }
+        /* Stretch Grid */
+        .stretch-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 18px;
+            margin: 28px 0;
+        }
+        .stretch-card {
+            background: var(--bg-clay-light);
+            border: 3px solid var(--ergo-teal);
+            border-radius: var(--radius-md);
+            padding: 20px;
+            text-align: center;
+            transition: var(--transition);
+        }
+        .stretch-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-medium);
+        }
+        .stretch-title {
+            font-weight: 900;
+            font-size: 16px;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+            font-family: var(--font-heading);
+        }
+        .stretch-desc {
+            font-size: 13px;
+            color: var(--text-medium);
+            line-height: 1.5;
+        }
+        /* ═══════════════════════════════════════════
+           QUIZ STYLES
+           ═══════════════════════════════════════════ */
+        .quiz-question {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 28px;
+            line-height: 1.5;
+        }
+        .quiz-options {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            margin-bottom: 24px;
+        }
+        .quiz-option {
+            background: var(--bg-clay-light);
+            border: 3px solid var(--bg-clay-dark);
+            padding: 18px 24px;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 16px;
+            font-weight: 600;
+            position: relative;
+        }
+        .quiz-option:hover:not(.disabled) {
+            background: var(--bg-clay);
+            border-color: var(--primary);
+            transform: translateX(6px);
+        }
+        .quiz-option.selected {
+            background: var(--primary);
+            border-color: var(--primary-dark);
+            color: var(--accent-black);
+        }
+        .quiz-option.correct {
+            background: var(--success);
+            border-color: var(--success-dark);
+            color: var(--white);
+        }
+        .quiz-option.incorrect {
+            background: var(--error);
+            border-color: var(--error-dark);
+            color: var(--white);
+        }
+        .quiz-option.disabled {
+            cursor: default;
+        }
+        .quiz-feedback {
+            display: none;
+            padding: 18px 22px;
+            border-radius: var(--radius-md);
+            font-size: 16px;
+            line-height: 1.7;
+            margin-top: 20px;
+        }
+        .quiz-feedback.show {
+            display: block;
+        }
+        .quiz-feedback.correct-fb {
+            background: #E8F5E9;
+            color: #2E7D32;
+            border-left: 5px solid var(--success);
+        }
+        .quiz-feedback.incorrect-fb {
+            background: #FFEBEE;
+            color: #C62828;
+            border-left: 5px solid var(--error);
+        }
+        /* Quiz Buttons */
+        .quiz-btn-group {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+        }
+        /* Results Screen */
+        .results-card {
+            background: var(--white);
+            border-radius: var(--radius-xl);
+            padding: 60px 50px;
+            box-shadow: var(--shadow-hard);
+            text-align: center;
+        }
+        .results-icon {
+            font-size: 100px;
+            margin-bottom: 24px;
+            animation: scaleIn 0.6s ease;
+        }
+        @keyframes scaleIn {
+            from { transform: scale(0) rotate(-180deg); }
+            to { transform: scale(1) rotate(0); }
+        }
+        .results-score {
+            font-family: var(--font-heading);
+            font-size: 72px;
+            font-weight: 900;
+            color: var(--primary);
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 0 rgba(0,0,0,0.1);
+        }
+        .results-title {
+            font-family: var(--font-heading);
+            font-size: 42px;
+            font-weight: 900;
+            color: var(--text-dark);
+            margin-bottom: 16px;
+        }
+        .results-message {
+            font-size: 19px;
+            color: var(--text-medium);
+            margin-bottom: 36px;
+            line-height: 1.7;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .results-katie {
+            background: linear-gradient(135deg, #FFFDE7 0%, #FFF9C4 100%);
+            border-left: 5px solid var(--primary);
+            padding: 20px 24px;
+            border-radius: var(--radius-md);
+            font-size: 17px;
+            font-style: italic;
+            color: var(--text-dark);
+            margin-bottom: 36px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .results-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+        /* ═══════════════════════════════════════════
+           BUTTONS
+           ═══════════════════════════════════════════ */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 14px 32px;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-family: var(--font-heading);
+            font-size: 16px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+            box-shadow: var(--shadow-clay);
+        }
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .btn-gold {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: var(--accent-black);
+        }
+        .btn-gold:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-hard);
+        }
+        .btn-success {
+            background: var(--success);
+            color: var(--white);
+        }
+        .btn-success:hover:not(:disabled) {
+            background: var(--success-dark);
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-hard);
+        }
+        .btn-outline {
+            background: var(--white);
+            color: var(--text-dark);
+            border: 2px solid var(--bg-clay-dark);
+        }
+        .btn-outline:hover:not(:disabled) {
+            background: var(--bg-clay-light);
+            border-color: var(--primary);
+        }
+        /* ═══════════════════════════════════════════
+           NAVIGATION
+           ═══════════════════════════════════════════ */
+        .nav-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(180deg, rgba(26,26,26,0.97) 0%, rgba(0,0,0,0.98) 100%);
+            border-top: 3px solid var(--primary);
+            padding: 16px 24px;
+            z-index: 100;
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.3);
+        }
+        .nav-inner {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+        }
+        .nav-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            border: 2px solid rgba(255,255,255,0.15);
+            border-radius: var(--radius-sm);
+            font-family: var(--font-heading);
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: var(--transition);
+            background: rgba(255,255,255,0.08);
+            color: var(--white);
+            text-decoration: none;
+        }
+        .nav-btn:hover:not(:disabled) {
+            background: rgba(255,255,255,0.15);
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+        .nav-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+        .nav-btn.nav-next {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: var(--accent-black);
+            border-color: transparent;
+        }
+        .nav-btn.nav-next:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255,215,0,0.4);
+        }
+        .slide-indicator {
+            color: rgba(255,255,255,0.6);
+            font-size: 13px;
+            font-weight: 600;
+        }
+        /* ═══════════════════════════════════════════
+           RESPONSIVE
+           ═══════════════════════════════════════════ */
+        @media (max-width: 768px) {
+            .container { padding: 30px 20px 100px; }
+            .content-card { padding: 32px 24px; }
+            .intro-card { padding: 40px 30px; }
+            .intro-title { font-size: 36px; }
+            .slide-title { font-size: 28px; }
+            .risk-grid { grid-template-columns: 1fr; }
+            .stretch-grid { grid-template-columns: repeat(2, 1fr); }
+            .nav-inner { flex-direction: column; gap: 12px; }
+            .nav-btn { width: 100%; justify-content: center; }
+            .header-center { position: static; transform: none; }
+        }
+        @media (max-width: 480px) {
+            .intro-meta { flex-direction: column; gap: 16px; }
+            .katie-message { flex-direction: column; text-align: center; }
+            .stretch-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-inner">
+            <a href="../../user-dashboard/index.html" class="logo">
+                <div class="logo-icon"><img src="logo.png?v=2" alt="SafetyVerse Logo"></div>
+                <div class="logo-text">Safety<em>Verse</em></div>
+            </a>
+            <div class="header-center">
+                <span class="header-module-tag">MODULE 16</span>
+                <span class="header-module-title">Ergonomics</span>
+            </div>
+            <a href="../../user-dashboard/index.html" class="back-btn">
+                <span>←</span>
+                <span>Back to Dashboard</span>
+            </a>
+        </div>
+    </header>
+    <!-- Progress Bar -->
+    <div class="progress-bar">
+        <div class="progress-bar-inner">
+            <span class="progress-label" id="progressLabel">Slide 1 of 15</span>
+            <div class="progress-track">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <span class="progress-pct" id="progressPct">0%</span>
+        </div>
+    </div>
+    <!-- Main Content -->
+    <div class="content-wrapper">
+        <div class="container">
+            <!-- Slide 1: Intro -->
+            <div class="slide active" data-slide="1">
+                <div class="intro-card">
+                    <div class="intro-icon">&#129681;</div>
+                    <h1 class="intro-title">Ergonomics</h1>
+                    <p class="intro-subtitle">Work Smarter, Not Harder</p>
+                    <div class="intro-meta">
+                        <div class="intro-meta-item">
+                            <span>&#9201;&#65039;</span>
+                            <span>15 minutes</span>
+                        </div>
+                        <div class="intro-meta-item">
+                            <span>&#128218;</span>
+                            <span>Occupational Health Path</span>
+                        </div>
+                        <div class="intro-meta-item">
+                            <span>&#10003;</span>
+                            <span>OSHA Guidelines</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+          <!-- Slide 2: Introduction with Katie -->
+            <div class="slide" data-slide="2">
+                <div class="content-card">
+                    <div class="katie-message">
+                        <img src="katie.png" alt="Katie" class="katie-avatar">
+                        <div class="katie-bubble">
+                            <div class="katie-name">Katie, Your Safety Guide</div>
+                            <div class="katie-text">
+                                Welcome! Ergonomics is about fitting the job to the person, not forcing the person to fit the job. Poor ergonomics leads to musculoskeletal disorders (MSDs)—injuries to muscles, nerves, tendons, joints, and spinal discs. These injuries develop gradually from repetitive motions, awkward postures, and overexertion. Whether you work at a desk or lift boxes all day, proper ergonomics prevents pain and injury. Let's learn how to work comfortably and safely!
+                            </div>
+                        </div>
+                    </div>
+                    <div class="slide-header">
+                        <div class="slide-number">Slide 2 of 15</div>
+                        <h2 class="slide-title">What is Ergonomics?</h2>
+                    </div>
+                    <div class="slide-content">
+                        <p><strong>Ergonomics</strong> is the science of designing work tasks, equipment, and workspaces to fit the capabilities and limitations of workers. Good ergonomics reduces physical stress and prevents injuries.</p>
+                        
+                        <div class="info-box danger">
+                            <div class="info-box-title">&#128680; Musculoskeletal Disorder (MSD) Statistics</div>
+                            <div class="info-box-content">
+                                According to OSHA and BLS:
+                                <ul>
+                                    <li><strong>1.8 million workers</strong> suffer work-related MSDs annually</li>
+                                    <li><strong>33% of workplace injuries</strong> are MSDs</li>
+                                    <li><strong>$15-20 billion</strong> in direct costs (workers' comp) annually</li>
+                                    <li><strong>Average 12 days off work</strong> per MSD injury</li>
+                                    <li><strong>Most common MSDs:</strong> Back injuries, carpal tunnel syndrome, tendonitis, rotator cuff injuries</li>
+                                    <li><strong>Preventable:</strong> Proper ergonomics eliminates most MSDs</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="info-box">
+                            <div class="info-box-title">&#128161; Examples of Ergonomic Improvements</div>
+                            <div class="info-box-content">
+                                <ul>
+                                    <li><strong>Office:</strong> Adjustable chair and monitor to support neutral postures</li>
+                                    <li><strong>Warehouse:</strong> Lift assist devices to reduce manual lifting</li>
+                                    <li><strong>Manufacturing:</strong> Rotate workers between tasks to vary muscle use</li>
+                                    <li><strong>Retail:</strong> Anti-fatigue mats for standing workers</li>
+                                    <li><strong>Healthcare:</strong> Patient lifts to prevent back injuries</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <p><strong>Learning Objectives:</strong></p>
+                        <ul class="content-list">
+                            <li>Understand ergonomic risk factors and MSDs</li>
+                            <li>Set up an ergonomic office workstation</li>
+                            <li>Practice safe lifting techniques and body mechanics</li>
+                            <li>Recognize repetitive motion injuries and prevention</li>
+                            <li>Incorporate stretches and micro-breaks into your day</li>
+                            <li>Know when to report discomfort or pain</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 3: Ergonomic Risk Factors -->
+            <div class="slide" data-slide="3">
+                <div class="content-card">
+                    <div class="slide-header">
+                        <div class="slide-number">Slide 3 of 15</div>
+                        <h2 class="slide-title">Ergonomic Risk Factors</h2>
+                        <p class="slide-subtitle">What causes MSDs?</p>
+                    </div>
+                    <div class="slide-content">
+                        <p>Musculoskeletal disorders develop when workers are exposed to ergonomic risk factors. <strong>Recognizing these risk factors helps you prevent injury.</strong></p>
+                        <div class="risk-grid">
+                            <div class="risk-card">
+                                <div class="risk-icon">&#128257;</div>
+                                <div class="risk-title">Repetitive Motion</div>
+                                <div class="risk-desc">Performing the same motion over and over. Examples: typing, assembly line work, scanning items, using power tools repeatedly. Causes: carpal tunnel, tendonitis, trigger finger.</div>
+                            </div>
+                            <div class="risk-card">
+                                <div class="risk-icon">&#128170;</div>
+                                <div class="risk-title">Forceful Exertion</div>
+                                <div class="risk-desc">Using excessive force with hands, arms, or body. Examples: heavy lifting, gripping tools tightly, pushing/pulling loads. Causes: muscle strains, joint damage, herniated discs.</div>
+                            </div>
+                            <div class="risk-card">
+                                <div class="risk-icon">&#128260;</div>
+                                <div class="risk-title">Awkward Postures</div>
+                                <div class="risk-desc">Working with body in unnatural positions. Examples: reaching overhead, twisting, bending, kneeling, working with bent wrists. Causes: back pain, shoulder injuries, neck strain.</div>
+                            </div>
+                            <div class="risk-card">
+                                <div class="risk-icon">&#9201;&#65039;</div>
+                                <div class="risk-title">Static Postures</div>
+                                <div class="risk-desc">Holding the same position for long periods. Examples: standing in one place, sitting without movement, holding arms raised. Causes: muscle fatigue, reduced circulation, discomfort.</div>
+                            </div>
+                            <div class="risk-card">
+                                <div class="risk-icon">&#128222;</div>
+                                <div class="risk-title">Contact Stress</div>
+                                <div class="risk-desc">Body part pressing against hard or sharp surface. Examples: wrists resting on desk edge, hand gripping tool handle, leaning against workbench. Causes: nerve compression, reduced blood flow.</div>
+                            </div>
+                            <div class="risk-card">
+                                <div class="risk-icon">&#129398;</div>
+                                <div class="risk-title">Vibration & Temperature</div>
+                                <div class="risk-desc">Hand-arm vibration from power tools or whole-body vibration from vehicles. Cold temperatures reduce dexterity. Causes: white finger syndrome, reduced grip strength.</div>
+                            </div>
+                        </div>
+                        <div class="info-box warning">
+                            <div class="info-box-title">&#9888;&#65039; Risk Factors Combine</div>
+                            <div class="info-box-content">
+                                <strong>Multiple risk factors increase injury risk exponentially.</strong> For example, repetitive motion + forceful exertion + awkward posture is much more dangerous than any single factor alone. The more risk factors present, the higher your chance of developing an MSD.
+                            </div>
+                        </div>
+                        <div class="info-box danger">
+                            <div class="info-box-title">&#128680; Early Warning Signs of MSDs</div>
+                            <div class="info-box-content">
+                                <strong>Report these symptoms early—don't wait until pain is severe:</strong>
+                                <ul>
+                                    <li>Pain, aching, or tenderness in joints or muscles</li>
+                                    <li>Stiffness or reduced range of motion</li>
+                                    <li>Tingling, numbness, or "pins and needles" sensation</li>
+                                    <li>Burning sensation in muscles or joints</li>
+                                    <li>Weakness or loss of grip strength</li>
+                                    <li>Swelling or inflammation</li>
+                                    <li>Symptoms that worsen during work and improve on days off</li>
+                                </ul>
+                                Early intervention prevents permanent damage. Don't "tough it out"—get help!
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 4: Office Ergonomics - Chair & Posture -->
+            <div class="slide" data-slide="4">
+                <div class="content-card">
+                    <div class="slide-header">
+                        <div class="slide-number">Slide 4 of 15</div>
+                        <h2 class="slide-title">Office Ergonomics: Chair & Posture</h2>
+                        <p class="slide-subtitle">Setting up your workspace</p>
+                    </div>
+                    <div class="slide-content">
+                        <p><strong>Proper workstation setup prevents back pain, neck strain, and repetitive stress injuries.</strong> Start with your chair—it's the foundation of good posture.</p>
+                        <div class="workstation-grid">
+                            <div class="workstation-item">
+                                <div class="workstation-icon">&#129681;</div>
+                                <div class="workstation-content">
+                                    <h5>Chair Height</h5>
+                                    <p><strong>Adjust so:</strong> Feet flat on floor (or footrest), thighs parallel to ground, knees at 90° angle, hips slightly higher than knees. <strong>Why:</strong> Reduces pressure on lower back and improves circulation.</p>
+                                </div>
+                            </div>
+                            <div class="workstation-item">
+                                <div class="workstation-icon">&#8597;&#65039;</div>
+                                <div class="workstation-content">
+                                    <h5>Backrest</h5>
+                                    <p><strong>Adjust so:</strong> Lumbar support fills the curve of your lower back, backrest reclined 100-110° (slightly back from vertical). <strong>Sit back fully</strong> in chair—don't perch on edge. <strong>Why:</strong> Supports natural spine curve, reduces disc pressure.</p>
+                                </div>
+                            </div>
+                            <div class="workstation-item">
+                                <div class="workstation-icon">&#128170;</div>
+                                <div class="workstation-content">
+                                    <h5>Armrests</h5>
+                                    <p><strong>Adjust so:</strong> Arms rest lightly, elbows at 90°, shoulders relaxed (not shrugged). Armrests should support forearms, not lift shoulders. <strong>If armrests cause shoulder shrugging, remove them.</strong> <strong>Why:</strong> Reduces shoulder and neck tension.</p>
+                                </div>
+                            </div>
+                            <div class="workstation-item">
+                                <div class="workstation-icon">&#129485;</div>
+                                <div class="workstation-content">
+                                    <h5>Neutral Posture</h5>
+                                    <p><strong>Maintain:</strong> Head balanced over shoulders (not jutting forward), shoulders back and down (not hunched), natural S-curve in spine, wrists straight (not bent up/down). <strong>Why:</strong> Minimizes muscle strain and joint stress.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="info-box danger">
+                            <div class="info-box-title">&#10060; Poor Posture Habits to Avoid</div>
+                            <div class="info-box-content">
+                                <ul>
+                                    <li><strong>Slouching or hunching:</strong> Increases back and neck strain by 300%</li>
+                                    <li><strong>Perching on edge of chair:</strong> No back support, increases disc pressure</li>
+                                    <li><strong>Crossing legs:</strong> Restricts circulation, causes hip/back misalignment</li>
+                                    <li><strong>Tilting head forward:</strong> "Text neck"—adds 60 lbs of pressure on cervical spine</li>
+                                    <li><strong>Twisting to view screen:</strong> Causes chronic neck and shoulder pain</li>
+                                    <li><strong>Leaning on one armrest:</strong> Creates uneven pressure, spinal misalignment</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="info-box success">
+                            <div class="info-box-title">&#10003; The "90-90-90 Rule"</div>
+                            <div class="info-box-content">
+                                Remember: <strong>90° at ankles, 90° at knees, 90° at hips, 90° at elbows.</strong> This creates neutral body positioning that minimizes stress on joints and muscles.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 5: Office Ergonomics - Monitor & Keyboard -->
+            <div class="slide" data-slide="5">
+                <div class="content-card">
+                    <div class="slide-header">
+                        <div class="slide-number">Slide 5 of 15</div>
+                        <h2 class="slide-title">Office Ergonomics: Monitor & Keyboard</h2>
+                        <p class="slide-subtitle">Screen and input device positioning</p>
+                    </div>
+                    <div class="slide-content">
+                        <p><strong>Improper monitor and keyboard placement causes eye strain, neck pain, and wrist injuries.</strong></p>
+                        <div class="workstation-grid">
+                            <div class="workstation-item">
+                                <div class="workstation-icon">&#128421;&#65039;</div>
+                                <div class="workstation-content">
+                                    <h5>Monitor Height</h5>
+                                    <p><strong>Position:</strong> Top of screen at or slightly below eye level. Eyes should look down 10-20° to center of screen. <strong>Distance:</strong> 20-26 inches (arm's length) from eyes. <strong>Why:</strong> Prevents neck strain from looking up or down too much.</p>
+                                </div>
+                            </div>
+                            <div class="workstation-item">
+                                <div class="workstation-icon">&#128260;</div>
+                                <div class="workstation-content">
+                                    <h5>Monitor Position</h5>
+                                    <p><strong>Placement:</strong> Directly in front of you (not to side). If using dual monitors, place primary monitor directly ahead and secondary at 30° angle. Tilt screen back 10-20° to reduce glare. <strong>Why:</strong> Eliminates twisting and neck rotation.</p>
+                                </div>
+                            </div>
+                            <div class="workstation-item">
+                                <div class="workstation-icon">&#9000;&#65039;</div>
+                                <div class="workstation-content">
+                                    <h5>Keyboard Position</h5>
+                                    <p><strong>Height:</strong> Elbows at 90°, wrists straight (not bent up or down). Keyboard at elbow height or slightly below. <strong>Distance:</strong> Close enough that shoulders stay relaxed, not reaching. <strong>Tilt:</strong> Flat or slight negative tilt (front higher than back). <strong>Why:</strong> Prevents carpal tunnel and wrist strain.</p>
+                                </div>
+                            </div>
+                            <div class="workstation-item">
+                                <div class="workstation-icon">&#128433;&#65039;</div>
+                                <div class="workstation-content">
+                                    <h5>Mouse Position</h5>
+                                    <p><strong>Placement:</strong> Same height as keyboard, close to body (don't reach). Keep wrist straight when using mouse—move from elbow, not wrist. Consider vertical mouse if wrist pain develops. <strong>Why:</strong> Reduces shoulder reach and wrist deviation.</p>
+                                </div>
+                            </div>
+                            <div class="workstation-item">
+                                <div class="workstation-icon">&#128196;</div>
+                                <div class="workstation-content">
+                                    <h5>Document Holders</h5>
+                                    <p><strong>Use when:</strong> Frequently referencing paper documents while typing. <strong>Position:</strong> Between monitor and keyboard or beside monitor at same height/distance as screen. <strong>Why:</strong> Prevents constant neck bending to look down at desk.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="info-box warning">
+                            <div class="info-box-title">&#9888;&#65039; Laptop Ergonomics</div>
+                            <div class="info-box-content">
+                                <strong>Laptops are NOT ergonomic for extended use!</strong> Screen and keyboard are attached, forcing you to choose: proper screen height OR proper keyboard position—you can't have both.<br><br>
+                                <strong>Solution for full-time laptop use:</strong>
+                                <ul>
+                                    <li>Use external keyboard and mouse</li>
+                                    <li>Raise laptop on stand to proper screen height</li>
+                                    <li>Or use external monitor and keep laptop closed</li>
+                                </ul>
+                                <strong>Never hunch over a low laptop screen for hours!</strong>
+                            </div>
+                        </div>
+                        <div class="info-box">
+                            <div class="info-box-title">&#128161; The 20-20-20 Rule for Eye Strain</div>
+                            <div class="info-box-content">
+                                Every 20 minutes, look at something 20 feet away for 20 seconds. This relaxes eye muscles and reduces digital eye strain, headaches, and dry eyes.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 6: Safe Lifting Techniques -->
+            <div class="slide" data-slide="6">
+                <div class="content-card">
+                    <div class="slide-header">
+                        <div class="slide-number">Slide 6 of 15</div>
+                        <h2 class="slide-title">Safe Lifting Techniques</h2>
+                        <p class="slide-subtitle">Protecting your back</p>
+                    </div>
+                    <div class="slide-content">
+                        <p><strong>Back injuries are the most common workplace MSD.</strong> Proper lifting technique prevents herniated discs, muscle strains, and chronic back pain.</p>
+                        <div class="lifting-steps">
+                            <div class="lifting-step">
+                                <div class="lifting-number">1</div>
+                                <div class="lifting-content">
+                                    <h5>Plan the Lift</h5>
+                                    <p>Check weight—if over 50 lbs, get help or use equipment. Clear path of obstacles. Know where you're going. Ensure stable footing. Wear proper footwear (no slip-on shoes).</p>
+                                </div>
+                            </div>
+                            <div class="lifting-step">
+                                <div class="lifting-number">2</div>
+                                <div class="lifting-content">
+                                    <h5>Get Close to the Load</h5>
+                                    <p>Stand as close as possible to the object. The farther the load from your body, the more stress on your back. Feet shoulder-width apart for stable base.</p>
+                                </div>
+                            </div>
+                            <div class="lifting-step">
+                                <div class="lifting-number">3</div>
+                                <div class="lifting-content">
+                                    <h5>Squat Down - Don't Bend Over</h5>
+                                    <p><strong>CRITICAL:</strong> Bend knees and hips, NOT your back. Keep back straight (natural curve maintained). Squat down by pushing hips back. Get good grip on object before lifting.</p>
+                                </div>
+                            </div>
+                            <div class="lifting-step">
+                                <div class="lifting-number">4</div>
+                                <div class="lifting-content">
+                                    <h5>Lift with Your Legs</h5>
+                                    <p>Tighten core muscles. Keep load close to body. Push up with leg muscles (thighs, glutes)—NOT your back. Keep back straight as you stand. Look straight ahead, not down.</p>
+                                </div>
+                            </div>
+                            <div class="lifting-step">
+                                <div class="lifting-number">5</div>
+                                <div class="lifting-content">
+                                    <h5>Don't Twist While Carrying</h5>
+                                    <p><strong>CRITICAL:</strong> Turn your whole body by moving your feet, don't twist your torso. Twisting while carrying is a leading cause of back injury. Point feet in direction you want to go.</p>
+                                </div>
+                            </div>
+                            <div class="lifting-step">
+                                <div class="lifting-number">6</div>
+                                <div class="lifting-content">
+                                    <h5>Set Down Safely</h5>
+                                    <p>Squat down using legs (don't bend back). Keep load close. Place object down gently—don't drop it. Remove hands only after object is stable.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="info-box danger">
+                            <div class="info-box-title">&#10060; NEVER Do These Things When Lifting</div>
+                            <div class="info-box-content">
+                                <ul>
+                                    <li><strong>Bend at waist with straight legs:</strong> Puts 1000+ lbs of pressure on lower back discs</li>
+                                    <li><strong>Twist while lifting:</strong> Leading cause of herniated discs</li>
+                                    <li><strong>Lift with jerky motions:</strong> Sudden movements cause muscle tears</li>
+                                    <li><strong>Lift objects above shoulder height:</strong> Very unstable, high injury risk</li>
+                                    <li><strong>Carry loads to one side of body:</strong> Creates uneven spine loading</li>
+                                    <li><strong>Lift when fatigued:</strong> Muscle fatigue increases injury risk 300%</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="info-box warning">
+                            <div class="info-box-title">&#9888;&#65039; When to Get Help or Use Equipment</div>
+                            <div class="info-box-content">
+                                <strong>Get assistance if:</strong>
+                                <ul>
+                                    <li>Object weighs more than 50 lbs (or 25 lbs if lifting repeatedly)</li>
+                                    <li>Load is bulky, awkward, or oddly shaped</li>
+                                    <li>You can't get good grip on the object</li>
+                                    <li>You must lift above shoulders or below knees</li>
+                                    <li>You're fatigued or have back pain</li>
+                                </ul>
+                                <strong>Mechanical aids:</strong> Hand trucks, dollies, forklifts, pallet jacks, lift tables, hoists. Always use available equipment!
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 7: Repetitive Motion Injuries -->
+            <div class="slide" data-slide="7">
+                <div class="content-card">
+                    <div class="slide-header">
+                        <div class="slide-number">Slide 7 of 15</div>
+                        <h2 class="slide-title">Repetitive Motion Injuries</h2>
+                        <p class="slide-subtitle">Prevention and recognition</p>
+                    </div>
+                    <div class="slide-content">
+                        <p><strong>Repetitive strain injuries (RSIs) develop gradually from performing the same motion thousands of times.</strong> They're cumulative—damage builds up over weeks, months, or years.</p>
+                        <div class="info-box danger">
+                            <div class="info-box-title">&#128680; Common Repetitive Motion Injuries</div>
+                            <div class="info-box-content">
+                                <strong>Carpal Tunnel Syndrome:</strong><br>
+                                • Compression of median nerve in wrist<br>
+                                • Symptoms: Numbness/tingling in thumb and first 3 fingers, weakness in grip, pain that wakes you at night<br>
+                                • Causes: Typing, assembly work, tool use with bent wrists<br><br>
+                                
+                                <strong>Tendonitis:</strong><br>
+                                • Inflammation of tendons (tissue connecting muscle to bone)<br>
+                                • Symptoms: Pain, tenderness, swelling, reduced range of motion<br>
+                                • Common locations: Shoulder (rotator cuff), elbow (tennis/golfer's elbow), wrist, Achilles<br>
+                                • Causes: Repetitive overhead reaching, forceful gripping<br><br>
+                                
+                                <strong>Trigger Finger:</strong><br>
+                                • Tendon inflammation causing finger to lock in bent position<br>
+                                • Symptoms: Finger catches or locks, painful clicking, stiffness<br>
+                                • Causes: Repetitive gripping, forceful hand use<br><br>
+                                
+                                <strong>DeQuervain's Tenosynovitis:</strong><br>
+                                • Inflammation of tendons at base of thumb<br>
+                                • Symptoms: Pain near thumb, difficulty gripping, swelling<br>
+                                • Causes: Repetitive thumb movements, awkward wrist positions
+                            </div>
+                        </div>
+                        <div class="info-box success">
+                            <div class="info-box-title">&#10003; Prevention Strategies</div>
+                            <div class="info-box-content">
+                                <strong>Vary Your Tasks (Job Rotation):</strong><br>
+                                Switch between different tasks throughout the day. This gives overused muscles time to recover while using different muscle groups. Example: Alternate between computer work, filing, and phone calls.<br><br>
+                                
+                                <strong>Take Micro-Breaks:</strong><br>
+                                Every 30 minutes, take 30 seconds to stretch and rest overused muscles. Even brief breaks significantly reduce injury risk.<br><br>
+                                
+                                <strong>Maintain Neutral Positions:</strong><br>
+                                Keep wrists straight when typing/using tools. Avoid extreme bending, twisting, or reaching.<br><br>
+                                
+                                <strong>Reduce Force:</strong><br>
+                                Use lightest grip necessary. Don't grip tools/pens tighter than needed. Use ergonomic tools that require less force.<br><br>
+                                
+                                <strong>Pace Yourself:</strong><br>
+                                Avoid "marathons" of the same activity. Spread repetitive tasks throughout week rather than doing them all at once.
+                            </div>
+                        </div>
+                        <div class="info-box warning">
+                            <div class="info-box-title">&#9888;&#65039; Don't Ignore Early Symptoms</div>
+                            <div class="info-box-content">
+                                <strong>RSIs are progressive—they get worse over time if not addressed.</strong><br><br>
+                                Stage 1: Mild discomfort during work, improves with rest<br>
+                                Stage 2: Pain persists after work, reduced performance<br>
+                                Stage 3: Chronic pain even at rest, difficulty with simple tasks<br><br>
+                                <strong>Report symptoms at Stage 1!</strong> Early intervention (task modification, ergonomic adjustments, rest) can prevent permanent damage. By Stage 3, recovery may take months or years.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 8: Stretches for Office Workers -->
+            <div class="slide" data-slide="8">
+                <div class="content-card">
+                    <div class="slide-header">
+                        <div class="slide-number">Slide 8 of 15</div>
+                        <h2 class="slide-title">Stretches for Office Workers</h2>
+                        <p class="slide-subtitle">Desk-friendly exercises</p>
+                    </div>
+                    <div class="slide-content">
+                        <p><strong>Regular stretching reduces muscle tension, improves circulation, and prevents stiffness.</strong> Do these every 1-2 hours.</p>
+                        <div class="stretch-grid">
+                            <div class="stretch-card">
+                                <div class="stretch-title">Neck Stretch</div>
+                                <div class="stretch-desc">Slowly tilt head toward shoulder, hold 15-20 sec. Repeat other side. Roll shoulders back 10 times. Reduces "text neck" pain.</div>
+                            </div>
+                            <div class="stretch-card">
+                                <div class="stretch-title">Shoulder Shrug</div>
+                                <div class="stretch-desc">Raise shoulders to ears, hold 3 sec, release. Repeat 10 times. Relieves shoulder and upper back tension from typing.</div>
+                            </div>
+                            <div class="stretch-card">
+                                <div class="stretch-title">Chest Opener</div>
+                                <div class="stretch-desc">Clasp hands behind back, straighten arms, lift slightly. Hold 15-20 sec. Counteracts hunched posture, opens chest muscles.</div>
+                            </div>
+                            <div class="stretch-card">
+                                <div class="stretch-title">Seated Spinal Twist</div>
+                                <div class="stretch-desc">Sit tall, place right hand on left knee, twist left. Hold 15-20 sec. Repeat other side. Mobilizes spine, reduces back stiffness.</div>
+                            </div>
+                            <div class="stretch-card">
+                                <div class="stretch-title">Wrist Extension</div>
+                                <div class="stretch-desc">Extend arm, pull fingers back gently with other hand. Hold 15 sec each side. Stretches wrist flexors, prevents carpal tunnel.</div>
+                            </div>
+                            <div class="stretch-card">
+                                <div class="stretch-title">Wrist Flexion</div>
+                                <div class="stretch-desc">Extend arm palm up, pull fingers down gently. Hold 15 sec each side. Stretches wrist extensors, balances forearm muscles.</div>
+                            </div>
+                            <div class="stretch-card">
+                                <div class="stretch-title">Ankle Circles</div>
+                                <div class="stretch-desc">Lift foot, rotate ankle 10 times each direction. Repeat other foot. Improves circulation, reduces leg swelling from sitting.</div>
+                            </div>
+                            <div class="stretch-card">
+                                <div class="stretch-title">Seated Cat-Cow</div>
+                                <div class="stretch-desc">Arch back and look up (cow), then round back and look down (cat). Repeat 5-10 times. Mobilizes entire spine.</div>
+                            </div>
+                            <div class="stretch-card">
+                                <div class="stretch-title">Hip Flexor Stretch</div>
+                                <div class="stretch-desc">Stand, take large step back with one leg, lower hips forward. Hold 15-20 sec each side. Counteracts tight hips from sitting.</div>
+                            </div>
+                        </div>
+                        <div class="info-box success">
+                            <div class="info-box-title">&#10003; Movement is Medicine</div>
+                            <div class="info-box-content">
+                                <strong>Stand and move every 30-60 minutes.</strong> Walk to get water, use restroom, deliver documents in person instead of emailing. Take phone calls standing. Use stairs instead of elevator. Movement prevents stiffness and improves focus.
+                            </div>
+                        </div>
+                        <div class="info-box">
+                            <div class="info-box-title">&#128161; Stretch Tips</div>
+                            <div class="info-box-content">
+                                <ul>
+                                    <li>Breathe normally—don't hold your breath</li>
+                                    <li>Stretch until mild tension, NOT pain</li>
+                                    <li>Hold static stretches 15-30 seconds</li>
+                                    <li>Never bounce or jerk</li>
+                                    <li>Consistency matters more than duration—daily 5-minute stretching beats occasional 30-minute sessions</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 9: Stretches for Manual Workers -->
+            <div class="slide" data-slide="9">
+                <div class="content-card">
+                    <div class="slide-header">
+                        <div class="slide-number">Slide 9 of 15</div>
+                        <h2 class="slide-title">Stretches for Manual Workers</h2>
+                        <p class="slide-subtitle">Pre-shift warm-up and work breaks</p>
+                    </div>
+                    <div class="slide-content">
+                        <p><strong>Warming up before physical work and stretching during breaks reduces injury risk by 50%.</strong></p>
+                        <div class="stretch-grid">
+                            <div class="stretch-card">
+                                <div class="stretch-title">Back Extension</div>
+                                <div class="stretch-desc">Stand, place hands on lower back, gently arch backward. Hold 10 sec. Repeat 5 times. Counteracts forward bending, relieves lower back compression.</div>
+                            </div>
+                            <div class="stretch-card">
+                                <div class="stretch-title">Hamstring Stretch</div>
+                                <div class="stretch-desc">Prop foot on low step, keep leg straight, lean forward slightly. Hold 20-30 sec each leg. Prevents back injuries from lifting.</div>
+                            </div>
+                            <div class="stretch-card">
+                                <div class="stretch-title">Quad Stretch</div>
+                                <div class="stretch-desc">Stand, pull foot to buttock, keep knees together. Hold 20-30 sec each leg. Prevents knee injuries, improves squat mechanics.</div>
+                            </div>
+                            <div class="stretch-card">
+                                <div class="stretch-title">Shoulder Rolls</div>
+                                <div class="stretch-desc">Roll shoulders backward 15 times, then forward 15 times. Warms up shoulders before overhead work, reduces strain.</div>
+                            </div>
+                            <div class="stretch-card">
+                                <div class="stretch-title">Arm Circles</div>
+                                <div class="stretch-desc">Extend arms to sides, make small circles, gradually larger. 20 circles forward, 20 backward. Warms up shoulder joints and muscles.</div>
+                            </div>
+                            <div class="stretch-card">
+                                <div class="stretch-title">Calf Stretch</div>
+                                <div class="stretch-desc">Step forward in lunge, keep back leg straight, heel on ground. Hold 20-30 sec each side. Prevents Achilles injuries from walking/standing.</div>
+                            </div>
+                            <div class="stretch-card">
+                                <div class="stretch-title">Side Bend</div>
+                                <div class="stretch-desc">Stand, raise one arm overhead, bend sideways. Hold 15 sec each side. Stretches obliques, improves spine flexibility.</div>
+                            </div>
+                            <div class="stretch-card">
+                                <div class="stretch-title">Wrist Rotations</div>
+                                <div class="stretch-desc">Make fists, rotate wrists 10 times each direction. Opens hands wide, spread fingers. Warms up hands before gripping tools.</div>
+                            </div>
+                            <div class="stretch-card">
+                                <div class="stretch-title">Knee Bends</div>
+                                <div class="stretch-desc">Gentle squats (quarter to half depth), 10-15 reps. Warms up knees and leg muscles before lifting or kneeling work.</div>
+                            </div>
+                        </div>
+                        <div class="info-box success">
+                            <div class="info-box-title">&#10003; Pre-Shift Warm-Up Routine (5 minutes)</div>
+                            <div class="info-box-content">
+                                <strong>Before starting physical work:</strong><br>
+                                1. Light cardio: Walk briskly or march in place 2 minutes<br>
+                                2. Dynamic stretches: Arm circles, leg swings, torso twists 2 minutes<br>
+                                3. Job-specific movements: Practice lifting motion, overhead reaching 1 minute<br><br>
+                                <strong>Result:</strong> Warmed muscles are more flexible, less prone to strains. Blood flow increases, joints are lubricated.
+                            </div>
+                        </div>
+                        <div class="info-box warning">
+                            <div class="info-box-title">&#9888;&#65039; Mid-Shift Recovery Breaks</div>
+                            <div class="info-box-content">
+                                <strong>Take 5-minute stretch breaks every 2 hours during physical work:</strong><br>
+                                • Allows muscles to recover from repeated stress<br>
+                                • Prevents accumulation of metabolic waste products<br>
+                                • Reduces fatigue and maintains performance<br>
+                                • Significantly lowers injury risk<br><br>
+                                Don't skip breaks to "power through"—fatigue dramatically increases injury risk!
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 10: Summary -->
+            <div class="slide" data-slide="10">
+                <div class="content-card">
+                    <div class="slide-header">
+                        <div class="slide-number">Slide 10 of 15</div>
+                        <h2 class="slide-title">Ergonomics Key Takeaways</h2>
+                        <p class="slide-subtitle">Remember these critical points</p>
+                    </div>
+                    <div class="slide-content">
+                        <p><strong>Essential ergonomics knowledge:</strong></p>
+                        <ul class="content-list">
+                            <li><strong>Ergonomics prevents MSDs:</strong> Musculoskeletal disorders affect 1.8 million workers annually. Proper ergonomics eliminates most MSDs.</li>
+                            <li><strong>Six risk factors:</strong> Repetitive motion, forceful exertion, awkward postures, static postures, contact stress, vibration/temperature. Multiple factors compound risk.</li>
+                            <li><strong>Office setup - 90-90-90 rule:</strong> 90° ankles, knees, hips, elbows. Monitor at arm's length, top at eye level. Wrists straight when typing.</li>
+                            <li><strong>Lift with legs, not back:</strong> Squat down, keep back straight, load close, stand using leg muscles. NEVER bend at waist or twist while lifting.</li>
+                            <li><strong>Get help over 50 lbs:</strong> Use mechanical aids or team lifting. Don't lift alone if load is heavy, awkward, or you're fatigued.</li>
+                            <li><strong>Repetitive motion injuries:</strong> Carpal tunnel, tendonitis, trigger finger develop gradually. Report early symptoms immediately.</li>
+                            <li><strong>Vary tasks (job rotation):</strong> Switch between different activities to give muscles recovery time. Don't marathon the same task.</li>
+                            <li><strong>Take micro-breaks:</strong> Every 30-60 minutes, stand, move, stretch. Movement prevents stiffness and reduces injury risk 50%.</li>
+                            <li><strong>Stretch daily:</strong> Office workers: neck, shoulders, wrists. Manual workers: warm up before shift, stretch mid-shift.</li>
+                            <li><strong>Report discomfort early:</strong> Stage 1 (mild discomfort) is easiest to fix. Don't wait until chronic pain develops.</li>
+                        </ul>
+                        <div class="info-box success">
+                            <div class="info-box-title">&#10003; Small Changes, Big Impact</div>
+                            <div class="info-box-content">
+                                <strong>You don't need to be perfect—incremental improvements matter!</strong><br><br>
+                                • Raise your monitor a few inches → Reduces neck strain<br>
+                                • Take one 30-second stretch break per hour → 30% less stiffness<br>
+                                • Squat instead of bending for one lift per day → Builds good habits<br>
+                                • Stand up during one phone call → Breaks up sitting<br><br>
+                                Start small, build consistency. Your body will thank you!
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Quiz Questions 11-13 -->
+            <div class="slide" data-slide="11">
+                <div class="content-card">
+                    <div class="slide-header">
+                        <div class="slide-number">Quiz Question 1 of 3</div>
+                        <h2 class="slide-title">Knowledge Check</h2>
+                    </div>
+                    <div class="slide-content">
+                        <div class="quiz-question">
+                            What is the correct technique for lifting heavy objects?
+                        </div>
+                        <div class="quiz-options" id="q1-options">
+                            <div class="quiz-option" data-q="1" data-val="A">Bend at the waist with straight legs</div>
+                            <div class="quiz-option" data-q="1" data-val="B">Squat down, keep back straight, lift with leg muscles</div>
+                            <div class="quiz-option" data-q="1" data-val="C">Keep legs straight and use back muscles to lift</div>
+                            <div class="quiz-option" data-q="1" data-val="D">Twist while lifting to face the right direction</div>
+                        </div>
+                        <div class="quiz-feedback" id="fb-1"></div>
+                        <div class="quiz-btn-group">
+                            <button class="btn btn-gold" id="submit-1" onclick="submitQuiz(1)" disabled>Submit Answer</button>
+                            <button class="btn btn-outline" id="next-q-1" onclick="nextSlide()" style="display: none;">Next Question →</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="slide" data-slide="12">
+                <div class="content-card">
+                    <div class="slide-header">
+                        <div class="slide-number">Quiz Question 2 of 3</div>
+                        <h2 class="slide-title">Knowledge Check</h2>
+                    </div>
+                    <div class="slide-content">
+                        <div class="quiz-question">
+                            Where should the top of your computer monitor be positioned for proper ergonomics?
+                        </div>
+                        <div class="quiz-options" id="q2-options">
+                            <div class="quiz-option" data-q="2" data-val="A">Well above eye level so you look up</div>
+                            <div class="quiz-option" data-q="2" data-val="B">At or slightly below eye level</div>
+                            <div class="quiz-option" data-q="2" data-val="C">At chest level so you look down</div>
+                            <div class="quiz-option" data-q="2" data-val="D">Position doesn't matter as long as you can see it</div>
+                        </div>
+                        <div class="quiz-feedback" id="fb-2"></div>
+                        <div class="quiz-btn-group">
+                            <button class="btn btn-gold" id="submit-2" onclick="submitQuiz(2)" disabled>Submit Answer</button>
+                            <button class="btn btn-outline" id="next-q-2" onclick="nextSlide()" style="display: none;">Next Question →</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="slide" data-slide="13">
+                <div class="content-card">
+                    <div class="slide-header">
+                        <div class="slide-number">Quiz Question 3 of 3</div>
+                        <h2 class="slide-title">Knowledge Check</h2>
+                    </div>
+                    <div class="slide-content">
+                        <div class="quiz-question">
+                            Which of the following is a key ergonomic risk factor for developing musculoskeletal disorders (MSDs)?
+                        </div>
+                        <div class="quiz-options" id="q3-options">
+                            <div class="quiz-option" data-q="3" data-val="A">Taking frequent breaks</div>
+                            <div class="quiz-option" data-q="3" data-val="B">Repetitive motions performed thousands of times</div>
+                            <div class="quiz-option" data-q="3" data-val="C">Using ergonomic equipment</div>
+                            <div class="quiz-option" data-q="3" data-val="D">Stretching before work</div>
+                        </div>
+                        <div class="quiz-feedback" id="fb-3"></div>
+                        <div class="quiz-btn-group">
+                            <button class="btn btn-gold" id="submit-3" onclick="submitQuiz(3)" disabled>Submit Answer</button>
+                            <button class="btn btn-outline" id="next-q-3" onclick="nextSlide()" style="display: none;">View Results →</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Remaining slides 14-16 -->
+            <div class="slide" data-slide="14">
+                <div class="content-card">
+                    <div class="slide-header">
+                        <div class="slide-number">Slide 14 of 15</div>
+                        <h2 class="slide-title">When to Report Ergonomic Issues</h2>
+                        <p class="slide-subtitle">Getting help early</p>
+                    </div>
+                    <div class="slide-content">
+                        <div class="info-box danger">
+                            <div class="info-box-title">&#128680; Report These Symptoms Immediately</div>
+                            <div class="info-box-content">
+                                <strong>Don't wait—early reporting prevents permanent injury:</strong>
+                                <ul>
+                                    <li>Pain, tingling, or numbness that persists overnight or on days off</li>
+                                    <li>Weakness in hands, arms, or legs</li>
+                                    <li>Reduced range of motion in joints</li>
+                                    <li>Symptoms that are getting progressively worse</li>
+                                    <li>Any discomfort that interferes with work tasks or sleep</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="info-box success">
+                            <div class="info-box-title">&#10003; What to Expect When You Report</div>
+                            <div class="info-box-content">
+                                <strong>Your employer should:</strong><br>
+                                • Take your concerns seriously—no punishment for reporting<br>
+                                • Conduct ergonomic assessment of your workstation or tasks<br>
+                                • Make reasonable accommodations (adjust equipment, modify tasks, provide tools)<br>
+                                • Refer you for medical evaluation if needed<br>
+                                • Follow up to ensure changes are helping<br><br>
+                                <strong>You have the right to a safe workplace!</strong> Reporting ergonomic issues protects you and helps improve conditions for coworkers.
+                            </div>
+                        </div>
+                        <div class="info-box">
+                            <div class="info-box-title">&#128161; Document Your Symptoms</div>
+                            <div class="info-box-content">
+                                Keep a log of:
+                                <ul>
+                                    <li>When symptoms occur (time of day, during which tasks)</li>
+                                    <li>Type of pain/discomfort (sharp, aching, tingling, etc.)</li>
+                                    <li>Severity (1-10 scale)</li>
+                                    <li>What makes it better or worse</li>
+                                </ul>
+                                This helps medical professionals and ergonomic specialists identify the cause and solution.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="slide" data-slide="15">
+                <div class="content-card">
+                    <div class="slide-header">
+                        <div class="slide-number">Slide 15 of 15</div>
+                        <h2 class="slide-title">Take Control of Your Ergonomic Health</h2>
+                        <p class="slide-subtitle">Your body is your most important tool</p>
+                    </div>
+                    <div class="slide-content">
+                        <p><strong>You spend one-third of your life at work.</strong> Investing in good ergonomics protects your health for the decades ahead.</p>
+                        <div class="info-box success">
+                            <div class="info-box-title">&#10003; Your Ergonomics Action Plan</div>
+                            <div class="info-box-content">
+                                <strong>This week:</strong><br>
+                                • Adjust your chair, monitor, and keyboard to proper positions<br>
+                                • Set hourly reminder to stand and stretch<br>
+                                • Practice proper lifting technique at least once<br><br>
+                                <strong>This month:</strong><br>
+                                • Make stretching a daily habit (morning and during work)<br>
+                                • Request ergonomic assessment if you have discomfort<br>
+                                • Learn to recognize early warning signs in yourself and coworkers<br><br>
+                                <strong>Long-term:</strong><br>
+                                • Maintain good ergonomic habits consistently<br>
+                                • Report new risk factors or changes to your work<br>
+                                • Continue education on ergonomics and body mechanics
+                            </div>
+                        </div>
+                        <div class="info-box">
+                            <div class="info-box-title">&#128161; Remember</div>
+                            <div class="info-box-content">
+                                <strong>Ergonomics is not "one size fits all."</strong> What works for one person may not work for another. Your body is unique—adjust your workspace and techniques to fit YOU. Listen to your body, make adjustments, and don't hesitate to ask for help!
+                            </div>
+                        </div>
+                        <p style="margin-top: 30px; font-size: 19px; font-weight: 700; color: var(--ergo-teal); text-align: center;">
+                            Work smarter, not harder. Protect your body today for a healthier tomorrow! &#128170;&#129681;
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 16: Results -->
+            <div class="slide" data-slide="16">
+                <div class="results-card">
+                    <div class="results-icon" id="rIcon">&#127919;</div>
+                    <div class="results-score" id="rScore">0 / 3</div>
+                    <h2 class="results-title" id="rTitle">Quiz Complete</h2>
+                    <p class="results-message" id="rMsg">Calculating your results...</p>
+                    <div class="results-katie" id="rKatie">"Let's see how you did!"</div>
+                    <div class="results-buttons" id="rBtns">
+                        <button class="btn btn-gold">Loading...</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Navigation Bar -->
+    <nav class="nav-bar">
+        <div class="nav-inner">
+            <button class="nav-btn" id="prevBtn" onclick="prevSlide()">
+                ← Previous
+            </button>
+            <span class="slide-indicator" id="slideIndicator">Slide 1 of 15</span>
+            <button class="nav-btn nav-next" id="nextBtn" onclick="nextSlide()">
+                Next →
+            </button>
+        </div>
+    </nav>
+    <script>
+    (function() {
+        'use strict';
+        // ═══ CONFIG ═══
+        var TOTAL_SLIDES = 16;
+        var TOTAL_CONTENT = 15;
+        var MODULE_KEY = 'ergonomics';
+        // ═══ STATE ═══
+        var currentSlide = 1;
+        var quizAnswers = { 1: null, 2: null, 3: null };
+        var quizSubmitted = { 1: false, 2: false, 3: false };
+        var quizScore = 0;
+        // Quiz correct answers
+        var quizCorrectAnswers = {
+            1: 'B',  // Squat down, keep back straight, lift with legs
+            2: 'B',  // Monitor at or slightly below eye level
+            3: 'B'   // Repetitive motions as risk factor
+        };
+        // Feedback messages
+        var feedbackMessages = {
+            1: {
+                correct: '&#10003; Correct! Always squat down, keep your back straight, and lift with your leg muscles. Never bend at the waist or twist while lifting!',
+                incorrect: '✗ Incorrect. Proper lifting: squat down (bend knees and hips, not back), keep back straight, lift with leg muscles. Never bend at waist or twist!'
+            },
+            2: {
+                correct: '&#10003; Correct! Monitor should be at or slightly below eye level, about arm\'s length away. This prevents neck strain from looking up or down too much.',
+                incorrect: '✗ Incorrect. The top of your monitor should be at or slightly below eye level. Your eyes should look down 10-20° to the center of the screen.'
+            },
+            3: {
+                correct: '&#10003; Correct! Repetitive motions performed thousands of times cause cumulative trauma to muscles, tendons, and nerves, leading to MSDs like carpal tunnel.',
+                incorrect: '✗ Incorrect. Repetitive motions are a major ergonomic risk factor. Performing the same movement thousands of times causes cumulative injury over time.'
+            }
+        };
+        // ═══ NAVIGATION ═══
+        function goToSlide(n) {
+            if (n < 1 || n > TOTAL_SLIDES) return;
+            currentSlide = n;
+            updateUI();
+            saveSlideProgress();
+        }
+        window.nextSlide = function() {
+            goToSlide(currentSlide + 1);
+        };
+        window.prevSlide = function() {
+            goToSlide(currentSlide - 1);
+        };
+        // ═══ UI UPDATE ═══
+        function updateUI() {
+            document.querySelectorAll('.slide').forEach(function(s) {
+                s.classList.remove('active');
+            });
+            var activeSlide = document.querySelector('[data-slide="' + currentSlide + '"]');
+            if (activeSlide) {
+                activeSlide.classList.add('active');
+            }
+            var progressPct = ((currentSlide - 1) / (TOTAL_CONTENT - 1)) * 100;
+            document.getElementById('progressFill').style.width = Math.min(100, progressPct) + '%';
+            document.getElementById('progressPct').textContent = Math.round(Math.min(100, progressPct)) + '%';
+            
+            if (currentSlide <= TOTAL_CONTENT) {
+                document.getElementById('progressLabel').textContent = 'Slide ' + currentSlide + ' of ' + TOTAL_CONTENT;
+                document.getElementById('slideIndicator').textContent = 'Slide ' + currentSlide + ' of ' + TOTAL_CONTENT;
+            } else {
+                document.getElementById('progressLabel').textContent = 'Results';
+                document.getElementById('slideIndicator').textContent = 'Results';
+            }
+            var prevBtn = document.getElementById('prevBtn');
+            var nextBtn = document.getElementById('nextBtn');
+            
+            prevBtn.disabled = currentSlide === 1;
+            nextBtn.disabled = currentSlide === TOTAL_SLIDES;
+            if (currentSlide === 16) {
+                buildResults();
+            }
+            document.querySelector('.content-wrapper').scrollTop = 0;
+        }
+        // ═══ KEYBOARD NAV ═══
+        document.addEventListener('keydown', function(e) {
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+            if (e.key === 'ArrowRight' || e.key === 'Right') {
+                e.preventDefault();
+                nextSlide();
+            } else if (e.key === 'ArrowLeft' || e.key === 'Left') {
+                e.preventDefault();
+                prevSlide();
+            }
+        });
+        // ═══ QUIZ HANDLING ═══
+        document.querySelectorAll('.quiz-option').forEach(function(opt) {
+            opt.addEventListener('click', function() {
+                var qNum = parseInt(this.getAttribute('data-q'));
+                if (quizSubmitted[qNum]) return;
+                var container = document.getElementById('q' + qNum + '-options');
+                container.querySelectorAll('.quiz-option').forEach(function(o) {
+                    o.classList.remove('selected');
+                });
+                this.classList.add('selected');
+                quizAnswers[qNum] = this.getAttribute('data-val');
+                document.getElementById('submit-' + qNum).disabled = false;
+            });
+        });
+        window.submitQuiz = function(qNum) {
+            if (quizSubmitted[qNum]) return;
+            quizSubmitted[qNum] = true;
+            var userAnswer = quizAnswers[qNum];
+            var correctAnswer = quizCorrectAnswers[qNum];
+            var isCorrect = (userAnswer === correctAnswer);
+            var container = document.getElementById('q' + qNum + '-options');
+            container.querySelectorAll('.quiz-option').forEach(function(opt) {
+                opt.classList.add('disabled');
+                var val = opt.getAttribute('data-val');
+                if (val === correctAnswer) {
+                    opt.classList.add('correct');
+                } else if (opt.classList.contains('selected') && !isCorrect) {
+                    opt.classList.add('incorrect');
+                }
+            });
+            var fb = document.getElementById('fb-' + qNum);
+            if (isCorrect) {
+                fb.textContent = feedbackMessages[qNum].correct;
+                fb.className = 'quiz-feedback show correct-fb';
+                quizScore++;
+            } else {
+                fb.textContent = feedbackMessages[qNum].incorrect;
+                fb.className = 'quiz-feedback show incorrect-fb';
+            }
+            document.getElementById('submit-' + qNum).style.display = 'none';
+            document.getElementById('next-q-' + qNum).style.display = '';
+        };
+        // ═══ BUILD RESULTS ═══
+        function buildResults() {
+            var icon = document.getElementById('rIcon');
+            var score = document.getElementById('rScore');
+            var title = document.getElementById('rTitle');
+            var msg = document.getElementById('rMsg');
+            var btns = document.getElementById('rBtns');
+            var katie = document.getElementById('rKatie');
+            score.textContent = quizScore + ' / 3';
+            if (quizScore === 3) {
+                icon.textContent = '&#127881;';
+                title.textContent = 'Perfect Score!';
+                msg.textContent = 'Outstanding! You understand ergonomic principles, proper lifting, workstation setup, and MSD prevention. Protect your body!';
+                btns.innerHTML = '<button class="btn btn-success" onclick="completeModule()">&#10003; Complete Module & Return to Dashboard</button>';
+                katie.textContent = '"Excellent work! Remember: 90-90-90 for office, squat for lifting, stretch hourly, report discomfort early!"';
+            } else if (quizScore >= 2) {
+                icon.textContent = '&#9989;';
+                title.textContent = 'You Passed!';
+                msg.textContent = 'Great job! You demonstrated solid understanding of ergonomics and injury prevention.';
+                btns.innerHTML = '<button class="btn btn-success" onclick="completeModule()">&#10003; Complete Module & Return to Dashboard</button>';
+                katie.textContent = '"Well done! Set up your workstation properly, lift with your legs, and take stretch breaks!"';
+            } else {
+                icon.textContent = '&#128218;';
+                title.textContent = 'Not Quite Yet';
+                msg.textContent = 'You need 2 out of 3 correct to pass this module. Review the lesson and try again!';
+                btns.innerHTML = '<button class="btn btn-gold" onclick="retakeQuiz()">↻ Retake Quiz</button>' +
+                    '<button class="btn btn-outline" onclick="goToSlide(3)">↑ Review Lesson</button>';
+                katie.textContent = '"Don\'t worry! Ergonomics is vital for long-term health. Review lifting techniques and workstation setup!"';
+            }
+            saveQuizProgress();
+        }
+        // ═══ RETAKE QUIZ ═══
+        window.retakeQuiz = function() {
+            quizAnswers = { 1: null, 2: null, 3: null };
+            quizSubmitted = { 1: false, 2: false, 3: false };
+            quizScore = 0;
+            for (var q = 1; q <= 3; q++) {
+                var container = document.getElementById('q' + q + '-options');
+                container.querySelectorAll('.quiz-option').forEach(function(opt) {
+                    opt.classList.remove('selected', 'correct', 'incorrect', 'disabled');
+                });
+                document.getElementById('fb-' + q).className = 'quiz-feedback';
+                document.getElementById('fb-' + q).textContent = '';
+                document.getElementById('submit-' + q).style.display = '';
+                document.getElementById('submit-' + q).disabled = true;
+                document.getElementById('next-q-' + q).style.display = 'none';
+            }
+            goToSlide(11);
+        };
+        // ═══ LOCAL STORAGE ═══
+        function getProgress() {
+            try {
+                var d = localStorage.getItem('safetyverse-progress');
+                return d ? JSON.parse(d) : {};
+            } catch(e) { return {}; }
+        }
+        function saveSlideProgress() {
+            try {
+                var p = getProgress();
+                if (!p.modules) p.modules = {};
+                if (!p.modules[MODULE_KEY]) {
+                    p.modules[MODULE_KEY] = { completed: false, quizScore: 0, attempts: 0, lastAttempt: null };
+                }
+                p.modules[MODULE_KEY].currentSlide = currentSlide;
+                p.modules[MODULE_KEY].totalSlides = TOTAL_SLIDES;
+                localStorage.setItem('safetyverse-progress', JSON.stringify(p));
+            } catch(e) {}
+        }
+        function saveQuizProgress() {
+            try {
+                var p = getProgress();
+                if (!p.modules) p.modules = {};
+                if (!p.modules[MODULE_KEY]) {
+                    p.modules[MODULE_KEY] = { completed: false, quizScore: 0, attempts: 0 };
+                }
+                var mod = p.modules[MODULE_KEY];
+                mod.quizScore = quizScore;
+                mod.attempts = (mod.attempts || 0) + 1;
+                mod.lastAttempt = new Date().toISOString();
+                if (quizScore >= 2) mod.completed = true;
+                localStorage.setItem('safetyverse-progress', JSON.stringify(p));
+            } catch(e) {}
+        }
+        window.completeModule = function() {
+            try {
+                var p = getProgress();
+                if (!p.modules) p.modules = {};
+                if (!p.modules[MODULE_KEY]) {
+                    p.modules[MODULE_KEY] = { quizScore: 0, attempts: 0 };
+                }
+                p.modules[MODULE_KEY].completed = true;
+                p.modules[MODULE_KEY].completedAt = new Date().toISOString();
+                p.modules[MODULE_KEY].quizScore = quizScore;
+                localStorage.setItem('safetyverse-progress', JSON.stringify(p));
+            } catch(e) {}
+            window.location.href = '../../user-dashboard/index.html';
+        };
+        // ═══ RESTORE PROGRESS ON LOAD ═══
+        function restoreProgress() {
+            try {
+                var p = getProgress();
+                if (p.modules && p.modules[MODULE_KEY]) {
+                    var mod = p.modules[MODULE_KEY];
+                    if (mod.completed) {
+                        var introCard = document.querySelector('.intro-card');
+                        if (introCard) {
+                            var badge = document.createElement('div');
+                            badge.style.cssText = 'position:absolute;top:20px;right:20px;background:var(--success);color:white;font-size:12px;font-weight:700;padding:5px 16px;border-radius:20px;z-index:5;';
+                            badge.textContent = '&#10003; Completed';
+                            introCard.appendChild(badge);
+                        }
+                    }
+                }
+            } catch(e) {}
+        }
+        // ═══ INIT ═══
+        restoreProgress();
+        updateUI();
+    })();
+    </script>
+</body>
+</html>

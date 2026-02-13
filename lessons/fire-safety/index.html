@@ -1,0 +1,1676 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="logo.png?v=2">
+    <title>Module 7: Fire Safety - SafetyVerse</title>
+    <style>
+        /* ═══════════════════════════════════════════
+           CSS VARIABLES & RESET
+           ═══════════════════════════════════════════ */
+        :root {
+            --primary: #FFD700;
+            --primary-dark: #E6C200;
+            --secondary: #FF8C00;
+            --secondary-dark: #E67A00;
+            --bg-clay: #F5E6D3;
+            --bg-clay-dark: #E8D5C0;
+            --bg-clay-light: #FAF0E6;
+            --text-dark: #333333;
+            --text-medium: #555555;
+            --text-light: #777777;
+            --accent-black: #1A1A1A;
+            --white: #FFFFFF;
+            --success: #4CAF50;
+            --success-dark: #388E3C;
+            --error: #E53935;
+            --error-dark: #C62828;
+            --info: #2196F3;
+            --shadow-soft: 0 4px 15px rgba(0,0,0,0.1);
+            --shadow-medium: 0 6px 25px rgba(0,0,0,0.15);
+            --shadow-hard: 0 8px 30px rgba(0,0,0,0.2);
+            --shadow-clay: 4px 4px 0px rgba(0,0,0,0.15), inset 0 2px 4px rgba(255,255,255,0.3);
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 20px;
+            --radius-xl: 28px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --font-heading: 'Segoe UI', 'Arial Black', sans-serif;
+            --font-body: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body {
+            height: 100%;
+            overflow: hidden;
+        }
+        body {
+            font-family: var(--font-body);
+            background-color: var(--bg-clay);
+            color: var(--text-dark);
+            line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+        }
+        /* Clay texture */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 9999;
+            background-image:
+                radial-gradient(circle at 20% 50%, rgba(139,90,43,0.03) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(139,90,43,0.02) 0%, transparent 50%),
+                radial-gradient(circle at 50% 80%, rgba(139,90,43,0.03) 0%, transparent 50%);
+        }
+        /* ═══════════════════════════════════════════
+           HEADER
+           ═══════════════════════════════════════════ */
+        .header {
+            background: linear-gradient(180deg, var(--accent-black) 0%, #2A2A2A 100%);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            border-bottom: 4px solid var(--primary);
+            z-index: 100;
+            flex-shrink: 0;
+        }
+        .header-inner {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 64px;
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            flex-shrink: 0;
+        }
+        .logo-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .logo-icon img {
+            display: block;
+            height: 50px;
+            width: auto;
+            image-rendering: -webkit-optimize-contrast;
+            image-rendering: crisp-edges;
+            box-shadow: 4px 4px 0px rgba(0,0,0,0.15);
+            border-radius: 12px;
+            transition: transform 0.2s ease;
+        }
+        .logo-text {
+            font-family: var(--font-heading);
+            font-size: 22px; font-weight: 900;
+            color: var(--white);
+            letter-spacing: -0.5px;
+        }
+        .logo-text em {
+            color: var(--primary);
+            font-style: normal;
+        }
+        .header-center {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        .header-module-tag {
+            background: rgba(255,215,0,0.15);
+            color: var(--primary);
+            font-size: 11px; font-weight: 800;
+            padding: 3px 10px;
+            border-radius: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+        }
+        .header-module-title {
+            color: rgba(255,255,255,0.8);
+            font-size: 14px; font-weight: 600;
+        }
+        .back-btn {
+            display: flex; align-items: center; gap: 6px;
+            text-decoration: none;
+            color: rgba(255,255,255,0.7);
+            font-size: 13px; font-weight: 600;
+            padding: 7px 14px;
+            border-radius: var(--radius-sm);
+            transition: var(--transition);
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .back-btn:hover {
+            color: var(--white);
+            background: rgba(255,255,255,0.12);
+            border-color: rgba(255,255,255,0.2);
+        }
+        /* ═══════════════════════════════════════════
+           PROGRESS BAR
+           ═══════════════════════════════════════════ */
+        .progress-bar {
+            background: var(--accent-black);
+            border-bottom: 1px solid rgba(255,215,0,0.15);
+            flex-shrink: 0;
+            z-index: 99;
+        }
+        .progress-bar-inner {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 8px 24px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+        .progress-label {
+            font-size: 12px; font-weight: 700;
+            color: rgba(255,255,255,0.5);
+            white-space: nowrap;
+            min-width: 90px;
+        }
+        .progress-track {
+            flex: 1;
+            height: 6px;
+            background: rgba(255,255,255,0.08);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 3px;
+            transition: width 0.4s ease;
+        }
+        .progress-pct {
+            font-size: 12px; font-weight: 700;
+            color: var(--primary);
+            min-width: 40px;
+            text-align: right;
+        }
+        /* ═══════════════════════════════════════════
+           MAIN CONTENT AREA
+           ═══════════════════════════════════════════ */
+        .content-wrapper {
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 40px 24px 100px;
+        }
+        /* ═══════════════════════════════════════════
+           SLIDES
+           ═══════════════════════════════════════════ */
+        .slide {
+            display: none;
+            animation: slideIn 0.3s ease;
+        }
+        .slide.active { display: block; }
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        /* Intro Card (Slide 1) */
+        .intro-card {
+            background: linear-gradient(135deg, #FF6B35 0%, #E53935 100%);
+            border-radius: var(--radius-xl);
+            padding: 60px 50px;
+            box-shadow: var(--shadow-hard);
+            color: var(--white);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .intro-card::before {
+            content: '';
+            position: absolute;
+            top: -100px; right: -100px;
+            width: 300px; height: 300px;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+        }
+        .intro-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+            animation: bounce 2s ease-in-out infinite;
+        }
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        .intro-title {
+            font-family: var(--font-heading);
+            font-size: 48px; font-weight: 900;
+            margin-bottom: 12px;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.2);
+        }
+        .intro-subtitle {
+            font-size: 20px;
+            margin-bottom: 30px;
+            opacity: 0.95;
+        }
+        .intro-meta {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            flex-wrap: wrap;
+        }
+        .intro-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 15px; font-weight: 600;
+        }
+        .intro-meta-item span:first-child {
+            font-size: 20px;
+        }
+        /* Content Card */
+        .content-card {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            padding: 50px;
+            box-shadow: var(--shadow-medium);
+            margin-bottom: 30px;
+        }
+        .slide-header {
+            margin-bottom: 35px;
+        }
+        .slide-number {
+            font-size: 11px; font-weight: 800;
+            color: var(--text-light);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 10px;
+        }
+        .slide-title {
+            font-family: var(--font-heading);
+            font-size: 36px; font-weight: 900;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+            line-height: 1.2;
+        }
+        .slide-subtitle {
+            font-size: 17px;
+            color: var(--text-medium);
+        }
+        .slide-content {
+            font-size: 17px;
+            line-height: 1.8;
+            color: var(--text-dark);
+        }
+        .slide-content p {
+            margin-bottom: 20px;
+        }
+        .slide-content strong {
+            color: var(--secondary);
+            font-weight: 700;
+        }
+        /* Katie Message */
+        .katie-message {
+            display: flex;
+            align-items: flex-start;
+            gap: 18px;
+            background: linear-gradient(135deg, #FFFDE7 0%, #FFF9C4 100%);
+            border-left: 5px solid var(--primary);
+            padding: 24px;
+            border-radius: var(--radius-md);
+            margin-bottom: 35px;
+            box-shadow: 0 3px 12px rgba(255,215,0,0.15);
+        }
+        .katie-avatar {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            object-fit: cover;
+            object-position: center 48%;
+            background: white;
+            border: 4px solid var(--primary);
+            padding: 6px;
+            flex-shrink: 0;
+            box-shadow: var(--shadow-soft);
+        }
+        .katie-bubble {
+            flex: 1;
+        }
+        .katie-name {
+            font-weight: 800;
+            color: var(--secondary);
+            margin-bottom: 8px;
+            font-size: 15px;
+        }
+        .katie-text {
+            font-size: 16px;
+            color: var(--text-dark);
+            line-height: 1.7;
+        }
+        /* Info Boxes */
+        .info-box {
+            background: linear-gradient(135deg, #E3F2FD 0%, #BBDEFB 100%);
+            border-left: 5px solid var(--info);
+            padding: 22px 24px;
+            border-radius: var(--radius-md);
+            margin: 28px 0;
+        }
+        .info-box.warning {
+            background: linear-gradient(135deg, #FFF3E0 0%, #FFE0B2 100%);
+            border-left-color: var(--secondary);
+        }
+        .info-box.danger {
+            background: linear-gradient(135deg, #FFEBEE 0%, #FFCDD2 100%);
+            border-left-color: var(--error);
+        }
+        .info-box.success {
+            background: linear-gradient(135deg, #E8F5E9 0%, #C8E6C9 100%);
+            border-left-color: var(--success);
+        }
+        .info-box-title {
+            font-weight: 800;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 16px;
+        }
+        .info-box-content {
+            font-size: 15px;
+            line-height: 1.7;
+        }
+        .info-box-content ul {
+            margin-top: 10px;
+            padding-left: 20px;
+        }
+        .info-box-content li {
+            margin-bottom: 6px;
+        }
+        /* Lists */
+        .content-list {
+            list-style: none;
+            margin: 28px 0;
+        }
+        .content-list li {
+            padding: 14px 0 14px 36px;
+            position: relative;
+            border-bottom: 1px solid rgba(0,0,0,0.06);
+            font-size: 16px;
+        }
+        .content-list li:last-child {
+            border-bottom: none;
+        }
+        .content-list li::before {
+            content: '\25CF';
+            position: absolute;
+            left: 14px;
+            color: var(--secondary);
+            font-size: 14px;
+        }
+        /* Fire Extinguisher Classes Grid */
+        .extinguisher-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+            margin: 28px 0;
+        }
+        .extinguisher-card {
+            background: var(--bg-clay-light);
+            border: 2px solid var(--bg-clay-dark);
+            border-radius: var(--radius-md);
+            padding: 24px;
+            text-align: center;
+            transition: var(--transition);
+        }
+        .extinguisher-card:hover {
+            transform: translateY(-6px);
+            box-shadow: var(--shadow-medium);
+            border-color: var(--primary);
+        }
+        .extinguisher-icon {
+            font-size: 48px;
+            margin-bottom: 14px;
+        }
+        .extinguisher-class {
+            font-weight: 900;
+            font-size: 28px;
+            color: var(--secondary);
+            margin-bottom: 10px;
+            font-family: var(--font-heading);
+        }
+        .extinguisher-label {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-medium);
+            margin-bottom: 10px;
+        }
+        .extinguisher-desc {
+            font-size: 14px;
+            color: var(--text-light);
+            line-height: 1.6;
+        }
+        /* PASS Technique Grid */
+        .pass-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 18px;
+            margin: 28px 0;
+        }
+        .pass-step {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: var(--accent-black);
+            border-radius: var(--radius-md);
+            padding: 28px 18px;
+            text-align: center;
+            box-shadow: var(--shadow-clay);
+            transition: var(--transition);
+        }
+        .pass-step:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-hard);
+        }
+        .pass-letter {
+            font-family: var(--font-heading);
+            font-size: 56px;
+            font-weight: 900;
+            margin-bottom: 14px;
+            line-height: 1;
+        }
+        .pass-word {
+            font-weight: 800;
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+        .pass-desc {
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        /* Evacuation Steps */
+        .evacuation-steps {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+            margin: 28px 0;
+        }
+        .evac-step {
+            display: flex;
+            align-items: flex-start;
+            gap: 18px;
+            background: var(--bg-clay-light);
+            padding: 24px;
+            border-radius: var(--radius-md);
+            border-left: 5px solid var(--secondary);
+            transition: var(--transition);
+        }
+        .evac-step:hover {
+            background: var(--bg-clay);
+            box-shadow: var(--shadow-soft);
+        }
+        .evac-number {
+            background: var(--secondary);
+            color: var(--white);
+            min-width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            font-size: 22px;
+            flex-shrink: 0;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+        }
+        .evac-content h4 {
+            font-weight: 800;
+            margin-bottom: 8px;
+            color: var(--text-dark);
+            font-size: 17px;
+        }
+        .evac-content p {
+            font-size: 15px;
+            color: var(--text-medium);
+            line-height: 1.7;
+            margin: 0;
+        }
+        /* ═══════════════════════════════════════════
+           QUIZ STYLES
+           ═══════════════════════════════════════════ */
+        .quiz-question {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 28px;
+            line-height: 1.5;
+        }
+        .quiz-options {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            margin-bottom: 24px;
+        }
+        .quiz-option {
+            background: var(--bg-clay-light);
+            border: 3px solid var(--bg-clay-dark);
+            padding: 18px 24px;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 16px;
+            font-weight: 600;
+            position: relative;
+        }
+        .quiz-option:hover:not(.disabled) {
+            background: var(--bg-clay);
+            border-color: var(--primary);
+            transform: translateX(6px);
+        }
+        .quiz-option.selected {
+            background: var(--primary);
+            border-color: var(--primary-dark);
+            color: var(--accent-black);
+        }
+        .quiz-option.correct {
+            background: var(--success);
+            border-color: var(--success-dark);
+            color: var(--white);
+        }
+        .quiz-option.incorrect {
+            background: var(--error);
+            border-color: var(--error-dark);
+            color: var(--white);
+        }
+        .quiz-option.disabled {
+            cursor: default;
+        }
+        .quiz-feedback {
+            display: none;
+            padding: 18px 22px;
+            border-radius: var(--radius-md);
+            font-size: 16px;
+            line-height: 1.7;
+            margin-top: 20px;
+        }
+        .quiz-feedback.show {
+            display: block;
+        }
+        .quiz-feedback.correct-fb {
+            background: #E8F5E9;
+            color: #2E7D32;
+            border-left: 5px solid var(--success);
+        }
+        .quiz-feedback.incorrect-fb {
+            background: #FFEBEE;
+            color: #C62828;
+            border-left: 5px solid var(--error);
+        }
+        /* Quiz Buttons */
+        .quiz-btn-group {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+        }
+        /* Results Screen */
+        .results-card {
+            background: var(--white);
+            border-radius: var(--radius-xl);
+            padding: 60px 50px;
+            box-shadow: var(--shadow-hard);
+            text-align: center;
+        }
+        .results-icon {
+            font-size: 100px;
+            margin-bottom: 24px;
+            animation: scaleIn 0.6s ease;
+        }
+        @keyframes scaleIn {
+            from { transform: scale(0) rotate(-180deg); }
+            to { transform: scale(1) rotate(0); }
+        }
+        .results-score {
+            font-family: var(--font-heading);
+            font-size: 72px;
+            font-weight: 900;
+            color: var(--primary);
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 0 rgba(0,0,0,0.1);
+        }
+        .results-title {
+            font-family: var(--font-heading);
+            font-size: 42px;
+            font-weight: 900;
+            color: var(--text-dark);
+            margin-bottom: 16px;
+        }
+        .results-message {
+            font-size: 19px;
+            color: var(--text-medium);
+            margin-bottom: 36px;
+            line-height: 1.7;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .results-katie {
+            background: linear-gradient(135deg, #FFFDE7 0%, #FFF9C4 100%);
+            border-left: 5px solid var(--primary);
+            padding: 20px 24px;
+            border-radius: var(--radius-md);
+            font-size: 17px;
+            font-style: italic;
+            color: var(--text-dark);
+            margin-bottom: 36px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .results-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+        /* ═══════════════════════════════════════════
+           BUTTONS
+           ═══════════════════════════════════════════ */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 14px 32px;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-family: var(--font-heading);
+            font-size: 16px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+            box-shadow: var(--shadow-clay);
+        }
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .btn-gold {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: var(--accent-black);
+        }
+        .btn-gold:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-hard);
+        }
+        .btn-success {
+            background: var(--success);
+            color: var(--white);
+        }
+        .btn-success:hover:not(:disabled) {
+            background: var(--success-dark);
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-hard);
+        }
+        .btn-outline {
+            background: var(--white);
+            color: var(--text-dark);
+            border: 2px solid var(--bg-clay-dark);
+        }
+        .btn-outline:hover:not(:disabled) {
+            background: var(--bg-clay-light);
+            border-color: var(--primary);
+        }
+        /* ═══════════════════════════════════════════
+           NAVIGATION
+           ═══════════════════════════════════════════ */
+        .nav-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(180deg, rgba(26,26,26,0.97) 0%, rgba(0,0,0,0.98) 100%);
+            border-top: 3px solid var(--primary);
+            padding: 16px 24px;
+            z-index: 100;
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.3);
+        }
+        .nav-inner {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+        }
+        .nav-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            border: 2px solid rgba(255,255,255,0.15);
+            border-radius: var(--radius-sm);
+            font-family: var(--font-heading);
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: var(--transition);
+            background: rgba(255,255,255,0.08);
+            color: var(--white);
+            text-decoration: none;
+        }
+        .nav-btn:hover:not(:disabled) {
+            background: rgba(255,255,255,0.15);
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+        .nav-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+        .nav-btn.nav-next {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: var(--accent-black);
+            border-color: transparent;
+        }
+        .nav-btn.nav-next:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255,215,0,0.4);
+        }
+        .slide-indicator {
+            color: rgba(255,255,255,0.6);
+            font-size: 13px;
+            font-weight: 600;
+        }
+        /* ═══════════════════════════════════════════
+           RESPONSIVE
+           ═══════════════════════════════════════════ */
+        @media (max-width: 768px) {
+            .container { padding: 30px 20px 100px; }
+            .content-card { padding: 32px 24px; }
+            .intro-card { padding: 40px 30px; }
+            .intro-title { font-size: 36px; }
+            .slide-title { font-size: 28px; }
+            .pass-grid { grid-template-columns: repeat(2, 1fr); }
+            .extinguisher-grid { grid-template-columns: 1fr; }
+            .nav-inner { flex-direction: column; gap: 12px; }
+            .nav-btn { width: 100%; justify-content: center; }
+            .header-center { position: static; transform: none; }
+        }
+        @media (max-width: 480px) {
+            .intro-meta { flex-direction: column; gap: 16px; }
+            .pass-grid { grid-template-columns: 1fr; }
+            .katie-message { flex-direction: column; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-inner">
+            <a href="../../user-dashboard/index.html" class="logo">
+                <div class="logo-icon"><img src="logo.png?v=2" alt="SafetyVerse Logo"></div>
+                <div class="logo-text">Safety<em>Verse</em></div>
+            </a>
+            <div class="header-center">
+                <span class="header-module-tag">MODULE 7</span>
+                <span class="header-module-title">Fire Safety</span>
+            </div>
+            <a href="../../user-dashboard/index.html" class="back-btn">
+                <span>&larr;</span>
+                <span>Back to Dashboard</span>
+            </a>
+        </div>
+    </header>
+    <!-- Progress Bar -->
+    <div class="progress-bar">
+        <div class="progress-bar-inner">
+            <span class="progress-label" id="progressLabel">Slide 1 of 15</span>
+            <div class="progress-track">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <span class="progress-pct" id="progressPct">0%</span>
+        </div>
+    </div>
+    <!-- Main Content -->
+    <div class="content-wrapper">
+        <div class="container">
+            <!-- Slide 1: Intro -->
+            <div class="slide active" data-slide="1">
+                <div class="intro-card">
+                    <div class="intro-icon">&#128293;</div>
+                    <h1 class="intro-title">Fire Safety</h1>
+                    <p class="intro-subtitle">Prevention, Response, and Protection</p>
+                    <div class="intro-meta">
+                        <div class="intro-meta-item">
+                            <span>&#9201;</span>
+                            <span>15 minutes</span>
+                        </div>
+                        <div class="intro-meta-item">
+                            <span>&#128218;</span>
+                            <span>Operational Safety Path</span>
+                        </div>
+                        <div class="intro-meta-item">
+                            <span>&#10003;</span>
+                            <span>OSHA Standards</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 2: Introduction with Katie -->
+            <div class="slide" data-slide="2">
+                <div class="content-card">
+                    <div class="katie-message">
+                        <img src="katie.png" alt="Katie" class="katie-avatar">
+                        <div class="katie-bubble">
+                            <div class="katie-name">Katie, Your Safety Guide</div>
+                            <div class="katie-text">
+                                Welcome! Fire safety is one of the most critical workplace safety topics. Every year, workplace fires cause injuries, fatalities, and billions in property damage. In this module, you'll learn how to prevent fires, respond to fire emergencies, and use fire extinguishers properly. Let's make sure you're prepared to stay safe!
+                            </div>
+                        </div>
+                    </div>
+                    <div class="slide-header">
+                        <div class="slide-number">Slide 2 of 15</div>
+                        <h2 class="slide-title">Why Fire Safety Matters</h2>
+                    </div>
+                    <div class="slide-content">
+                        <p>Fire safety is everyone's responsibility. Understanding fire hazards, prevention strategies, and emergency response procedures can mean the difference between life and death.</p>
+
+                        <div class="info-box danger">
+                            <div class="info-box-title">&#9888; Fire Statistics</div>
+                            <div class="info-box-content">
+                                According to OSHA and NFPA:
+                                <ul>
+                                    <li>Workplace fires cause 200+ deaths annually</li>
+                                    <li>5,000+ workplace fire injuries each year</li>
+                                    <li>$3+ billion in direct property damage</li>
+                                    <li>Most workplace fires are preventable</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <p><strong>Learning Objectives:</strong></p>
+                        <ul class="content-list">
+                            <li>Identify common fire hazards in the workplace</li>
+                            <li>Apply fire prevention best practices</li>
+                            <li>Understand the fire triangle and classes of fire</li>
+                            <li>Demonstrate proper fire extinguisher use (PASS technique)</li>
+                            <li>Execute safe evacuation procedures</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 3: The Fire Triangle -->
+            <div class="slide" data-slide="3">
+                <div class="content-card">
+                    <div class="slide-header">
+                        <div class="slide-number">Slide 3 of 15</div>
+                        <h2 class="slide-title">Understanding Fire: The Fire Triangle</h2>
+                        <p class="slide-subtitle">Three elements must be present for fire to exist</p>
+                    </div>
+                    <div class="slide-content">
+                        <p>Fire requires three elements to ignite and sustain. Remove any one of these, and the fire cannot exist. This principle is the foundation of fire prevention and suppression.</p>
+                        <div class="extinguisher-grid">
+                            <div class="extinguisher-card">
+                                <div class="extinguisher-icon">&#128293;</div>
+                                <div class="extinguisher-class">HEAT</div>
+                                <div class="extinguisher-label">Energy Source</div>
+                                <div class="extinguisher-desc">Sparks, flames, hot surfaces, friction, electricity, chemical reactions</div>
+                            </div>
+                            <div class="extinguisher-card">
+                                <div class="extinguisher-icon">&#9981;</div>
+                                <div class="extinguisher-class">FUEL</div>
+                                <div class="extinguisher-label">Combustible Material</div>
+                                <div class="extinguisher-desc">Wood, paper, flammable liquids, gases, chemicals, fabrics</div>
+                            </div>
+                            <div class="extinguisher-card">
+                                <div class="extinguisher-icon">&#128168;</div>
+                                <div class="extinguisher-class">OXYGEN</div>
+                                <div class="extinguisher-label">Air Supply</div>
+                                <div class="extinguisher-desc">Atmospheric oxygen (21%), oxidizers that release oxygen</div>
+                            </div>
+                        </div>
+                        <div class="info-box">
+                            <div class="info-box-title">&#128161; Fire Prevention Strategy</div>
+                            <div class="info-box-content">
+                                Fire prevention focuses on <strong>eliminating or controlling</strong> one or more elements of the fire triangle. Fire suppression works by <strong>removing</strong> one element after ignition occurs.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 4: Common Fire Hazards -->
+            <div class="slide" data-slide="4">
+                <div class="content-card">
+                    <div class="slide-header">
+                        <div class="slide-number">Slide 4 of 15</div>
+                        <h2 class="slide-title">Common Workplace Fire Hazards</h2>
+                        <p class="slide-subtitle">Know what to look for</p>
+                    </div>
+                    <div class="slide-content">
+                        <p>Fire hazards exist in every workplace. Being able to recognize them is the first step in prevention.</p>
+                        <ul class="content-list">
+                            <li><strong>Electrical hazards:</strong> Overloaded outlets, damaged cords, faulty equipment, poor wiring</li>
+                            <li><strong>Flammable materials:</strong> Improperly stored chemicals, gasoline, solvents, cleaning agents</li>
+                            <li><strong>Hot work operations:</strong> Welding, cutting, grinding, brazing without proper permits</li>
+                            <li><strong>Smoking materials:</strong> Cigarettes in unauthorized areas, improper disposal</li>
+                            <li><strong>Heating equipment:</strong> Space heaters near combustibles, unmaintained HVAC systems</li>
+                            <li><strong>Cooking equipment:</strong> Unattended stoves, grease buildup in kitchens</li>
+                            <li><strong>Poor housekeeping:</strong> Trash accumulation, blocked exits, cluttered storage</li>
+                            <li><strong>Arson:</strong> Intentional fires, often targeting unoccupied areas</li>
+                        </ul>
+                        <div class="info-box warning">
+                            <div class="info-box-title">&#9888; Leading Causes</div>
+                            <div class="info-box-content">
+                                The top three causes of workplace fires are: <strong>(1) Cooking equipment (29%)</strong>, <strong>(2) Electrical malfunctions (24%)</strong>, and <strong>(3) Heating equipment (13%)</strong>.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 5: Fire Prevention Best Practices -->
+            <div class="slide" data-slide="5">
+                <div class="content-card">
+                    <div class="slide-header">
+                        <div class="slide-number">Slide 5 of 15</div>
+                        <h2 class="slide-title">Fire Prevention Best Practices</h2>
+                        <p class="slide-subtitle">Your daily responsibilities</p>
+                    </div>
+                    <div class="slide-content">
+                        <p>Fire prevention is a shared responsibility. Follow these practices every day:</p>
+                        <div class="evacuation-steps">
+                            <div class="evac-step">
+                                <div class="evac-number">1</div>
+                                <div class="evac-content">
+                                    <h4>Keep Work Areas Clean</h4>
+                                    <p>Remove trash regularly, don't let combustible materials accumulate, maintain clear pathways and exits.</p>
+                                </div>
+                            </div>
+                            <div class="evac-step">
+                                <div class="evac-number">2</div>
+                                <div class="evac-content">
+                                    <h4>Store Flammables Properly</h4>
+                                    <p>Use approved containers, keep away from heat sources, store in designated areas with proper ventilation.</p>
+                                </div>
+                            </div>
+                            <div class="evac-step">
+                                <div class="evac-number">3</div>
+                                <div class="evac-content">
+                                    <h4>Inspect Electrical Equipment</h4>
+                                    <p>Check cords for damage, don't overload outlets, unplug equipment when not in use, report defects immediately.</p>
+                                </div>
+                            </div>
+                            <div class="evac-step">
+                                <div class="evac-number">4</div>
+                                <div class="evac-content">
+                                    <h4>Follow Hot Work Procedures</h4>
+                                    <p>Obtain permits before welding/cutting, have fire watch present, keep extinguisher nearby, inspect area after completion.</p>
+                                </div>
+                            </div>
+                            <div class="evac-step">
+                                <div class="evac-number">5</div>
+                                <div class="evac-content">
+                                    <h4>Maintain Fire Safety Equipment</h4>
+                                    <p>Don't block extinguishers or exits, report damaged equipment, participate in fire drills, know alarm locations.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 6: Classes of Fire -->
+            <div class="slide" data-slide="6">
+                <div class="content-card">
+                    <div class="slide-header">
+                        <div class="slide-number">Slide 6 of 15</div>
+                        <h2 class="slide-title">Classes of Fire</h2>
+                        <p class="slide-subtitle">Different fires require different suppression methods</p>
+                    </div>
+                    <div class="slide-content">
+                        <p>Fires are classified by the type of fuel involved. Using the wrong extinguisher can be ineffective or dangerous.</p>
+                        <div class="extinguisher-grid">
+                            <div class="extinguisher-card">
+                                <div class="extinguisher-icon">&#129717;</div>
+                                <div class="extinguisher-class">Class A</div>
+                                <div class="extinguisher-label">Ordinary Combustibles</div>
+                                <div class="extinguisher-desc">Wood, paper, cloth, rubber, many plastics. Leaves ash when burned.</div>
+                            </div>
+                            <div class="extinguisher-card">
+                                <div class="extinguisher-icon">&#9981;</div>
+                                <div class="extinguisher-class">Class B</div>
+                                <div class="extinguisher-label">Flammable Liquids</div>
+                                <div class="extinguisher-desc">Gasoline, oil, grease, paint, solvents, alcohol. Does not leave ash.</div>
+                            </div>
+                            <div class="extinguisher-card">
+                                <div class="extinguisher-icon">&#9889;</div>
+                                <div class="extinguisher-class">Class C</div>
+                                <div class="extinguisher-label">Electrical Equipment</div>
+                                <div class="extinguisher-desc">Live electrical equipment, wiring, circuit breakers, appliances.</div>
+                            </div>
+                            <div class="extinguisher-card">
+                                <div class="extinguisher-icon">&#128297;</div>
+                                <div class="extinguisher-class">Class D</div>
+                                <div class="extinguisher-label">Combustible Metals</div>
+                                <div class="extinguisher-desc">Magnesium, titanium, sodium, lithium. Requires special dry powder.</div>
+                            </div>
+                            <div class="extinguisher-card">
+                                <div class="extinguisher-icon">&#127859;</div>
+                                <div class="extinguisher-class">Class K</div>
+                                <div class="extinguisher-label">Kitchen/Cooking Fires</div>
+                                <div class="extinguisher-desc">Vegetable oils, animal fats, cooking grease. High-temperature fires.</div>
+                            </div>
+                        </div>
+                        <div class="info-box warning">
+                            <div class="info-box-title">&#9888; Critical Safety Note</div>
+                            <div class="info-box-content">
+                                <strong>NEVER use water on Class B, C, D, or K fires.</strong> Water on grease fires (Class K) causes explosive splattering. Water on electrical fires (Class C) causes electrocution risk. Water on metal fires (Class D) causes violent reactions.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 7: Fire Extinguisher Types -->
+            <div class="slide" data-slide="7">
+                <div class="content-card">
+                    <div class="slide-header">
+                        <div class="slide-number">Slide 7 of 15</div>
+                        <h2 class="slide-title">Fire Extinguisher Types</h2>
+                        <p class="slide-subtitle">Matching extinguishers to fire classes</p>
+                    </div>
+                    <div class="slide-content">
+                        <p>Different extinguishers contain different suppression agents. Most workplaces use ABC extinguishers for versatility.</p>
+                        <ul class="content-list">
+                            <li><strong>Water (Class A):</strong> Most common for ordinary combustibles. Cools the fire. Never use on electrical or grease fires.</li>
+                            <li><strong>CO&#8322; (Class B, C):</strong> Carbon dioxide displaces oxygen. Good for electrical fires. Leaves no residue but provides no cooling.</li>
+                            <li><strong>Dry Chemical ABC (Class A, B, C):</strong> Most versatile. Contains monoammonium phosphate. Interrupts chemical reaction. Most common in workplaces.</li>
+                            <li><strong>Dry Chemical BC (Class B, C):</strong> Sodium or potassium bicarbonate. For flammable liquids and electrical. Not effective on Class A.</li>
+                            <li><strong>Wet Chemical (Class K):</strong> Potassium-based solution. Specifically designed for kitchen fires. Creates soapy foam that cools and suppresses.</li>
+                            <li><strong>Dry Powder (Class D):</strong> Special compounds for metal fires. Each metal may require specific agent (sodium chloride, copper powder, etc.).</li>
+                        </ul>
+                        <div class="info-box">
+                            <div class="info-box-title">&#128269; How to Identify</div>
+                            <div class="info-box-content">
+                                Every fire extinguisher has a label showing which classes it's rated for. Look for the letter symbols (A, B, C, D, K) and pictograms. ABC extinguishers are the most common multi-purpose type.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 8: PASS Technique - Overview -->
+            <div class="slide" data-slide="8">
+                <div class="content-card">
+                    <div class="slide-header">
+                        <div class="slide-number">Slide 8 of 15</div>
+                        <h2 class="slide-title">The PASS Technique</h2>
+                        <p class="slide-subtitle">How to use a fire extinguisher effectively</p>
+                    </div>
+                    <div class="slide-content">
+                        <p>PASS is an acronym that helps you remember the four steps for proper fire extinguisher use. Memorize this technique&mdash;it could save your life.</p>
+                        <div class="pass-grid">
+                            <div class="pass-step">
+                                <div class="pass-letter">P</div>
+                                <div class="pass-word">PULL</div>
+                                <div class="pass-desc">Pull the pin to break the tamper seal</div>
+                            </div>
+                            <div class="pass-step">
+                                <div class="pass-letter">A</div>
+                                <div class="pass-word">AIM</div>
+                                <div class="pass-desc">Aim low at the base of the fire</div>
+                            </div>
+                            <div class="pass-step">
+                                <div class="pass-letter">S</div>
+                                <div class="pass-word">SQUEEZE</div>
+                                <div class="pass-desc">Squeeze the handle to discharge</div>
+                            </div>
+                            <div class="pass-step">
+                                <div class="pass-letter">S</div>
+                                <div class="pass-word">SWEEP</div>
+                                <div class="pass-desc">Sweep side to side at the base</div>
+                            </div>
+                        </div>
+                        <div class="info-box warning">
+                            <div class="info-box-title">&#9888; Before Using an Extinguisher</div>
+                            <div class="info-box-content">
+                                <strong>Always ensure:</strong>
+                                <ul>
+                                    <li>Fire alarm has been activated</li>
+                                    <li>Building evacuation has started</li>
+                                    <li>You have a clear escape route behind you</li>
+                                    <li>Fire is small and contained (no larger than a trash can)</li>
+                                    <li>You have the correct type of extinguisher</li>
+                                </ul>
+                                <strong>If in doubt, GET OUT!</strong> Your life is more important than property.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 9: PASS Technique - Detailed Steps -->
+            <div class="slide" data-slide="9">
+                <div class="content-card">
+                    <div class="slide-header">
+                        <div class="slide-number">Slide 9 of 15</div>
+                        <h2 class="slide-title">PASS Technique: Step-by-Step</h2>
+                        <p class="slide-subtitle">Detailed instructions for each step</p>
+                    </div>
+                    <div class="slide-content">
+                        <div class="evacuation-steps">
+                            <div class="evac-step">
+                                <div class="evac-number">P</div>
+                                <div class="evac-content">
+                                    <h4>PULL the Pin</h4>
+                                    <p>Hold the extinguisher upright. Pull the safety pin located at the top handle. This breaks the tamper seal and allows you to discharge the extinguisher. Some pins require twisting or turning before pulling.</p>
+                                </div>
+                            </div>
+                            <div class="evac-step">
+                                <div class="evac-number">A</div>
+                                <div class="evac-content">
+                                    <h4>AIM Low</h4>
+                                    <p>Stand 6-10 feet away from the fire (follow extinguisher label for exact distance). Point the nozzle or hose at the <strong>base of the fire</strong>, not the flames. The base is where the fuel is located.</p>
+                                </div>
+                            </div>
+                            <div class="evac-step">
+                                <div class="evac-number">S</div>
+                                <div class="evac-content">
+                                    <h4>SQUEEZE the Handle</h4>
+                                    <p>Squeeze the handles together firmly. This releases the extinguishing agent. Release the handle to stop discharge. Keep the extinguisher upright to maintain pressure.</p>
+                                </div>
+                            </div>
+                            <div class="evac-step">
+                                <div class="evac-number">S</div>
+                                <div class="evac-content">
+                                    <h4>SWEEP Side to Side</h4>
+                                    <p>Move the nozzle from side to side at the base of the fire. Start at the near edge and work your way back, covering the entire fuel source. Continue until the fire is completely out.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="info-box danger">
+                            <div class="info-box-title">&#128680; When NOT to Fight a Fire</div>
+                            <div class="info-box-content">
+                                <strong>Evacuate immediately if:</strong>
+                                <ul>
+                                    <li>Fire is spreading rapidly</li>
+                                    <li>Fire blocks your exit path</li>
+                                    <li>Smoke makes it hard to breathe</li>
+                                    <li>You don't have the correct extinguisher</li>
+                                    <li>You're not trained or confident</li>
+                                    <li>Multiple extinguishers are needed</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 10: Fire Alarm Response -->
+            <div class="slide" data-slide="10">
+                <div class="content-card">
+                    <div class="slide-header">
+                        <div class="slide-number">Slide 10 of 15</div>
+                        <h2 class="slide-title">When the Fire Alarm Sounds</h2>
+                        <p class="slide-subtitle">Immediate action required</p>
+                    </div>
+                    <div class="slide-content">
+                        <p>Fire alarms save lives. <strong>Never ignore a fire alarm</strong>, even if you think it's a drill or false alarm. Every second counts in a fire emergency.</p>
+                        <div class="info-box danger">
+                            <div class="info-box-title">&#128680; Immediate Actions</div>
+                            <div class="info-box-content">
+                                When you hear the alarm:
+                                <ol style="margin-top: 10px; padding-left: 20px;">
+                                    <li><strong>Stop work immediately</strong> - Leave tools, belongings, and materials</li>
+                                    <li><strong>Alert others</strong> - Notify anyone who may not have heard the alarm</li>
+                                    <li><strong>Close doors</strong> - Close (don't lock) doors behind you to contain fire and smoke</li>
+                                    <li><strong>Use stairs only</strong> - Never use elevators during fire emergencies</li>
+                                    <li><strong>Follow exit signs</strong> - Move to the nearest safe exit</li>
+                                    <li><strong>Stay low if smoke is present</strong> - Crawl to stay below smoke level</li>
+                                    <li><strong>Go to assembly point</strong> - Don't leave until accounted for</li>
+                                </ol>
+                            </div>
+                        </div>
+                        <div class="info-box warning">
+                            <div class="info-box-title">&#9888; Common Mistakes to Avoid</div>
+                            <div class="info-box-content">
+                                <ul>
+                                    <li>Don't go back for personal belongings</li>
+                                    <li>Don't use elevators (they may malfunction or open on fire floor)</li>
+                                    <li>Don't investigate before evacuating</li>
+                                    <li>Don't assume it's a false alarm or drill</li>
+                                    <li>Don't re-enter until emergency personnel give all-clear</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 11: Evacuation Procedures -->
+            <div class="slide" data-slide="11">
+                <div class="content-card">
+                    <div class="slide-header">
+                        <div class="slide-number">Slide 11 of 15</div>
+                        <h2 class="slide-title">Evacuation Procedures</h2>
+                        <p class="slide-subtitle">Know your escape routes</p>
+                    </div>
+                    <div class="slide-content">
+                        <p>Effective evacuation requires planning and practice. Your workplace should have clearly marked exits and an evacuation plan.</p>
+                        <div class="evacuation-steps">
+                            <div class="evac-step">
+                                <div class="evac-number">1</div>
+                                <div class="evac-content">
+                                    <h4>Know Two Ways Out</h4>
+                                    <p>Identify at least two exit routes from every area you work in. Primary and alternate routes ensure you have options if one is blocked.</p>
+                                </div>
+                            </div>
+                            <div class="evac-step">
+                                <div class="evac-number">2</div>
+                                <div class="evac-content">
+                                    <h4>Check Before Opening Doors</h4>
+                                    <p>Feel the door with the back of your hand. If it's hot, don't open it&mdash;fire is on the other side. Use alternate route. If cool, open slowly and be ready to close quickly.</p>
+                                </div>
+                            </div>
+                            <div class="evac-step">
+                                <div class="evac-number">3</div>
+                                <div class="evac-content">
+                                    <h4>Stay Low in Smoke</h4>
+                                    <p>Smoke and heat rise. Breathable air is near the floor. If encountering smoke, get down and crawl. Cover your nose and mouth with cloth if possible.</p>
+                                </div>
+                            </div>
+                            <div class="evac-step">
+                                <div class="evac-number">4</div>
+                                <div class="evac-content">
+                                    <h4>Go to Assembly Point</h4>
+                                    <p>Once outside, move to your designated assembly point. Stay there so emergency personnel can account for everyone. Don't leave the area or re-enter the building.</p>
+                                </div>
+                            </div>
+                            <div class="evac-step">
+                                <div class="evac-number">5</div>
+                                <div class="evac-content">
+                                    <h4>Assist Others if Safe</h4>
+                                    <p>Help coworkers with disabilities, injuries, or language barriers if you can do so safely. Never put yourself in danger. Alert emergency personnel about anyone who needs assistance.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="info-box">
+                            <div class="info-box-title">&#128161; Emergency Preparedness Tips</div>
+                            <div class="info-box-content">
+                                <ul>
+                                    <li>Participate in all fire drills seriously</li>
+                                    <li>Review evacuation maps posted in your work area</li>
+                                    <li>Know where fire extinguishers and pull stations are located</li>
+                                    <li>Keep exits and pathways clear of obstructions</li>
+                                    <li>Report blocked exits or inoperable emergency equipment</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 12: Special Situations -->
+            <div class="slide" data-slide="12">
+                <div class="content-card">
+                    <div class="slide-header">
+                        <div class="slide-number">Slide 12 of 15</div>
+                        <h2 class="slide-title">Special Fire Safety Situations</h2>
+                        <p class="slide-subtitle">Additional scenarios to understand</p>
+                    </div>
+                    <div class="slide-content">
+                        <p>Some fire situations require specific responses. Know how to react in these scenarios:</p>
+                        <div class="evacuation-steps">
+                            <div class="evac-step">
+                                <div class="evac-number">&#128293;</div>
+                                <div class="evac-content">
+                                    <h4>If Your Clothes Catch Fire</h4>
+                                    <p><strong>STOP, DROP, and ROLL.</strong> Stop moving immediately. Drop to the ground. Cover your face with hands. Roll over and over to smother flames. Do NOT run&mdash;running fans the flames.</p>
+                                </div>
+                            </div>
+                            <div class="evac-step">
+                                <div class="evac-number">&#128682;</div>
+                                <div class="evac-content">
+                                    <h4>If Trapped in a Room</h4>
+                                    <p>Close the door. Seal cracks with cloth or tape. Signal for help at the window. Call 911 and give your exact location. Don't break windows unless necessary (smoke may rush in).</p>
+                                </div>
+                            </div>
+                            <div class="evac-step">
+                                <div class="evac-number">&#127970;</div>
+                                <div class="evac-content">
+                                    <h4>High-Rise Buildings</h4>
+                                    <p>Know stairwell locations. Never use elevators. If smoke in stairwell, try alternate stairwell. If all stairwells blocked, return to office, close door, seal cracks, and call for help.</p>
+                                </div>
+                            </div>
+                            <div class="evac-step">
+                                <div class="evac-number">&#9855;</div>
+                                <div class="evac-content">
+                                    <h4>Assisting People with Disabilities</h4>
+                                    <p>Ask how you can help&mdash;don't assume. For wheelchair users: If safe, help evacuate using evacuation chair or carry. If not safe, help to stairwell landing and alert firefighters immediately.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="info-box danger">
+                            <div class="info-box-title">&#9763; Chemical Fires</div>
+                            <div class="info-box-content">
+                                If fire involves chemicals or hazardous materials: <strong>EVACUATE IMMEDIATELY.</strong> Do not attempt to fight chemical fires. Alert emergency responders about the specific chemicals involved. Refer to Safety Data Sheets (SDS) if safe to do so.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 13: Quiz Question 1 -->
+            <div class="slide" data-slide="13">
+                <div class="content-card">
+                    <div class="slide-header">
+                        <div class="slide-number">Quiz Question 1 of 3</div>
+                        <h2 class="slide-title">Knowledge Check</h2>
+                    </div>
+                    <div class="slide-content">
+                        <div class="quiz-question">
+                            What does the "A" in the PASS technique stand for when using a fire extinguisher?
+                        </div>
+                        <div class="quiz-options" id="q1-options">
+                            <div class="quiz-option" data-q="1" data-val="A">Activate the alarm before attempting to extinguish</div>
+                            <div class="quiz-option" data-q="1" data-val="B">Aim low at the base of the fire</div>
+                            <div class="quiz-option" data-q="1" data-val="C">Avoid inhaling smoke while fighting the fire</div>
+                            <div class="quiz-option" data-q="1" data-val="D">Alert others in the area before using the extinguisher</div>
+                        </div>
+                        <div class="quiz-feedback" id="fb-1"></div>
+                        <div class="quiz-btn-group">
+                            <button class="btn btn-gold" id="submit-1" onclick="submitQuiz(1)" disabled>Submit Answer</button>
+                            <button class="btn btn-outline" id="next-q-1" onclick="nextSlide()" style="display: none;">Next Question &rarr;</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 14: Quiz Question 2 -->
+            <div class="slide" data-slide="14">
+                <div class="content-card">
+                    <div class="slide-header">
+                        <div class="slide-number">Quiz Question 2 of 3</div>
+                        <h2 class="slide-title">Knowledge Check</h2>
+                    </div>
+                    <div class="slide-content">
+                        <div class="quiz-question">
+                            Which class of fire involves flammable liquids such as gasoline, oil, and solvents?
+                        </div>
+                        <div class="quiz-options" id="q2-options">
+                            <div class="quiz-option" data-q="2" data-val="A">Class A</div>
+                            <div class="quiz-option" data-q="2" data-val="B">Class B</div>
+                            <div class="quiz-option" data-q="2" data-val="C">Class C</div>
+                            <div class="quiz-option" data-q="2" data-val="D">Class K</div>
+                        </div>
+                        <div class="quiz-feedback" id="fb-2"></div>
+                        <div class="quiz-btn-group">
+                            <button class="btn btn-gold" id="submit-2" onclick="submitQuiz(2)" disabled>Submit Answer</button>
+                            <button class="btn btn-outline" id="next-q-2" onclick="nextSlide()" style="display: none;">Next Question &rarr;</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 15: Quiz Question 3 -->
+            <div class="slide" data-slide="15">
+                <div class="content-card">
+                    <div class="slide-header">
+                        <div class="slide-number">Quiz Question 3 of 3</div>
+                        <h2 class="slide-title">Knowledge Check</h2>
+                    </div>
+                    <div class="slide-content">
+                        <div class="quiz-question">
+                            What should you do FIRST when you hear a fire alarm?
+                        </div>
+                        <div class="quiz-options" id="q3-options">
+                            <div class="quiz-option" data-q="3" data-val="A">Investigate to see if there is an actual fire</div>
+                            <div class="quiz-option" data-q="3" data-val="B">Gather your personal belongings before evacuating</div>
+                            <div class="quiz-option" data-q="3" data-val="C">Stop work immediately and begin evacuation</div>
+                            <div class="quiz-option" data-q="3" data-val="D">Wait for a supervisor to tell you what to do</div>
+                        </div>
+                        <div class="quiz-feedback" id="fb-3"></div>
+                        <div class="quiz-btn-group">
+                            <button class="btn btn-gold" id="submit-3" onclick="submitQuiz(3)" disabled>Submit Answer</button>
+                            <button class="btn btn-outline" id="next-q-3" onclick="nextSlide()" style="display: none;">View Results &rarr;</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 16: Results -->
+            <div class="slide" data-slide="16">
+                <div class="results-card">
+                    <div class="results-icon" id="rIcon">&#127919;</div>
+                    <div class="results-score" id="rScore">0 / 3</div>
+                    <h2 class="results-title" id="rTitle">Quiz Complete</h2>
+                    <p class="results-message" id="rMsg">Calculating your results...</p>
+                    <div class="results-katie" id="rKatie">"Let's see how you did!"</div>
+                    <div class="results-buttons" id="rBtns">
+                        <button class="btn btn-gold">Loading...</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Navigation Bar -->
+    <nav class="nav-bar">
+        <div class="nav-inner">
+            <button class="nav-btn" id="prevBtn" onclick="prevSlide()">
+                &larr; Previous
+            </button>
+            <span class="slide-indicator" id="slideIndicator">Slide 1 of 15</span>
+            <button class="nav-btn nav-next" id="nextBtn" onclick="nextSlide()">
+                Next &rarr;
+            </button>
+        </div>
+    </nav>
+    <script>
+    (function() {
+        'use strict';
+        // ═══ CONFIG ═══
+        var TOTAL_SLIDES = 16;
+        var TOTAL_CONTENT = 15;
+        var MODULE_KEY = 'fire-safety';
+        // ═══ STATE ═══
+        var currentSlide = 1;
+        var quizAnswers = { 1: null, 2: null, 3: null };
+        var quizSubmitted = { 1: false, 2: false, 3: false };
+        var quizScore = 0;
+        var quizCorrectAnswers = {
+            1: 'B',
+            2: 'B',
+            3: 'C'
+        };
+        var feedbackMessages = {
+            1: {
+                correct: '\u2713 Correct! The "A" in PASS stands for Aim low at the base of the fire, not at the flames.',
+                incorrect: '\u2717 Incorrect. The "A" in PASS stands for Aim low at the base of the fire. This targets the fuel source, not the flames.'
+            },
+            2: {
+                correct: '\u2713 Correct! Class B fires involve flammable liquids like gasoline, oil, and solvents.',
+                incorrect: '\u2717 Incorrect. Class B fires involve flammable liquids. Class A is ordinary combustibles, Class C is electrical, and Class K is kitchen fires.'
+            },
+            3: {
+                correct: '\u2713 Correct! You should stop work immediately and begin evacuation when a fire alarm sounds.',
+                incorrect: '\u2717 Incorrect. Never investigate or wait. When a fire alarm sounds, stop work immediately and evacuate.'
+            }
+        };
+        // ═══ NAVIGATION ═══
+        function goToSlide(n) {
+            if (n < 1 || n > TOTAL_SLIDES) return;
+            currentSlide = n;
+            updateUI();
+            saveSlideProgress();
+        }
+        window.nextSlide = function() { goToSlide(currentSlide + 1); };
+        window.prevSlide = function() { goToSlide(currentSlide - 1); };
+        // ═══ UI UPDATE ═══
+        function updateUI() {
+            document.querySelectorAll('.slide').forEach(function(s) { s.classList.remove('active'); });
+            var activeSlide = document.querySelector('[data-slide="' + currentSlide + '"]');
+            if (activeSlide) activeSlide.classList.add('active');
+            var progressPct = ((currentSlide - 1) / (TOTAL_CONTENT - 1)) * 100;
+            document.getElementById('progressFill').style.width = Math.min(100, progressPct) + '%';
+            document.getElementById('progressPct').textContent = Math.round(Math.min(100, progressPct)) + '%';
+            if (currentSlide <= TOTAL_CONTENT) {
+                document.getElementById('progressLabel').textContent = 'Slide ' + currentSlide + ' of ' + TOTAL_CONTENT;
+                document.getElementById('slideIndicator').textContent = 'Slide ' + currentSlide + ' of ' + TOTAL_CONTENT;
+            } else {
+                document.getElementById('progressLabel').textContent = 'Results';
+                document.getElementById('slideIndicator').textContent = 'Results';
+            }
+            document.getElementById('prevBtn').disabled = currentSlide === 1;
+            document.getElementById('nextBtn').disabled = currentSlide === TOTAL_SLIDES;
+            if (currentSlide === 16) buildResults();
+            document.querySelector('.content-wrapper').scrollTop = 0;
+        }
+        // ═══ KEYBOARD NAV ═══
+        document.addEventListener('keydown', function(e) {
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+            if (e.key === 'ArrowRight' || e.key === 'Right') { e.preventDefault(); nextSlide(); }
+            else if (e.key === 'ArrowLeft' || e.key === 'Left') { e.preventDefault(); prevSlide(); }
+        });
+        // ═══ QUIZ HANDLING ═══
+        document.querySelectorAll('.quiz-option').forEach(function(opt) {
+            opt.addEventListener('click', function() {
+                var qNum = parseInt(this.getAttribute('data-q'));
+                if (quizSubmitted[qNum]) return;
+                var container = document.getElementById('q' + qNum + '-options');
+                container.querySelectorAll('.quiz-option').forEach(function(o) { o.classList.remove('selected'); });
+                this.classList.add('selected');
+                quizAnswers[qNum] = this.getAttribute('data-val');
+                document.getElementById('submit-' + qNum).disabled = false;
+            });
+        });
+        window.submitQuiz = function(qNum) {
+            if (quizSubmitted[qNum]) return;
+            quizSubmitted[qNum] = true;
+            var userAnswer = quizAnswers[qNum];
+            var correctAnswer = quizCorrectAnswers[qNum];
+            var isCorrect = (userAnswer === correctAnswer);
+            var container = document.getElementById('q' + qNum + '-options');
+            container.querySelectorAll('.quiz-option').forEach(function(opt) {
+                opt.classList.add('disabled');
+                var val = opt.getAttribute('data-val');
+                if (val === correctAnswer) opt.classList.add('correct');
+                else if (opt.classList.contains('selected') && !isCorrect) opt.classList.add('incorrect');
+            });
+            var fb = document.getElementById('fb-' + qNum);
+            if (isCorrect) {
+                fb.textContent = feedbackMessages[qNum].correct;
+                fb.className = 'quiz-feedback show correct-fb';
+                quizScore++;
+            } else {
+                fb.textContent = feedbackMessages[qNum].incorrect;
+                fb.className = 'quiz-feedback show incorrect-fb';
+            }
+            document.getElementById('submit-' + qNum).style.display = 'none';
+            document.getElementById('next-q-' + qNum).style.display = '';
+        };
+        // ═══ BUILD RESULTS ═══
+        function buildResults() {
+            var icon = document.getElementById('rIcon');
+            var score = document.getElementById('rScore');
+            var title = document.getElementById('rTitle');
+            var msg = document.getElementById('rMsg');
+            var btns = document.getElementById('rBtns');
+            var katie = document.getElementById('rKatie');
+            score.textContent = quizScore + ' / 3';
+            if (quizScore === 3) {
+                icon.textContent = '\uD83C\uDF89';
+                title.textContent = 'Perfect Score!';
+                msg.textContent = 'Outstanding! You have mastered fire safety principles and are ready to respond to fire emergencies.';
+                btns.innerHTML = '<button class="btn btn-success" onclick="completeModule()">\u2713 Complete Module & Return to Dashboard</button>';
+                katie.textContent = '"Excellent work! You\'re now prepared to prevent fires and respond to emergencies. Stay safe out there!"';
+            } else if (quizScore >= 2) {
+                icon.textContent = '\u2705';
+                title.textContent = 'You Passed!';
+                msg.textContent = 'Great job! You demonstrated solid understanding of fire safety fundamentals.';
+                btns.innerHTML = '<button class="btn btn-success" onclick="completeModule()">\u2713 Complete Module & Return to Dashboard</button>';
+                katie.textContent = '"Well done! You understand the key concepts. Remember: when in doubt, get out!"';
+            } else {
+                icon.textContent = '\uD83D\uDCDA';
+                title.textContent = 'Not Quite Yet';
+                msg.textContent = 'You need 2 out of 3 correct to pass this module. Review the lesson and try again!';
+                btns.innerHTML = '<button class="btn btn-gold" onclick="retakeQuiz()">\u21BB Retake Quiz</button>' +
+                    '<button class="btn btn-outline" onclick="goToSlide(3)">\u2191 Review Lesson</button>';
+                katie.textContent = '"Don\'t worry! Fire safety is crucial. Review the slides carefully and give it another try!"';
+            }
+            saveQuizProgress();
+        }
+        // ═══ RETAKE QUIZ ═══
+        window.retakeQuiz = function() {
+            quizAnswers = { 1: null, 2: null, 3: null };
+            quizSubmitted = { 1: false, 2: false, 3: false };
+            quizScore = 0;
+            for (var q = 1; q <= 3; q++) {
+                var container = document.getElementById('q' + q + '-options');
+                container.querySelectorAll('.quiz-option').forEach(function(opt) {
+                    opt.classList.remove('selected', 'correct', 'incorrect', 'disabled');
+                });
+                document.getElementById('fb-' + q).className = 'quiz-feedback';
+                document.getElementById('fb-' + q).textContent = '';
+                document.getElementById('submit-' + q).style.display = '';
+                document.getElementById('submit-' + q).disabled = true;
+                document.getElementById('next-q-' + q).style.display = 'none';
+            }
+            goToSlide(13);
+        };
+        // ═══ LOCAL STORAGE ═══
+        function getProgress() {
+            try {
+                var d = localStorage.getItem('safetyverse-progress');
+                return d ? JSON.parse(d) : {};
+            } catch(e) { return {}; }
+        }
+        function saveSlideProgress() {
+            try {
+                var p = getProgress();
+                if (!p.modules) p.modules = {};
+                if (!p.modules[MODULE_KEY]) p.modules[MODULE_KEY] = { completed: false, quizScore: 0, attempts: 0, lastAttempt: null };
+                p.modules[MODULE_KEY].currentSlide = currentSlide;
+                p.modules[MODULE_KEY].totalSlides = TOTAL_SLIDES;
+                localStorage.setItem('safetyverse-progress', JSON.stringify(p));
+            } catch(e) {}
+        }
+        function saveQuizProgress() {
+            try {
+                var p = getProgress();
+                if (!p.modules) p.modules = {};
+                if (!p.modules[MODULE_KEY]) p.modules[MODULE_KEY] = { completed: false, quizScore: 0, attempts: 0 };
+                var mod = p.modules[MODULE_KEY];
+                mod.quizScore = quizScore;
+                mod.attempts = (mod.attempts || 0) + 1;
+                mod.lastAttempt = new Date().toISOString();
+                if (quizScore >= 2) mod.completed = true;
+                localStorage.setItem('safetyverse-progress', JSON.stringify(p));
+            } catch(e) {}
+        }
+        window.completeModule = function() {
+            try {
+                var p = getProgress();
+                if (!p.modules) p.modules = {};
+                if (!p.modules[MODULE_KEY]) p.modules[MODULE_KEY] = { quizScore: 0, attempts: 0 };
+                p.modules[MODULE_KEY].completed = true;
+                p.modules[MODULE_KEY].completedAt = new Date().toISOString();
+                p.modules[MODULE_KEY].quizScore = quizScore;
+                localStorage.setItem('safetyverse-progress', JSON.stringify(p));
+            } catch(e) {}
+            window.location.href = '../../user-dashboard/index.html';
+        };
+        // ═══ RESTORE PROGRESS ON LOAD ═══
+        function restoreProgress() {
+            try {
+                var p = getProgress();
+                if (p.modules && p.modules[MODULE_KEY]) {
+                    var mod = p.modules[MODULE_KEY];
+                    if (mod.completed) {
+                        var introCard = document.querySelector('.intro-card');
+                        if (introCard) {
+                            var badge = document.createElement('div');
+                            badge.style.cssText = 'position:absolute;top:20px;right:20px;background:var(--success);color:white;font-size:12px;font-weight:700;padding:5px 16px;border-radius:20px;z-index:5;';
+                            badge.textContent = '\u2713 Completed';
+                            introCard.appendChild(badge);
+                        }
+                    }
+                }
+            } catch(e) {}
+        }
+        // ═══ INIT ═══
+        restoreProgress();
+        updateUI();
+    })();
+    </script>
+</body>
+</html>

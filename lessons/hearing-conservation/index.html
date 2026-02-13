@@ -1,0 +1,1902 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="logo.png?v=2">
+    <title>Module 15: Hearing Conservation - SafetyVerse</title>
+    <style>
+        /* ═══════════════════════════════════════════
+           CSS VARIABLES & RESET
+           ═══════════════════════════════════════════ */
+        :root {
+            --primary: #FFD700;
+            --primary-dark: #E6C200;
+            --secondary: #FF8C00;
+            --secondary-dark: #E67A00;
+            --bg-clay: #F5E6D3;
+            --bg-clay-dark: #E8D5C0;
+            --bg-clay-light: #FAF0E6;
+            --text-dark: #333333;
+            --text-medium: #555555;
+            --text-light: #777777;
+            --accent-black: #1A1A1A;
+            --white: #FFFFFF;
+            --success: #4CAF50;
+            --success-dark: #388E3C;
+            --error: #E53935;
+            --error-dark: #C62828;
+            --info: #2196F3;
+            --warning: #FF9800;
+            --hearing-purple: #9C27B0;
+            --shadow-soft: 0 4px 15px rgba(0,0,0,0.1);
+            --shadow-medium: 0 6px 25px rgba(0,0,0,0.15);
+            --shadow-hard: 0 8px 30px rgba(0,0,0,0.2);
+            --shadow-clay: 4px 4px 0px rgba(0,0,0,0.15), inset 0 2px 4px rgba(255,255,255,0.3);
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 20px;
+            --radius-xl: 28px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --font-heading: 'Segoe UI', 'Arial Black', sans-serif;
+            --font-body: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body {
+            height: 100%;
+            overflow: hidden;
+        }
+        body {
+            font-family: var(--font-body);
+            background-color: var(--bg-clay);
+            color: var(--text-dark);
+            line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+        }
+        /* Clay texture */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 9999;
+            background-image:
+                radial-gradient(circle at 20% 50%, rgba(139,90,43,0.03) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(139,90,43,0.02) 0%, transparent 50%),
+                radial-gradient(circle at 50% 80%, rgba(139,90,43,0.03) 0%, transparent 50%);
+        }
+        /* ═══════════════════════════════════════════
+           HEADER
+           ═══════════════════════════════════════════ */
+        .header {
+            background: linear-gradient(180deg, var(--accent-black) 0%, #2A2A2A 100%);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            border-bottom: 4px solid var(--primary);
+            z-index: 100;
+            flex-shrink: 0;
+        }
+        .header-inner {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 64px;
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            flex-shrink: 0;
+        }
+        .logo-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .logo-icon img {
+            display: block;
+            height: 50px;
+            width: auto;
+            image-rendering: -webkit-optimize-contrast;
+            image-rendering: crisp-edges;
+            box-shadow: 4px 4px 0px rgba(0,0,0,0.15);
+            border-radius: 12px;
+            transition: transform 0.2s ease;
+        }
+        .logo-text {
+            font-family: var(--font-heading);
+            font-size: 22px; font-weight: 900;
+            color: var(--white);
+            letter-spacing: -0.5px;
+        }
+        .logo-text em {
+            color: var(--primary);
+            font-style: normal;
+        }
+        .header-center {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        .header-module-tag {
+            background: rgba(255,215,0,0.15);
+            color: var(--primary);
+            font-size: 11px; font-weight: 800;
+            padding: 3px 10px;
+            border-radius: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+        }
+        .header-module-title {
+            color: rgba(255,255,255,0.8);
+            font-size: 14px; font-weight: 600;
+        }
+        .back-btn {
+            display: flex; align-items: center; gap: 6px;
+            text-decoration: none;
+            color: rgba(255,255,255,0.7);
+            font-size: 13px; font-weight: 600;
+            padding: 7px 14px;
+            border-radius: var(--radius-sm);
+            transition: var(--transition);
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .back-btn:hover {
+            color: var(--white);
+            background: rgba(255,255,255,0.12);
+            border-color: rgba(255,255,255,0.2);
+        }
+        /* ═══════════════════════════════════════════
+           PROGRESS BAR
+           ═══════════════════════════════════════════ */
+        .progress-bar {
+            background: var(--accent-black);
+            border-bottom: 1px solid rgba(255,215,0,0.15);
+            flex-shrink: 0;
+            z-index: 99;
+        }
+        .progress-bar-inner {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 8px 24px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+        .progress-label {
+            font-size: 12px; font-weight: 700;
+            color: rgba(255,255,255,0.5);
+            white-space: nowrap;
+            min-width: 90px;
+        }
+        .progress-track {
+            flex: 1;
+            height: 6px;
+            background: rgba(255,255,255,0.08);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 3px;
+            transition: width 0.4s ease;
+        }
+        .progress-pct {
+            font-size: 12px; font-weight: 700;
+            color: var(--primary);
+            min-width: 40px;
+            text-align: right;
+        }
+        /* ═══════════════════════════════════════════
+           MAIN CONTENT AREA
+           ═══════════════════════════════════════════ */
+        .content-wrapper {
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 40px 24px 100px;
+        }
+        /* ═══════════════════════════════════════════
+           SLIDES
+           ═══════════════════════════════════════════ */
+        .slide {
+            display: none;
+            animation: slideIn 0.3s ease;
+        }
+        .slide.active { display: block; }
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        /* Intro Card (Slide 1) */
+        .intro-card {
+            background: linear-gradient(135deg, #9C27B0 0%, #7B1FA2 100%);
+            border-radius: var(--radius-xl);
+            padding: 60px 50px;
+            box-shadow: var(--shadow-hard);
+            color: var(--white);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .intro-card::before {
+            content: '';
+            position: absolute;
+            top: -100px; right: -100px;
+            width: 300px; height: 300px;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+        }
+        .intro-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+            animation: soundWave 2s ease-in-out infinite;
+        }
+        @keyframes soundWave {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.15); }
+        }
+        .intro-title {
+            font-family: var(--font-heading);
+            font-size: 48px; font-weight: 900;
+            margin-bottom: 12px;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.2);
+        }
+        .intro-subtitle {
+            font-size: 20px;
+            margin-bottom: 30px;
+            opacity: 0.95;
+        }
+        .intro-meta {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            flex-wrap: wrap;
+        }
+        .intro-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 15px; font-weight: 600;
+        }
+        .intro-meta-item span:first-child {
+            font-size: 20px;
+        }
+        /* Content Card */
+        .content-card {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            padding: 50px;
+            box-shadow: var(--shadow-medium);
+            margin-bottom: 30px;
+        }
+        .slide-header {
+            margin-bottom: 35px;
+        }
+        .slide-number {
+            font-size: 11px; font-weight: 800;
+            color: var(--text-light);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 10px;
+        }
+        .slide-title {
+            font-family: var(--font-heading);
+            font-size: 36px; font-weight: 900;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+            line-height: 1.2;
+        }
+        .slide-subtitle {
+            font-size: 17px;
+            color: var(--text-medium);
+        }
+        .slide-content {
+            font-size: 17px;
+            line-height: 1.8;
+            color: var(--text-dark);
+        }
+        .slide-content p {
+            margin-bottom: 20px;
+        }
+        .slide-content strong {
+            color: var(--hearing-purple);
+            font-weight: 700;
+        }
+        /* Katie Message */
+        .katie-message {
+            display: flex;
+            align-items: flex-start;
+            gap: 18px;
+            background: linear-gradient(135deg, #FFFDE7 0%, #FFF9C4 100%);
+            border-left: 5px solid var(--primary);
+            padding: 24px;
+            border-radius: var(--radius-md);
+            margin-bottom: 35px;
+            box-shadow: 0 3px 12px rgba(255,215,0,0.15);
+        }
+        .katie-avatar {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            object-fit: cover;
+            object-position: center 48%;
+            background: white;
+            border: 4px solid var(--primary);
+            padding: 6px;
+            flex-shrink: 0;
+            box-shadow: var(--shadow-soft);
+        }
+        .katie-bubble {
+            flex: 1;
+        }
+        .katie-name {
+            font-weight: 800;
+            color: var(--secondary);
+            margin-bottom: 8px;
+            font-size: 15px;
+        }
+        .katie-text {
+            font-size: 16px;
+            color: var(--text-dark);
+            line-height: 1.7;
+        }
+        /* Info Boxes */
+        .info-box {
+            background: linear-gradient(135deg, #E3F2FD 0%, #BBDEFB 100%);
+            border-left: 5px solid var(--info);
+            padding: 22px 24px;
+            border-radius: var(--radius-md);
+            margin: 28px 0;
+        }
+        .info-box.warning {
+            background: linear-gradient(135deg, #FFF3E0 0%, #FFE0B2 100%);
+            border-left-color: var(--warning);
+        }
+        .info-box.danger {
+            background: linear-gradient(135deg, #FFEBEE 0%, #FFCDD2 100%);
+            border-left-color: var(--error);
+        }
+        .info-box.success {
+            background: linear-gradient(135deg, #E8F5E9 0%, #C8E6C9 100%);
+            border-left-color: var(--success);
+        }
+        .info-box-title {
+            font-weight: 800;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 16px;
+        }
+        .info-box-content {
+            font-size: 15px;
+            line-height: 1.7;
+        }
+        .info-box-content ul, .info-box-content ol {
+            margin-top: 10px;
+            padding-left: 20px;
+        }
+        .info-box-content li {
+            margin-bottom: 6px;
+        }
+        /* Lists */
+        .content-list {
+            list-style: none;
+            margin: 28px 0;
+        }
+        .content-list li {
+            padding: 14px 0 14px 36px;
+            position: relative;
+            border-bottom: 1px solid rgba(0,0,0,0.06);
+            font-size: 16px;
+        }
+        .content-list li:last-child {
+            border-bottom: none;
+        }
+        .content-list li::before {
+            content: '&#128066;';
+            position: absolute;
+            left: 8px;
+            font-size: 18px;
+        }
+        /* Noise Level Grid */
+        .noise-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 16px;
+            margin: 28px 0;
+        }
+        .noise-card {
+            background: var(--bg-clay-light);
+            border: 3px solid var(--bg-clay-dark);
+            border-radius: var(--radius-md);
+            padding: 20px;
+            text-align: center;
+            transition: var(--transition);
+        }
+        .noise-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-medium);
+        }
+        .noise-level {
+            font-size: 36px;
+            font-weight: 900;
+            color: var(--hearing-purple);
+            margin-bottom: 8px;
+            font-family: var(--font-heading);
+        }
+        .noise-source {
+            font-weight: 800;
+            font-size: 16px;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+        }
+        .noise-effect {
+            font-size: 13px;
+            color: var(--text-medium);
+            line-height: 1.5;
+        }
+        /* HPD Grid */
+        .hpd-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin: 28px 0;
+        }
+        .hpd-card {
+            background: var(--bg-clay-light);
+            border: 3px solid var(--hearing-purple);
+            border-radius: var(--radius-md);
+            padding: 26px;
+            transition: var(--transition);
+        }
+        .hpd-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-medium);
+        }
+        .hpd-icon {
+            font-size: 56px;
+            margin-bottom: 14px;
+            text-align: center;
+        }
+        .hpd-title {
+            font-weight: 900;
+            font-size: 20px;
+            color: var(--text-dark);
+            margin-bottom: 12px;
+            font-family: var(--font-heading);
+            text-align: center;
+        }
+        .hpd-desc {
+            font-size: 15px;
+            color: var(--text-dark);
+            line-height: 1.6;
+            margin-bottom: 12px;
+        }
+        /* Steps Grid */
+        .steps-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin: 28px 0;
+        }
+        .step-card {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            background: var(--bg-clay-light);
+            padding: 20px;
+            border-radius: var(--radius-md);
+            border-left: 5px solid var(--hearing-purple);
+        }
+        .step-number {
+            background: var(--hearing-purple);
+            color: var(--white);
+            min-width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+        .step-content {
+            flex: 1;
+        }
+        .step-content h5 {
+            font-weight: 800;
+            margin-bottom: 6px;
+            color: var(--text-dark);
+            font-size: 16px;
+        }
+        .step-content p {
+            font-size: 14px;
+            color: var(--text-medium);
+            line-height: 1.6;
+            margin: 0;
+        }
+        /* ═══════════════════════════════════════════
+           QUIZ STYLES
+           ═══════════════════════════════════════════ */
+        .quiz-question {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 28px;
+            line-height: 1.5;
+        }
+        .quiz-options {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            margin-bottom: 24px;
+        }
+        .quiz-option {
+            background: var(--bg-clay-light);
+            border: 3px solid var(--bg-clay-dark);
+            padding: 18px 24px;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 16px;
+            font-weight: 600;
+            position: relative;
+        }
+        .quiz-option:hover:not(.disabled) {
+            background: var(--bg-clay);
+            border-color: var(--primary);
+            transform: translateX(6px);
+        }
+        .quiz-option.selected {
+            background: var(--primary);
+            border-color: var(--primary-dark);
+            color: var(--accent-black);
+        }
+        .quiz-option.correct {
+            background: var(--success);
+            border-color: var(--success-dark);
+            color: var(--white);
+        }
+        .quiz-option.incorrect {
+            background: var(--error);
+            border-color: var(--error-dark);
+            color: var(--white);
+        }
+        .quiz-option.disabled {
+            cursor: default;
+        }
+        .quiz-feedback {
+            display: none;
+            padding: 18px 22px;
+            border-radius: var(--radius-md);
+            font-size: 16px;
+            line-height: 1.7;
+            margin-top: 20px;
+        }
+        .quiz-feedback.show {
+            display: block;
+        }
+        .quiz-feedback.correct-fb {
+            background: #E8F5E9;
+            color: #2E7D32;
+            border-left: 5px solid var(--success);
+        }
+        .quiz-feedback.incorrect-fb {
+            background: #FFEBEE;
+            color: #C62828;
+            border-left: 5px solid var(--error);
+        }
+        /* Quiz Buttons */
+        .quiz-btn-group {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+        }
+        /* Results Screen */
+        .results-card {
+            background: var(--white);
+            border-radius: var(--radius-xl);
+            padding: 60px 50px;
+            box-shadow: var(--shadow-hard);
+            text-align: center;
+        }
+        .results-icon {
+            font-size: 100px;
+            margin-bottom: 24px;
+            animation: scaleIn 0.6s ease;
+        }
+        @keyframes scaleIn {
+            from { transform: scale(0) rotate(-180deg); }
+            to { transform: scale(1) rotate(0); }
+        }
+        .results-score {
+            font-family: var(--font-heading);
+            font-size: 72px;
+            font-weight: 900;
+            color: var(--primary);
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 0 rgba(0,0,0,0.1);
+        }
+        .results-title {
+            font-family: var(--font-heading);
+            font-size: 42px;
+            font-weight: 900;
+            color: var(--text-dark);
+            margin-bottom: 16px;
+        }
+        .results-message {
+            font-size: 19px;
+            color: var(--text-medium);
+            margin-bottom: 36px;
+            line-height: 1.7;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .results-katie {
+            background: linear-gradient(135deg, #FFFDE7 0%, #FFF9C4 100%);
+            border-left: 5px solid var(--primary);
+            padding: 20px 24px;
+            border-radius: var(--radius-md);
+            font-size: 17px;
+            font-style: italic;
+            color: var(--text-dark);
+            margin-bottom: 36px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .results-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+        /* ═══════════════════════════════════════════
+           BUTTONS
+           ═══════════════════════════════════════════ */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 14px 32px;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-family: var(--font-heading);
+            font-size: 16px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+            box-shadow: var(--shadow-clay);
+        }
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .btn-gold {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: var(--accent-black);
+        }
+        .btn-gold:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-hard);
+        }
+        .btn-success {
+            background: var(--success);
+            color: var(--white);
+        }
+        .btn-success:hover:not(:disabled) {
+            background: var(--success-dark);
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-hard);
+        }
+        .btn-outline {
+            background: var(--white);
+            color: var(--text-dark);
+            border: 2px solid var(--bg-clay-dark);
+        }
+        .btn-outline:hover:not(:disabled) {
+            background: var(--bg-clay-light);
+            border-color: var(--primary);
+        }
+        /* ═══════════════════════════════════════════
+           NAVIGATION
+           ═══════════════════════════════════════════ */
+        .nav-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(180deg, rgba(26,26,26,0.97) 0%, rgba(0,0,0,0.98) 100%);
+            border-top: 3px solid var(--primary);
+            padding: 16px 24px;
+            z-index: 100;
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.3);
+        }
+        .nav-inner {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+        }
+        .nav-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            border: 2px solid rgba(255,255,255,0.15);
+            border-radius: var(--radius-sm);
+            font-family: var(--font-heading);
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: var(--transition);
+            background: rgba(255,255,255,0.08);
+            color: var(--white);
+            text-decoration: none;
+        }
+        .nav-btn:hover:not(:disabled) {
+            background: rgba(255,255,255,0.15);
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+        .nav-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+        .nav-btn.nav-next {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: var(--accent-black);
+            border-color: transparent;
+        }
+        .nav-btn.nav-next:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255,215,0,0.4);
+        }
+        .slide-indicator {
+            color: rgba(255,255,255,0.6);
+            font-size: 13px;
+            font-weight: 600;
+        }
+        /* ═══════════════════════════════════════════
+           RESPONSIVE
+           ═══════════════════════════════════════════ */
+        @media (max-width: 768px) {
+            .container { padding: 30px 20px 100px; }
+            .content-card { padding: 32px 24px; }
+            .intro-card { padding: 40px 30px; }
+            .intro-title { font-size: 36px; }
+            .slide-title { font-size: 28px; }
+            .noise-grid { grid-template-columns: repeat(2, 1fr); }
+            .hpd-grid { grid-template-columns: 1fr; }
+            .nav-inner { flex-direction: column; gap: 12px; }
+            .nav-btn { width: 100%; justify-content: center; }
+            .header-center { position: static; transform: none; }
+        }
+        @media (max-width: 480px) {
+            .intro-meta { flex-direction: column; gap: 16px; }
+            .katie-message { flex-direction: column; text-align: center; }
+            .noise-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-inner">
+            <a href="../../user-dashboard/index.html" class="logo">
+                <div class="logo-icon"><img src="logo.png?v=2" alt="SafetyVerse Logo"></div>
+                <div class="logo-text">Safety<em>Verse</em></div>
+            </a>
+            <div class="header-center">
+                <span class="header-module-tag">MODULE 15</span>
+                <span class="header-module-title">Hearing Conservation</span>
+            </div>
+            <a href="../../user-dashboard/index.html" class="back-btn">
+                <span>←</span>
+                <span>Back to Dashboard</span>
+            </a>
+        </div>
+    </header>
+    <!-- Progress Bar -->
+    <div class="progress-bar">
+        <div class="progress-bar-inner">
+            <span class="progress-label" id="progressLabel">Slide 1 of 15</span>
+            <div class="progress-track">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <span class="progress-pct" id="progressPct">0%</span>
+        </div>
+    </div>
+    <!-- Main Content -->
+    <div class="content-wrapper">
+        <div class="container">
+            <!-- Slide 1: Intro -->
+            <div class="slide active" data-slide="1">
+                <div class="intro-card">
+                    <div class="intro-icon">&#128066;</div>
+                    <h1 class="intro-title">Hearing Conservation</h1>
+                    <p class="intro-subtitle">Protect Your Hearing for Life</p>
+                    <div class="intro-meta">
+                        <div class="intro-meta-item">
+                            <span>&#9201;&#65039;</span>
+                            <span>15 minutes</span>
+                        </div>
+                        <div class="intro-meta-item">
+                            <span>&#128218;</span>
+                            <span>Occupational Health Path</span>
+                        </div>
+                        <div class="intro-meta-item">
+                            <span>&#10003;</span>
+                            <span>OSHA 1910.95</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 2: Introduction with Katie -->
+            <div class="slide" data-slide="2">
+                <div class="content-card">
+                    <div class="katie-message">
+                        <img src="katie.png" alt="Katie" class="katie-avatar">
+                        <div class="katie-bubble">
+                            <div class="katie-name">Katie, Your Safety Guide</div>
+                            <div class="katie-text">
+                                Welcome! Hearing loss is one of the most common work-related injuries, affecting millions of workers. The worst part? It's permanent and preventable. Once hair cells in your inner ear are damaged, they don't grow back. Whether you work in manufacturing, construction, warehousing, or any noisy environment, understanding noise hazards and proper hearing protection is essential. Let's learn how to protect your hearing for life!
+                            </div>
+                        </div>
+                    </div>
+                    <div class="slide-header">
+                        <div class="slide-number">Slide 2 of 15</div>
+                        <h2 class="slide-title">Why Hearing Conservation Matters</h2>
+                    </div>
+                    <div class="slide-content">
+                        <p><strong>Noise-induced hearing loss (NIHL)</strong> is permanent damage to hearing caused by exposure to loud noise. It's 100% preventable but affects 22 million U.S. workers annually.</p>
+                        
+                        <div class="info-box danger">
+                            <div class="info-box-title">&#128680; Hearing Loss Statistics</div>
+                            <div class="info-box-content">
+                                According to OSHA and NIOSH:
+                                <ul>
+                                    <li><strong>22 million workers</strong> exposed to hazardous noise levels each year</li>
+                                    <li><strong>$242 million</strong> spent annually on workers' compensation for hearing loss</li>
+                                    <li><strong>Permanent and irreversible:</strong> Once damaged, hearing doesn't recover</li>
+                                    <li><strong>Gradual onset:</strong> Damage accumulates over years before you notice</li>
+                                    <li><strong>Affects quality of life:</strong> Difficulty communicating, social isolation, depression</li>
+                                    <li><strong>Increases accident risk:</strong> Can't hear warnings, alarms, or coworkers</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <p><strong>Learning Objectives:</strong></p>
+                        <ul class="content-list">
+                            <li>Understand how hearing works and how noise damages it</li>
+                            <li>Recognize noise levels and the 85 dB action level</li>
+                            <li>Identify types of hearing protection and when to use them</li>
+                            <li>Learn proper insertion and fit of earplugs and earmuffs</li>
+                            <li>Know the signs of noise-induced hearing loss</li>
+                            <li>Understand your employer's hearing conservation program</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 3: How Hearing Works -->
+            <div class="slide" data-slide="3">
+                <div class="content-card">
+                    <div class="slide-header">
+                        <div class="slide-number">Slide 3 of 15</div>
+                        <h2 class="slide-title">How Your Hearing Works</h2>
+                        <p class="slide-subtitle">Understanding the ear</p>
+                    </div>
+                    <div class="slide-content">
+                        <p>Understanding how your ear works helps you appreciate why protecting it is so important.</p>
+                        <div class="steps-grid">
+                            <div class="step-card">
+                                <div class="step-number">1</div>
+                                <div class="step-content">
+                                    <h5>Outer Ear (Ear Canal)</h5>
+                                    <p>Sound waves enter through the visible part of your ear and travel down the ear canal to the eardrum.</p>
+                                </div>
+                            </div>
+                            <div class="step-card">
+                                <div class="step-number">2</div>
+                                <div class="step-content">
+                                    <h5>Middle Ear (Eardrum & Bones)</h5>
+                                    <p>Sound waves vibrate the eardrum, which moves three tiny bones (ossicles). These bones amplify the vibrations and transmit them to the inner ear.</p>
+                                </div>
+                            </div>
+                            <div class="step-card">
+                                <div class="step-number">3</div>
+                                <div class="step-content">
+                                    <h5>Inner Ear (Cochlea & Hair Cells)</h5>
+                                    <p>Vibrations enter the cochlea, a snail-shaped structure filled with fluid. Inside are ~16,000 tiny hair cells. Sound waves bend these hair cells, which convert mechanical energy into electrical signals.</p>
+                                </div>
+                            </div>
+                            <div class="step-card">
+                                <div class="step-number">4</div>
+                                <div class="step-content">
+                                    <h5>Auditory Nerve to Brain</h5>
+                                    <p>Hair cells send electrical signals through the auditory nerve to your brain, where they're interpreted as sound.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="info-box danger">
+                            <div class="info-box-title">&#128148; How Noise Damages Hearing</div>
+                            <div class="info-box-content">
+                                <strong>Loud noise physically damages the hair cells in your inner ear.</strong><br><br>
+                                <strong>Short-term exposure (very loud noise):</strong> Hair cells bend too far and break. Causes immediate, permanent hearing loss. Example: explosion, gunshot without hearing protection.<br><br>
+                                <strong>Long-term exposure (moderate loud noise):</strong> Repeated stress wears down hair cells over time. They become damaged, bent, or die. This is the most common type—gradual hearing loss from years of noise exposure.<br><br>
+                                <strong>CRITICAL FACT: Hair cells DO NOT regenerate.</strong> Once damaged or dead, they're gone forever. There's no surgery, medication, or treatment to restore them. Hearing loss from noise is 100% permanent.
+                            </div>
+                        </div>
+                        <div class="info-box warning">
+                            <div class="info-box-title">&#9888;&#65039; Early Warning Signs</div>
+                            <div class="info-box-content">
+                                <ul>
+                                    <li><strong>Temporary threshold shift:</strong> Muffled hearing or ringing after noise exposure that goes away after hours/days. This is a warning—damage is starting!</li>
+                                    <li><strong>Tinnitus:</strong> Ringing, buzzing, or hissing in ears. Sign of hair cell damage.</li>
+                                    <li><strong>Difficulty understanding speech:</strong> Especially in noisy environments or on phone</li>
+                                    <li><strong>Needing to turn up TV/radio:</strong> More than others in your household</li>
+                                </ul>
+                                If you notice these signs, you're already experiencing damage. Protect your hearing NOW before it gets worse!
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+<!-- Slide 4: Noise Levels & Decibels -->
+            <div class="slide" data-slide="4">
+                <div class="content-card">
+                    <div class="slide-header">
+                        <div class="slide-number">Slide 4 of 15</div>
+                        <h2 class="slide-title">Understanding Noise Levels</h2>
+                        <p class="slide-subtitle">Decibels (dB) and exposure limits</p>
+                    </div>
+                    <div class="slide-content">
+                        <p><strong>Sound is measured in decibels (dB).</strong> The decibel scale is logarithmic—every increase of 10 dB represents a 10-fold increase in sound intensity. This means 90 dB is 10 times louder than 80 dB, not just a little louder!</p>
+                        <div class="noise-grid">
+                            <div class="noise-card">
+                                <div class="noise-level">30 dB</div>
+                                <div class="noise-source">Whisper</div>
+                                <div class="noise-effect">Very quiet, safe</div>
+                            </div>
+                            <div class="noise-card">
+                                <div class="noise-level">60 dB</div>
+                                <div class="noise-source">Normal Conversation</div>
+                                <div class="noise-effect">Comfortable, safe</div>
+                            </div>
+                            <div class="noise-card">
+                                <div class="noise-level">70 dB</div>
+                                <div class="noise-source">Vacuum Cleaner</div>
+                                <div class="noise-effect">Annoying, still safe</div>
+                            </div>
+                            <div class="noise-card">
+                                <div class="noise-level">85 dB</div>
+                                <div class="noise-source">Heavy Traffic, Lawn Mower</div>
+                                <div class="noise-effect">OSHA Action Level - Protection Required</div>
+                            </div>
+                            <div class="noise-card">
+                                <div class="noise-level">90 dB</div>
+                                <div class="noise-source">Power Tools, Blender</div>
+                                <div class="noise-effect">Hearing damage after 8 hours</div>
+                            </div>
+                            <div class="noise-card">
+                                <div class="noise-level">100 dB</div>
+                                <div class="noise-source">Chainsaw, Jackhammer</div>
+                                <div class="noise-effect">Hearing damage after 2 hours</div>
+                            </div>
+                            <div class="noise-card">
+                                <div class="noise-level">110 dB</div>
+                                <div class="noise-source">Rock Concert, Car Horn</div>
+                                <div class="noise-effect">Hearing damage after 30 minutes</div>
+                            </div>
+                            <div class="noise-card">
+                                <div class="noise-level">120 dB</div>
+                                <div class="noise-source">Thunder, Siren</div>
+                                <div class="noise-effect">Pain threshold, immediate damage possible</div>
+                            </div>
+                            <div class="noise-card">
+                                <div class="noise-level">140 dB</div>
+                                <div class="noise-source">Gunshot, Jet Engine</div>
+                                <div class="noise-effect">Immediate, permanent damage</div>
+                            </div>
+                        </div>
+                        <div class="info-box danger">
+                            <div class="info-box-title">&#128680; OSHA Exposure Limits</div>
+                            <div class="info-box-content">
+                                <strong>85 dB - Action Level (8-hour exposure):</strong><br>
+                                Employers must implement hearing conservation program: monitoring, training, hearing protection, audiometric testing.<br><br>
+                                <strong>90 dB - Permissible Exposure Limit (8-hour exposure):</strong><br>
+                                Maximum allowed without engineering controls. Hearing protection required.<br><br>
+                                <strong>Exchange Rate Rule:</strong><br>
+                                For every 5 dB increase in noise, safe exposure time is cut in half:<br>
+                                • 85 dB = 8 hours safe<br>
+                                • 90 dB = 8 hours (PEL)<br>
+                                • 95 dB = 4 hours<br>
+                                • 100 dB = 2 hours<br>
+                                • 105 dB = 1 hour<br>
+                                • 110 dB = 30 minutes<br>
+                                • 115 dB = 15 minutes<br><br>
+                                <strong>Above 115 dB:</strong> No exposure allowed without hearing protection, regardless of duration.
+                            </div>
+                        </div>
+                        <div class="info-box">
+                            <div class="info-box-title">&#128161; How to Tell If It's Too Loud</div>
+                            <div class="info-box-content">
+                                <strong>You need hearing protection if:</strong>
+                                <ul>
+                                    <li>You have to raise your voice to be heard by someone 3 feet away</li>
+                                    <li>Your ears feel "full" or you hear ringing after exposure</li>
+                                    <li>Speech sounds muffled after leaving work</li>
+                                    <li>You work with loud equipment (power tools, machinery, engines)</li>
+                                    <li>Your workplace has posted noise warnings or requires hearing protection</li>
+                                </ul>
+                                <strong>When in doubt, wear hearing protection. It's better to over-protect than under-protect.</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 5: Types of Hearing Protection -->
+            <div class="slide" data-slide="5">
+                <div class="content-card">
+                    <div class="slide-header">
+                        <div class="slide-number">Slide 5 of 15</div>
+                        <h2 class="slide-title">Types of Hearing Protection</h2>
+                        <p class="slide-subtitle">Earplugs and earmuffs</p>
+                    </div>
+                    <div class="slide-content">
+                        <p>There are two main types of hearing protection devices (HPDs). Both can be highly effective when used properly.</p>
+                        <div class="hpd-grid">
+                            <div class="hpd-card">
+                                <div class="hpd-icon">&#128268;</div>
+                                <div class="hpd-title">Earplugs</div>
+                                <div class="hpd-desc">
+                                    <strong>What they are:</strong> Small devices inserted into the ear canal to block sound.<br><br>
+                                    <strong>Types:</strong><br>
+                                    • <strong>Foam (disposable):</strong> Roll, compress, insert, expand to seal. Most common. NRR 29-33 dB. Replace daily or when dirty/damaged.<br>
+                                    • <strong>Pre-molded (reusable):</strong> Silicone or rubber. Push into ear canal. NRR 20-30 dB. Washable, last weeks/months.<br>
+                                    • <strong>Custom-molded:</strong> Made from ear impression. Most comfortable. NRR 25-30 dB. Expensive but long-lasting.<br><br>
+                                    <strong>Advantages:</strong> Small, portable, comfortable in heat, work with hard hats/safety glasses, higher NRR ratings<br><br>
+                                    <strong>Disadvantages:</strong> Require proper insertion (most people do it wrong!), need clean hands to insert, can be uncomfortable for some users
+                                </div>
+                            </div>
+                            <div class="hpd-card">
+                                <div class="hpd-icon">&#127911;</div>
+                                <div class="hpd-title">Earmuffs</div>
+                                <div class="hpd-desc">
+                                    <strong>What they are:</strong> Cushioned cups that fit over ears, connected by headband.<br><br>
+                                    <strong>Types:</strong><br>
+                                    • <strong>Passive:</strong> Foam/liquid-filled cups create seal. NRR 20-30 dB.<br>
+                                    • <strong>Electronic:</strong> Amplify quiet sounds, block loud sounds. Good for communication. NRR 20-25 dB.<br>
+                                    • <strong>Cap-mounted:</strong> Attach to hard hats. Convenient but may have lower NRR.<br><br>
+                                    <strong>Advantages:</strong> Easy to put on correctly, one-size-fits-most, reusable, visible (supervisors can see you're wearing them), good for intermittent noise<br><br>
+                                    <strong>Disadvantages:</strong> Hot in warm environments, don't work well with glasses/long hair, bulky, can interfere with hard hats, lower NRR than earplugs
+                                </div>
+                            </div>
+                        </div>
+                        <div class="info-box success">
+                            <div class="info-box-title">&#10003; Dual Protection</div>
+                            <div class="info-box-content">
+                                <strong>For very high noise (>100 dB), wear BOTH earplugs AND earmuffs.</strong> This is called "dual protection" and provides maximum noise reduction. Common in shooting ranges, around jet engines, very loud manufacturing. Don't just add the NRR ratings together—the combined protection is less than the sum.
+                            </div>
+                        </div>
+                        <div class="info-box">
+                            <div class="info-box-title">&#128202; Understanding NRR (Noise Reduction Rating)</div>
+                            <div class="info-box-content">
+                                NRR is the maximum noise reduction (in decibels) that hearing protection can provide when worn perfectly in ideal conditions. <strong>Real-world protection is usually 50% or less of the NRR rating.</strong><br><br>
+                                Example: Earplugs rated NRR 33 dB might only provide 16-17 dB of actual protection due to improper fit, insertion errors, or poor maintenance. <strong>This is why proper use is critical!</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 6: Proper Earplug Insertion -->
+            <div class="slide" data-slide="6">
+                <div class="content-card">
+                    <div class="slide-header">
+                        <div class="slide-number">Slide 6 of 15</div>
+                        <h2 class="slide-title">How to Insert Foam Earplugs Correctly</h2>
+                        <p class="slide-subtitle">Proper technique is critical</p>
+                    </div>
+                    <div class="slide-content">
+                        <p><strong>Most people insert earplugs incorrectly!</strong> Improper insertion reduces protection dramatically. Follow these steps every time:</p>
+                        <div class="steps-grid">
+                            <div class="step-card">
+                                <div class="step-number">1</div>
+                                <div class="step-content">
+                                    <h5>Wash Your Hands</h5>
+                                    <p>Clean hands prevent ear infections. Dry hands thoroughly—wet hands make foam earplugs hard to compress.</p>
+                                </div>
+                            </div>
+                            <div class="step-card">
+                                <div class="step-number">2</div>
+                                <div class="step-content">
+                                    <h5>Roll the Earplug</h5>
+                                    <p>Roll the foam earplug between your fingers into a tight, thin cylinder (about the diameter of a pencil). The smaller you compress it, the deeper it will go and the better seal you'll get.</p>
+                                </div>
+                            </div>
+                            <div class="step-card">
+                                <div class="step-number">3</div>
+                                <div class="step-content">
+                                    <h5>Reach Over Your Head</h5>
+                                    <p>Use your opposite hand to reach over your head and pull your ear UP and BACK. This straightens your ear canal and makes insertion easier. (For children, pull ear DOWN and back.)</p>
+                                </div>
+                            </div>
+                            <div class="step-card">
+                                <div class="step-number">4</div>
+                                <div class="step-content">
+                                    <h5>Insert the Earplug Deeply</h5>
+                                    <p>While holding your ear up and back, gently push the rolled earplug deep into your ear canal. Insert it as far as comfortable—aim for 2/3 of the earplug to be inside the canal. If you can see most of the earplug, it's not in far enough.</p>
+                                </div>
+                            </div>
+                            <div class="step-card">
+                                <div class="step-number">5</div>
+                                <div class="step-content">
+                                    <h5>Hold in Place</h5>
+                                    <p>Hold the earplug in place for 30-40 seconds while the foam expands. Don't let go too soon or it will pop out before fully expanding. You should feel gentle pressure as it expands to seal the ear canal.</p>
+                                </div>
+                            </div>
+                            <div class="step-card">
+                                <div class="step-number">6</div>
+                                <div class="step-content">
+                                    <h5>Check the Seal</h5>
+                                    <p>Proper fit: Your voice sounds muffled/hollow, outside sounds are significantly quieter, you can barely see the earplug from the side. <strong>If you can easily see the colored end of the earplug, it's not inserted properly—remove and try again.</strong></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="info-box danger">
+                            <div class="info-box-title">&#10060; Common Mistakes</div>
+                            <div class="info-box-content">
+                                <ul>
+                                    <li><strong>Not rolling small enough:</strong> Earplug won't go in deep enough</li>
+                                    <li><strong>Not pulling ear up and back:</strong> Can't insert deeply into curved ear canal</li>
+                                    <li><strong>Inserting straight in:</strong> Doesn't follow ear canal curve, poor seal</li>
+                                    <li><strong>Letting go too soon:</strong> Earplug pops out before expanding</li>
+                                    <li><strong>Inserting too shallow:</strong> Most common error! Only tip of earplug in canal = almost no protection</li>
+                                    <li><strong>Using dirty or damaged earplugs:</strong> Contaminated earplugs cause infections, damaged ones don't seal</li>
+                                </ul>
+                                <strong>If earplugs feel uncomfortable or you can still hear clearly, they're not inserted correctly. Remove and try again!</strong>
+                            </div>
+                        </div>
+                        <div class="info-box warning">
+                            <div class="info-box-title">&#9888;&#65039; When to Replace Earplugs</div>
+                            <div class="info-box-content">
+                                <strong>Disposable foam earplugs:</strong>
+                                <ul>
+                                    <li>Replace daily (minimum)</li>
+                                    <li>Replace immediately if dirty, torn, or won't expand</li>
+                                    <li>Don't reuse disposable earplugs—they lose effectiveness</li>
+                                </ul>
+                                <strong>Reusable earplugs:</strong>
+                                <ul>
+                                    <li>Wash with mild soap and water after each use</li>
+                                    <li>Replace when material hardens, tears, or doesn't seal well</li>
+                                    <li>Typically last weeks to months with proper care</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 7: Proper Earmuff Use -->
+            <div class="slide" data-slide="7">
+                <div class="content-card">
+                    <div class="slide-header">
+                        <div class="slide-number">Slide 7 of 15</div>
+                        <h2 class="slide-title">How to Use Earmuffs Correctly</h2>
+                        <p class="slide-subtitle">Getting a proper seal</p>
+                    </div>
+                    <div class="slide-content">
+                        <p>While earmuffs are easier to use than earplugs, you still need proper technique for maximum protection.</p>
+                        <div class="steps-grid">
+                            <div class="step-card">
+                                <div class="step-number">1</div>
+                                <div class="step-content">
+                                    <h5>Inspect Before Use</h5>
+                                    <p>Check cushions for cracks, tears, or hardening. Check headband for proper tension—should feel snug, not loose. Ensure cushions are clean and free of debris. Replace worn cushions or damaged muffs.</p>
+                                </div>
+                            </div>
+                            <div class="step-card">
+                                <div class="step-number">2</div>
+                                <div class="step-content">
+                                    <h5>Remove Obstructions</h5>
+                                    <p>Take off glasses if possible (or use thin wire-frame glasses). Pull long hair away from ears and behind the cushions. Remove earrings. Anything breaking the seal reduces protection significantly.</p>
+                                </div>
+                            </div>
+                            <div class="step-card">
+                                <div class="step-number">3</div>
+                                <div class="step-content">
+                                    <h5>Position Correctly</h5>
+                                    <p>Place earmuffs so cushions completely surround your ears (not on them). Cushions should seal against your head all the way around the ear. Headband can go over head or behind neck, depending on muff design and hard hat use.</p>
+                                </div>
+                            </div>
+                            <div class="step-card">
+                                <div class="step-number">4</div>
+                                <div class="step-content">
+                                    <h5>Adjust Fit</h5>
+                                    <p>Adjust headband for even pressure on both ears. Not too tight (causes discomfort) or too loose (breaks seal). Cups should feel snug but not painful. Move your head side-to-side—muffs shouldn't shift or loosen.</p>
+                                </div>
+                            </div>
+                            <div class="step-card">
+                                <div class="step-number">5</div>
+                                <div class="step-content">
+                                    <h5>Check the Seal</h5>
+                                    <p>Cup your hands over the earmuffs and press gently. You should hear a noticeable difference in sound (muffled further). If no difference, seal is broken—check for hair, glasses, or improper positioning.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="info-box danger">
+                            <div class="info-box-title">&#10060; Things That Break the Seal</div>
+                            <div class="info-box-content">
+                                These common items reduce earmuff effectiveness by 5-15 dB or more:
+                                <ul>
+                                    <li><strong>Safety glasses:</strong> Temples (arms) of glasses break seal. Consider thin wire-frame glasses or earplugs instead</li>
+                                    <li><strong>Long hair:</strong> Hair under cushions creates gaps. Pull hair away from ears</li>
+                                    <li><strong>Hats or hoods:</strong> Fabric under cushions breaks seal. Remove if possible</li>
+                                    <li><strong>Facial hair:</strong> Thick sideburns or hair near ears can break seal</li>
+                                    <li><strong>Earrings:</strong> Can prevent proper cushion contact</li>
+                                    <li><strong>Dirty/worn cushions:</strong> Hard, cracked cushions don't seal properly</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="info-box warning">
+                            <div class="info-box-title">&#9888;&#65039; Earmuff Maintenance</div>
+                            <div class="info-box-content">
+                                <strong>Daily:</strong>
+                                <ul>
+                                    <li>Wipe cushions clean with damp cloth</li>
+                                    <li>Inspect for damage before each use</li>
+                                    <li>Check headband tension</li>
+                                </ul>
+                                <strong>Replace cushions when:</strong>
+                                <ul>
+                                    <li>Hard, cracked, or torn</li>
+                                    <li>Lost elasticity</li>
+                                    <li>Visible wear or deformation</li>
+                                    <li>Typically every 6-12 months</li>
+                                </ul>
+                                <strong>Replace entire earmuff when:</strong>
+                                <ul>
+                                    <li>Headband loses tension</li>
+                                    <li>Structural damage to cups</li>
+                                    <li>Can't get proper seal anymore</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 8: When to Wear Hearing Protection -->
+            <div class="slide" data-slide="8">
+                <div class="content-card">
+                    <div class="slide-header">
+                        <div class="slide-number">Slide 8 of 15</div>
+                        <h2 class="slide-title">When to Wear Hearing Protection</h2>
+                        <p class="slide-subtitle">Recognizing noise hazards</p>
+                    </div>
+                    <div class="slide-content">
+                        <p><strong>You should wear hearing protection whenever you're exposed to noise at or above 85 dB.</strong> Here's how to know:</p>
+                        <ul class="content-list">
+                            <li><strong>Required areas are marked:</strong> Look for signs that say "Hearing Protection Required" or similar warnings. These areas have been tested and exceed 85 dB.</li>
+                            <li><strong>You have to raise your voice:</strong> If you must raise your voice to be heard by someone 3 feet away, the noise is likely above 85 dB. Wear protection.</li>
+                            <li><strong>Your ears feel "full" afterward:</strong> If your hearing feels muffled or you hear ringing after exposure, the noise was too loud. Wear protection next time.</li>
+                            <li><strong>You're using loud equipment:</strong> Power tools, heavy machinery, engines, compressed air, grinding, cutting, or any equipment that produces loud noise typically exceeds 85 dB.</li>
+                            <li><strong>Construction or manufacturing environment:</strong> If you work in these industries, assume you need hearing protection unless told otherwise.</li>
+                            <li><strong>Sudden loud noises:</strong> Gunshots, explosions, nail guns, drop hammers—any impulse noise needs protection, even if brief.</li>
+                        </ul>
+                        <div class="info-box success">
+                            <div class="info-box-title">&#10003; Better Safe Than Sorry</div>
+                            <div class="info-box-content">
+                                <strong>When in doubt, wear hearing protection!</strong> There's no downside to over-protecting your hearing, but under-protecting causes permanent damage. It's better to wear hearing protection you don't need than to need it and not wear it.
+                            </div>
+                        </div>
+                        <div class="info-box warning">
+                            <div class="info-box-title">&#9888;&#65039; Wear It the ENTIRE Time</div>
+                            <div class="info-box-content">
+                                <strong>Hearing protection must be worn for the entire duration of noise exposure to be effective.</strong><br><br>
+                                Example: If you're in 95 dB noise for 4 hours but remove your earplugs for just 10 minutes during that time, you've lost most of the protection!<br><br>
+                                <strong>Don't remove hearing protection:</strong>
+                                <ul>
+                                    <li>To talk to someone (move to quieter area or speak louder)</li>
+                                    <li>"Just for a minute" (every minute without protection causes damage)</li>
+                                    <li>Because it's uncomfortable (adjust fit or try different type)</li>
+                                    <li>To hear alarms or signals (electronic earmuffs allow this)</li>
+                                </ul>
+                                If you must remove protection, leave the noise area first.
+                            </div>
+                        </div>
+                        <div class="info-box danger">
+                            <div class="info-box-title">&#128680; Don't Forget Off-the-Job Exposure</div>
+                            <div class="info-box-content">
+                                Noise exposure adds up from ALL sources, not just work:
+                                <ul>
+                                    <li>Lawn mowing, leaf blowing, power tools at home</li>
+                                    <li>Loud music (concerts, headphones, car stereo)</li>
+                                    <li>Motorcycles, ATVs, snowmobiles</li>
+                                    <li>Shooting firearms or attending shooting ranges</li>
+                                    <li>Woodworking, automotive work</li>
+                                </ul>
+                                <strong>Protect your hearing 24/7, not just at work!</strong> Damage from recreational noise is just as permanent as occupational noise.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 9: Hearing Conservation Program -->
+            <div class="slide" data-slide="9">
+                <div class="content-card">
+                    <div class="slide-header">
+                        <div class="slide-number">Slide 9 of 15</div>
+                        <h2 class="slide-title">Employer Hearing Conservation Program</h2>
+                        <p class="slide-subtitle">OSHA requirements</p>
+                    </div>
+                    <div class="slide-content">
+                        <p>If noise levels reach 85 dB or higher (8-hour time-weighted average), <strong>OSHA requires employers to implement a hearing conservation program.</strong></p>
+                        <div class="steps-grid">
+                            <div class="step-card">
+                                <div class="step-number">1</div>
+                                <div class="step-content">
+                                    <h5>Noise Monitoring</h5>
+                                    <p>Employers must measure workplace noise levels to identify areas and jobs that exceed 85 dB. Re-monitor whenever processes or equipment change. Employees have the right to observe monitoring.</p>
+                                </div>
+                            </div>
+                            <div class="step-card">
+                                <div class="step-number">2</div>
+                                <div class="step-content">
+                                    <h5>Audiometric Testing</h5>
+                                    <p>Baseline hearing test within 6 months of first exposure to 85+ dB noise. Annual hearing tests thereafter to track any hearing loss. Tests must be free to employees. Employees get results and explanations.</p>
+                                </div>
+                            </div>
+                            <div class="step-card">
+                                <div class="step-number">3</div>
+                                <div class="step-content">
+                                    <h5>Hearing Protection</h5>
+                                    <p>Employers must provide variety of hearing protection at no cost (earplugs and earmuffs). Employees choose type that fits comfortably. Replace when damaged or worn. Provide training on proper use.</p>
+                                </div>
+                            </div>
+                            <div class="step-card">
+                                <div class="step-number">4</div>
+                                <div class="step-content">
+                                    <h5>Training and Education</h5>
+                                    <p>Annual training on: noise hazards, hearing protection types and use, audiometric testing procedures, employer's hearing conservation program. Training must be understandable and practical.</p>
+                                </div>
+                            </div>
+                            <div class="step-card">
+                                <div class="step-number">5</div>
+                                <div class="step-content">
+                                    <h5>Recordkeeping</h5>
+                                    <p>Employers must keep records of: noise exposure measurements, audiometric test results (for duration of employment). Employees can access their own records.</p>
+                                </div>
+                            </div>
+                            <div class="step-card">
+                                <div class="step-number">6</div>
+                                <div class="step-content">
+                                    <h5>Engineering/Administrative Controls</h5>
+                                    <p>When noise exceeds 90 dB, employers must use engineering controls (quieter equipment, sound barriers, enclosures) or administrative controls (limit exposure time, rotate workers) to reduce exposure when feasible.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="info-box">
+                            <div class="info-box-title">&#128203; Your Rights Under the Hearing Conservation Program</div>
+                            <div class="info-box-content">
+                                <strong>You have the right to:</strong>
+                                <ul>
+                                    <li>Free hearing protection that fits properly</li>
+                                    <li>Annual hearing tests at no cost</li>
+                                    <li>Results of your hearing tests with explanation</li>
+                                    <li>Training on noise hazards and protection</li>
+                                    <li>Observe noise monitoring of your work area</li>
+                                    <li>Access your exposure and medical records</li>
+                                    <li>Report inadequate protection to OSHA without retaliation</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="info-box warning">
+                            <div class="info-box-title">&#9888;&#65039; What Audiometric Testing Shows</div>
+                            <div class="info-box-content">
+                                <strong>Baseline test:</strong> Establishes your "normal" hearing ability. Done when you start work in noise.<br><br>
+                                <strong>Annual tests:</strong> Compared to your baseline to detect any hearing loss.<br><br>
+                                <strong>Standard Threshold Shift (STS):</strong> If your hearing gets 10 dB worse (on average) at certain frequencies in either ear compared to baseline, this is a "Standard Threshold Shift." Employer must:<br>
+                                • Notify you in writing within 21 days<br>
+                                • Refit or retrain you on hearing protection<br>
+                                • Refer you for medical evaluation<br>
+                                • Consider if additional protection is needed<br><br>
+                                <strong>Early detection allows intervention before severe hearing loss occurs!</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 10: Summary -->
+            <div class="slide" data-slide="10">
+                <div class="content-card">
+                    <div class="slide-header">
+                        <div class="slide-number">Slide 10 of 15</div>
+                        <h2 class="slide-title">Hearing Conservation Key Takeaways</h2>
+                        <p class="slide-subtitle">Remember these critical points</p>
+                    </div>
+                    <div class="slide-content">
+                        <p><strong>Essential hearing conservation knowledge:</strong></p>
+                        <ul class="content-list">
+                            <li><strong>Hearing loss is permanent:</strong> Hair cells in your inner ear don't regenerate. Once damaged, your hearing is gone forever. No surgery or medicine can restore it.</li>
+                            <li><strong>85 dB is the action level:</strong> Hearing protection required at 85 dB for 8-hour exposure. For every 5 dB increase, safe time cuts in half.</li>
+                            <li><strong>Two types of protection:</strong> Earplugs (inserted in ear canal, NRR 20-33 dB) and earmuffs (cover ears, NRR 20-30 dB). Both work if used correctly.</li>
+                            <li><strong>Proper insertion is critical:</strong> Most people insert earplugs wrong! Roll small, pull ear up and back, insert deep, hold 30 seconds. If you can see most of the earplug, it's wrong.</li>
+                            <li><strong>Wear it the entire time:</strong> Removing protection even briefly during noise exposure destroys most of the protection. Don't take breaks from your hearing protection.</li>
+                            <li><strong>Check for proper seal:</strong> Earplugs: voice sounds hollow, outside noise much quieter. Earmuffs: cover hands over muffs—should hear difference.</li>
+                            <li><strong>3-foot voice test:</strong> If you must raise your voice to be heard 3 feet away, it's too loud—wear protection.</li>
+                            <li><strong>Warning signs:</strong> Ringing ears (tinnitus), muffled hearing after exposure, difficulty understanding speech. These mean damage is occurring!</li>
+                            <li><strong>Annual hearing tests:</strong> Audiometric testing detects hearing loss early so you can increase protection before it gets worse.</li>
+                            <li><strong>Protect off the job too:</strong> Loud music, power tools at home, shooting, concerts all damage hearing. Wear protection for ALL loud noise.</li>
+                        </ul>
+                        <div class="info-box danger">
+                            <div class="info-box-title">&#128148; The Cost of Hearing Loss</div>
+                            <div class="info-box-content">
+                                Noise-induced hearing loss affects more than just your ears:
+                                <ul>
+                                    <li><strong>Communication:</strong> Difficulty understanding conversations, especially in groups or noisy places</li>
+                                    <li><strong>Relationships:</strong> Strain on family/friends who must repeat themselves constantly</li>
+                                    <li><strong>Social isolation:</strong> Avoiding social situations because you can't hear</li>
+                                    <li><strong>Mental health:</strong> Depression, anxiety, frustration from communication difficulties</li>
+                                    <li><strong>Safety:</strong> Can't hear warnings, alarms, vehicles, or hazards</li>
+                                    <li><strong>Employment:</strong> May limit job opportunities that require good hearing</li>
+                                    <li><strong>Tinnitus:</strong> Constant ringing/buzzing that never stops—affects sleep, concentration</li>
+                                    <li><strong>Quality of life:</strong> Can't enjoy music, nature sounds, grandchildren's voices</li>
+                                </ul>
+                                <strong>All of this is preventable. Protect your hearing NOW.</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Quiz Questions 11-13 -->
+            <div class="slide" data-slide="11">
+                <div class="content-card">
+                    <div class="slide-header">
+                        <div class="slide-number">Quiz Question 1 of 3</div>
+                        <h2 class="slide-title">Knowledge Check</h2>
+                    </div>
+                    <div class="slide-content">
+                        <div class="quiz-question">
+                            At what noise level does OSHA require employers to implement a hearing conservation program?
+                        </div>
+                        <div class="quiz-options" id="q1-options">
+                            <div class="quiz-option" data-q="1" data-val="A">70 dB (8-hour exposure)</div>
+                            <div class="quiz-option" data-q="1" data-val="B">85 dB (8-hour exposure)</div>
+                            <div class="quiz-option" data-q="1" data-val="C">90 dB (8-hour exposure)</div>
+                            <div class="quiz-option" data-q="1" data-val="D">100 dB (8-hour exposure)</div>
+                        </div>
+                        <div class="quiz-feedback" id="fb-1"></div>
+                        <div class="quiz-btn-group">
+                            <button class="btn btn-gold" id="submit-1" onclick="submitQuiz(1)" disabled>Submit Answer</button>
+                            <button class="btn btn-outline" id="next-q-1" onclick="nextSlide()" style="display: none;">Next Question →</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="slide" data-slide="12">
+                <div class="content-card">
+                    <div class="slide-header">
+                        <div class="slide-number">Quiz Question 2 of 3</div>
+                        <h2 class="slide-title">Knowledge Check</h2>
+                    </div>
+                    <div class="slide-content">
+                        <div class="quiz-question">
+                            What is the MOST common mistake when inserting foam earplugs?
+                        </div>
+                        <div class="quiz-options" id="q2-options">
+                            <div class="quiz-option" data-q="2" data-val="A">Using earplugs that are too large</div>
+                            <div class="quiz-option" data-q="2" data-val="B">Not inserting them deep enough into the ear canal</div>
+                            <div class="quiz-option" data-q="2" data-val="C">Inserting them too deep</div>
+                            <div class="quiz-option" data-q="2" data-val="D">Rolling them too tightly</div>
+                        </div>
+                        <div class="quiz-feedback" id="fb-2"></div>
+                        <div class="quiz-btn-group">
+                            <button class="btn btn-gold" id="submit-2" onclick="submitQuiz(2)" disabled>Submit Answer</button>
+                            <button class="btn btn-outline" id="next-q-2" onclick="nextSlide()" style="display: none;">Next Question →</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="slide" data-slide="13">
+                <div class="content-card">
+                    <div class="slide-header">
+                        <div class="slide-number">Quiz Question 3 of 3</div>
+                        <h2 class="slide-title">Knowledge Check</h2>
+                    </div>
+                    <div class="slide-content">
+                        <div class="quiz-question">
+                            Why is noise-induced hearing loss (NIHL) so serious?
+                        </div>
+                        <div class="quiz-options" id="q3-options">
+                            <div class="quiz-option" data-q="3" data-val="A">It's temporary and goes away after a few days</div>
+                            <div class="quiz-option" data-q="3" data-val="B">It's permanent and irreversible - damaged hair cells don't regenerate</div>
+                            <div class="quiz-option" data-q="3" data-val="C">It can be cured with surgery</div>
+                            <div class="quiz-option" data-q="3" data-val="D">It only affects very old people</div>
+                        </div>
+                        <div class="quiz-feedback" id="fb-3"></div>
+                        <div class="quiz-btn-group">
+                            <button class="btn btn-gold" id="submit-3" onclick="submitQuiz(3)" disabled>Submit Answer</button>
+                            <button class="btn btn-outline" id="next-q-3" onclick="nextSlide()" style="display: none;">View Results →</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 14-16: Remaining slides (14-15 are extra content, 16 is results) -->
+            <div class="slide" data-slide="14">
+                <div class="content-card">
+                    <div class="slide-header">
+                        <div class="slide-number">Slide 14 of 15</div>
+                        <h2 class="slide-title">Common Questions</h2>
+                        <p class="slide-subtitle">Hearing protection FAQs</p>
+                    </div>
+                    <div class="slide-content">
+                        <div class="info-box">
+                            <div class="info-box-title">&#10067; "Will hearing protection prevent me from hearing warnings or alarms?"</div>
+                            <div class="info-box-content">
+                                <strong>No!</strong> Hearing protection reduces ALL sounds equally. Alarms and warnings are designed to be much louder than background noise, so even with protection, you'll hear them clearly. In fact, hearing protection often makes it EASIER to hear warnings because it reduces competing background noise. For critical communication needs, consider electronic earmuffs that amplify voices while blocking loud noise.
+                            </div>
+                        </div>
+                        <div class="info-box">
+                            <div class="info-box-title">&#10067; "Can I get used to loud noise so it doesn't damage my hearing?"</div>
+                            <div class="info-box-content">
+                                <strong>No!</strong> While you may mentally adapt and not notice loud noise as much, your ears are STILL being damaged. The hair cells don't become "tougher" with exposure—they continue to be destroyed. This false sense of comfort is dangerous because damage continues while you don't notice it.
+                            </div>
+                        </div>
+                        <div class="info-box">
+                            <div class="info-box-title">&#10067; "My hearing seems fine. Do I really need protection?"</div>
+                            <div class="info-box-content">
+                                <strong>Yes!</strong> Hearing loss is gradual. By the time you notice difficulty hearing, significant permanent damage has already occurred. You typically don't notice hearing loss until you've lost 25-30 dB of hearing. Protect your hearing NOW to prevent future loss, not after you notice problems.
+                            </div>
+                        </div>
+                        <div class="info-box">
+                            <div class="info-box-title">&#10067; "Hearing protection is uncomfortable. What can I do?"</div>
+                            <div class="info-box-content">
+                                Try different types and sizes! Earplugs come in different sizes and materials. Some people prefer earmuffs. Your employer must provide variety. Try different options until you find comfortable protection—then wear it consistently. Discomfort is temporary; hearing loss is permanent.
+                            </div>
+                        </div>
+                        <div class="info-box">
+                            <div class="info-box-title">&#10067; "What if I already have some hearing loss?"</div>
+                            <div class="info-box-content">
+                                <strong>Protect what you have left!</strong> Additional hearing loss makes everything worse. If you already have some hearing loss, you're at HIGHER risk for further damage. Wearing hearing protection prevents additional loss and protects your remaining hearing ability.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="slide" data-slide="15">
+                <div class="content-card">
+                    <div class="slide-header">
+                        <div class="slide-number">Slide 15 of 15</div>
+                        <h2 class="slide-title">Take Action Today</h2>
+                        <p class="slide-subtitle">Protect your hearing for life</p>
+                    </div>
+                    <div class="slide-content">
+                        <p><strong>Your hearing is precious and irreplaceable.</strong> Once lost, it never comes back. But the good news is that noise-induced hearing loss is 100% preventable!</p>
+                        <div class="info-box success">
+                            <div class="info-box-title">&#10003; Starting Today, Commit To:</div>
+                            <div class="info-box-content">
+                                <ul>
+                                    <li>Wear hearing protection in ALL noise above 85 dB—at work and at home</li>
+                                    <li>Insert earplugs correctly EVERY time (roll, pull ear up/back, insert deep, hold)</li>
+                                    <li>Wear protection for the ENTIRE duration of noise exposure</li>
+                                    <li>Replace damaged or worn hearing protection immediately</li>
+                                    <li>Participate in annual hearing tests to catch loss early</li>
+                                    <li>Speak up if you notice hearing changes or tinnitus</li>
+                                    <li>Encourage coworkers to protect their hearing too</li>
+                                    <li>Lower volume on headphones/earbuds (if others can hear it, it's too loud)</li>
+                                    <li>Use hearing protection for lawn mowers, power tools, shooting, concerts</li>
+                                    <li>Get a hearing check if you notice any changes</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="info-box warning">
+                            <div class="info-box-title">&#9888;&#65039; Make It a Habit</div>
+                            <div class="info-box-content">
+                                <strong>Consistent use is key.</strong> Hearing protection only works if you wear it every time, all the time during noise exposure. Make it automatic—like putting on a seatbelt. Keep earplugs in your pocket or toolbelt so they're always available. Your future self will thank you!
+                            </div>
+                        </div>
+                        <p style="margin-top: 30px; font-size: 19px; font-weight: 700; color: var(--hearing-purple); text-align: center;">
+                            Remember: Hearing loss is permanent, but hearing protection is easy. <br>
+                            Protect your hearing today to enjoy sounds for a lifetime! &#128066;&#127925;
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 16: Results -->
+            <div class="slide" data-slide="16">
+                <div class="results-card">
+                    <div class="results-icon" id="rIcon">&#127919;</div>
+                    <div class="results-score" id="rScore">0 / 3</div>
+                    <h2 class="results-title" id="rTitle">Quiz Complete</h2>
+                    <p class="results-message" id="rMsg">Calculating your results...</p>
+                    <div class="results-katie" id="rKatie">"Let's see how you did!"</div>
+                    <div class="results-buttons" id="rBtns">
+                        <button class="btn btn-gold">Loading...</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Navigation Bar -->
+    <nav class="nav-bar">
+        <div class="nav-inner">
+            <button class="nav-btn" id="prevBtn" onclick="prevSlide()">
+                ← Previous
+            </button>
+            <span class="slide-indicator" id="slideIndicator">Slide 1 of 15</span>
+            <button class="nav-btn nav-next" id="nextBtn" onclick="nextSlide()">
+                Next →
+            </button>
+        </div>
+    </nav>
+    <script>
+    (function() {
+        'use strict';
+        // ═══ CONFIG ═══
+        var TOTAL_SLIDES = 16;
+        var TOTAL_CONTENT = 15;
+        var MODULE_KEY = 'hearing-conservation';
+        // ═══ STATE ═══
+        var currentSlide = 1;
+        var quizAnswers = { 1: null, 2: null, 3: null };
+        var quizSubmitted = { 1: false, 2: false, 3: false };
+        var quizScore = 0;
+        // Quiz correct answers
+        var quizCorrectAnswers = {
+            1: 'B',  // 85 dB action level
+            2: 'B',  // Not inserting deep enough
+            3: 'B'   // Permanent and irreversible
+        };
+        // Feedback messages
+        var feedbackMessages = {
+            1: {
+                correct: '&#10003; Correct! OSHA requires a hearing conservation program at 85 dB (8-hour TWA). This includes monitoring, protection, testing, and training.',
+                incorrect: '✗ Incorrect. The action level is 85 dB for an 8-hour time-weighted average. At this level, employers must implement a full hearing conservation program.'
+            },
+            2: {
+                correct: '&#10003; Correct! Most people don\'t insert earplugs deep enough. You must roll them small, pull ear up and back, insert deep, and hold for 30 seconds.',
+                incorrect: '✗ Incorrect. The most common mistake is not inserting earplugs deep enough into the ear canal. Only the tip in the canal provides almost no protection!'
+            },
+            3: {
+                correct: '&#10003; Correct! NIHL is permanent because hair cells in the inner ear don\'t regenerate. Once damaged, hearing loss is irreversible. That\'s why prevention is critical!',
+                incorrect: '✗ Incorrect. Noise-induced hearing loss is permanent and irreversible. Hair cells in your inner ear don\'t regenerate—once damaged, they\'re gone forever.'
+            }
+        };
+        // ═══ NAVIGATION ═══
+        function goToSlide(n) {
+            if (n < 1 || n > TOTAL_SLIDES) return;
+            currentSlide = n;
+            updateUI();
+            saveSlideProgress();
+        }
+        window.nextSlide = function() {
+            goToSlide(currentSlide + 1);
+        };
+        window.prevSlide = function() {
+            goToSlide(currentSlide - 1);
+        };
+        // ═══ UI UPDATE ═══
+        function updateUI() {
+            document.querySelectorAll('.slide').forEach(function(s) {
+                s.classList.remove('active');
+            });
+            var activeSlide = document.querySelector('[data-slide="' + currentSlide + '"]');
+            if (activeSlide) {
+                activeSlide.classList.add('active');
+            }
+            var progressPct = ((currentSlide - 1) / (TOTAL_CONTENT - 1)) * 100;
+            document.getElementById('progressFill').style.width = Math.min(100, progressPct) + '%';
+            document.getElementById('progressPct').textContent = Math.round(Math.min(100, progressPct)) + '%';
+            
+            if (currentSlide <= TOTAL_CONTENT) {
+                document.getElementById('progressLabel').textContent = 'Slide ' + currentSlide + ' of ' + TOTAL_CONTENT;
+                document.getElementById('slideIndicator').textContent = 'Slide ' + currentSlide + ' of ' + TOTAL_CONTENT;
+            } else {
+                document.getElementById('progressLabel').textContent = 'Results';
+                document.getElementById('slideIndicator').textContent = 'Results';
+            }
+            var prevBtn = document.getElementById('prevBtn');
+            var nextBtn = document.getElementById('nextBtn');
+            
+            prevBtn.disabled = currentSlide === 1;
+            nextBtn.disabled = currentSlide === TOTAL_SLIDES;
+            if (currentSlide === 16) {
+                buildResults();
+            }
+            document.querySelector('.content-wrapper').scrollTop = 0;
+        }
+        // ═══ KEYBOARD NAV ═══
+        document.addEventListener('keydown', function(e) {
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+            if (e.key === 'ArrowRight' || e.key === 'Right') {
+                e.preventDefault();
+                nextSlide();
+            } else if (e.key === 'ArrowLeft' || e.key === 'Left') {
+                e.preventDefault();
+                prevSlide();
+            }
+        });
+        // ═══ QUIZ HANDLING ═══
+        document.querySelectorAll('.quiz-option').forEach(function(opt) {
+            opt.addEventListener('click', function() {
+                var qNum = parseInt(this.getAttribute('data-q'));
+                if (quizSubmitted[qNum]) return;
+                var container = document.getElementById('q' + qNum + '-options');
+                container.querySelectorAll('.quiz-option').forEach(function(o) {
+                    o.classList.remove('selected');
+                });
+                this.classList.add('selected');
+                quizAnswers[qNum] = this.getAttribute('data-val');
+                document.getElementById('submit-' + qNum).disabled = false;
+            });
+        });
+        window.submitQuiz = function(qNum) {
+            if (quizSubmitted[qNum]) return;
+            quizSubmitted[qNum] = true;
+            var userAnswer = quizAnswers[qNum];
+            var correctAnswer = quizCorrectAnswers[qNum];
+            var isCorrect = (userAnswer === correctAnswer);
+            var container = document.getElementById('q' + qNum + '-options');
+            container.querySelectorAll('.quiz-option').forEach(function(opt) {
+                opt.classList.add('disabled');
+                var val = opt.getAttribute('data-val');
+                if (val === correctAnswer) {
+                    opt.classList.add('correct');
+                } else if (opt.classList.contains('selected') && !isCorrect) {
+                    opt.classList.add('incorrect');
+                }
+            });
+            var fb = document.getElementById('fb-' + qNum);
+            if (isCorrect) {
+                fb.textContent = feedbackMessages[qNum].correct;
+                fb.className = 'quiz-feedback show correct-fb';
+                quizScore++;
+            } else {
+                fb.textContent = feedbackMessages[qNum].incorrect;
+                fb.className = 'quiz-feedback show incorrect-fb';
+            }
+            document.getElementById('submit-' + qNum).style.display = 'none';
+            document.getElementById('next-q-' + qNum).style.display = '';
+        };
+        // ═══ BUILD RESULTS ═══
+        function buildResults() {
+            var icon = document.getElementById('rIcon');
+            var score = document.getElementById('rScore');
+            var title = document.getElementById('rTitle');
+            var msg = document.getElementById('rMsg');
+            var btns = document.getElementById('rBtns');
+            var katie = document.getElementById('rKatie');
+            score.textContent = quizScore + ' / 3';
+            if (quizScore === 3) {
+                icon.textContent = '&#127881;';
+                title.textContent = 'Perfect Score!';
+                msg.textContent = 'Outstanding! You understand hearing conservation, noise levels, and proper use of hearing protection. Protect your hearing for life!';
+                btns.innerHTML = '<button class="btn btn-success" onclick="completeModule()">&#10003; Complete Module & Return to Dashboard</button>';
+                katie.textContent = '"Excellent work! Remember: 85 dB action level, insert earplugs deep, wear protection the entire time!"';
+            } else if (quizScore >= 2) {
+                icon.textContent = '&#9989;';
+                title.textContent = 'You Passed!';
+                msg.textContent = 'Great job! You demonstrated solid understanding of hearing conservation and protection.';
+                btns.innerHTML = '<button class="btn btn-success" onclick="completeModule()">&#10003; Complete Module & Return to Dashboard</button>';
+                katie.textContent = '"Well done! Always wear hearing protection above 85 dB, insert earplugs correctly, and protect your hearing!"';
+            } else {
+                icon.textContent = '&#128218;';
+                title.textContent = 'Not Quite Yet';
+                msg.textContent = 'You need 2 out of 3 correct to pass this module. Review the lesson and try again!';
+                btns.innerHTML = '<button class="btn btn-gold" onclick="retakeQuiz()">↻ Retake Quiz</button>' +
+                    '<button class="btn btn-outline" onclick="goToSlide(3)">↑ Review Lesson</button>';
+                katie.textContent = '"Don\'t worry! Hearing protection is vital. Review the 85 dB action level and proper earplug insertion!"';
+            }
+            saveQuizProgress();
+        }
+        // ═══ RETAKE QUIZ ═══
+        window.retakeQuiz = function() {
+            quizAnswers = { 1: null, 2: null, 3: null };
+            quizSubmitted = { 1: false, 2: false, 3: false };
+            quizScore = 0;
+            for (var q = 1; q <= 3; q++) {
+                var container = document.getElementById('q' + q + '-options');
+                container.querySelectorAll('.quiz-option').forEach(function(opt) {
+                    opt.classList.remove('selected', 'correct', 'incorrect', 'disabled');
+                });
+                document.getElementById('fb-' + q).className = 'quiz-feedback';
+                document.getElementById('fb-' + q).textContent = '';
+                document.getElementById('submit-' + q).style.display = '';
+                document.getElementById('submit-' + q).disabled = true;
+                document.getElementById('next-q-' + q).style.display = 'none';
+            }
+            goToSlide(11);
+        };
+        // ═══ LOCAL STORAGE ═══
+        function getProgress() {
+            try {
+                var d = localStorage.getItem('safetyverse-progress');
+                return d ? JSON.parse(d) : {};
+            } catch(e) { return {}; }
+        }
+        function saveSlideProgress() {
+            try {
+                var p = getProgress();
+                if (!p.modules) p.modules = {};
+                if (!p.modules[MODULE_KEY]) {
+                    p.modules[MODULE_KEY] = { completed: false, quizScore: 0, attempts: 0, lastAttempt: null };
+                }
+                p.modules[MODULE_KEY].currentSlide = currentSlide;
+                p.modules[MODULE_KEY].totalSlides = TOTAL_SLIDES;
+                localStorage.setItem('safetyverse-progress', JSON.stringify(p));
+            } catch(e) {}
+        }
+        function saveQuizProgress() {
+            try {
+                var p = getProgress();
+                if (!p.modules) p.modules = {};
+                if (!p.modules[MODULE_KEY]) {
+                    p.modules[MODULE_KEY] = { completed: false, quizScore: 0, attempts: 0 };
+                }
+                var mod = p.modules[MODULE_KEY];
+                mod.quizScore = quizScore;
+                mod.attempts = (mod.attempts || 0) + 1;
+                mod.lastAttempt = new Date().toISOString();
+                if (quizScore >= 2) mod.completed = true;
+                localStorage.setItem('safetyverse-progress', JSON.stringify(p));
+            } catch(e) {}
+        }
+        window.completeModule = function() {
+            try {
+                var p = getProgress();
+                if (!p.modules) p.modules = {};
+                if (!p.modules[MODULE_KEY]) {
+                    p.modules[MODULE_KEY] = { quizScore: 0, attempts: 0 };
+                }
+                p.modules[MODULE_KEY].completed = true;
+                p.modules[MODULE_KEY].completedAt = new Date().toISOString();
+                p.modules[MODULE_KEY].quizScore = quizScore;
+                localStorage.setItem('safetyverse-progress', JSON.stringify(p));
+            } catch(e) {}
+            window.location.href = '../../user-dashboard/index.html';
+        };
+        // ═══ RESTORE PROGRESS ON LOAD ═══
+        function restoreProgress() {
+            try {
+                var p = getProgress();
+                if (p.modules && p.modules[MODULE_KEY]) {
+                    var mod = p.modules[MODULE_KEY];
+                    if (mod.completed) {
+                        var introCard = document.querySelector('.intro-card');
+                        if (introCard) {
+                            var badge = document.createElement('div');
+                            badge.style.cssText = 'position:absolute;top:20px;right:20px;background:var(--success);color:white;font-size:12px;font-weight:700;padding:5px 16px;border-radius:20px;z-index:5;';
+                            badge.textContent = '&#10003; Completed';
+                            introCard.appendChild(badge);
+                        }
+                    }
+                }
+            } catch(e) {}
+        }
+        // ═══ INIT ═══
+        restoreProgress();
+        updateUI();
+    })();
+    </script>
+</body>
+</html>

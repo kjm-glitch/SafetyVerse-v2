@@ -1,0 +1,1859 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="logo.png?v=2">
+    <title>Module 14: Cold Stress - SafetyVerse</title>
+    <style>
+        /* ═══════════════════════════════════════════
+           CSS VARIABLES & RESET
+           ═══════════════════════════════════════════ */
+        :root {
+            --primary: #FFD700;
+            --primary-dark: #E6C200;
+            --secondary: #FF8C00;
+            --secondary-dark: #E67A00;
+            --bg-clay: #F5E6D3;
+            --bg-clay-dark: #E8D5C0;
+            --bg-clay-light: #FAF0E6;
+            --text-dark: #333333;
+            --text-medium: #555555;
+            --text-light: #777777;
+            --accent-black: #1A1A1A;
+            --white: #FFFFFF;
+            --success: #4CAF50;
+            --success-dark: #388E3C;
+            --error: #E53935;
+            --error-dark: #C62828;
+            --info: #2196F3;
+            --warning: #FF9800;
+            --cold-blue: #1976D2;
+            --shadow-soft: 0 4px 15px rgba(0,0,0,0.1);
+            --shadow-medium: 0 6px 25px rgba(0,0,0,0.15);
+            --shadow-hard: 0 8px 30px rgba(0,0,0,0.2);
+            --shadow-clay: 4px 4px 0px rgba(0,0,0,0.15), inset 0 2px 4px rgba(255,255,255,0.3);
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 20px;
+            --radius-xl: 28px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --font-heading: 'Segoe UI', 'Arial Black', sans-serif;
+            --font-body: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body {
+            height: 100%;
+            overflow: hidden;
+        }
+        body {
+            font-family: var(--font-body);
+            background-color: var(--bg-clay);
+            color: var(--text-dark);
+            line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+        }
+        /* Clay texture */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 9999;
+            background-image:
+                radial-gradient(circle at 20% 50%, rgba(139,90,43,0.03) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(139,90,43,0.02) 0%, transparent 50%),
+                radial-gradient(circle at 50% 80%, rgba(139,90,43,0.03) 0%, transparent 50%);
+        }
+        /* ═══════════════════════════════════════════
+           HEADER
+           ═══════════════════════════════════════════ */
+        .header {
+            background: linear-gradient(180deg, var(--accent-black) 0%, #2A2A2A 100%);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            border-bottom: 4px solid var(--primary);
+            z-index: 100;
+            flex-shrink: 0;
+        }
+        .header-inner {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 64px;
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            flex-shrink: 0;
+        }
+        .logo-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .logo-icon img {
+            display: block;
+            height: 50px;
+            width: auto;
+            image-rendering: -webkit-optimize-contrast;
+            image-rendering: crisp-edges;
+            box-shadow: 4px 4px 0px rgba(0,0,0,0.15);
+            border-radius: 12px;
+            transition: transform 0.2s ease;
+        }
+        .logo-text {
+            font-family: var(--font-heading);
+            font-size: 22px; font-weight: 900;
+            color: var(--white);
+            letter-spacing: -0.5px;
+        }
+        .logo-text em {
+            color: var(--primary);
+            font-style: normal;
+        }
+        .header-center {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        .header-module-tag {
+            background: rgba(255,215,0,0.15);
+            color: var(--primary);
+            font-size: 11px; font-weight: 800;
+            padding: 3px 10px;
+            border-radius: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+        }
+        .header-module-title {
+            color: rgba(255,255,255,0.8);
+            font-size: 14px; font-weight: 600;
+        }
+        .back-btn {
+            display: flex; align-items: center; gap: 6px;
+            text-decoration: none;
+            color: rgba(255,255,255,0.7);
+            font-size: 13px; font-weight: 600;
+            padding: 7px 14px;
+            border-radius: var(--radius-sm);
+            transition: var(--transition);
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .back-btn:hover {
+            color: var(--white);
+            background: rgba(255,255,255,0.12);
+            border-color: rgba(255,255,255,0.2);
+        }
+        /* ═══════════════════════════════════════════
+           PROGRESS BAR
+           ═══════════════════════════════════════════ */
+        .progress-bar {
+            background: var(--accent-black);
+            border-bottom: 1px solid rgba(255,215,0,0.15);
+            flex-shrink: 0;
+            z-index: 99;
+        }
+        .progress-bar-inner {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 8px 24px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+        .progress-label {
+            font-size: 12px; font-weight: 700;
+            color: rgba(255,255,255,0.5);
+            white-space: nowrap;
+            min-width: 90px;
+        }
+        .progress-track {
+            flex: 1;
+            height: 6px;
+            background: rgba(255,255,255,0.08);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 3px;
+            transition: width 0.4s ease;
+        }
+        .progress-pct {
+            font-size: 12px; font-weight: 700;
+            color: var(--primary);
+            min-width: 40px;
+            text-align: right;
+        }
+        /* ═══════════════════════════════════════════
+           MAIN CONTENT AREA
+           ═══════════════════════════════════════════ */
+        .content-wrapper {
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 40px 24px 100px;
+        }
+        /* ═══════════════════════════════════════════
+           SLIDES
+           ═══════════════════════════════════════════ */
+        .slide {
+            display: none;
+            animation: slideIn 0.3s ease;
+        }
+        .slide.active { display: block; }
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        /* Intro Card (Slide 1) */
+        .intro-card {
+            background: linear-gradient(135deg, #1976D2 0%, #1565C0 100%);
+            border-radius: var(--radius-xl);
+            padding: 60px 50px;
+            box-shadow: var(--shadow-hard);
+            color: var(--white);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .intro-card::before {
+            content: '';
+            position: absolute;
+            top: -100px; right: -100px;
+            width: 300px; height: 300px;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+        }
+        .intro-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+            animation: sway 3s ease-in-out infinite;
+        }
+        @keyframes sway {
+            0%, 100% { transform: translateX(0px); }
+            50% { transform: translateX(-8px); }
+        }
+        .intro-title {
+            font-family: var(--font-heading);
+            font-size: 48px; font-weight: 900;
+            margin-bottom: 12px;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.2);
+        }
+        .intro-subtitle {
+            font-size: 20px;
+            margin-bottom: 30px;
+            opacity: 0.95;
+        }
+        .intro-meta {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            flex-wrap: wrap;
+        }
+        .intro-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 15px; font-weight: 600;
+        }
+        .intro-meta-item span:first-child {
+            font-size: 20px;
+        }
+        /* Content Card */
+        .content-card {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            padding: 50px;
+            box-shadow: var(--shadow-medium);
+            margin-bottom: 30px;
+        }
+        .slide-header {
+            margin-bottom: 35px;
+        }
+        .slide-number {
+            font-size: 11px; font-weight: 800;
+            color: var(--text-light);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 10px;
+        }
+        .slide-title {
+            font-family: var(--font-heading);
+            font-size: 36px; font-weight: 900;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+            line-height: 1.2;
+        }
+        .slide-subtitle {
+            font-size: 17px;
+            color: var(--text-medium);
+        }
+        .slide-content {
+            font-size: 17px;
+            line-height: 1.8;
+            color: var(--text-dark);
+        }
+        .slide-content p {
+            margin-bottom: 20px;
+        }
+        .slide-content strong {
+            color: var(--cold-blue);
+            font-weight: 700;
+        }
+        /* Katie Message */
+        .katie-message {
+            display: flex;
+            align-items: flex-start;
+            gap: 18px;
+            background: linear-gradient(135deg, #FFFDE7 0%, #FFF9C4 100%);
+            border-left: 5px solid var(--primary);
+            padding: 24px;
+            border-radius: var(--radius-md);
+            margin-bottom: 35px;
+            box-shadow: 0 3px 12px rgba(255,215,0,0.15);
+        }
+        .katie-avatar {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            object-fit: cover;
+            object-position: center 48%;
+            background: white;
+            border: 4px solid var(--primary);
+            padding: 6px;
+            flex-shrink: 0;
+            box-shadow: var(--shadow-soft);
+        }
+        .katie-bubble {
+            flex: 1;
+        }
+        .katie-name {
+            font-weight: 800;
+            color: var(--secondary);
+            margin-bottom: 8px;
+            font-size: 15px;
+        }
+        .katie-text {
+            font-size: 16px;
+            color: var(--text-dark);
+            line-height: 1.7;
+        }
+        /* Info Boxes */
+        .info-box {
+            background: linear-gradient(135deg, #E3F2FD 0%, #BBDEFB 100%);
+            border-left: 5px solid var(--info);
+            padding: 22px 24px;
+            border-radius: var(--radius-md);
+            margin: 28px 0;
+        }
+        .info-box.warning {
+            background: linear-gradient(135deg, #FFF3E0 0%, #FFE0B2 100%);
+            border-left-color: var(--warning);
+        }
+        .info-box.danger {
+            background: linear-gradient(135deg, #FFEBEE 0%, #FFCDD2 100%);
+            border-left-color: var(--error);
+        }
+        .info-box.success {
+            background: linear-gradient(135deg, #E8F5E9 0%, #C8E6C9 100%);
+            border-left-color: var(--success);
+        }
+        .info-box-title {
+            font-weight: 800;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 16px;
+        }
+        .info-box-content {
+            font-size: 15px;
+            line-height: 1.7;
+        }
+        .info-box-content ul, .info-box-content ol {
+            margin-top: 10px;
+            padding-left: 20px;
+        }
+        .info-box-content li {
+            margin-bottom: 6px;
+        }
+        /* Lists */
+        .content-list {
+            list-style: none;
+            margin: 28px 0;
+        }
+        .content-list li {
+            padding: 14px 0 14px 36px;
+            position: relative;
+            border-bottom: 1px solid rgba(0,0,0,0.06);
+            font-size: 16px;
+        }
+        .content-list li:last-child {
+            border-bottom: none;
+        }
+        .content-list li::before {
+            content: '&#10052;&#65039;';
+            position: absolute;
+            left: 8px;
+            font-size: 18px;
+        }
+        /* Cold Illness Comparison Grid */
+        .illness-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin: 28px 0;
+        }
+        .illness-card {
+            background: var(--bg-clay-light);
+            border: 3px solid var(--bg-clay-dark);
+            border-radius: var(--radius-md);
+            padding: 26px;
+            transition: var(--transition);
+        }
+        .illness-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-medium);
+            border-color: var(--cold-blue);
+        }
+        .illness-severity {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+        }
+        .illness-severity.mild {
+            background: #E1F5FE;
+            color: #0277BD;
+        }
+        .illness-severity.moderate {
+            background: #B3E5FC;
+            color: #01579B;
+        }
+        .illness-severity.severe {
+            background: #81D4FA;
+            color: #004D40;
+        }
+        .illness-severity.critical {
+            background: #FFCDD2;
+            color: #B71C1C;
+        }
+        .illness-title {
+            font-weight: 900;
+            font-size: 22px;
+            color: var(--text-dark);
+            margin-bottom: 14px;
+            font-family: var(--font-heading);
+        }
+        .illness-symptoms {
+            font-size: 15px;
+            color: var(--text-dark);
+            line-height: 1.6;
+            margin-bottom: 12px;
+        }
+        .illness-action {
+            font-size: 14px;
+            color: var(--cold-blue);
+            font-weight: 700;
+            margin-top: 12px;
+        }
+        /* Risk Factors Grid */
+        .risk-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 18px;
+            margin: 28px 0;
+        }
+        .risk-card {
+            background: linear-gradient(135deg, #E1F5FE 0%, #B3E5FC 100%);
+            border-left: 5px solid var(--cold-blue);
+            border-radius: var(--radius-md);
+            padding: 22px;
+            transition: var(--transition);
+        }
+        .risk-card:hover {
+            box-shadow: var(--shadow-soft);
+            transform: translateX(4px);
+        }
+        .risk-title {
+            font-weight: 800;
+            font-size: 17px;
+            color: var(--cold-blue);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .risk-desc {
+            font-size: 14px;
+            color: var(--text-dark);
+            line-height: 1.6;
+        }
+        /* Prevention Steps */
+        .prevention-steps {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+            margin: 28px 0;
+        }
+        .prevention-step {
+            display: flex;
+            align-items: flex-start;
+            gap: 18px;
+            background: var(--bg-clay-light);
+            padding: 24px;
+            border-radius: var(--radius-md);
+            border-left: 5px solid var(--success);
+            transition: var(--transition);
+        }
+        .prevention-step:hover {
+            background: var(--bg-clay);
+            box-shadow: var(--shadow-soft);
+        }
+        .prevention-icon {
+            font-size: 48px;
+            flex-shrink: 0;
+        }
+        .prevention-content h4 {
+            font-weight: 800;
+            margin-bottom: 8px;
+            color: var(--text-dark);
+            font-size: 17px;
+        }
+        .prevention-content p {
+            font-size: 15px;
+            color: var(--text-medium);
+            line-height: 1.7;
+            margin: 0;
+        }
+        /* Layering Visual */
+        .layering-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 18px;
+            margin: 28px 0;
+        }
+        .layer-card {
+            background: var(--bg-clay-light);
+            border: 3px solid var(--cold-blue);
+            border-radius: var(--radius-md);
+            padding: 24px;
+            text-align: center;
+            transition: var(--transition);
+        }
+        .layer-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-medium);
+        }
+        .layer-number {
+            background: var(--cold-blue);
+            color: var(--white);
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            font-size: 22px;
+            margin: 0 auto 14px;
+        }
+        .layer-title {
+            font-weight: 900;
+            font-size: 18px;
+            color: var(--text-dark);
+            margin-bottom: 10px;
+            font-family: var(--font-heading);
+        }
+        .layer-desc {
+            font-size: 14px;
+            color: var(--text-medium);
+            line-height: 1.6;
+        }
+        /* ═══════════════════════════════════════════
+           QUIZ STYLES
+           ═══════════════════════════════════════════ */
+        .quiz-question {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 28px;
+            line-height: 1.5;
+        }
+        .quiz-options {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            margin-bottom: 24px;
+        }
+        .quiz-option {
+            background: var(--bg-clay-light);
+            border: 3px solid var(--bg-clay-dark);
+            padding: 18px 24px;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 16px;
+            font-weight: 600;
+            position: relative;
+        }
+        .quiz-option:hover:not(.disabled) {
+            background: var(--bg-clay);
+            border-color: var(--primary);
+            transform: translateX(6px);
+        }
+        .quiz-option.selected {
+            background: var(--primary);
+            border-color: var(--primary-dark);
+            color: var(--accent-black);
+        }
+        .quiz-option.correct {
+            background: var(--success);
+            border-color: var(--success-dark);
+            color: var(--white);
+        }
+        .quiz-option.incorrect {
+            background: var(--error);
+            border-color: var(--error-dark);
+            color: var(--white);
+        }
+        .quiz-option.disabled {
+            cursor: default;
+        }
+        .quiz-feedback {
+            display: none;
+            padding: 18px 22px;
+            border-radius: var(--radius-md);
+            font-size: 16px;
+            line-height: 1.7;
+            margin-top: 20px;
+        }
+        .quiz-feedback.show {
+            display: block;
+        }
+        .quiz-feedback.correct-fb {
+            background: #E8F5E9;
+            color: #2E7D32;
+            border-left: 5px solid var(--success);
+        }
+        .quiz-feedback.incorrect-fb {
+            background: #FFEBEE;
+            color: #C62828;
+            border-left: 5px solid var(--error);
+        }
+        /* Quiz Buttons */
+        .quiz-btn-group {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+        }
+        /* Results Screen */
+        .results-card {
+            background: var(--white);
+            border-radius: var(--radius-xl);
+            padding: 60px 50px;
+            box-shadow: var(--shadow-hard);
+            text-align: center;
+        }
+        .results-icon {
+            font-size: 100px;
+            margin-bottom: 24px;
+            animation: scaleIn 0.6s ease;
+        }
+        @keyframes scaleIn {
+            from { transform: scale(0) rotate(-180deg); }
+            to { transform: scale(1) rotate(0); }
+        }
+        .results-score {
+            font-family: var(--font-heading);
+            font-size: 72px;
+            font-weight: 900;
+            color: var(--primary);
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 0 rgba(0,0,0,0.1);
+        }
+        .results-title {
+            font-family: var(--font-heading);
+            font-size: 42px;
+            font-weight: 900;
+            color: var(--text-dark);
+            margin-bottom: 16px;
+        }
+        .results-message {
+            font-size: 19px;
+            color: var(--text-medium);
+            margin-bottom: 36px;
+            line-height: 1.7;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .results-katie {
+            background: linear-gradient(135deg, #FFFDE7 0%, #FFF9C4 100%);
+            border-left: 5px solid var(--primary);
+            padding: 20px 24px;
+            border-radius: var(--radius-md);
+            font-size: 17px;
+            font-style: italic;
+            color: var(--text-dark);
+            margin-bottom: 36px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .results-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+        /* ═══════════════════════════════════════════
+           BUTTONS
+           ═══════════════════════════════════════════ */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 14px 32px;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-family: var(--font-heading);
+            font-size: 16px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+            box-shadow: var(--shadow-clay);
+        }
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .btn-gold {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: var(--accent-black);
+        }
+        .btn-gold:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-hard);
+        }
+        .btn-success {
+            background: var(--success);
+            color: var(--white);
+        }
+        .btn-success:hover:not(:disabled) {
+            background: var(--success-dark);
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-hard);
+        }
+        .btn-outline {
+            background: var(--white);
+            color: var(--text-dark);
+            border: 2px solid var(--bg-clay-dark);
+        }
+        .btn-outline:hover:not(:disabled) {
+            background: var(--bg-clay-light);
+            border-color: var(--primary);
+        }
+        /* ═══════════════════════════════════════════
+           NAVIGATION
+           ═══════════════════════════════════════════ */
+        .nav-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(180deg, rgba(26,26,26,0.97) 0%, rgba(0,0,0,0.98) 100%);
+            border-top: 3px solid var(--primary);
+            padding: 16px 24px;
+            z-index: 100;
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.3);
+        }
+        .nav-inner {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+        }
+        .nav-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            border: 2px solid rgba(255,255,255,0.15);
+            border-radius: var(--radius-sm);
+            font-family: var(--font-heading);
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: var(--transition);
+            background: rgba(255,255,255,0.08);
+            color: var(--white);
+            text-decoration: none;
+        }
+        .nav-btn:hover:not(:disabled) {
+            background: rgba(255,255,255,0.15);
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+        .nav-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+        .nav-btn.nav-next {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: var(--accent-black);
+            border-color: transparent;
+        }
+        .nav-btn.nav-next:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255,215,0,0.4);
+        }
+        .slide-indicator {
+            color: rgba(255,255,255,0.6);
+            font-size: 13px;
+            font-weight: 600;
+        }
+        /* ═══════════════════════════════════════════
+           RESPONSIVE
+           ═══════════════════════════════════════════ */
+        @media (max-width: 768px) {
+            .container { padding: 30px 20px 100px; }
+            .content-card { padding: 32px 24px; }
+            .intro-card { padding: 40px 30px; }
+            .intro-title { font-size: 36px; }
+            .slide-title { font-size: 28px; }
+            .illness-grid { grid-template-columns: 1fr; }
+            .risk-grid { grid-template-columns: 1fr; }
+            .layering-grid { grid-template-columns: 1fr; }
+            .nav-inner { flex-direction: column; gap: 12px; }
+            .nav-btn { width: 100%; justify-content: center; }
+            .header-center { position: static; transform: none; }
+        }
+        @media (max-width: 480px) {
+            .intro-meta { flex-direction: column; gap: 16px; }
+            .katie-message { flex-direction: column; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-inner">
+            <a href="../../user-dashboard/index.html" class="logo">
+                <div class="logo-icon"><img src="logo.png?v=2" alt="SafetyVerse Logo"></div>
+                <div class="logo-text">Safety<em>Verse</em></div>
+            </a>
+            <div class="header-center">
+                <span class="header-module-tag">MODULE 14</span>
+                <span class="header-module-title">Cold Stress</span>
+            </div>
+            <a href="../../user-dashboard/index.html" class="back-btn">
+                <span>←</span>
+                <span>Back to Dashboard</span>
+            </a>
+        </div>
+    </header>
+    <!-- Progress Bar -->
+    <div class="progress-bar">
+        <div class="progress-bar-inner">
+            <span class="progress-label" id="progressLabel">Slide 1 of 15</span>
+            <div class="progress-track">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <span class="progress-pct" id="progressPct">0%</span>
+        </div>
+    </div>
+    <!-- Main Content -->
+    <div class="content-wrapper">
+        <div class="container">
+            <!-- Slide 1: Intro -->
+            <div class="slide active" data-slide="1">
+                <div class="intro-card">
+                    <div class="intro-icon">&#10052;&#65039;</div>
+                    <h1 class="intro-title">Cold Stress</h1>
+                    <p class="intro-subtitle">Recognize, Prevent, and Respond</p>
+                    <div class="intro-meta">
+                        <div class="intro-meta-item">
+                            <span>&#9201;&#65039;</span>
+                            <span>15 minutes</span>
+                        </div>
+                        <div class="intro-meta-item">
+                            <span>&#128218;</span>
+                            <span>Occupational Health Path</span>
+                        </div>
+                        <div class="intro-meta-item">
+                            <span>✓</span>
+                            <span>OSHA/NIOSH Standards</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 2: Introduction with Katie -->
+            <div class="slide" data-slide="2">
+                <div class="content-card">
+                    <div class="katie-message">
+                        <img src="katie.png" alt="Katie" class="katie-avatar">
+                        <div class="katie-bubble">
+                            <div class="katie-name">Katie, Your Safety Guide</div>
+                            <div class="katie-text">
+                                Welcome! Cold stress is just as dangerous as heat stress, but it's often underestimated. Whether you work outdoors in winter weather—construction, utilities, landscaping—or in cold storage facilities and freezers, exposure to cold can cause serious health problems. Every year, workers suffer frostbite, hypothermia, and even death from cold exposure. In this module, you'll learn to recognize cold stress symptoms, protect yourself, and respond to cold emergencies.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="slide-header">
+                        <div class="slide-number">Slide 2 of 15</div>
+                        <h2 class="slide-title">Why Cold Stress Matters</h2>
+                    </div>
+                    <div class="slide-content">
+                        <p><strong>Cold stress</strong> occurs when the body cannot maintain its core temperature of 98.6°F (37°C) due to exposure to cold. When your body gets too cold, it can lead to tissue damage, organ failure, and death.</p>
+                        
+                        <div class="info-box danger">
+                            <div class="info-box-title">&#128680; Cold Stress Statistics</div>
+                            <div class="info-box-content">
+                                According to OSHA, NIOSH, and CDC:
+                                <ul>
+                                    <li><strong>700+ deaths annually</strong> in the U.S. from hypothermia</li>
+                                    <li><strong>Thousands of cold-related injuries</strong> (frostbite, trench foot) each year</li>
+                                    <li><strong>Outdoor workers at highest risk:</strong> construction, utilities, agriculture, emergency responders</li>
+                                    <li><strong>Indoor cold storage workers</strong> also vulnerable to cold stress</li>
+                                    <li><strong>Wind chill makes it worse:</strong> Wind increases heat loss dramatically</li>
+                                    <li><strong>Wet conditions increase risk:</strong> Wet clothing loses insulation</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <p><strong>Learning Objectives:</strong></p>
+                        <ul class="content-list">
+                            <li>Understand how cold affects the body and causes injury</li>
+                            <li>Recognize four types of cold stress illness and their symptoms</li>
+                            <li>Identify risk factors that increase vulnerability to cold</li>
+                            <li>Apply prevention strategies: layering, warm breaks, nutrition</li>
+                            <li>Know how to respond when someone shows cold stress symptoms</li>
+                            <li>Understand wind chill and its dangers</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 3: How Cold Affects the Body -->
+            <div class="slide" data-slide="3">
+                <div class="content-card">
+                    <div class="slide-header">
+                        <div class="slide-number">Slide 3 of 15</div>
+                        <h2 class="slide-title">How Cold Affects Your Body</h2>
+                        <p class="slide-subtitle">Understanding cold stress</p>
+                    </div>
+                    <div class="slide-content">
+                        <p>Your body prioritizes keeping your core temperature (vital organs) at 98.6°F. When exposed to cold, your body makes automatic adjustments to preserve heat.</p>
+                        <div class="prevention-steps">
+                            <div class="prevention-step">
+                                <div class="prevention-icon">&#129482;</div>
+                                <div class="prevention-content">
+                                    <h4>Body's Response to Cold</h4>
+                                    <p><strong>Shivering:</strong> Muscles contract rapidly to generate heat. This is your body's primary heating mechanism. <strong>Vasoconstriction:</strong> Blood vessels in extremities (fingers, toes, ears, nose) constrict to reduce blood flow to skin and redirect warm blood to vital organs. This is why these areas get cold first and are vulnerable to frostbite. <strong>Increased metabolism:</strong> Body burns more calories to produce heat.</p>
+                                </div>
+                            </div>
+                            <div class="prevention-step">
+                                <div class="prevention-icon">&#9888;&#65039;</div>
+                                <div class="prevention-content">
+                                    <h4>When These Mechanisms Fail</h4>
+                                    <p>Cold stress occurs when your body can't generate or conserve enough heat. This happens when: temperature is very low, you're exposed for extended periods, clothing is inadequate or wet, wind increases heat loss, you're physically exhausted, or you're dehydrated or malnourished. Once core temperature begins to drop, cold stress illnesses develop rapidly.</p>
+                                </div>
+                            </div>
+                            <div class="prevention-step">
+                                <div class="prevention-icon">&#127788;&#65039;</div>
+                                <div class="prevention-content">
+                                    <h4>Wind Chill Effect</h4>
+                                    <p><strong>Wind dramatically increases heat loss.</strong> Wind chill is what the temperature "feels like" to exposed skin due to wind. Example: 30°F with 20 mph wind feels like 17°F. At -10°F with 20 mph wind (feels like -29°F), frostbite can occur in 30 minutes. Wind chill doesn't affect objects or thermometers—it only affects living tissue losing heat.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="info-box warning">
+                            <div class="info-box-title">&#9888;&#65039; Wet Conditions Are Especially Dangerous</div>
+                            <div class="info-box-content">
+                                <strong>Water conducts heat away from your body 25 times faster than air!</strong> Wet clothing loses nearly all its insulating value. You can develop hypothermia at 50°F (10°C) if you're wet. Always change wet clothing immediately, even if the temperature isn't extremely cold.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 4: Four Types of Cold Illness -->
+            <div class="slide" data-slide="4">
+                <div class="content-card">
+                    <div class="slide-header">
+                        <div class="slide-number">Slide 4 of 15</div>
+                        <h2 class="slide-title">Four Types of Cold Stress Illness</h2>
+                        <p class="slide-subtitle">From mild to life-threatening</p>
+                    </div>
+                    <div class="slide-content">
+                        <p>Cold stress causes several distinct conditions, ranging from painful but treatable to immediately life-threatening. <strong>Recognizing symptoms early can prevent permanent injury.</strong></p>
+                        <div class="illness-grid">
+                            <div class="illness-card">
+                                <span class="illness-severity mild">MILD-MODERATE</span>
+                                <div class="illness-title">Frostbite</div>
+                                <div class="illness-symptoms">
+                                    <strong>What it is:</strong> Freezing of skin and tissue, usually affecting fingers, toes, ears, nose, cheeks.<br><br>
+                                    <strong>Symptoms:</strong>
+                                    <ul style="margin-top: 8px; padding-left: 18px;">
+                                        <li>Numbness in affected area</li>
+                                        <li>Skin turns white/gray, waxy appearance</li>
+                                        <li>Skin feels hard or frozen</li>
+                                        <li>Blisters (in severe cases)</li>
+                                        <li>Black/dead tissue (severe frostbite)</li>
+                                    </ul>
+                                </div>
+                                <div class="illness-action">
+                                    <strong>Action:</strong> Get to warm area immediately. Do NOT rub frozen tissue. Warm gently with body heat or warm (not hot) water (98-105°F). Never use direct heat (heating pad, fire). Seek medical attention—severe frostbite can cause permanent damage or amputation.
+                                </div>
+                            </div>
+                            <div class="illness-card">
+                                <span class="illness-severity moderate">MODERATE</span>
+                                <div class="illness-title">Trench Foot (Immersion Foot)</div>
+                                <div class="illness-symptoms">
+                                    <strong>What it is:</strong> Non-freezing injury from prolonged exposure to wet, cold conditions (can occur above freezing).<br><br>
+                                    <strong>Symptoms:</strong>
+                                    <ul style="margin-top: 8px; padding-left: 18px;">
+                                        <li>Tingling, itching, or burning sensation</li>
+                                        <li>Red or blotchy skin</li>
+                                        <li>Numbness</li>
+                                        <li>Swelling</li>
+                                        <li>Leg cramps</li>
+                                        <li>Blisters or ulcers (severe)</li>
+                                    </ul>
+                                </div>
+                                <div class="illness-action">
+                                    <strong>Action:</strong> Remove wet socks and shoes. Dry feet thoroughly. Elevate feet. Do not walk if possible. Seek medical attention. Can take weeks or months to heal and may cause permanent nerve damage.
+                                </div>
+                            </div>
+                            <div class="illness-card">
+                                <span class="illness-severity moderate">MILD</span>
+                                <div class="illness-title">Chilblains</div>
+                                <div class="illness-symptoms">
+                                    <strong>What it is:</strong> Inflammation of small blood vessels in skin in response to repeated cold exposure (above freezing).<br><br>
+                                    <strong>Symptoms:</strong>
+                                    <ul style="margin-top: 8px; padding-left: 18px;">
+                                        <li>Red, itchy patches on skin</li>
+                                        <li>Swelling</li>
+                                        <li>Burning sensation</li>
+                                        <li>Blisters (sometimes)</li>
+                                        <li>Usually affects toes, fingers, ears, nose</li>
+                                    </ul>
+                                </div>
+                                <div class="illness-action">
+                                    <strong>Action:</strong> Warm affected area slowly. Do not scratch or rub. Apply lotion. Usually heals in 1-3 weeks. Avoid rapid temperature changes. Seek medical attention if symptoms are severe or persistent.
+                                </div>
+                            </div>
+                            <div class="illness-card">
+                                <span class="illness-severity critical">LIFE-THREATENING EMERGENCY</span>
+                                <div class="illness-title">Hypothermia</div>
+                                <div class="illness-symptoms">
+                                    <strong>What it is:</strong> Core body temperature drops below 95°F. Can be fatal.<br><br>
+                                    <strong>Mild (95-90°F):</strong> Shivering, confusion, fatigue, slurred speech, loss of coordination<br>
+                                    <strong>Moderate (90-82°F):</strong> Violent shivering OR shivering stops, very confused, drowsy, weak pulse<br>
+                                    <strong>Severe (<82°F):</strong> No shivering, unconscious, weak/no pulse, rigid muscles, may appear dead
+                                </div>
+                                <div class="illness-action">
+                                    <strong>Action:</strong> CALL 911 IMMEDIATELY! Move to warm area. Remove wet clothing. Warm person gradually (blankets, body heat). Give warm (not hot) drinks if conscious. Do NOT use direct heat. Do NOT give alcohol. Handle gently—rough movements can cause cardiac arrest. CPR if no pulse. HYPOTHERMIA CAN BE FATAL!
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 5: Hypother
+mia Emergency Response -->
+            <div class="slide" data-slide="5">
+                <div class="content-card">
+                    <div class="slide-header">
+                        <div class="slide-number">Slide 5 of 15</div>
+                        <h2 class="slide-title">Hypothermia: Emergency Response</h2>
+                        <p class="slide-subtitle">Life-threatening emergency</p>
+                    </div>
+                    <div class="slide-content">
+                        <p><strong>Hypothermia is a medical emergency.</strong> When core body temperature drops below 95°F, vital organs begin to fail. Without treatment, hypothermia leads to unconsciousness, cardiac arrest, and death.</p>
+                        <div class="info-box danger">
+                            <div class="info-box-title">&#128680; Immediate Actions for Hypothermia</div>
+                            <div class="info-box-content">
+                                <strong>Follow these steps in order:</strong><br><br>
+                                <strong>1. CALL 911 IMMEDIATELY</strong>
+                                <ul>
+                                    <li>Tell dispatcher: "Hypothermia emergency"</li>
+                                    <li>Provide exact location</li>
+                                    <li>Describe person's condition and level of consciousness</li>
+                                </ul>
+                                <br>
+                                <strong>2. MOVE TO WARM, DRY LOCATION</strong>
+                                <ul>
+                                    <li>Get person out of cold, wind, and wet conditions immediately</li>
+                                    <li>Move to heated building, vehicle, or shelter</li>
+                                    <li>If no shelter available, shield from wind and insulate from ground</li>
+                                </ul>
+                                <br>
+                                <strong>3. REMOVE WET CLOTHING</strong>
+                                <ul>
+                                    <li>Gently remove wet clothing</li>
+                                    <li>Cut clothing off if necessary to avoid excess movement</li>
+                                    <li>Replace with dry clothing or blankets</li>
+                                    <li>Cover head—significant heat loss occurs through head</li>
+                                </ul>
+                                <br>
+                                <strong>4. WARM THE PERSON GRADUALLY</strong>
+                                <ul>
+                                    <li>Wrap in blankets, sleeping bag, or coats</li>
+                                    <li>Use your own body heat (skin-to-skin contact under blankets)</li>
+                                    <li>Apply hot packs to neck, armpits, and groin (wrap in cloth, not directly on skin)</li>
+                                    <li><strong>CRITICAL: Do NOT use direct heat</strong> (heating pads, hot water bottles directly on skin, fire)—can cause burns and cardiac arrest</li>
+                                    <li>Warm slowly—rapid warming can cause shock</li>
+                                </ul>
+                                <br>
+                                <strong>5. IF CONSCIOUS:</strong>
+                                <ul>
+                                    <li>Give warm, sweet drinks (water, juice, hot chocolate)</li>
+                                    <li>Do NOT give alcohol or caffeinated beverages</li>
+                                    <li>Do NOT give food or drink if person is drowsy or unconscious</li>
+                                </ul>
+                                <br>
+                                <strong>6. MONITOR AND HANDLE GENTLY</strong>
+                                <ul>
+                                    <li>Handle person very gently—rough movement can cause cardiac arrest</li>
+                                    <li>Keep person lying down and still</li>
+                                    <li>Monitor breathing and pulse</li>
+                                    <li>If no pulse, begin CPR and continue until help arrives</li>
+                                    <li>Person may appear dead but can still be revived—continue efforts</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="info-box warning">
+                            <div class="info-box-title">&#9888;&#65039; Special Considerations</div>
+                            <div class="info-box-content">
+                                <strong>"They're not dead until they're warm and dead"</strong> is a medical saying for hypothermia. People with severe hypothermia may have no detectable pulse or breathing, but can still be revived with proper warming and CPR. Continue rescue efforts until medical professionals take over. Never assume someone with severe hypothermia is dead.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 6: Risk Factors -->
+            <div class="slide" data-slide="6">
+                <div class="content-card">
+                    <div class="slide-header">
+                        <div class="slide-number">Slide 6 of 15</div>
+                        <h2 class="slide-title">Who Is at Higher Risk?</h2>
+                        <p class="slide-subtitle">Recognizing vulnerability factors</p>
+                    </div>
+                    <div class="slide-content">
+                        <p>While anyone can develop cold stress, certain factors increase vulnerability. <strong>Knowing your risk helps you take extra precautions.</strong></p>
+                        <div class="risk-grid">
+                            <div class="risk-card">
+                                <div class="risk-title">&#128116; Age</div>
+                                <div class="risk-desc">Older workers (65+) have reduced ability to sense cold and regulate body temperature. Younger workers may underestimate cold hazards due to inexperience. Both need extra monitoring.</div>
+                            </div>
+                            <div class="risk-card">
+                                <div class="risk-title">&#127973; Health Conditions</div>
+                                <div class="risk-desc">Diabetes, heart disease, thyroid problems, circulatory disorders, Raynaud's disease all increase cold sensitivity. Medications for these conditions may worsen cold intolerance.</div>
+                            </div>
+                            <div class="risk-card">
+                                <div class="risk-title">&#128138; Medications</div>
+                                <div class="risk-desc">Beta-blockers (blood pressure), antidepressants, sedatives, alcohol consumption all impair body's response to cold. Check with doctor about cold weather work if on medications.</div>
+                            </div>
+                            <div class="risk-card">
+                                <div class="risk-title">&#128564; Fatigue & Exhaustion</div>
+                                <div class="risk-desc">Physical exhaustion reduces body's ability to generate heat. Mental fatigue impairs judgment about when to warm up or take breaks. Get adequate sleep before working in cold.</div>
+                            </div>
+                            <div class="risk-card">
+                                <div class="risk-title">&#128167; Dehydration</div>
+                                <div class="risk-desc">Yes, dehydration is a risk in cold too! Cold air is dry. Heavy clothing makes you sweat. You don't feel as thirsty in cold. Dehydration reduces blood volume and cold tolerance.</div>
+                            </div>
+                            <div class="risk-card">
+                                <div class="risk-title">&#127869;&#65039; Poor Nutrition</div>
+                                <div class="risk-desc">Your body needs calories to generate heat. Skipping meals or inadequate nutrition reduces cold tolerance. Eat regular, high-calorie meals when working in cold.</div>
+                            </div>
+                            <div class="risk-card">
+                                <div class="risk-title">&#127754; Wet Conditions</div>
+                                <div class="risk-desc">Rain, snow, sweat, or wet work environments dramatically increase cold stress. Wet clothing loses insulation. Can develop hypothermia at temperatures above freezing if wet.</div>
+                            </div>
+                            <div class="risk-card">
+                                <div class="risk-title">&#128201; Previous Cold Injury</div>
+                                <div class="risk-desc">Prior frostbite or cold injury makes you more susceptible to future cold injuries in the same area. Damaged tissue is more sensitive to cold. Extra protection needed.</div>
+                            </div>
+                        </div>
+                        <div class="info-box">
+                            <div class="info-box-title">&#128161; What to Do If You're High Risk</div>
+                            <div class="info-box-content">
+                                <ul>
+                                    <li>Inform your supervisor about risk factors</li>
+                                    <li>Dress in extra layers</li>
+                                    <li>Take more frequent warm-up breaks</li>
+                                    <li>Monitor yourself closely for symptoms</li>
+                                    <li>Have a buddy watch for signs of cold stress</li>
+                                    <li>Consider medical clearance if you have health conditions</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 7: Prevention - Clothing & Layering -->
+            <div class="slide" data-slide="7">
+                <div class="content-card">
+                    <div class="slide-header">
+                        <div class="slide-number">Slide 7 of 15</div>
+                        <h2 class="slide-title">Prevention: Dress in Layers</h2>
+                        <p class="slide-subtitle">The three-layer system</p>
+                    </div>
+                    <div class="slide-content">
+                        <p><strong>Proper clothing is your primary defense against cold.</strong> Layering allows you to adjust insulation as activity level and temperature change.</p>
+                        <div class="layering-grid">
+                            <div class="layer-card">
+                                <div class="layer-number">1</div>
+                                <div class="layer-title">Base Layer (Next to Skin)</div>
+                                <div class="layer-desc">
+                                    <strong>Purpose:</strong> Wick moisture away from skin<br><br>
+                                    <strong>Material:</strong> Synthetic (polypropylene, polyester) or merino wool. <strong>NEVER COTTON</strong>—it holds moisture and stays wet.<br><br>
+                                    <strong>Fit:</strong> Snug but not tight
+                                </div>
+                            </div>
+                            <div class="layer-card">
+                                <div class="layer-number">2</div>
+                                <div class="layer-title">Middle Layer (Insulation)</div>
+                                <div class="layer-desc">
+                                    <strong>Purpose:</strong> Trap air and retain body heat<br><br>
+                                    <strong>Material:</strong> Fleece, wool, down, synthetic insulation. Multiple thinner layers better than one thick layer.<br><br>
+                                    <strong>Adjust:</strong> Add/remove based on activity
+                                </div>
+                            </div>
+                            <div class="layer-card">
+                                <div class="layer-number">3</div>
+                                <div class="layer-title">Outer Layer (Shell)</div>
+                                <div class="layer-desc">
+                                    <strong>Purpose:</strong> Block wind and moisture<br><br>
+                                    <strong>Material:</strong> Waterproof, wind-resistant, breathable. Should have hood.<br><br>
+                                    <strong>Features:</strong> Sealed seams, closures at wrists/ankles, ventilation zippers
+                                </div>
+                            </div>
+                        </div>
+                        <div class="prevention-steps">
+                            <div class="prevention-step">
+                                <div class="prevention-icon">&#129508;</div>
+                                <div class="prevention-content">
+                                    <h4>Protect Extremities</h4>
+                                    <p><strong>Hands:</strong> Insulated, waterproof gloves or mittens (mittens are warmer). Keep hands dry—carry extra gloves. <strong>Feet:</strong> Insulated, waterproof boots with thick socks (wool or synthetic, not cotton). Keep feet dry—change socks if they get damp. <strong>Head:</strong> 40% of body heat lost through head! Wear insulated hat that covers ears. <strong>Face/Neck:</strong> Scarf, balaclava, or face mask to protect nose, cheeks, neck.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="info-box danger">
+                            <div class="info-box-title">&#10060; Common Clothing Mistakes</div>
+                            <div class="info-box-content">
+                                <ul>
+                                    <li><strong>Wearing cotton:</strong> "Cotton kills" in cold weather. Absorbs sweat, stays wet, loses all insulation</li>
+                                    <li><strong>Overdressing:</strong> Causes sweating, wet clothing, then rapid heat loss when you stop working</li>
+                                    <li><strong>Tight clothing:</strong> Restricts blood flow to extremities, increases frostbite risk</li>
+                                    <li><strong>Ignoring wet clothes:</strong> Must change wet clothing immediately, even if temperature isn't extreme</li>
+                                    <li><strong>Forgetting head/hands:</strong> Most heat lost through head, hands, feet—must protect these areas</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Continue with remaining slides... Due to character limits, I'll provide the structure for the remaining slides -->
+            <!-- Slide 8: Warm Breaks & Hydration -->
+            <div class="slide" data-slide="8">
+                <div class="content-card">
+                    <div class="slide-header">
+                        <div class="slide-number">Slide 8 of 15</div>
+                        <h2 class="slide-title">Prevention: Warm Breaks & Hydration</h2>
+                        <p class="slide-subtitle">Regular warming is essential</p>
+                    </div>
+                    <div class="slide-content">
+                        <p><strong>Taking regular breaks in warm areas prevents cold stress from developing.</strong> Even brief warm-up periods help maintain core temperature.</p>
+                        <div class="prevention-steps">
+                            <div class="prevention-step">
+                                <div class="prevention-icon">&#128293;</div>
+                                <div class="prevention-content">
+                                    <h4>Warm Break Schedule</h4>
+                                    <p><strong>When to take breaks:</strong> At minimum, 10-15 minute warm break every 1-2 hours. More frequently in extreme cold (below 0°F or with high wind chill), when doing light work (less body heat generated), or if you feel cold, numb, or start shivering. <strong>Where to warm up:</strong> Heated building, vehicle with heater, warming hut. Out of wind even if not heated. Remove outer layers to prevent sweating indoors.</p>
+                                </div>
+                            </div>
+                            <div class="prevention-step">
+                                <div class="prevention-icon">&#128167;</div>
+                                <div class="prevention-content">
+                                    <h4>Stay Hydrated in Cold</h4>
+                                    <p><strong>Yes, you need water in cold weather!</strong> Cold air is very dry—you lose moisture through breathing. Heavy clothing causes sweating. You don't feel as thirsty in cold, but you still need fluids. <strong>Drink:</strong> Warm (not hot) water, warm soup, warm sweet drinks. <strong>Avoid:</strong> Alcohol (increases heat loss, impairs judgment), Caffeine (causes dehydration). <strong>How much:</strong> Drink regularly throughout the day, even if not thirsty.</p>
+                                </div>
+                            </div>
+                            <div class="prevention-step">
+                                <div class="prevention-icon">&#127858;</div>
+                                <div class="prevention-content">
+                                    <h4>Eat for Heat Production</h4>
+                                    <p>Your body burns more calories to stay warm in cold. <strong>Eat:</strong> Regular, high-calorie meals and snacks. Warm foods when possible. Carbohydrates for quick energy, fats for sustained energy. <strong>Don't skip meals</strong>—your body needs fuel to generate heat. Bring extra food on cold days. Eat before you feel hungry.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="info-box success">
+                            <div class="info-box-title">✓ Your Right to Warm Up</div>
+                            <div class="info-box-content">
+                                <strong>You have the right to take warm-up breaks.</strong> If you're shivering, experiencing numbness, or feeling dangerously cold, you can and should stop working and warm up. Tell your supervisor you need a break. No supervisor should deny warming breaks in cold conditions. Your safety is more important than productivity.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 9: Recognizing Symptoms -->
+            <div class="slide" data-slide="9">
+                <div class="content-card">
+                    <div class="slide-header">
+                        <div class="slide-number">Slide 9 of 15</div>
+                        <h2 class="slide-title">Recognize Symptoms Early</h2>
+                        <p class="slide-subtitle">In yourself and others</p>
+                    </div>
+                    <div class="slide-content">
+                        <p><strong>Cold stress symptoms can develop gradually or suddenly.</strong> Early recognition and response prevent serious injury.</p>
+                        <div class="info-box warning">
+                            <div class="info-box-title">&#9888;&#65039; Warning Signs in Yourself</div>
+                            <div class="info-box-content">
+                                <strong>STOP and warm up if you experience:</strong>
+                                <ul>
+                                    <li><strong>Shivering:</strong> Your body's first defense. Don't ignore it—warm up immediately</li>
+                                    <li><strong>Numbness or tingling:</strong> In fingers, toes, ears, nose, face. Early frostbite warning</li>
+                                    <li><strong>Pain in extremities:</strong> Fingers, toes feel painful when cold</li>
+                                    <li><strong>Skin color changes:</strong> White, gray, or bluish skin</li>
+                                    <li><strong>Clumsiness or poor coordination:</strong> Difficulty with fine motor tasks, dropping things</li>
+                                    <li><strong>Confusion or difficulty thinking:</strong> Can't make decisions, feel "out of it"</li>
+                                    <li><strong>Slurred speech:</strong> Words don't come out right</li>
+                                    <li><strong>Excessive fatigue:</strong> Overwhelming tiredness, want to sit/lie down</li>
+                                    <li><strong>Stop shivering when still cold:</strong> DANGER—sign of severe hypothermia</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="info-box danger">
+                            <div class="info-box-title">&#128680; Signs in Coworkers (Buddy System)</div>
+                            <div class="info-box-content">
+                                <strong>Watch your coworkers for:</strong>
+                                <ul>
+                                    <li>Visible shivering or complaining of cold</li>
+                                    <li>White/gray patches on skin (frostbite)</li>
+                                    <li>Stumbling, poor coordination, clumsiness</li>
+                                    <li>Slurred speech or confusion</li>
+                                    <li>Unusual behavior—irritability, apathy, drowsiness</li>
+                                    <li>Stopped shivering but still in cold (severe hypothermia)</li>
+                                </ul>
+                                <strong>If you notice these signs:</strong> Get them to warm area immediately. Tell supervisor. Stay with them. Call 911 if symptoms are severe or they're confused/unresponsive.
+                            </div>
+                        </div>
+                        <div class="info-box">
+                            <div class="info-box-title">&#128161; Self-Monitoring Tips</div>
+                            <div class="info-box-content">
+                                <ul>
+                                    <li>Check your fingers and toes periodically—can you feel them? Move them?</li>
+                                    <li>Touch your face, ears, nose—do they feel numb or painfully cold?</li>
+                                    <li>Are you shivering? If yes, warm up now</li>
+                                    <li>Can you do fine motor tasks (button, zipper)? If no, you're getting too cold</li>
+                                    <li>Buddy check: Ask coworker "Do I look okay?" Look at each other's faces for white patches</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        <!-- Slide 10: Wind Chill -->
+            <div class="slide" data-slide="10">
+                <div class="content-card">
+                    <div class="slide-header">
+                        <div class="slide-number">Slide 10 of 15</div>
+                        <h2 class="slide-title">Understanding Wind Chill</h2>
+                        <p class="slide-subtitle">How wind makes cold more dangerous</p>
+                    </div>
+                    <div class="slide-content">
+                        <p><strong>Wind chill</strong> is the temperature it "feels like" on exposed skin due to wind. Wind strips away the thin layer of warm air around your body, dramatically increasing heat loss.</p>
+                        <div class="info-box">
+                            <div class="info-box-title">&#127788;&#65039; How Wind Chill Works</div>
+                            <div class="info-box-content">
+                                Your body warms a thin layer of air next to your skin. When wind blows, it constantly removes this warm layer and replaces it with cold air. The stronger the wind, the faster you lose heat. <strong>Example:</strong> 20°F with 30 mph wind feels like -1°F. At this wind chill, frostbite can occur in 30 minutes on exposed skin.
+                            </div>
+                        </div>
+                        <div class="info-box danger">
+                            <div class="info-box-title">&#9888;&#65039; Critical Wind Chill Thresholds</div>
+                            <div class="info-box-content">
+                                <strong>Wind Chill -18°F or lower:</strong> Frostbite possible in 30 minutes on exposed skin. Limit outdoor work, increase warm-up breaks.<br><br>
+                                <strong>Wind Chill -40°F or lower:</strong> Frostbite can occur in 10 minutes. Extremely dangerous. Consider stopping outdoor work or rotating workers very frequently.<br><br>
+                                <strong>Wind Chill -60°F or lower:</strong> Frostbite in 5 minutes. Life-threatening conditions. Outdoor work should be suspended if possible.
+                            </div>
+                        </div>
+                        <div class="info-box warning">
+                            <div class="info-box-title">&#128161; Important Notes About Wind Chill</div>
+                            <div class="info-box-content">
+                                <ul>
+                                    <li>Wind chill only affects living tissue—doesn't affect thermometers, car engines, etc.</li>
+                                    <li>Wind chill is calculated for exposed skin—proper clothing dramatically reduces the effect</li>
+                                    <li>No wind chill below 3 mph—your body creates its own "wind" through movement</li>
+                                    <li>Getting wet makes wind chill worse—wet skin loses heat 25x faster</li>
+                                    <li>Check wind chill forecast before starting outdoor work</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <p><strong>Protection Against Wind Chill:</strong></p>
+                        <ul class="content-list">
+                            <li>Cover all exposed skin when wind chill is below 0°F</li>
+                            <li>Wear wind-resistant outer layer</li>
+                            <li>Face masks or balaclavas protect face and neck</li>
+                            <li>Work in sheltered areas when possible (behind buildings, equipment)</li>
+                            <li>Take more frequent warm-up breaks when wind is strong</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 11: Employer Responsibilities -->
+            <div class="slide" data-slide="11">
+                <div class="content-card">
+                    <div class="slide-header">
+                        <div class="slide-number">Slide 11 of 15</div>
+                        <h2 class="slide-title">Employer Responsibilities</h2>
+                        <p class="slide-subtitle">What your employer must provide</p>
+                    </div>
+                    <div class="slide-content">
+                        <p>Under OSHA's General Duty Clause, <strong>employers have legal obligations to protect workers from cold stress hazards.</strong></p>
+                        <ul class="content-list">
+                            <li><strong>Training:</strong> Train all workers on cold stress recognition, prevention, and emergency response before working in cold conditions.</li>
+                            <li><strong>Warm areas:</strong> Provide heated break areas, warming huts, or heated vehicles for workers to warm up regularly.</li>
+                            <li><strong>Schedule modifications:</strong> Adjust work schedules during extreme cold. Work during warmest part of day when possible. Rotate workers to limit exposure time.</li>
+                            <li><strong>Monitor conditions:</strong> Check temperature and wind chill. Increase monitoring during extreme cold. Watch workers for symptoms, especially new/vulnerable workers.</li>
+                            <li><strong>Appropriate clothing:</strong> Provide or require appropriate cold weather clothing. For some jobs, employer must provide specialized cold weather gear (insulated, water-resistant PPE).</li>
+                            <li><strong>Engineering controls:</strong> Radiant heaters in outdoor work areas when feasible. Wind breaks or shields. Insulation on equipment handles.</li>
+                            <li><strong>Emergency procedures:</strong> Have plan for responding to cold stress emergencies. Ensure communication methods to call for help. First aid supplies for cold injuries.</li>
+                            <li><strong>Acclimatization:</strong> Allow workers to gradually adapt to cold conditions if coming from warmer climates or returning after time off.</li>
+                        </ul>
+                        <div class="info-box success">
+                            <div class="info-box-title">✓ Your Rights</div>
+                            <div class="info-box-content">
+                                <strong>You have the right to:</strong>
+                                <ul>
+                                    <li>Work in conditions free from recognized hazards (including cold)</li>
+                                    <li>Access to warm break areas</li>
+                                    <li>Training on cold stress hazards</li>
+                                    <li>Appropriate protective clothing for the job</li>
+                                    <li>Refuse work you believe is immediately dangerous to life/health</li>
+                                    <li>Report unsafe conditions to OSHA without retaliation</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="info-box">
+                            <div class="info-box-title">&#128161; State-Specific Requirements</div>
+                            <div class="info-box-content">
+                                Some states have specific cold weather work regulations. Check your state OSHA program for additional requirements. Cold storage facilities and freezer workers may have specific regulations regarding temperature limits and protective equipment.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 12: Summary -->
+            <div class="slide" data-slide="12">
+                <div class="content-card">
+                    <div class="slide-header">
+                        <div class="slide-number">Slide 12 of 15</div>
+                        <h2 class="slide-title">Cold Stress Key Takeaways</h2>
+                        <p class="slide-subtitle">Remember these critical points</p>
+                    </div>
+                    <div class="slide-content">
+                        <p><strong>Essential cold stress knowledge for all employees:</strong></p>
+                        <ul class="content-list">
+                            <li><strong>Four types of cold illness:</strong> Frostbite (frozen tissue), Hypothermia (low core temp - life-threatening), Trench foot (wet, cold feet), Chilblains (inflamed blood vessels)</li>
+                            <li><strong>Hypothermia is an emergency:</strong> Call 911, move to warmth, remove wet clothes, warm gradually, handle gently. Can be fatal without treatment.</li>
+                            <li><strong>Dress in three layers:</strong> Base layer (moisture-wicking, NO COTTON), middle layer (insulation), outer layer (wind/water protection). Protect head, hands, feet.</li>
+                            <li><strong>Wind chill matters:</strong> Wind dramatically increases heat loss. Below -18°F wind chill, frostbite risk in 30 minutes. Check forecast and protect exposed skin.</li>
+                            <li><strong>Wet = dangerous:</strong> Water conducts heat 25x faster than air. Change wet clothing immediately. Can get hypothermia at 50°F if wet.</li>
+                            <li><strong>Take warm breaks:</strong> 10-15 minutes every 1-2 hours minimum. More frequently in extreme cold. You have the right to warm up.</li>
+                            <li><strong>Stay hydrated and fed:</strong> Drink warm fluids regularly. Eat high-calorie meals and snacks. Your body needs fuel to generate heat.</li>
+                            <li><strong>Watch yourself and buddies:</strong> Monitor for shivering, numbness, confusion, coordination problems. Speak up if you or a coworker shows symptoms.</li>
+                            <li><strong>Risk factors:</strong> Age, medications, health conditions, fatigue, dehydration, previous cold injury all increase vulnerability.</li>
+                            <li><strong>Early recognition saves lives:</strong> Don't ignore symptoms. Stop work and warm up at first signs of cold stress.</li>
+                        </ul>
+                        <div class="info-box danger">
+                            <div class="info-box-title">&#128680; Never Ignore These Warnings</div>
+                            <div class="info-box-content">
+                                <ul>
+                                    <li>Shivering that won't stop</li>
+                                    <li>Numbness or white/gray skin (frostbite)</li>
+                                    <li>Confusion, slurred speech, or poor coordination</li>
+                                    <li>Stopped shivering when still cold (severe hypothermia)</li>
+                                </ul>
+                                <strong>These are emergencies. Get to warmth and get help immediately.</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 13: Quiz Question 1 -->
+            <div class="slide" data-slide="13">
+                <div class="content-card">
+                    <div class="slide-header">
+                        <div class="slide-number">Quiz Question 1 of 3</div>
+                        <h2 class="slide-title">Knowledge Check</h2>
+                    </div>
+                    <div class="slide-content">
+                        <div class="quiz-question">
+                            Which cold stress illness is a LIFE-THREATENING EMERGENCY requiring immediate medical attention?
+                        </div>
+                        <div class="quiz-options" id="q1-options">
+                            <div class="quiz-option" data-q="1" data-val="A">Frostbite</div>
+                            <div class="quiz-option" data-q="1" data-val="B">Hypothermia</div>
+                            <div class="quiz-option" data-q="1" data-val="C">Chilblains</div>
+                            <div class="quiz-option" data-q="1" data-val="D">Trench foot</div>
+                        </div>
+                        <div class="quiz-feedback" id="fb-1"></div>
+                        <div class="quiz-btn-group">
+                            <button class="btn btn-gold" id="submit-1" onclick="submitQuiz(1)" disabled>Submit Answer</button>
+                            <button class="btn btn-outline" id="next-q-1" onclick="nextSlide()" style="display: none;">Next Question →</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 14: Quiz Question 2 -->
+            <div class="slide" data-slide="14">
+                <div class="content-card">
+                    <div class="slide-header">
+                        <div class="slide-number">Quiz Question 2 of 3</div>
+                        <h2 class="slide-title">Knowledge Check</h2>
+                    </div>
+                    <div class="slide-content">
+                        <div class="quiz-question">
+                            What is the three-layer clothing system for cold weather protection?
+                        </div>
+                        <div class="quiz-options" id="q2-options">
+                            <div class="quiz-option" data-q="2" data-val="A">Cotton base, wool middle, cotton outer</div>
+                            <div class="quiz-option" data-q="2" data-val="B">Moisture-wicking base, insulation middle, wind/water-resistant outer</div>
+                            <div class="quiz-option" data-q="2" data-val="C">Three thick cotton shirts layered together</div>
+                            <div class="quiz-option" data-q="2" data-val="D">Any three layers of clothing will work equally well</div>
+                        </div>
+                        <div class="quiz-feedback" id="fb-2"></div>
+                        <div class="quiz-btn-group">
+                            <button class="btn btn-gold" id="submit-2" onclick="submitQuiz(2)" disabled>Submit Answer</button>
+                            <button class="btn btn-outline" id="next-q-2" onclick="nextSlide()" style="display: none;">Next Question →</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 15: Quiz Question 3 -->
+            <div class="slide" data-slide="15">
+                <div class="content-card">
+                    <div class="slide-header">
+                        <div class="slide-number">Quiz Question 3 of 3</div>
+                        <h2 class="slide-title">Knowledge Check</h2>
+                    </div>
+                    <div class="slide-content">
+                        <div class="quiz-question">
+                            Why is it dangerous to wear cotton clothing in cold weather?
+                        </div>
+                        <div class="quiz-options" id="q3-options">
+                            <div class="quiz-option" data-q="3" data-val="A">Cotton is too thin to provide warmth</div>
+                            <div class="quiz-option" data-q="3" data-val="B">Cotton absorbs moisture, stays wet, and loses all insulation value</div>
+                            <div class="quiz-option" data-q="3" data-val="C">Cotton doesn't come in warm colors</div>
+                            <div class="quiz-option" data-q="3" data-val="D">Cotton is only dangerous if it gets dirty</div>
+                        </div>
+                        <div class="quiz-feedback" id="fb-3"></div>
+                        <div class="quiz-btn-group">
+                            <button class="btn btn-gold" id="submit-3" onclick="submitQuiz(3)" disabled>Submit Answer</button>
+                            <button class="btn btn-outline" id="next-q-3" onclick="nextSlide()" style="display: none;">View Results →</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 16: Results -->
+            <div class="slide" data-slide="16">
+                <div class="results-card">
+                    <div class="results-icon" id="rIcon">&#127919;</div>
+                    <div class="results-score" id="rScore">0 / 3</div>
+                    <h2 class="results-title" id="rTitle">Quiz Complete</h2>
+                    <p class="results-message" id="rMsg">Calculating your results...</p>
+                    <div class="results-katie" id="rKatie">"Let's see how you did!"</div>
+                    <div class="results-buttons" id="rBtns">
+                        <button class="btn btn-gold">Loading...</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Navigation Bar -->
+    <nav class="nav-bar">
+        <div class="nav-inner">
+            <button class="nav-btn" id="prevBtn" onclick="prevSlide()">
+                ← Previous
+            </button>
+            <span class="slide-indicator" id="slideIndicator">Slide 1 of 15</span>
+            <button class="nav-btn nav-next" id="nextBtn" onclick="nextSlide()">
+                Next →
+            </button>
+        </div>
+    </nav>
+    <script>
+    (function() {
+        'use strict';
+        // ═══ CONFIG ═══
+        var TOTAL_SLIDES = 16;
+        var TOTAL_CONTENT = 15;
+        var MODULE_KEY = 'cold-stress';
+        // ═══ STATE ═══
+        var currentSlide = 1;
+        var quizAnswers = { 1: null, 2: null, 3: null };
+        var quizSubmitted = { 1: false, 2: false, 3: false };
+        var quizScore = 0;
+        // Quiz correct answers
+        var quizCorrectAnswers = {
+            1: 'B',  // Hypothermia is life-threatening emergency
+            2: 'B',  // Moisture-wicking base, insulation middle, wind/water-resistant outer
+            3: 'B'   // Cotton absorbs moisture, stays wet, loses insulation
+        };
+        // Feedback messages
+        var feedbackMessages = {
+            1: {
+                correct: '✓ Correct! Hypothermia (core body temperature below 95°F) is a life-threatening emergency requiring immediate 911 call and medical treatment.',
+                incorrect: '✗ Incorrect. Hypothermia is the life-threatening emergency. When core body temperature drops below 95°F, it can quickly lead to organ failure and death without treatment.'
+            },
+            2: {
+                correct: '✓ Correct! The three-layer system: base layer wicks moisture, middle layer provides insulation, outer layer blocks wind and water. Never use cotton!',
+                incorrect: '✗ Incorrect. Proper layering is: moisture-wicking base (synthetic or wool), insulation middle (fleece, wool), wind/water-resistant outer. NEVER cotton—it stays wet.'
+            },
+            3: {
+                correct: '✓ Correct! "Cotton kills" in cold weather. It absorbs sweat and moisture, stays wet, and loses all insulation value, causing rapid heat loss.',
+                incorrect: '✗ Incorrect. Cotton is dangerous because it absorbs moisture (sweat, rain, snow), stays wet, and loses all insulation value. This causes rapid heat loss and hypothermia.'
+            }
+        };
+        // ═══ NAVIGATION ═══
+        function goToSlide(n) {
+            if (n < 1 || n > TOTAL_SLIDES) return;
+            currentSlide = n;
+            updateUI();
+            saveSlideProgress();
+        }
+        window.nextSlide = function() {
+            goToSlide(currentSlide + 1);
+        };
+        window.prevSlide = function() {
+            goToSlide(currentSlide - 1);
+        };
+        // ═══ UI UPDATE ═══
+        function updateUI() {
+            document.querySelectorAll('.slide').forEach(function(s) {
+                s.classList.remove('active');
+            });
+            var activeSlide = document.querySelector('[data-slide="' + currentSlide + '"]');
+            if (activeSlide) {
+                activeSlide.classList.add('active');
+            }
+            var progressPct = ((currentSlide - 1) / (TOTAL_CONTENT - 1)) * 100;
+            document.getElementById('progressFill').style.width = Math.min(100, progressPct) + '%';
+            document.getElementById('progressPct').textContent = Math.round(Math.min(100, progressPct)) + '%';
+            
+            if (currentSlide <= TOTAL_CONTENT) {
+                document.getElementById('progressLabel').textContent = 'Slide ' + currentSlide + ' of ' + TOTAL_CONTENT;
+                document.getElementById('slideIndicator').textContent = 'Slide ' + currentSlide + ' of ' + TOTAL_CONTENT;
+            } else {
+                document.getElementById('progressLabel').textContent = 'Results';
+                document.getElementById('slideIndicator').textContent = 'Results';
+            }
+            var prevBtn = document.getElementById('prevBtn');
+            var nextBtn = document.getElementById('nextBtn');
+            
+            prevBtn.disabled = currentSlide === 1;
+            nextBtn.disabled = currentSlide === TOTAL_SLIDES;
+            if (currentSlide === 16) {
+                buildResults();
+            }
+            document.querySelector('.content-wrapper').scrollTop = 0;
+        }
+        // ═══ KEYBOARD NAV ═══
+        document.addEventListener('keydown', function(e) {
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+            if (e.key === 'ArrowRight' || e.key === 'Right') {
+                e.preventDefault();
+                nextSlide();
+            } else if (e.key === 'ArrowLeft' || e.key === 'Left') {
+                e.preventDefault();
+                prevSlide();
+            }
+        });
+        // ═══ QUIZ HANDLING ═══
+        document.querySelectorAll('.quiz-option').forEach(function(opt) {
+            opt.addEventListener('click', function() {
+                var qNum = parseInt(this.getAttribute('data-q'));
+                if (quizSubmitted[qNum]) return;
+                var container = document.getElementById('q' + qNum + '-options');
+                container.querySelectorAll('.quiz-option').forEach(function(o) {
+                    o.classList.remove('selected');
+                });
+                this.classList.add('selected');
+                quizAnswers[qNum] = this.getAttribute('data-val');
+                document.getElementById('submit-' + qNum).disabled = false;
+            });
+        });
+        window.submitQuiz = function(qNum) {
+            if (quizSubmitted[qNum]) return;
+            quizSubmitted[qNum] = true;
+            var userAnswer = quizAnswers[qNum];
+            var correctAnswer = quizCorrectAnswers[qNum];
+            var isCorrect = (userAnswer === correctAnswer);
+            var container = document.getElementById('q' + qNum + '-options');
+            container.querySelectorAll('.quiz-option').forEach(function(opt) {
+                opt.classList.add('disabled');
+                var val = opt.getAttribute('data-val');
+                if (val === correctAnswer) {
+                    opt.classList.add('correct');
+                } else if (opt.classList.contains('selected') && !isCorrect) {
+                    opt.classList.add('incorrect');
+                }
+            });
+            var fb = document.getElementById('fb-' + qNum);
+            if (isCorrect) {
+                fb.textContent = feedbackMessages[qNum].correct;
+                fb.className = 'quiz-feedback show correct-fb';
+                quizScore++;
+            } else {
+                fb.textContent = feedbackMessages[qNum].incorrect;
+                fb.className = 'quiz-feedback show incorrect-fb';
+            }
+            document.getElementById('submit-' + qNum).style.display = 'none';
+            document.getElementById('next-q-' + qNum).style.display = '';
+        };
+        // ═══ BUILD RESULTS ═══
+        function buildResults() {
+            var icon = document.getElementById('rIcon');
+            var score = document.getElementById('rScore');
+            var title = document.getElementById('rTitle');
+            var msg = document.getElementById('rMsg');
+            var btns = document.getElementById('rBtns');
+            var katie = document.getElementById('rKatie');
+            score.textContent = quizScore + ' / 3';
+            if (quizScore === 3) {
+                icon.textContent = '&#127881;';
+                title.textContent = 'Perfect Score!';
+                msg.textContent = 'Outstanding! You understand cold stress illnesses, proper clothing layers, and emergency response. Stay safe and warm!';
+                btns.innerHTML = '<button class="btn btn-success" onclick="completeModule()">✓ Complete Module & Return to Dashboard</button>';
+                katie.textContent = '"Excellent work! Remember: Layer properly, take warm breaks, watch for symptoms, and never ignore shivering or numbness!"';
+            } else if (quizScore >= 2) {
+                icon.textContent = '&#9989;';
+                title.textContent = 'You Passed!';
+                msg.textContent = 'Great job! You demonstrated solid understanding of cold stress awareness and prevention.';
+                btns.innerHTML = '<button class="btn btn-success" onclick="completeModule()">✓ Complete Module & Return to Dashboard</button>';
+                katie.textContent = '"Well done! Dress in layers (no cotton!), take warm breaks, stay hydrated, and watch your buddies in cold weather!"';
+            } else {
+                icon.textContent = '&#128218;';
+                title.textContent = 'Not Quite Yet';
+                msg.textContent = 'You need 2 out of 3 correct to pass this module. Review the lesson and try again!';
+                btns.innerHTML = '<button class="btn btn-gold" onclick="retakeQuiz()">↻ Retake Quiz</button>' +
+                    '<button class="btn btn-outline" onclick="goToSlide(3)">↑ Review Lesson</button>';
+                katie.textContent = '"Don\'t worry! Cold safety is critical. Review hypothermia symptoms and the three-layer clothing system!"';
+            }
+            saveQuizProgress();
+        }
+        // ═══ RETAKE QUIZ ═══
+        window.retakeQuiz = function() {
+            quizAnswers = { 1: null, 2: null, 3: null };
+            quizSubmitted = { 1: false, 2: false, 3: false };
+            quizScore = 0;
+            for (var q = 1; q <= 3; q++) {
+                var container = document.getElementById('q' + q + '-options');
+                container.querySelectorAll('.quiz-option').forEach(function(opt) {
+                    opt.classList.remove('selected', 'correct', 'incorrect', 'disabled');
+                });
+                document.getElementById('fb-' + q).className = 'quiz-feedback';
+                document.getElementById('fb-' + q).textContent = '';
+                document.getElementById('submit-' + q).style.display = '';
+                document.getElementById('submit-' + q).disabled = true;
+                document.getElementById('next-q-' + q).style.display = 'none';
+            }
+            goToSlide(13);
+        };
+        // ═══ LOCAL STORAGE ═══
+        function getProgress() {
+            try {
+                var d = localStorage.getItem('safetyverse-progress');
+                return d ? JSON.parse(d) : {};
+            } catch(e) { return {}; }
+        }
+        function saveSlideProgress() {
+            try {
+                var p = getProgress();
+                if (!p.modules) p.modules = {};
+                if (!p.modules[MODULE_KEY]) {
+                    p.modules[MODULE_KEY] = { completed: false, quizScore: 0, attempts: 0, lastAttempt: null };
+                }
+                p.modules[MODULE_KEY].currentSlide = currentSlide;
+                p.modules[MODULE_KEY].totalSlides = TOTAL_SLIDES;
+                localStorage.setItem('safetyverse-progress', JSON.stringify(p));
+            } catch(e) {}
+        }
+        function saveQuizProgress() {
+            try {
+                var p = getProgress();
+                if (!p.modules) p.modules = {};
+                if (!p.modules[MODULE_KEY]) {
+                    p.modules[MODULE_KEY] = { completed: false, quizScore: 0, attempts: 0 };
+                }
+                var mod = p.modules[MODULE_KEY];
+                mod.quizScore = quizScore;
+                mod.attempts = (mod.attempts || 0) + 1;
+                mod.lastAttempt = new Date().toISOString();
+                if (quizScore >= 2) mod.completed = true;
+                localStorage.setItem('safetyverse-progress', JSON.stringify(p));
+            } catch(e) {}
+        }
+        window.completeModule = function() {
+            try {
+                var p = getProgress();
+                if (!p.modules) p.modules = {};
+                if (!p.modules[MODULE_KEY]) {
+                    p.modules[MODULE_KEY] = { quizScore: 0, attempts: 0 };
+                }
+                p.modules[MODULE_KEY].completed = true;
+                p.modules[MODULE_KEY].completedAt = new Date().toISOString();
+                p.modules[MODULE_KEY].quizScore = quizScore;
+                localStorage.setItem('safetyverse-progress', JSON.stringify(p));
+            } catch(e) {}
+            window.location.href = '../../user-dashboard/index.html';
+        };
+        // ═══ RESTORE PROGRESS ON LOAD ═══
+        function restoreProgress() {
+            try {
+                var p = getProgress();
+                if (p.modules && p.modules[MODULE_KEY]) {
+                    var mod = p.modules[MODULE_KEY];
+                    if (mod.completed) {
+                        var introCard = document.querySelector('.intro-card');
+                        if (introCard) {
+                            var badge = document.createElement('div');
+                            badge.style.cssText = 'position:absolute;top:20px;right:20px;background:var(--success);color:white;font-size:12px;font-weight:700;padding:5px 16px;border-radius:20px;z-index:5;';
+                            badge.textContent = '✓ Completed';
+                            introCard.appendChild(badge);
+                        }
+                    }
+                }
+            } catch(e) {}
+        }
+        // ═══ INIT ═══
+        restoreProgress();
+        updateUI();
+    })();
+    </script>
+</body>
+</html>

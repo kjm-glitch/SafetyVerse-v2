@@ -1,0 +1,1540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="logo.png?v=2">
+    <title>Module 5: First Aid &amp; AED - SafetyVerse</title>
+    <style>
+        /* ═══════════════════════════════════════════
+           CSS VARIABLES & RESET
+           ═══════════════════════════════════════════ */
+        :root {
+            --primary: #FFD700;
+            --primary-dark: #E6C200;
+            --secondary: #FF8C00;
+            --secondary-dark: #E67A00;
+            --bg-clay: #F5E6D3;
+            --bg-clay-dark: #E8D5C0;
+            --bg-clay-light: #FAF0E6;
+            --text-dark: #333333;
+            --text-medium: #555555;
+            --text-light: #777777;
+            --accent-black: #1A1A1A;
+            --white: #FFFFFF;
+            --success: #4CAF50;
+            --success-dark: #388E3C;
+            --error: #E53935;
+            --error-dark: #C62828;
+            --info: #2196F3;
+            --shadow-soft: 0 4px 15px rgba(0,0,0,0.1);
+            --shadow-medium: 0 6px 25px rgba(0,0,0,0.15);
+            --shadow-hard: 0 8px 30px rgba(0,0,0,0.2);
+            --shadow-clay: 4px 4px 0px rgba(0,0,0,0.15), inset 0 2px 4px rgba(255,255,255,0.3);
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 20px;
+            --radius-xl: 28px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --font-heading: 'Segoe UI', 'Arial Black', sans-serif;
+            --font-body: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        html, body {
+            height: 100%;
+            overflow: hidden;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background-color: var(--bg-clay);
+            color: var(--text-dark);
+            line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 9999;
+            background-image:
+                radial-gradient(circle at 20% 50%, rgba(139,90,43,0.03) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(139,90,43,0.02) 0%, transparent 50%),
+                radial-gradient(circle at 50% 80%, rgba(139,90,43,0.03) 0%, transparent 50%);
+        }
+
+        /* ═══ HEADER ═══ */
+        .header {
+            background: linear-gradient(180deg, var(--accent-black) 0%, #2A2A2A 100%);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            border-bottom: 4px solid var(--primary);
+            z-index: 100;
+            flex-shrink: 0;
+        }
+        .header-inner {
+            max-width: 1400px; margin: 0 auto; padding: 0 24px;
+            display: flex; align-items: center; justify-content: space-between; height: 64px;
+        }
+        .logo { display: flex; align-items: center; gap: 12px; text-decoration: none; flex-shrink: 0; }
+        .logo-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .logo-icon img {
+            display: block;
+            height: 50px;
+            width: auto;
+            image-rendering: -webkit-optimize-contrast;
+            image-rendering: crisp-edges;
+            box-shadow: 4px 4px 0px rgba(0,0,0,0.15);
+            border-radius: 12px;
+            transition: transform 0.2s ease;
+        }
+        .logo-text { font-family: var(--font-heading); font-size: 22px; font-weight: 900; color: var(--white); letter-spacing: -0.5px; }
+        .logo-text em { color: var(--primary); font-style: normal; }
+        .header-center { display: flex; align-items: center; gap: 10px; position: absolute; left: 50%; transform: translateX(-50%); }
+        .header-module-tag { background: rgba(255,215,0,0.15); color: var(--primary); font-size: 11px; font-weight: 800; padding: 3px 10px; border-radius: 12px; text-transform: uppercase; letter-spacing: 0.8px; }
+        .header-module-title { color: rgba(255,255,255,0.8); font-size: 14px; font-weight: 600; }
+        .back-btn { display: flex; align-items: center; gap: 6px; text-decoration: none; color: rgba(255,255,255,0.7); font-size: 13px; font-weight: 600; padding: 7px 14px; border-radius: var(--radius-sm); transition: var(--transition); background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); }
+        .back-btn:hover { color: var(--white); background: rgba(255,255,255,0.12); border-color: rgba(255,255,255,0.2); }
+
+        /* ═══ PROGRESS BAR ═══ */
+        .progress-bar { background: var(--accent-black); border-bottom: 1px solid rgba(255,215,0,0.15); flex-shrink: 0; z-index: 99; }
+        .progress-bar-inner { max-width: 1400px; margin: 0 auto; padding: 8px 24px; display: flex; align-items: center; gap: 14px; }
+        .progress-label { font-size: 12px; font-weight: 700; color: rgba(255,255,255,0.5); white-space: nowrap; min-width: 90px; }
+        .progress-track { flex: 1; height: 6px; background: rgba(255,255,255,0.08); border-radius: 3px; overflow: hidden; }
+        .progress-fill { height: 100%; background: linear-gradient(90deg, var(--primary), var(--secondary)); border-radius: 3px; transition: width 0.4s ease; }
+        .progress-pct { font-size: 12px; font-weight: 700; color: var(--primary); white-space: nowrap; min-width: 32px; text-align: right; }
+
+        /* ═══ SLIDE VIEWPORT ═══ */
+        .slide-viewport { flex: 1; position: relative; overflow: hidden; }
+        .slide { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; padding: 24px; opacity: 0; visibility: hidden; transition: opacity 0.4s ease, transform 0.4s ease; transform: translateX(40px); overflow-y: auto; }
+        .slide.active { opacity: 1; visibility: visible; transform: translateX(0); z-index: 2; }
+        .slide.exit-left { opacity: 0; transform: translateX(-40px); }
+
+        /* ═══ SLIDE CARD ═══ */
+        .slide-card { background: var(--white); border-radius: var(--radius-lg); box-shadow: var(--shadow-hard); width: 100%; max-width: 860px; position: relative; display: flex; flex-direction: column; }
+        .slide-card-body { padding: 36px 40px 32px; flex: 1; overflow-y: auto; max-height: calc(100vh - 220px); }
+        .slide-badge { display: inline-block; background: linear-gradient(135deg, var(--primary), var(--secondary)); color: var(--accent-black); font-size: 11px; font-weight: 800; padding: 4px 14px; border-radius: 20px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 18px; }
+        .slide-heading { display: flex; align-items: center; gap: 16px; margin-bottom: 22px; }
+        .slide-icon { width: 54px; height: 54px; border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; font-size: 28px; flex-shrink: 0; box-shadow: var(--shadow-clay); }
+        .slide-icon.blue { background: linear-gradient(135deg, #E3F2FD, #BBDEFB); }
+        .slide-icon.green { background: linear-gradient(135deg, #E8F5E9, #C8E6C9); }
+        .slide-icon.orange { background: linear-gradient(135deg, #FFF3E0, #FFE0B2); }
+        .slide-icon.red { background: linear-gradient(135deg, #FFEBEE, #FFCDD2); }
+        .slide-icon.purple { background: linear-gradient(135deg, #F3E5F5, #E1BEE7); }
+        .slide-icon.yellow { background: linear-gradient(135deg, #FFFDE7, #FFF9C4); }
+        .slide-icon.teal { background: linear-gradient(135deg, #E0F2F1, #B2DFDB); }
+        .slide-icon.gold { background: linear-gradient(135deg, #FFF8E1, #FFE082); }
+        .slide-title { font-family: var(--font-heading); font-size: 26px; font-weight: 900; color: var(--text-dark); line-height: 1.2; }
+        .slide-text { font-size: 16px; color: var(--text-medium); line-height: 1.7; }
+        .slide-text p { margin-bottom: 14px; }
+        .slide-text strong { color: var(--text-dark); }
+        .slide-text h4 { font-size: 16px; font-weight: 800; color: var(--text-dark); margin: 18px 0 6px; }
+
+        /* ═══ LISTS ═══ */
+        .check-list { list-style: none; margin: 16px 0; }
+        .check-list li { padding: 9px 0 9px 36px; position: relative; font-size: 15px; color: var(--text-medium); line-height: 1.55; }
+        .check-list li::before { content: '\2713'; position: absolute; left: 0; top: 9px; width: 24px; height: 24px; background: #E8F5E9; color: var(--success); font-weight: 900; font-size: 13px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+        .x-list { list-style: none; margin: 16px 0; }
+        .x-list li { padding: 9px 0 9px 36px; position: relative; font-size: 15px; color: var(--text-medium); line-height: 1.55; }
+        .x-list li::before { content: '\2717'; position: absolute; left: 0; top: 9px; width: 24px; height: 24px; background: #FFEBEE; color: var(--error); font-weight: 900; font-size: 12px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+        .num-list { list-style: none; margin: 16px 0; counter-reset: numlist; }
+        .num-list li { padding: 9px 0 9px 36px; position: relative; font-size: 15px; color: var(--text-medium); line-height: 1.55; counter-increment: numlist; }
+        .num-list li::before { content: counter(numlist); position: absolute; left: 0; top: 9px; width: 24px; height: 24px; background: #E3F2FD; color: var(--info); font-weight: 800; font-size: 12px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+        .icon-list { list-style: none; margin: 16px 0; }
+        .icon-list li { padding: 9px 0 9px 36px; position: relative; font-size: 15px; color: var(--text-medium); line-height: 1.55; }
+        .icon-list li .li-icon { position: absolute; left: 2px; top: 10px; font-size: 16px; }
+
+        /* ═══ CALLOUTS ═══ */
+        .callout { border-radius: var(--radius-sm); padding: 16px 20px; margin: 18px 0; font-size: 15px; line-height: 1.6; }
+        .callout.gold { background: linear-gradient(135deg, #FFFDE7, #FFF9C4); border-left: 4px solid var(--primary); }
+        .callout.orange { background: linear-gradient(135deg, #FFF3E0, #FFE0B2); border-left: 4px solid var(--secondary); }
+        .callout.blue { background: linear-gradient(135deg, #E3F2FD, #BBDEFB); border-left: 4px solid var(--info); }
+        .callout.green { background: linear-gradient(135deg, #E8F5E9, #C8E6C9); border-left: 4px solid var(--success); }
+        .callout.red { background: linear-gradient(135deg, #FFEBEE, #FFCDD2); border-left: 4px solid var(--error); }
+        .stat-badge { display: inline-flex; align-items: center; gap: 8px; background: linear-gradient(135deg, var(--primary), var(--secondary)); color: var(--accent-black); padding: 10px 22px; border-radius: 28px; font-weight: 800; font-size: 15px; box-shadow: var(--shadow-clay); margin-top: 6px; }
+
+        /* ═══ KATIE TIP ═══ */
+        .katie-tip { display: flex; gap: 14px; align-items: flex-start; background: linear-gradient(135deg, #FFFDE7, #FFF9C4); border: 2px solid var(--primary); border-radius: var(--radius-md); padding: 16px 18px; margin-top: 22px; }
+        .katie-avatar { width: 48px; height: auto; border-radius: 10px; border: 2px solid var(--primary); object-fit: contain; background: #fff; padding: 3px; flex-shrink: 0; box-shadow: 2px 2px 0px rgba(0,0,0,0.1); }
+        .katie-tip-body { flex: 1; }
+        .katie-tip-label { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 1.2px; color: var(--secondary-dark); margin-bottom: 3px; }
+        .katie-tip-msg { font-size: 14px; color: var(--text-dark); font-style: italic; line-height: 1.5; }
+
+        /* ═══ TAKEAWAY ═══ */
+        .takeaway-grid { display: grid; gap: 12px; margin-top: 18px; }
+        .takeaway-item { display: flex; align-items: center; gap: 14px; background: var(--bg-clay-light); border-radius: var(--radius-md); padding: 16px 20px; border-left: 4px solid var(--primary); transition: var(--transition); }
+        .takeaway-item:hover { transform: translateX(4px); box-shadow: var(--shadow-soft); }
+        .takeaway-icon { font-size: 22px; flex-shrink: 0; }
+        .takeaway-text { font-size: 15px; font-weight: 600; color: var(--text-dark); }
+
+        /* ═══ TWO-SECTIONS ═══ */
+        .two-sections { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 16px 0; }
+        .two-sections .section-block h4 { font-size: 14px; font-weight: 800; color: var(--text-dark); margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+
+        /* ═══ STEP CARDS ═══ */
+        .step-cards { display: grid; gap: 12px; margin: 16px 0; }
+        .step-card { display: flex; gap: 14px; align-items: flex-start; background: var(--bg-clay-light); border-radius: var(--radius-md); padding: 16px; border-left: 4px solid var(--info); }
+        .step-card.danger { border-left-color: var(--error); }
+        .step-card.success { border-left-color: var(--success); }
+        .step-card.warning { border-left-color: var(--secondary); }
+        .step-num { width: 32px; height: 32px; border-radius: 50%; background: var(--info); color: var(--white); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px; flex-shrink: 0; }
+        .step-card.danger .step-num { background: var(--error); }
+        .step-card.success .step-num { background: var(--success); }
+        .step-card.warning .step-num { background: var(--secondary); }
+        .step-content h5 { font-size: 15px; font-weight: 800; color: var(--text-dark); margin-bottom: 4px; }
+        .step-content p { font-size: 14px; color: var(--text-medium); line-height: 1.5; margin: 0; }
+
+        /* ═══ INTRO CARD (SLIDE 1) ═══ */
+        .intro-card { background: linear-gradient(135deg, var(--accent-black) 0%, #2A2A2A 50%, #333 100%); color: var(--white); border-radius: var(--radius-xl); max-width: 860px; width: 100%; padding: 50px; position: relative; overflow: hidden; box-shadow: var(--shadow-hard); }
+        .intro-card::before { content: ''; position: absolute; top: -40%; right: -15%; width: 450px; height: 450px; background: radial-gradient(circle, rgba(255,215,0,0.1) 0%, transparent 65%); pointer-events: none; }
+        .intro-card::after { content: ''; position: absolute; bottom: -30%; left: -10%; width: 300px; height: 300px; background: radial-gradient(circle, rgba(255,140,0,0.06) 0%, transparent 65%); pointer-events: none; }
+        .intro-badge { display: inline-block; background: var(--primary); color: var(--accent-black); font-size: 11px; font-weight: 800; padding: 5px 16px; border-radius: 20px; text-transform: uppercase; letter-spacing: 1.2px; margin-bottom: 24px; }
+        .intro-path-tag { display: inline-block; background: rgba(255,215,0,0.12); color: var(--primary); font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 14px; margin-bottom: 14px; margin-left: 8px; }
+        .intro-final-tag { display: inline-block; background: rgba(76,175,80,0.2); color: #66BB6A; font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 14px; margin-bottom: 14px; margin-left: 8px; }
+        .intro-card h1 { font-family: var(--font-heading); font-size: 38px; font-weight: 900; line-height: 1.15; margin-bottom: 14px; }
+        .intro-card h1 em { color: var(--primary); font-style: normal; }
+        .intro-desc { color: rgba(255,255,255,0.65); font-size: 17px; max-width: 520px; line-height: 1.6; margin-bottom: 28px; }
+        .intro-meta { display: flex; gap: 24px; margin-bottom: 36px; flex-wrap: wrap; }
+        .intro-meta-item { display: flex; align-items: center; gap: 8px; color: rgba(255,255,255,0.5); font-size: 14px; font-weight: 600; }
+        .intro-meta-item span { font-size: 20px; }
+        .intro-start-btn { display: inline-flex; align-items: center; gap: 10px; padding: 16px 40px; background: linear-gradient(135deg, var(--primary), var(--secondary)); color: var(--accent-black); font-size: 16px; font-weight: 800; border: none; border-radius: var(--radius-md); cursor: pointer; transition: var(--transition); box-shadow: var(--shadow-clay); letter-spacing: 0.3px; }
+        .intro-start-btn:hover { transform: translateY(-3px) scale(1.02); box-shadow: 0 8px 30px rgba(255,215,0,0.3); }
+        .intro-katie { position: absolute; right: 40px; bottom: 30px; width: 140px; height: auto; border-radius: 12px; border: 4px solid var(--primary); object-fit: contain; background: #fff; padding: 8px; box-shadow: 0 6px 30px rgba(0,0,0,0.4); opacity: 0.95; }
+
+        /* ═══ VIDEO CARD (SLIDE 2) ═══ */
+        .video-wrap { width: 100%; max-width: 860px; }
+        .video-card { background: var(--white); border-radius: var(--radius-lg); box-shadow: var(--shadow-hard); overflow: hidden; }
+        .video-card-header { padding: 24px 32px 0; }
+        .video-card-header h2 { font-family: var(--font-heading); font-size: 22px; font-weight: 800; display: flex; align-items: center; gap: 10px; }
+        .video-card-header p { color: var(--text-light); font-size: 14px; margin-top: 4px; }
+        .video-player-area { margin: 20px 32px; background: linear-gradient(135deg, #111, #222); border-radius: var(--radius-md); aspect-ratio: 16/9; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; overflow: hidden; }
+        .video-player-area::before { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(45deg,transparent,transparent 10px,rgba(255,255,255,0.015) 10px,rgba(255,255,255,0.015) 20px); pointer-events: none; }
+        .video-play-btn { width: 72px; height: 72px; border-radius: 50%; background: rgba(255,215,0,0.15); border: 3px solid var(--primary); display: flex; align-items: center; justify-content: center; font-size: 30px; margin-bottom: 14px; color: var(--primary); }
+        .video-player-area h3 { color: var(--white); font-size: 17px; margin-bottom: 6px; }
+        .video-player-area p { color: rgba(255,255,255,0.4); font-size: 13px; }
+        .video-card-footer { padding: 16px 32px 24px; display: flex; align-items: center; justify-content: space-between; }
+        .mark-watched-btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 18px; border: 2px solid rgba(0,0,0,0.1); background: var(--bg-clay-light); color: var(--text-light); border-radius: var(--radius-sm); font-size: 13px; font-weight: 600; cursor: not-allowed; opacity: 0.5; }
+
+        /* ═══ QUIZ ═══ */
+        .quiz-card { background: var(--white); border-radius: var(--radius-lg); box-shadow: var(--shadow-hard); border: 2px solid var(--primary); width: 100%; max-width: 860px; overflow: hidden; }
+        .quiz-card-header { background: linear-gradient(135deg, var(--accent-black), #2A2A2A); padding: 20px 32px; display: flex; align-items: center; justify-content: space-between; }
+        .quiz-card-header h2 { font-family: var(--font-heading); font-size: 18px; font-weight: 800; color: var(--white); display: flex; align-items: center; gap: 8px; }
+        .quiz-progress-badge { background: rgba(255,215,0,0.15); color: var(--primary); font-size: 12px; font-weight: 700; padding: 4px 12px; border-radius: 14px; }
+        .quiz-card-body { padding: 36px 40px; }
+        .quiz-question-text { font-size: 19px; font-weight: 700; color: var(--text-dark); margin-bottom: 24px; line-height: 1.45; }
+        .quiz-options { display: grid; gap: 10px; }
+        .quiz-option { display: flex; align-items: center; gap: 14px; padding: 15px 20px; border: 2px solid rgba(0,0,0,0.09); border-radius: var(--radius-md); cursor: pointer; transition: var(--transition); background: var(--bg-clay-light); font-size: 15px; color: var(--text-dark); }
+        .quiz-option:hover:not(.disabled) { border-color: var(--primary); background: #FFFDE7; }
+        .quiz-option.selected { border-color: var(--primary); background: #FFFDE7; font-weight: 600; }
+        .quiz-option.correct { border-color: var(--success); background: #E8F5E9; }
+        .quiz-option.incorrect { border-color: var(--error); background: #FFEBEE; }
+        .quiz-option.disabled { cursor: default; }
+        .quiz-option.disabled:not(.correct):not(.selected) { opacity: 0.5; }
+        .quiz-option-letter { width: 34px; height: 34px; border-radius: 50%; background: rgba(0,0,0,0.06); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px; flex-shrink: 0; transition: var(--transition); }
+        .quiz-option.selected .quiz-option-letter { background: var(--primary); color: var(--accent-black); }
+        .quiz-option.correct .quiz-option-letter { background: var(--success); color: var(--white); }
+        .quiz-option.incorrect .quiz-option-letter { background: var(--error); color: var(--white); }
+        .quiz-feedback { margin-top: 16px; padding: 14px 18px; border-radius: var(--radius-sm); font-size: 14px; font-weight: 600; display: none; line-height: 1.5; }
+        .quiz-feedback.show { display: block; }
+        .quiz-feedback.correct-fb { background: #E8F5E9; color: #2E7D32; border: 1px solid #C8E6C9; }
+        .quiz-feedback.incorrect-fb { background: #FFEBEE; color: #C62828; border: 1px solid #FFCDD2; }
+        .quiz-card-actions { padding: 0 40px 32px; display: flex; gap: 12px; }
+
+        /* ═══ RESULTS ═══ */
+        .results-card { background: var(--white); border-radius: var(--radius-lg); box-shadow: var(--shadow-hard); width: 100%; max-width: 860px; text-align: center; overflow: hidden; }
+        .results-header { background: linear-gradient(135deg, var(--accent-black), #2A2A2A); padding: 20px 32px; }
+        .results-header h2 { font-family: var(--font-heading); font-size: 18px; font-weight: 800; color: var(--white); }
+        .results-body { padding: 40px; }
+        .results-icon { font-size: 60px; margin-bottom: 12px; }
+        .results-score { font-family: var(--font-heading); font-size: 48px; font-weight: 900; color: var(--primary-dark); margin-bottom: 8px; }
+        .results-title { font-family: var(--font-heading); font-size: 24px; font-weight: 800; margin-bottom: 8px; }
+        .results-msg { color: var(--text-medium); font-size: 16px; max-width: 500px; margin: 0 auto 10px; line-height: 1.5; }
+        .results-btns { display: flex; gap: 14px; justify-content: center; margin-top: 28px; flex-wrap: wrap; }
+        .results-katie { margin-top: 28px; padding-top: 24px; border-top: 2px dashed rgba(0,0,0,0.06); display: flex; align-items: center; gap: 14px; justify-content: center; }
+        .results-katie img { width: 50px; height: auto; border-radius: 12px; border: 2px solid var(--primary); object-fit: contain; background: #fff; padding: 3px; }
+        .results-katie p { font-style: italic; font-size: 15px; color: var(--text-medium); text-align: left; }
+        .foundation-banner { background: linear-gradient(135deg, #388E3C, #4CAF50); color: var(--white); padding: 18px 24px; border-radius: var(--radius-md); margin-top: 24px; text-align: center; }
+        .foundation-banner h3 { font-family: var(--font-heading); font-size: 18px; font-weight: 800; margin-bottom: 6px; }
+        .foundation-banner p { font-size: 14px; opacity: 0.9; }
+
+        /* ═══ BUTTONS ═══ */
+        .btn { display: inline-flex; align-items: center; gap: 8px; padding: 12px 28px; border-radius: var(--radius-sm); font-size: 14px; font-weight: 700; cursor: pointer; transition: var(--transition); border: none; text-decoration: none; }
+        .btn-gold { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: var(--accent-black); box-shadow: var(--shadow-clay); }
+        .btn-gold:hover { transform: translateY(-2px); box-shadow: var(--shadow-medium); }
+        .btn-gold:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+        .btn-dark { background: var(--accent-black); color: var(--white); }
+        .btn-dark:hover { background: #333; transform: translateY(-1px); }
+        .btn-outline { background: var(--white); color: var(--text-dark); border: 2px solid rgba(0,0,0,0.12); }
+        .btn-outline:hover { border-color: var(--primary); background: #FFFDE7; }
+        .btn-success { background: var(--success); color: var(--white); }
+        .btn-success:hover { background: var(--success-dark); transform: translateY(-2px); }
+
+        /* ═══ BOTTOM NAV ═══ */
+        .bottom-nav { background: var(--white); border-top: 1px solid rgba(0,0,0,0.08); box-shadow: 0 -2px 10px rgba(0,0,0,0.05); flex-shrink: 0; z-index: 100; }
+        .bottom-nav-inner { max-width: 1400px; margin: 0 auto; padding: 12px 24px; display: flex; align-items: center; justify-content: space-between; }
+        .nav-btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 24px; border-radius: var(--radius-sm); font-size: 14px; font-weight: 700; cursor: pointer; transition: var(--transition); border: 2px solid rgba(0,0,0,0.1); background: var(--white); color: var(--text-dark); }
+        .nav-btn:hover:not(:disabled) { border-color: var(--primary); background: #FFFDE7; }
+        .nav-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+        .nav-btn.next-btn { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: var(--accent-black); border: none; box-shadow: var(--shadow-clay); }
+        .nav-btn.next-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: var(--shadow-medium); }
+        .nav-slide-info { font-size: 13px; font-weight: 700; color: var(--text-light); }
+        .kbd-hints { display: flex; gap: 12px; align-items: center; }
+        .kbd-hint { font-size: 11px; color: var(--text-light); display: flex; align-items: center; gap: 4px; }
+        .kbd { display: inline-block; background: var(--bg-clay); border: 1px solid rgba(0,0,0,0.12); border-radius: 4px; padding: 1px 6px; font-size: 10px; font-weight: 700; font-family: monospace; }
+
+        /* ═══ RESPONSIVE ═══ */
+        @media (max-width: 768px) {
+            .header-inner { height: 56px; padding: 0 16px; }
+            .header-center { display: none; }
+            .logo-text { font-size: 19px; }
+            .back-btn { padding: 6px 10px; font-size: 12px; }
+            .progress-bar-inner { padding: 6px 16px; }
+            .slide { padding: 16px; }
+            .slide-card-body { padding: 24px 20px 20px; max-height: calc(100vh - 200px); }
+            .slide-title { font-size: 22px; }
+            .intro-card { padding: 32px 24px; }
+            .intro-card h1 { font-size: 28px; }
+            .intro-katie { width: 90px; height: auto; right: 20px; bottom: 20px; }
+            .intro-desc { font-size: 15px; }
+            .two-sections { grid-template-columns: 1fr; }
+            .quiz-card-body { padding: 24px 20px; }
+            .quiz-card-actions { padding: 0 20px 24px; }
+            .quiz-question-text { font-size: 17px; }
+            .results-body { padding: 28px 20px; }
+            .video-card-header { padding: 20px 20px 0; }
+            .video-player-area { margin: 16px 20px; }
+            .video-card-footer { padding: 12px 20px 20px; flex-direction: column; gap: 10px; }
+            .bottom-nav-inner { padding: 10px 16px; }
+            .kbd-hints { display: none; }
+            .nav-btn { padding: 10px 16px; font-size: 13px; }
+        }
+        @media (max-width: 480px) {
+            .intro-card h1 { font-size: 24px; }
+            .intro-katie { display: none; }
+            .intro-meta { gap: 14px; }
+            .intro-start-btn { padding: 14px 28px; font-size: 15px; }
+            .slide-heading { flex-direction: column; align-items: flex-start; gap: 10px; }
+            .katie-tip { flex-direction: column; text-align: center; align-items: center; }
+        }
+
+        /* ═══ NEXT SLIDE BUTTON ═══ */
+        .next-slide-button {
+            display: inline-block;
+            background: #FFD700;
+            color: #000;
+            padding: 16px 40px;
+            font-size: 18px;
+            font-weight: bold;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+        }
+        .next-slide-button:hover {
+            background: #E6C200;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 215, 0, 0.4);
+        }
+        .character-avatar {
+            width: 60px; height: auto;
+            border-radius: 10px;
+            border: 3px solid #FFD700;
+            object-fit: contain; background: #fff; padding: 4px;
+        }
+
+        /* Katie Circular Avatar Styles */
+        .katie-avatar-small {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            object-fit: cover;
+            object-position: center 48%;
+            background: white;
+            border: 3px solid #FFD700;
+            padding: 5px;
+            display: block;
+            flex-shrink: 0;
+        }
+        .katie-avatar-medium {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            object-position: center 48%;
+            background: white;
+            border: 3px solid #FFD700;
+            padding: 8px;
+            display: block;
+            flex-shrink: 0;
+        }
+        .katie-avatar-large {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            object-position: center 48%;
+            background: white;
+            border: 4px solid #FFD700;
+            padding: 10px;
+            display: block;
+            flex-shrink: 0;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ═══ HEADER ═══ -->
+    <header class="header" role="banner">
+        <div class="header-inner">
+            <a href="../../user-dashboard/index.html" class="logo" aria-label="SafetyVerse Home">
+                <div class="logo-icon" aria-hidden="true"><img src="logo.png?v=2" alt="SafetyVerse Logo" style="height: 50px; width: auto;"></div>
+                <div class="logo-text">Safety<em>Verse</em></div>
+            </a>
+            <div class="header-center">
+                <span class="header-module-tag">Module 5</span>
+                <span class="header-module-title">First Aid &amp; AED</span>
+            </div>
+            <a href="../../user-dashboard/index.html" class="back-btn">&#8592; Back to Dashboard</a>
+        </div>
+    </header>
+
+    <!-- ═══ PROGRESS BAR ═══ -->
+    <div class="progress-bar" role="navigation" aria-label="Lesson progress">
+        <div class="progress-bar-inner">
+            <span class="progress-label" id="progressLabel">Slide 1 of 17</span>
+            <div class="progress-track" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <span class="progress-pct" id="progressPct">6%</span>
+        </div>
+    </div>
+
+    <!-- ═══ SLIDE VIEWPORT ═══ -->
+    <div class="slide-viewport">
+
+        <!-- ══════════════════════════════════════════
+             SLIDE 1: INTRO
+             ══════════════════════════════════════════ -->
+        <div class="slide active" data-slide="1">
+            <div class="intro-card">
+                <span class="intro-badge">Module 5 of 19</span>
+                <span class="intro-path-tag">Foundation Path</span>
+                <span class="intro-final-tag">&#127942; Final Foundation Module</span>
+                <h1>First Aid <em>&amp; AED</em></h1>
+                <p style="color:rgba(255,255,255,0.5); font-size:15px; font-weight:700; margin-bottom:10px;">Save a Life, Be a First Responder</p>
+                <p class="intro-desc">Learn essential first aid skills and how to use an AED (Automated External Defibrillator). When seconds count, your knowledge can be the difference between life and death. Completing this module earns your Foundation Safety Certificate!</p>
+                <div class="intro-meta">
+                    <div class="intro-meta-item"><span>&#128218;</span> 10 Content Slides</div>
+                    <div class="intro-meta-item"><span>&#10067;</span> 3 Quiz Questions</div>
+                    <div class="intro-meta-item"><span>&#9201;</span> ~12 min</div>
+                </div>
+                <button class="intro-start-btn" onclick="goToSlide(2)">Start Module &#8594;</button>
+                <img src="katie.png" alt="Katie" class="katie-avatar-large">
+            </div>
+        </div>
+
+        <!-- ══════════════════════════════════════════
+             SLIDE 2: VIDEO
+             ══════════════════════════════════════════ -->
+        <div class="slide" data-slide="2">
+            <div class="video-wrap">
+                <div class="video-card">
+                    <div class="video-card-header">
+                        <h2>&#127909; First Aid &amp; AED Basics</h2>
+                        <p>Watch this 3-minute overview on workplace first aid and AED use</p>
+                    </div>
+                    <div class="video-player-area">
+                        <div class="video-play-btn" aria-hidden="true">&#9654;</div>
+                        <h3>Video Coming Soon</h3>
+                        <p>First aid and AED overview video in development</p>
+                    </div>
+                    <div class="video-card-footer">
+                        <span class="mark-watched-btn">&#9744; Mark as Watched</span>
+                        <button class="btn btn-gold" onclick="goToSlide(3)">Next: Begin Lesson &#8594;</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ══════════════════════════════════════════
+             SLIDE 3: Why First Aid Matters
+             ══════════════════════════════════════════ -->
+        <div class="slide" data-slide="3">
+            <div class="slide-card">
+                <div class="slide-card-body">
+                    <span class="slide-badge">Slide 1 of 10</span>
+                    <div class="slide-heading">
+                        <div class="slide-icon red" aria-hidden="true">&#127973;</div>
+                        <h2 class="slide-title">Why Workplace First Aid Matters</h2>
+                    </div>
+                    <div class="slide-text">
+                        <div class="callout red">
+                            <strong>&#128680; In a medical emergency, the first few minutes are the most critical.</strong> Professional help takes an average of 8&ndash;12 minutes to arrive. Your actions in that window can save a life.
+                        </div>
+                        <p><strong>First aid in the workplace is essential because:</strong></p>
+                        <ul class="check-list">
+                            <li>Immediate care can prevent injuries from worsening</li>
+                            <li>Some conditions (cardiac arrest, severe bleeding) require instant response</li>
+                            <li>OSHA requires employers to have first aid provisions</li>
+                            <li>Trained employees increase survival rates dramatically</li>
+                            <li>Reduces recovery time and long-term disability</li>
+                        </ul>
+                        <div class="stat-badge">&#128147; CPR within first 3 minutes doubles survival rates for cardiac arrest</div>
+                    </div>
+                    <div class="katie-tip">
+                        <img src="katie.png" alt="Katie" class="katie-avatar-small">
+                        <div class="katie-tip-body">
+                            <div class="katie-tip-label">Katie's Tip</div>
+                            <div class="katie-tip-msg">"You don't need to be a doctor to save a life. Basic first aid knowledge is one of the most powerful skills you can have!"</div>
+                        </div>
+                    </div>
+                </div>
+            
+                <div style="text-align: center; margin-top: 30px;">
+                    <button class="next-slide-button" onclick="goToSlide(4)">Next &#8594;</button>
+                </div></div>
+        </div>
+
+        <!-- ══════════════════════════════════════════
+             SLIDE 4: First Aid Basics - Scene Safety
+             ══════════════════════════════════════════ -->
+        <div class="slide" data-slide="4">
+            <div class="slide-card">
+                <div class="slide-card-body">
+                    <span class="slide-badge">Slide 2 of 10</span>
+                    <div class="slide-heading">
+                        <div class="slide-icon orange" aria-hidden="true">&#9888;&#65039;</div>
+                        <h2 class="slide-title">First Aid Basics: Scene Safety First</h2>
+                    </div>
+                    <div class="slide-text">
+                        <div class="callout gold">
+                            <strong>&#128161; Rule #1: Don't become the next victim!</strong> Always check for hazards before providing aid.
+                        </div>
+                        <h4>Before You Help &mdash; Check the Scene:</h4>
+                        <div class="step-cards">
+                            <div class="step-card danger">
+                                <div class="step-num">1</div>
+                                <div class="step-content">
+                                    <h5>Is the Scene Safe?</h5>
+                                    <p>Look for electrical hazards, chemical spills, traffic, fire, structural damage, or violent individuals. Do NOT enter an unsafe scene.</p>
+                                </div>
+                            </div>
+                            <div class="step-card">
+                                <div class="step-num">2</div>
+                                <div class="step-content">
+                                    <h5>What Happened?</h5>
+                                    <p>Quickly assess the situation. How many people are injured? What caused the injury? Are there ongoing hazards?</p>
+                                </div>
+                            </div>
+                            <div class="step-card">
+                                <div class="step-num">3</div>
+                                <div class="step-content">
+                                    <h5>Call for Help</h5>
+                                    <p>Call 911 (or your company's emergency number). Give location, number of injured, and type of emergency. Stay on the line.</p>
+                                </div>
+                            </div>
+                            <div class="step-card success">
+                                <div class="step-num">4</div>
+                                <div class="step-content">
+                                    <h5>Provide Aid</h5>
+                                    <p>Only if safe and within your training level. Use PPE (gloves!) and stay calm. Help is on the way.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="callout red">
+                            <strong>&#9888;&#65039; Good Samaritan Laws</strong> protect people who provide reasonable first aid in good faith. Don't hesitate to help &mdash; you're protected.
+                        </div>
+                    </div>
+                    <div class="katie-tip">
+                        <img src="katie.png" alt="Katie" class="katie-avatar-small">
+                        <div class="katie-tip-body">
+                            <div class="katie-tip-label">Katie's Tip</div>
+                            <div class="katie-tip-msg">"Always put your own safety first. You can't help anyone if you become a victim too!"</div>
+                        </div>
+                    </div>
+                </div>
+            
+                <div style="text-align: center; margin-top: 30px;">
+                    <button class="next-slide-button" onclick="goToSlide(5)">Next &#8594;</button>
+                </div></div>
+        </div>
+
+        <!-- ══════════════════════════════════════════
+             SLIDE 5: Calling 911
+             ══════════════════════════════════════════ -->
+        <div class="slide" data-slide="5">
+            <div class="slide-card">
+                <div class="slide-card-body">
+                    <span class="slide-badge">Slide 3 of 10</span>
+                    <div class="slide-heading">
+                        <div class="slide-icon blue" aria-hidden="true">&#128222;</div>
+                        <h2 class="slide-title">Calling for Emergency Help</h2>
+                    </div>
+                    <div class="slide-text">
+                        <div class="callout red">
+                            <strong>&#128680; When in doubt, CALL 911.</strong> It's always better to call and not need help than to not call and need it.
+                        </div>
+                        <h4>Always Call 911 For:</h4>
+                        <ul class="icon-list">
+                            <li><span class="li-icon">&#128148;</span>Chest pain, difficulty breathing, or signs of stroke</li>
+                            <li><span class="li-icon">&#129656;</span>Uncontrolled or severe bleeding</li>
+                            <li><span class="li-icon">&#128564;</span>Unconsciousness or unresponsiveness</li>
+                            <li><span class="li-icon">&#129460;</span>Suspected broken bones, head, or spinal injuries</li>
+                            <li><span class="li-icon">&#128293;</span>Burns covering large areas or on face/hands/feet</li>
+                            <li><span class="li-icon">&#129514;</span>Chemical exposure, poisoning, or allergic reactions</li>
+                            <li><span class="li-icon">&#9889;</span>Electrocution or lightning strike</li>
+                        </ul>
+                        <h4>What to Tell the Dispatcher:</h4>
+                        <ol class="num-list">
+                            <li><strong>Your location</strong> &mdash; Building, floor, room, nearest intersection</li>
+                            <li><strong>What happened</strong> &mdash; Type of emergency, cause of injury</li>
+                            <li><strong>Number of injured</strong> &mdash; How many people need help</li>
+                            <li><strong>Condition of victims</strong> &mdash; Conscious? Breathing? Bleeding?</li>
+                            <li><strong>What aid is being given</strong> &mdash; CPR in progress, bleeding controlled, etc.</li>
+                        </ol>
+                        <div class="callout green">
+                            <strong>&#128161; Tip:</strong> If possible, send someone to meet the ambulance at the entrance and guide them to the patient. This saves critical minutes.
+                        </div>
+                    </div>
+                </div>
+            
+                <div style="text-align: center; margin-top: 30px;">
+                    <button class="next-slide-button" onclick="goToSlide(6)">Next &#8594;</button>
+                </div></div>
+        </div>
+
+        <!-- ══════════════════════════════════════════
+             SLIDE 6: Bleeding & Wound Care
+             ══════════════════════════════════════════ -->
+        <div class="slide" data-slide="6">
+            <div class="slide-card">
+                <div class="slide-card-body">
+                    <span class="slide-badge">Slide 4 of 10</span>
+                    <div class="slide-heading">
+                        <div class="slide-icon red" aria-hidden="true">&#129656;</div>
+                        <h2 class="slide-title">Controlling Bleeding &amp; Wound Care</h2>
+                    </div>
+                    <div class="slide-text">
+                        <div class="callout red">
+                            <strong>&#9888;&#65039; Severe bleeding can be life-threatening in minutes.</strong> Quick action is critical.
+                        </div>
+                        <h4>Steps to Control Bleeding:</h4>
+                        <div class="step-cards">
+                            <div class="step-card danger">
+                                <div class="step-num">1</div>
+                                <div class="step-content">
+                                    <h5>Protect Yourself</h5>
+                                    <p>Put on disposable gloves before touching blood. This protects you from bloodborne pathogens.</p>
+                                </div>
+                            </div>
+                            <div class="step-card">
+                                <div class="step-num">2</div>
+                                <div class="step-content">
+                                    <h5>Apply Direct Pressure</h5>
+                                    <p>Use a clean cloth or sterile gauze. Press firmly on the wound. Don't lift to check &mdash; maintain constant pressure.</p>
+                                </div>
+                            </div>
+                            <div class="step-card">
+                                <div class="step-num">3</div>
+                                <div class="step-content">
+                                    <h5>Elevate if Possible</h5>
+                                    <p>Raise the injured area above the heart (if it's a limb and no suspected fracture).</p>
+                                </div>
+                            </div>
+                            <div class="step-card warning">
+                                <div class="step-num">4</div>
+                                <div class="step-content">
+                                    <h5>Call 911 if Severe</h5>
+                                    <p>If bleeding soaks through bandages, won't stop after 10 minutes, or the wound is deep/large, get emergency help immediately.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <h4>Do NOT:</h4>
+                        <ul class="x-list">
+                            <li>Remove objects embedded in wounds</li>
+                            <li>Apply a tourniquet unless trained and bleeding is life-threatening</li>
+                            <li>Touch the wound without gloves</li>
+                        </ul>
+                    </div>
+                    <div class="katie-tip">
+                        <img src="katie.png" alt="Katie" class="katie-avatar-small">
+                        <div class="katie-tip-body">
+                            <div class="katie-tip-label">Katie's Tip</div>
+                            <div class="katie-tip-msg">"Pressure and patience! Keep pressing on the wound &mdash; don't peek. Let the pressure do its work."</div>
+                        </div>
+                    </div>
+                </div>
+            
+                <div style="text-align: center; margin-top: 30px;">
+                    <button class="next-slide-button" onclick="goToSlide(7)">Next &#8594;</button>
+                </div></div>
+        </div>
+
+        <!-- ══════════════════════════════════════════
+             SLIDE 7: CPR Basics
+             ══════════════════════════════════════════ -->
+        <div class="slide" data-slide="7">
+            <div class="slide-card">
+                <div class="slide-card-body">
+                    <span class="slide-badge">Slide 5 of 10</span>
+                    <div class="slide-heading">
+                        <div class="slide-icon green" aria-hidden="true">&#128147;</div>
+                        <h2 class="slide-title">CPR Basics &mdash; Hands-Only CPR</h2>
+                    </div>
+                    <div class="slide-text">
+                        <div class="callout red">
+                            <strong>&#128680; When someone's heart stops, every second counts.</strong> Brain damage begins in 4&ndash;6 minutes without blood flow. CPR keeps blood moving until help arrives.
+                        </div>
+                        <h4>Hands-Only CPR Steps:</h4>
+                        <div class="step-cards">
+                            <div class="step-card danger">
+                                <div class="step-num">1</div>
+                                <div class="step-content">
+                                    <h5>Check Responsiveness</h5>
+                                    <p>Tap shoulders firmly and shout "Are you okay?" If no response and not breathing normally, begin CPR.</p>
+                                </div>
+                            </div>
+                            <div class="step-card">
+                                <div class="step-num">2</div>
+                                <div class="step-content">
+                                    <h5>Call 911</h5>
+                                    <p>Call 911 (or have someone call). If alone, put phone on speaker. Ask someone to get the AED.</p>
+                                </div>
+                            </div>
+                            <div class="step-card warning">
+                                <div class="step-num">3</div>
+                                <div class="step-content">
+                                    <h5>Begin Chest Compressions</h5>
+                                    <p>Place heel of hand on center of chest (between nipples). Push hard and fast &mdash; at least 2 inches deep, 100&ndash;120 compressions per minute.</p>
+                                </div>
+                            </div>
+                            <div class="step-card success">
+                                <div class="step-num">4</div>
+                                <div class="step-content">
+                                    <h5>Don't Stop</h5>
+                                    <p>Continue compressions until EMS arrives, an AED is available, or the person starts breathing. Switch off with another rescuer every 2 minutes if possible.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="callout gold">
+                            <strong>&#127925; Compression Rhythm:</strong> Push to the beat of "Stayin' Alive" by the Bee Gees &mdash; that's the perfect 100&ndash;120 beats per minute!
+                        </div>
+                    </div>
+                    <div class="katie-tip">
+                        <img src="katie.png" alt="Katie" class="katie-avatar-small">
+                        <div class="katie-tip-body">
+                            <div class="katie-tip-label">Katie's Tip</div>
+                            <div class="katie-tip-msg">"Hard and fast, center of chest! Don't worry about being perfect &mdash; any CPR is better than no CPR."</div>
+                        </div>
+                    </div>
+                </div>
+            
+                <div style="text-align: center; margin-top: 30px;">
+                    <button class="next-slide-button" onclick="goToSlide(8)">Next &#8594;</button>
+                </div></div>
+        </div>
+
+        <!-- ══════════════════════════════════════════
+             SLIDE 8: AED - What Is It?
+             ══════════════════════════════════════════ -->
+        <div class="slide" data-slide="8">
+            <div class="slide-card">
+                <div class="slide-card-body">
+                    <span class="slide-badge">Slide 6 of 10</span>
+                    <div class="slide-heading">
+                        <div class="slide-icon yellow" aria-hidden="true">&#9889;</div>
+                        <h2 class="slide-title">AED &mdash; Automated External Defibrillator</h2>
+                    </div>
+                    <div class="slide-text">
+                        <div class="callout blue">
+                            <strong>What is an AED?</strong> A portable device that analyzes heart rhythm and delivers an electric shock to restore a normal heartbeat during sudden cardiac arrest.
+                        </div>
+                        <p><strong>Key facts about AEDs:</strong></p>
+                        <ul class="check-list">
+                            <li><strong>Designed for anyone to use</strong> &mdash; no medical training required</li>
+                            <li>Provides voice prompts that guide you through every step</li>
+                            <li>Will only deliver a shock if the heart needs it &mdash; you cannot hurt someone</li>
+                            <li>Using an AED within 3&ndash;5 minutes of cardiac arrest increases survival by 50&ndash;70%</li>
+                            <li>Required in most workplaces, schools, and public buildings</li>
+                        </ul>
+                        <h4>Know Where Your AED Is Located!</h4>
+                        <ul class="check-list">
+                            <li>Usually near fire extinguishers or first aid kits</li>
+                            <li>Marked with a green heart or AED sign</li>
+                            <li>In wall-mounted cases (often with alarm when opened)</li>
+                            <li>Check your facility map for exact locations</li>
+                        </ul>
+                        <div class="stat-badge">&#128147; AED + CPR within 3 minutes = 74% survival rate for cardiac arrest</div>
+                    </div>
+                    <div class="katie-tip">
+                        <img src="katie.png" alt="Katie" class="katie-avatar-small">
+                        <div class="katie-tip-body">
+                            <div class="katie-tip-label">Katie's Tip</div>
+                            <div class="katie-tip-msg">"An AED is foolproof &mdash; it literally talks you through it! Don't be afraid to grab one. It could save a life."</div>
+                        </div>
+                    </div>
+                </div>
+            
+                <div style="text-align: center; margin-top: 30px;">
+                    <button class="next-slide-button" onclick="goToSlide(9)">Next &#8594;</button>
+                </div></div>
+        </div>
+
+        <!-- ══════════════════════════════════════════
+             SLIDE 9: How to Use an AED
+             ══════════════════════════════════════════ -->
+        <div class="slide" data-slide="9">
+            <div class="slide-card">
+                <div class="slide-card-body">
+                    <span class="slide-badge">Slide 7 of 10</span>
+                    <div class="slide-heading">
+                        <div class="slide-icon teal" aria-hidden="true">&#128268;</div>
+                        <h2 class="slide-title">How to Use an AED</h2>
+                    </div>
+                    <div class="slide-text">
+                        <div class="step-cards">
+                            <div class="step-card">
+                                <div class="step-num">1</div>
+                                <div class="step-content">
+                                    <h5>Turn On the AED</h5>
+                                    <p>Open the case and press the power button. The AED will begin giving voice instructions immediately.</p>
+                                </div>
+                            </div>
+                            <div class="step-card">
+                                <div class="step-num">2</div>
+                                <div class="step-content">
+                                    <h5>Expose the Chest</h5>
+                                    <p>Remove or cut clothing from the chest. Wipe the chest dry if wet. Remove any medication patches with gloved hand.</p>
+                                </div>
+                            </div>
+                            <div class="step-card warning">
+                                <div class="step-num">3</div>
+                                <div class="step-content">
+                                    <h5>Apply the Pads</h5>
+                                    <p>Peel pads and place as shown in diagrams: one on upper right chest, one on lower left side. Press firmly.</p>
+                                </div>
+                            </div>
+                            <div class="step-card">
+                                <div class="step-num">4</div>
+                                <div class="step-content">
+                                    <h5>Let the AED Analyze</h5>
+                                    <p>"Analyzing heart rhythm &mdash; do not touch the patient." Stand clear and make sure no one is touching the person.</p>
+                                </div>
+                            </div>
+                            <div class="step-card danger">
+                                <div class="step-num">5</div>
+                                <div class="step-content">
+                                    <h5>Deliver Shock (if Advised)</h5>
+                                    <p>"Shock advised &mdash; press the shock button." Loudly say "CLEAR!" and make sure no one is touching the person. Press the button.</p>
+                                </div>
+                            </div>
+                            <div class="step-card success">
+                                <div class="step-num">6</div>
+                                <div class="step-content">
+                                    <h5>Resume CPR</h5>
+                                    <p>Immediately resume chest compressions after the shock. The AED will guide you through the cycle every 2 minutes.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="callout green">
+                            <strong>&#128161; Remember:</strong> The AED will NOT shock someone who doesn't need it. You cannot accidentally harm a person by using an AED.
+                        </div>
+                    </div>
+                </div>
+            
+                <div style="text-align: center; margin-top: 30px;">
+                    <button class="next-slide-button" onclick="goToSlide(10)">Next &#8594;</button>
+                </div></div>
+        </div>
+
+        <!-- ══════════════════════════════════════════
+             SLIDE 10: Burns
+             ══════════════════════════════════════════ -->
+        <div class="slide" data-slide="10">
+            <div class="slide-card">
+                <div class="slide-card-body">
+                    <span class="slide-badge">Slide 8 of 10</span>
+                    <div class="slide-heading">
+                        <div class="slide-icon orange" aria-hidden="true">&#128293;</div>
+                        <h2 class="slide-title">Treating Burns</h2>
+                    </div>
+                    <div class="slide-text">
+                        <div class="two-sections">
+                            <div class="section-block">
+                                <h4>&#129657; Minor Burns (1st Degree)</h4>
+                                <p style="font-size:14px;color:var(--text-medium);margin-bottom:8px;">Red skin, pain, no blisters</p>
+                                <ul class="check-list">
+                                    <li>Cool with running water for 10&ndash;20 minutes</li>
+                                    <li>Apply aloe vera or burn cream</li>
+                                    <li>Cover loosely with sterile bandage</li>
+                                    <li>Take over-the-counter pain medication</li>
+                                </ul>
+                            </div>
+                            <div class="section-block">
+                                <h4>&#128293; Serious Burns (2nd/3rd Degree)</h4>
+                                <p style="font-size:14px;color:var(--text-medium);margin-bottom:8px;">Blisters, white/charred skin, deep tissue</p>
+                                <ul class="check-list">
+                                    <li>Call 911 immediately</li>
+                                    <li>Cool with running water (not ice)</li>
+                                    <li>Cover loosely with clean cloth</li>
+                                    <li>Monitor for shock</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <h4>For All Burns &mdash; Do NOT:</h4>
+                        <ul class="x-list">
+                            <li>Apply ice directly to burns (causes more damage)</li>
+                            <li>Pop blisters (increases infection risk)</li>
+                            <li>Apply butter, oil, or toothpaste (old myths &mdash; traps heat)</li>
+                            <li>Remove clothing stuck to the burn</li>
+                        </ul>
+                        <div class="callout orange">
+                            <strong>&#128293; Chemical Burns:</strong> Flush with large amounts of water for at least 20 minutes. Remove contaminated clothing. Call 911 and check the Safety Data Sheet.
+                        </div>
+                    </div>
+                    <div class="katie-tip">
+                        <img src="katie.png" alt="Katie" class="katie-avatar-small">
+                        <div class="katie-tip-body">
+                            <div class="katie-tip-label">Katie's Tip</div>
+                            <div class="katie-tip-msg">"Cool water is your best friend for burns. And please &mdash; no butter! That's a myth that actually makes burns worse."</div>
+                        </div>
+                    </div>
+                </div>
+            
+                <div style="text-align: center; margin-top: 30px;">
+                    <button class="next-slide-button" onclick="goToSlide(11)">Next &#8594;</button>
+                </div></div>
+        </div>
+
+        <!-- ══════════════════════════════════════════
+             SLIDE 11: Choking
+             ══════════════════════════════════════════ -->
+        <div class="slide" data-slide="11">
+            <div class="slide-card">
+                <div class="slide-card-body">
+                    <span class="slide-badge">Slide 9 of 10</span>
+                    <div class="slide-heading">
+                        <div class="slide-icon purple" aria-hidden="true">&#128168;</div>
+                        <h2 class="slide-title">Responding to Choking</h2>
+                    </div>
+                    <div class="slide-text">
+                        <div class="callout red">
+                            <strong>&#128680; A choking person can lose consciousness in under 4 minutes.</strong> Quick action is essential.
+                        </div>
+                        <h4>Signs of Choking:</h4>
+                        <ul class="icon-list">
+                            <li><span class="li-icon">&#128588;</span>Clutching the throat (universal choking sign)</li>
+                            <li><span class="li-icon">&#128566;</span>Unable to speak, cough, or breathe</li>
+                            <li><span class="li-icon">&#128561;</span>Skin turning blue/pale, panicked expression</li>
+                            <li><span class="li-icon">&#129324;</span>Weak or no cough, high-pitched sounds</li>
+                        </ul>
+                        <h4>Abdominal Thrusts (Heimlich Maneuver):</h4>
+                        <div class="step-cards">
+                            <div class="step-card">
+                                <div class="step-num">1</div>
+                                <div class="step-content">
+                                    <h5>Stand Behind the Person</h5>
+                                    <p>Wrap your arms around their waist. Make a fist with one hand and place it just above the navel, below the ribcage.</p>
+                                </div>
+                            </div>
+                            <div class="step-card warning">
+                                <div class="step-num">2</div>
+                                <div class="step-content">
+                                    <h5>Thrust Inward and Upward</h5>
+                                    <p>Grasp your fist with your other hand. Deliver quick, upward thrusts into the abdomen. Repeat until the object is expelled.</p>
+                                </div>
+                            </div>
+                            <div class="step-card danger">
+                                <div class="step-num">3</div>
+                                <div class="step-content">
+                                    <h5>If Person Becomes Unconscious</h5>
+                                    <p>Lower them to the ground. Call 911. Begin CPR. Check the mouth for visible objects before giving breaths.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="katie-tip">
+                        <img src="katie.png" alt="Katie" class="katie-avatar-small">
+                        <div class="katie-tip-body">
+                            <div class="katie-tip-label">Katie's Tip</div>
+                            <div class="katie-tip-msg">"If you see someone clutching their throat, act fast! Ask 'Are you choking?' &mdash; if they can't answer, start the Heimlich immediately."</div>
+                        </div>
+                    </div>
+                </div>
+            
+                <div style="text-align: center; margin-top: 30px;">
+                    <button class="next-slide-button" onclick="goToSlide(12)">Next &#8594;</button>
+                </div></div>
+        </div>
+
+        <!-- ══════════════════════════════════════════
+             SLIDE 12: First Aid Kits & Your Role
+             ══════════════════════════════════════════ -->
+        <div class="slide" data-slide="12">
+            <div class="slide-card">
+                <div class="slide-card-body">
+                    <span class="slide-badge">Slide 10 of 10</span>
+                    <div class="slide-heading">
+                        <div class="slide-icon green" aria-hidden="true">&#129530;</div>
+                        <h2 class="slide-title">First Aid Kits &amp; Your Role</h2>
+                    </div>
+                    <div class="slide-text">
+                        <h4>What Should Be in a Workplace First Aid Kit:</h4>
+                        <div class="two-sections">
+                            <div class="section-block">
+                                <h4>&#129657; Essential Supplies</h4>
+                                <ul class="check-list">
+                                    <li>Adhesive bandages (various sizes)</li>
+                                    <li>Sterile gauze pads and rolls</li>
+                                    <li>Adhesive tape</li>
+                                    <li>Elastic bandages (Ace wraps)</li>
+                                    <li>Disposable gloves (multiple pairs)</li>
+                                    <li>Scissors and tweezers</li>
+                                </ul>
+                            </div>
+                            <div class="section-block">
+                                <h4>&#127973; Additional Items</h4>
+                                <ul class="check-list">
+                                    <li>Antiseptic wipes and ointment</li>
+                                    <li>CPR breathing barrier/mask</li>
+                                    <li>Cold packs (instant)</li>
+                                    <li>Eye wash solution</li>
+                                    <li>Triangular bandages (slings)</li>
+                                    <li>Emergency blanket</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="callout green">
+                            <strong>&#128205; Know Your Location!</strong> First aid kits are typically located near entrances, break rooms, and high-risk work areas. Check your facility map and find the nearest one to your workstation.
+                        </div>
+                        <h4>Your Role as an Employee:</h4>
+                        <ul class="check-list">
+                            <li>Know where first aid kits and AEDs are located</li>
+                            <li>Take a certified CPR/First Aid class (ask your employer)</li>
+                            <li>Report when supplies are running low or expired</li>
+                            <li>Stay calm in emergencies &mdash; your composure helps others</li>
+                            <li>Know your company's emergency medical procedures</li>
+                        </ul>
+                    </div>
+                    <div class="katie-tip">
+                        <img src="katie.png" alt="Katie" class="katie-avatar-small">
+                        <div class="katie-tip-body">
+                            <div class="katie-tip-label">Katie's Tip</div>
+                            <div class="katie-tip-msg">"Before your next break, walk by the nearest first aid kit and AED. Knowing where they are BEFORE an emergency makes all the difference!"</div>
+                        </div>
+                    </div>
+                </div>
+            
+                <div style="text-align: center; margin-top: 30px;">
+                    <button class="next-slide-button" onclick="goToSlide(13)">Next &#8594;</button>
+                </div></div>
+        </div>
+
+        <!-- ══════════════════════════════════════════
+             SLIDE 13: KEY TAKEAWAYS
+             ══════════════════════════════════════════ -->
+        <div class="slide" data-slide="13">
+            <div class="slide-card">
+                <div class="slide-card-body">
+                    <span class="slide-badge">Review</span>
+                    <div class="slide-heading">
+                        <div class="slide-icon gold" aria-hidden="true">&#128161;</div>
+                        <h2 class="slide-title">Key Takeaways</h2>
+                    </div>
+                    <div class="takeaway-grid">
+                        <div class="takeaway-item">
+                            <span class="takeaway-icon">&#9888;&#65039;</span>
+                            <span class="takeaway-text">Scene safety first &mdash; check for hazards before helping</span>
+                        </div>
+                        <div class="takeaway-item">
+                            <span class="takeaway-icon">&#128222;</span>
+                            <span class="takeaway-text">When in doubt, call 911 &mdash; it's always better to call</span>
+                        </div>
+                        <div class="takeaway-item">
+                            <span class="takeaway-icon">&#128147;</span>
+                            <span class="takeaway-text">CPR: Push hard, push fast, center of chest, don't stop</span>
+                        </div>
+                        <div class="takeaway-item">
+                            <span class="takeaway-icon">&#9889;</span>
+                            <span class="takeaway-text">AEDs are foolproof &mdash; they talk you through every step</span>
+                        </div>
+                        <div class="takeaway-item">
+                            <span class="takeaway-icon">&#129656;</span>
+                            <span class="takeaway-text">Direct pressure stops bleeding &mdash; press firm and don't let go</span>
+                        </div>
+                        <div class="takeaway-item">
+                            <span class="takeaway-icon">&#128205;</span>
+                            <span class="takeaway-text">Know where your first aid kit and AED are located TODAY</span>
+                        </div>
+                    </div>
+                    <div class="katie-tip">
+                        <img src="katie.png" alt="Katie" class="katie-avatar-small">
+                        <div class="katie-tip-body">
+                            <div class="katie-tip-label">Katie's Tip</div>
+                            <div class="katie-tip-msg">"This is the final Foundation module! Pass the quiz to earn your Foundation Safety Certificate and unlock three new learning paths!"</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ══════════════════════════════════════════
+             SLIDE 14: QUIZ Q1
+             ══════════════════════════════════════════ -->
+        <div class="slide" data-slide="14">
+            <div class="quiz-card">
+                <div class="quiz-card-header">
+                    <h2>&#10067; Knowledge Check</h2>
+                    <span class="quiz-progress-badge">Question 1 of 3</span>
+                </div>
+                <div class="quiz-card-body">
+                    <p class="quiz-question-text">What is the correct rate for chest compressions during CPR?</p>
+                    <div class="quiz-options" id="q1-options" role="radiogroup" aria-label="Question 1 options">
+                        <div class="quiz-option" data-q="1" data-val="A" role="radio" aria-checked="false" tabindex="0">
+                            <span class="quiz-option-letter">A</span>
+                            <span>60&ndash;80 compressions per minute</span>
+                        </div>
+                        <div class="quiz-option" data-q="1" data-val="B" role="radio" aria-checked="false" tabindex="0">
+                            <span class="quiz-option-letter">B</span>
+                            <span>100&ndash;120 compressions per minute</span>
+                        </div>
+                        <div class="quiz-option" data-q="1" data-val="C" role="radio" aria-checked="false" tabindex="0">
+                            <span class="quiz-option-letter">C</span>
+                            <span>140&ndash;160 compressions per minute</span>
+                        </div>
+                        <div class="quiz-option" data-q="1" data-val="D" role="radio" aria-checked="false" tabindex="0">
+                            <span class="quiz-option-letter">D</span>
+                            <span>As slow as possible to conserve energy</span>
+                        </div>
+                    </div>
+                    <div class="quiz-feedback" id="fb-1"></div>
+                </div>
+                <div class="quiz-card-actions">
+                    <button class="btn btn-gold" id="submit-1" disabled onclick="submitQuiz(1)">Submit Answer</button>
+                    <button class="btn btn-dark" id="next-q-1" style="display:none" onclick="goToSlide(15)">Next Question &#8594;</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ══════════════════════════════════════════
+             SLIDE 15: QUIZ Q2
+             ══════════════════════════════════════════ -->
+        <div class="slide" data-slide="15">
+            <div class="quiz-card">
+                <div class="quiz-card-header">
+                    <h2>&#10067; Knowledge Check</h2>
+                    <span class="quiz-progress-badge">Question 2 of 3</span>
+                </div>
+                <div class="quiz-card-body">
+                    <p class="quiz-question-text">True or False: An AED can accidentally shock someone who doesn't need it.</p>
+                    <div class="quiz-options" id="q2-options" role="radiogroup" aria-label="Question 2 options">
+                        <div class="quiz-option" data-q="2" data-val="A" role="radio" aria-checked="false" tabindex="0">
+                            <span class="quiz-option-letter">A</span>
+                            <span>True</span>
+                        </div>
+                        <div class="quiz-option" data-q="2" data-val="B" role="radio" aria-checked="false" tabindex="0">
+                            <span class="quiz-option-letter">B</span>
+                            <span>False</span>
+                        </div>
+                    </div>
+                    <div class="quiz-feedback" id="fb-2"></div>
+                </div>
+                <div class="quiz-card-actions">
+                    <button class="btn btn-gold" id="submit-2" disabled onclick="submitQuiz(2)">Submit Answer</button>
+                    <button class="btn btn-dark" id="next-q-2" style="display:none" onclick="goToSlide(16)">Next Question &#8594;</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ══════════════════════════════════════════
+             SLIDE 16: QUIZ Q3
+             ══════════════════════════════════════════ -->
+        <div class="slide" data-slide="16">
+            <div class="quiz-card">
+                <div class="quiz-card-header">
+                    <h2>&#10067; Knowledge Check</h2>
+                    <span class="quiz-progress-badge">Question 3 of 3</span>
+                </div>
+                <div class="quiz-card-body">
+                    <p class="quiz-question-text">What is the FIRST thing you should do before providing first aid?</p>
+                    <div class="quiz-options" id="q3-options" role="radiogroup" aria-label="Question 3 options">
+                        <div class="quiz-option" data-q="3" data-val="A" role="radio" aria-checked="false" tabindex="0">
+                            <span class="quiz-option-letter">A</span>
+                            <span>Begin CPR immediately</span>
+                        </div>
+                        <div class="quiz-option" data-q="3" data-val="B" role="radio" aria-checked="false" tabindex="0">
+                            <span class="quiz-option-letter">B</span>
+                            <span>Check that the scene is safe</span>
+                        </div>
+                        <div class="quiz-option" data-q="3" data-val="C" role="radio" aria-checked="false" tabindex="0">
+                            <span class="quiz-option-letter">C</span>
+                            <span>Move the injured person to a safe area</span>
+                        </div>
+                        <div class="quiz-option" data-q="3" data-val="D" role="radio" aria-checked="false" tabindex="0">
+                            <span class="quiz-option-letter">D</span>
+                            <span>Find the first aid kit</span>
+                        </div>
+                    </div>
+                    <div class="quiz-feedback" id="fb-3"></div>
+                </div>
+                <div class="quiz-card-actions">
+                    <button class="btn btn-gold" id="submit-3" disabled onclick="submitQuiz(3)">Submit Answer</button>
+                    <button class="btn btn-dark" id="next-q-3" style="display:none" onclick="goToSlide(17)">See Results &#8594;</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ══════════════════════════════════════════
+             SLIDE 17: RESULTS
+             ══════════════════════════════════════════ -->
+        <div class="slide" data-slide="17">
+            <div class="results-card">
+                <div class="results-header">
+                    <h2>&#128202; Quiz Results</h2>
+                </div>
+                <div class="results-body">
+                    <div class="results-icon" id="rIcon">&#128202;</div>
+                    <div class="results-score" id="rScore">0 / 3</div>
+                    <div class="results-title" id="rTitle">Results</div>
+                    <p class="results-msg" id="rMsg"></p>
+                    <div class="results-btns" id="rBtns"></div>
+                    <div id="rFoundation"></div>
+                    <div class="results-katie">
+                        <img src="katie.png" alt="Katie" class="katie-avatar-small">
+                        <p id="rKatie"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div><!-- /slide-viewport -->
+
+    <!-- ═══ BOTTOM NAV ═══ -->
+    <nav class="bottom-nav" role="navigation" aria-label="Slide navigation">
+        <div class="bottom-nav-inner">
+            <button class="nav-btn" id="prevBtn" onclick="prevSlide()" disabled aria-label="Previous slide">&#8592; Previous</button>
+            <div class="kbd-hints">
+                <span class="kbd-hint"><span class="kbd">&#8592;</span> Prev</span>
+                <span class="nav-slide-info" id="navInfo">1 / 17</span>
+                <span class="kbd-hint">Next <span class="kbd">&#8594;</span></span>
+            </div>
+            <button class="nav-btn next-btn" id="nextBtn" onclick="nextSlide()" aria-label="Next slide">Next &#8594;</button>
+        </div>
+    </nav>
+
+    <!-- ═══ JAVASCRIPT ═══ -->
+    <script>
+    (function() {
+        'use strict';
+
+        var TOTAL_SLIDES = 17;
+        var MODULE_KEY = 'first-aid';
+        var currentSlide = 1;
+        var quizScore = 0;
+        var quizAnswers = { 1: null, 2: null, 3: null };
+        var quizSubmitted = { 1: false, 2: false, 3: false };
+
+        var quizCorrectAnswers = { 1: 'B', 2: 'B', 3: 'B' };
+
+        var feedbackMessages = {
+            1: {
+                correct: '\u2713 Correct! The recommended rate is 100\u2013120 compressions per minute \u2014 about the tempo of "Stayin\' Alive." Push hard, push fast!',
+                incorrect: '\u2717 Incorrect. The correct answer is B: 100\u2013120 compressions per minute. This is the rate recommended by the American Heart Association for effective CPR.'
+            },
+            2: {
+                correct: '\u2713 Correct! False \u2014 An AED analyzes the heart rhythm and will only deliver a shock if it detects a shockable rhythm. You cannot accidentally harm someone with an AED.',
+                incorrect: '\u2717 Incorrect. The correct answer is B: False. AEDs are designed to only shock when needed. They analyze the heart rhythm first and will not deliver a shock if it\u2019s not necessary.'
+            },
+            3: {
+                correct: '\u2713 Correct! Scene safety always comes first. Check for hazards like electrical, chemical, or traffic dangers before approaching. Don\u2019t become the next victim!',
+                incorrect: '\u2717 Incorrect. The correct answer is B: Check that the scene is safe. Before providing any first aid, you must ensure the scene is safe so you don\u2019t become a victim yourself.'
+            }
+        };
+
+        // ─── SLIDE NAVIGATION ───
+        function getAllSlides() {
+            return document.querySelectorAll('.slide');
+        }
+
+        function updateUI() {
+            var slides = getAllSlides();
+            slides.forEach(function(s) {
+                var num = parseInt(s.getAttribute('data-slide'));
+                s.classList.remove('active', 'exit-left');
+                if (num === currentSlide) {
+                    s.classList.add('active');
+                }
+            });
+
+            var pct = Math.round((currentSlide / TOTAL_SLIDES) * 100);
+            document.getElementById('progressFill').style.width = pct + '%';
+            document.getElementById('progressLabel').textContent = 'Slide ' + currentSlide + ' of ' + TOTAL_SLIDES;
+            document.getElementById('progressPct').textContent = pct + '%';
+            document.getElementById('navInfo').textContent = currentSlide + ' / ' + TOTAL_SLIDES;
+
+            var progressTrack = document.querySelector('.progress-track');
+            if (progressTrack) progressTrack.setAttribute('aria-valuenow', pct);
+
+            document.getElementById('prevBtn').disabled = (currentSlide <= 1);
+            document.getElementById('nextBtn').disabled = (currentSlide >= TOTAL_SLIDES);
+
+            var activeSlide = document.querySelector('.slide.active');
+            if (activeSlide) {
+                var scrollable = activeSlide.querySelector('.slide-card-body');
+                if (scrollable) scrollable.scrollTop = 0;
+            }
+
+            saveSlideProgress();
+        }
+
+        window.goToSlide = function(num) {
+            if (num < 1 || num > TOTAL_SLIDES) return;
+            if (num === 17) buildResults();
+            currentSlide = num;
+            updateUI();
+        };
+
+        window.nextSlide = function() {
+            if (currentSlide < TOTAL_SLIDES) {
+                goToSlide(currentSlide + 1);
+            }
+        };
+
+        window.prevSlide = function() {
+            if (currentSlide > 1) {
+                goToSlide(currentSlide - 1);
+            }
+        };
+
+        // ─── KEYBOARD NAV ───
+        document.addEventListener('keydown', function(e) {
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+            if (e.key === 'ArrowRight' || e.key === 'Right') {
+                e.preventDefault();
+                nextSlide();
+            } else if (e.key === 'ArrowLeft' || e.key === 'Left') {
+                e.preventDefault();
+                prevSlide();
+            }
+        });
+
+        // ─── QUIZ OPTION SELECTION ───
+        document.querySelectorAll('.quiz-option').forEach(function(opt) {
+            opt.addEventListener('click', function() {
+                var qNum = parseInt(this.getAttribute('data-q'));
+                if (quizSubmitted[qNum]) return;
+
+                var container = document.getElementById('q' + qNum + '-options');
+                container.querySelectorAll('.quiz-option').forEach(function(o) {
+                    o.classList.remove('selected');
+                    o.setAttribute('aria-checked', 'false');
+                });
+
+                this.classList.add('selected');
+                this.setAttribute('aria-checked', 'true');
+                quizAnswers[qNum] = this.getAttribute('data-val');
+
+                document.getElementById('submit-' + qNum).disabled = false;
+            });
+        });
+
+        // ─── QUIZ SUBMIT ───
+        window.submitQuiz = function(qNum) {
+            if (quizSubmitted[qNum]) return;
+            quizSubmitted[qNum] = true;
+
+            var userAnswer = quizAnswers[qNum];
+            var correctAnswer = quizCorrectAnswers[qNum];
+            var isCorrect = (userAnswer === correctAnswer);
+            var container = document.getElementById('q' + qNum + '-options');
+
+            container.querySelectorAll('.quiz-option').forEach(function(opt) {
+                opt.classList.add('disabled');
+                var val = opt.getAttribute('data-val');
+                if (val === correctAnswer) {
+                    opt.classList.add('correct');
+                } else if (opt.classList.contains('selected') && !isCorrect) {
+                    opt.classList.add('incorrect');
+                }
+            });
+
+            var fb = document.getElementById('fb-' + qNum);
+            if (isCorrect) {
+                fb.textContent = feedbackMessages[qNum].correct;
+                fb.className = 'quiz-feedback show correct-fb';
+                quizScore++;
+            } else {
+                fb.textContent = feedbackMessages[qNum].incorrect;
+                fb.className = 'quiz-feedback show incorrect-fb';
+            }
+
+            document.getElementById('submit-' + qNum).style.display = 'none';
+            document.getElementById('next-q-' + qNum).style.display = '';
+        };
+
+        // ─── CHECK FOUNDATION COMPLETE ───
+        function isFoundationComplete() {
+            try {
+                var p = getProgress();
+                if (!p.modules) return false;
+                var foundationKeys = ['intro-to-osha', 'hazard-recognition', 'safety-reporting', 'emergency-action', 'first-aid'];
+                for (var i = 0; i < foundationKeys.length; i++) {
+                    var mod = p.modules[foundationKeys[i]];
+                    if (!mod || !mod.completed) return false;
+                }
+                return true;
+            } catch(e) { return false; }
+        }
+
+        // ─── BUILD RESULTS ───
+        function buildResults() {
+            var icon = document.getElementById('rIcon');
+            var score = document.getElementById('rScore');
+            var title = document.getElementById('rTitle');
+            var msg = document.getElementById('rMsg');
+            var btns = document.getElementById('rBtns');
+            var katie = document.getElementById('rKatie');
+            var foundationEl = document.getElementById('rFoundation');
+
+            score.textContent = quizScore + ' / 3';
+
+            if (quizScore === 3) {
+                icon.textContent = '\uD83C\uDF89';
+                title.textContent = 'Perfect Score!';
+                msg.textContent = "You're a first aid champion! You know how to respond when every second counts.";
+                btns.innerHTML = '<button class="btn btn-success" onclick="completeModule()">\u2713 Complete Module & Return to Hub</button>';
+                katie.textContent = '"Amazing work! You\'ve completed the entire Foundation Path! Three new learning paths are now unlocked!"';
+                foundationEl.innerHTML = '<div class="foundation-banner"><h3>\uD83C\uDFC6 Foundation Safety Certificate Earned!</h3><p>You\'ve completed all 5 Foundation modules. Paths 2, 3, and 4 are now unlocked!</p></div>';
+            } else if (quizScore >= 2) {
+                icon.textContent = '\u2705';
+                title.textContent = 'You Passed!';
+                msg.textContent = "Good understanding of first aid and AED procedures. You're ready to help in an emergency.";
+                btns.innerHTML = '<button class="btn btn-success" onclick="completeModule()">\u2713 Complete Module & Return to Hub</button>';
+                katie.textContent = '"Great work! Foundation Path complete! You\'ve unlocked Operational Safety, Occupational Health, and Specialized Health paths!"';
+                foundationEl.innerHTML = '<div class="foundation-banner"><h3>\uD83C\uDFC6 Foundation Safety Certificate Earned!</h3><p>You\'ve completed all 5 Foundation modules. Paths 2, 3, and 4 are now unlocked!</p></div>';
+            } else {
+                icon.textContent = '\uD83D\uDCDA';
+                title.textContent = 'Not Quite Yet';
+                msg.textContent = 'You need at least 2 out of 3 correct to pass. Review the lesson and try again!';
+                btns.innerHTML = '<button class="btn btn-gold" onclick="retakeQuiz()">\u21BB Retake Quiz</button>' +
+                    '<button class="btn btn-outline" onclick="goToSlide(3)">\u2191 Review Lesson</button>';
+                katie.textContent = '"Don\'t worry! Review the slides and give it another try. You\'re so close to completing the Foundation Path!"';
+                foundationEl.innerHTML = '';
+            }
+
+            saveQuizProgress();
+        }
+
+        // ─── RETAKE QUIZ ───
+        window.retakeQuiz = function() {
+            quizAnswers = { 1: null, 2: null, 3: null };
+            quizSubmitted = { 1: false, 2: false, 3: false };
+            quizScore = 0;
+
+            for (var q = 1; q <= 3; q++) {
+                var container = document.getElementById('q' + q + '-options');
+                container.querySelectorAll('.quiz-option').forEach(function(opt) {
+                    opt.classList.remove('selected', 'correct', 'incorrect', 'disabled');
+                    opt.setAttribute('aria-checked', 'false');
+                });
+
+                document.getElementById('fb-' + q).className = 'quiz-feedback';
+                document.getElementById('fb-' + q).textContent = '';
+                document.getElementById('submit-' + q).style.display = '';
+                document.getElementById('submit-' + q).disabled = true;
+                document.getElementById('next-q-' + q).style.display = 'none';
+            }
+
+            goToSlide(14);
+        };
+
+        // ─── LOCAL STORAGE ───
+        function getProgress() {
+            try {
+                var d = localStorage.getItem('safetyverse-progress');
+                return d ? JSON.parse(d) : {};
+            } catch(e) { return {}; }
+        }
+
+        function saveSlideProgress() {
+            try {
+                var p = getProgress();
+                if (!p.modules) p.modules = {};
+                if (!p.modules[MODULE_KEY]) {
+                    p.modules[MODULE_KEY] = { completed: false, quizScore: 0, attempts: 0, lastAttempt: null };
+                }
+                p.modules[MODULE_KEY].currentSlide = currentSlide;
+                localStorage.setItem('safetyverse-progress', JSON.stringify(p));
+            } catch(e) {}
+        }
+
+        function saveQuizProgress() {
+            try {
+                var p = getProgress();
+                if (!p.modules) p.modules = {};
+                if (!p.modules[MODULE_KEY]) {
+                    p.modules[MODULE_KEY] = { completed: false, quizScore: 0, attempts: 0 };
+                }
+                var mod = p.modules[MODULE_KEY];
+                mod.quizScore = quizScore;
+                mod.attempts = (mod.attempts || 0) + 1;
+                mod.lastAttempt = new Date().toISOString();
+                if (quizScore >= 2) mod.completed = true;
+                localStorage.setItem('safetyverse-progress', JSON.stringify(p));
+            } catch(e) {}
+        }
+
+        window.completeModule = function() {
+            try {
+                var p = getProgress();
+                if (!p.modules) p.modules = {};
+                if (!p.modules[MODULE_KEY]) {
+                    p.modules[MODULE_KEY] = { quizScore: 0, attempts: 0 };
+                }
+                p.modules[MODULE_KEY].completed = true;
+                p.modules[MODULE_KEY].completedAt = new Date().toISOString();
+                p.modules[MODULE_KEY].quizScore = quizScore;
+                localStorage.setItem('safetyverse-progress', JSON.stringify(p));
+            } catch(e) {}
+            window.location.href = '../../user-dashboard/index.html';
+        };
+
+        // ─── RESTORE PROGRESS ON LOAD ───
+        function restoreProgress() {
+            try {
+                var p = getProgress();
+                if (p.modules && p.modules[MODULE_KEY]) {
+                    var mod = p.modules[MODULE_KEY];
+                    if (mod.completed) {
+                        var introCard = document.querySelector('.intro-card');
+                        if (introCard) {
+                            var badge = document.createElement('div');
+                            badge.style.cssText = 'position:absolute;top:20px;right:20px;background:var(--success);color:white;font-size:12px;font-weight:700;padding:5px 16px;border-radius:20px;z-index:5;';
+                            badge.textContent = '\u2713 Completed';
+                            introCard.appendChild(badge);
+                        }
+                    }
+                }
+            } catch(e) {}
+        }
+
+        // ─── INIT ───
+        restoreProgress();
+        updateUI();
+
+    })();
+    </script>
+
+</body>
+</html>

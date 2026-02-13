@@ -1,0 +1,1858 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="logo.png?v=2">
+    <title>Module 11: Lockout/Tagout (LOTO) - SafetyVerse</title>
+    <style>
+        /* ═══════════════════════════════════════════
+           CSS VARIABLES & RESET
+           ═══════════════════════════════════════════ */
+        :root {
+            --primary: #FFD700;
+            --primary-dark: #E6C200;
+            --secondary: #FF8C00;
+            --secondary-dark: #E67A00;
+            --bg-clay: #F5E6D3;
+            --bg-clay-dark: #E8D5C0;
+            --bg-clay-light: #FAF0E6;
+            --text-dark: #333333;
+            --text-medium: #555555;
+            --text-light: #777777;
+            --accent-black: #1A1A1A;
+            --white: #FFFFFF;
+            --success: #4CAF50;
+            --success-dark: #388E3C;
+            --error: #E53935;
+            --error-dark: #C62828;
+            --info: #2196F3;
+            --warning: #FF9800;
+            --loto-red: #D32F2F;
+            --shadow-soft: 0 4px 15px rgba(0,0,0,0.1);
+            --shadow-medium: 0 6px 25px rgba(0,0,0,0.15);
+            --shadow-hard: 0 8px 30px rgba(0,0,0,0.2);
+            --shadow-clay: 4px 4px 0px rgba(0,0,0,0.15), inset 0 2px 4px rgba(255,255,255,0.3);
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 20px;
+            --radius-xl: 28px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --font-heading: 'Segoe UI', 'Arial Black', sans-serif;
+            --font-body: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body {
+            height: 100%;
+            overflow: hidden;
+        }
+        body {
+            font-family: var(--font-body);
+            background-color: var(--bg-clay);
+            color: var(--text-dark);
+            line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+        }
+        /* Clay texture */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 9999;
+            background-image:
+                radial-gradient(circle at 20% 50%, rgba(139,90,43,0.03) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(139,90,43,0.02) 0%, transparent 50%),
+                radial-gradient(circle at 50% 80%, rgba(139,90,43,0.03) 0%, transparent 50%);
+        }
+        /* ═══════════════════════════════════════════
+           HEADER
+           ═══════════════════════════════════════════ */
+        .header {
+            background: linear-gradient(180deg, var(--accent-black) 0%, #2A2A2A 100%);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            border-bottom: 4px solid var(--primary);
+            z-index: 100;
+            flex-shrink: 0;
+        }
+        .header-inner {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 64px;
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            flex-shrink: 0;
+        }
+        .logo-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .logo-icon img {
+            display: block;
+            height: 50px;
+            width: auto;
+            image-rendering: -webkit-optimize-contrast;
+            image-rendering: crisp-edges;
+            box-shadow: 4px 4px 0px rgba(0,0,0,0.15);
+            border-radius: 12px;
+            transition: transform 0.2s ease;
+        }
+        .logo-text {
+            font-family: var(--font-heading);
+            font-size: 22px; font-weight: 900;
+            color: var(--white);
+            letter-spacing: -0.5px;
+        }
+        .logo-text em {
+            color: var(--primary);
+            font-style: normal;
+        }
+        .header-center {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        .header-module-tag {
+            background: rgba(255,215,0,0.15);
+            color: var(--primary);
+            font-size: 11px; font-weight: 800;
+            padding: 3px 10px;
+            border-radius: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+        }
+        .header-module-title {
+            color: rgba(255,255,255,0.8);
+            font-size: 14px; font-weight: 600;
+        }
+        .back-btn {
+            display: flex; align-items: center; gap: 6px;
+            text-decoration: none;
+            color: rgba(255,255,255,0.7);
+            font-size: 13px; font-weight: 600;
+            padding: 7px 14px;
+            border-radius: var(--radius-sm);
+            transition: var(--transition);
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .back-btn:hover {
+            color: var(--white);
+            background: rgba(255,255,255,0.12);
+            border-color: rgba(255,255,255,0.2);
+        }
+        /* ═══════════════════════════════════════════
+           PROGRESS BAR
+           ═══════════════════════════════════════════ */
+        .progress-bar {
+            background: var(--accent-black);
+            border-bottom: 1px solid rgba(255,215,0,0.15);
+            flex-shrink: 0;
+            z-index: 99;
+        }
+        .progress-bar-inner {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 8px 24px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+        .progress-label {
+            font-size: 12px; font-weight: 700;
+            color: rgba(255,255,255,0.5);
+            white-space: nowrap;
+            min-width: 90px;
+        }
+        .progress-track {
+            flex: 1;
+            height: 6px;
+            background: rgba(255,255,255,0.08);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 3px;
+            transition: width 0.4s ease;
+        }
+        .progress-pct {
+            font-size: 12px; font-weight: 700;
+            color: var(--primary);
+            min-width: 40px;
+            text-align: right;
+        }
+        /* ═══════════════════════════════════════════
+           MAIN CONTENT AREA
+           ═══════════════════════════════════════════ */
+        .content-wrapper {
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 40px 24px 100px;
+        }
+        /* ═══════════════════════════════════════════
+           SLIDES
+           ═══════════════════════════════════════════ */
+        .slide {
+            display: none;
+            animation: slideIn 0.3s ease;
+        }
+        .slide.active { display: block; }
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        /* Intro Card (Slide 1) */
+        .intro-card {
+            background: linear-gradient(135deg, #D32F2F 0%, #B71C1C 100%);
+            border-radius: var(--radius-xl);
+            padding: 60px 50px;
+            box-shadow: var(--shadow-hard);
+            color: var(--white);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .intro-card::before {
+            content: '';
+            position: absolute;
+            top: -100px; right: -100px;
+            width: 300px; height: 300px;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+        }
+        .intro-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+            animation: lock 2s ease-in-out infinite;
+        }
+        @keyframes lock {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(-5deg); }
+            75% { transform: rotate(5deg); }
+        }
+        .intro-title {
+            font-family: var(--font-heading);
+            font-size: 48px; font-weight: 900;
+            margin-bottom: 12px;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.2);
+        }
+        .intro-subtitle {
+            font-size: 20px;
+            margin-bottom: 30px;
+            opacity: 0.95;
+        }
+        .intro-meta {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            flex-wrap: wrap;
+        }
+        .intro-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 15px; font-weight: 600;
+        }
+        .intro-meta-item span:first-child {
+            font-size: 20px;
+        }
+        /* Content Card */
+        .content-card {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            padding: 50px;
+            box-shadow: var(--shadow-medium);
+            margin-bottom: 30px;
+        }
+        .slide-header {
+            margin-bottom: 35px;
+        }
+        .slide-number {
+            font-size: 11px; font-weight: 800;
+            color: var(--text-light);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 10px;
+        }
+        .slide-title {
+            font-family: var(--font-heading);
+            font-size: 36px; font-weight: 900;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+            line-height: 1.2;
+        }
+        .slide-subtitle {
+            font-size: 17px;
+            color: var(--text-medium);
+        }
+        .slide-content {
+            font-size: 17px;
+            line-height: 1.8;
+            color: var(--text-dark);
+        }
+        .slide-content p {
+            margin-bottom: 20px;
+        }
+        .slide-content strong {
+            color: var(--loto-red);
+            font-weight: 700;
+        }
+        /* Katie Message */
+        .katie-message {
+            display: flex;
+            align-items: flex-start;
+            gap: 18px;
+            background: linear-gradient(135deg, #FFFDE7 0%, #FFF9C4 100%);
+            border-left: 5px solid var(--primary);
+            padding: 24px;
+            border-radius: var(--radius-md);
+            margin-bottom: 35px;
+            box-shadow: 0 3px 12px rgba(255,215,0,0.15);
+        }
+        .katie-avatar {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            object-fit: cover;
+            object-position: center 48%;
+            background: white;
+            border: 4px solid var(--primary);
+            padding: 6px;
+            flex-shrink: 0;
+            box-shadow: var(--shadow-soft);
+        }
+        .katie-bubble {
+            flex: 1;
+        }
+        .katie-name {
+            font-weight: 800;
+            color: var(--secondary);
+            margin-bottom: 8px;
+            font-size: 15px;
+        }
+        .katie-text {
+            font-size: 16px;
+            color: var(--text-dark);
+            line-height: 1.7;
+        }
+        /* Info Boxes */
+        .info-box {
+            background: linear-gradient(135deg, #E3F2FD 0%, #BBDEFB 100%);
+            border-left: 5px solid var(--info);
+            padding: 22px 24px;
+            border-radius: var(--radius-md);
+            margin: 28px 0;
+        }
+        .info-box.warning {
+            background: linear-gradient(135deg, #FFF3E0 0%, #FFE0B2 100%);
+            border-left-color: var(--warning);
+        }
+        .info-box.danger {
+            background: linear-gradient(135deg, #FFEBEE 0%, #FFCDD2 100%);
+            border-left-color: var(--error);
+        }
+        .info-box.success {
+            background: linear-gradient(135deg, #E8F5E9 0%, #C8E6C9 100%);
+            border-left-color: var(--success);
+        }
+        .info-box-title {
+            font-weight: 800;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 16px;
+        }
+        .info-box-content {
+            font-size: 15px;
+            line-height: 1.7;
+        }
+        .info-box-content ul, .info-box-content ol {
+            margin-top: 10px;
+            padding-left: 20px;
+        }
+        .info-box-content li {
+            margin-bottom: 6px;
+        }
+        /* Lists */
+        .content-list {
+            list-style: none;
+            margin: 28px 0;
+        }
+        .content-list li {
+            padding: 14px 0 14px 36px;
+            position: relative;
+            border-bottom: 1px solid rgba(0,0,0,0.06);
+            font-size: 16px;
+        }
+        .content-list li:last-child {
+            border-bottom: none;
+        }
+        .content-list li::before {
+            content: '&#128274;';
+            position: absolute;
+            left: 8px;
+            font-size: 18px;
+        }
+        /* Energy Source Grid */
+        .energy-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+            margin: 28px 0;
+        }
+        .energy-card {
+            background: var(--bg-clay-light);
+            border: 3px solid var(--bg-clay-dark);
+            border-radius: var(--radius-md);
+            padding: 26px;
+            text-align: center;
+            transition: var(--transition);
+        }
+        .energy-card:hover {
+            transform: translateY(-6px);
+            box-shadow: var(--shadow-medium);
+            border-color: var(--loto-red);
+        }
+        .energy-icon {
+            font-size: 56px;
+            margin-bottom: 16px;
+        }
+        .energy-title {
+            font-weight: 900;
+            font-size: 20px;
+            color: var(--text-dark);
+            margin-bottom: 12px;
+            font-family: var(--font-heading);
+        }
+        .energy-desc {
+            font-size: 15px;
+            color: var(--text-medium);
+            line-height: 1.6;
+        }
+        /* LOTO Steps */
+        .loto-steps {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+            margin: 28px 0;
+        }
+        .loto-step {
+            display: flex;
+            align-items: flex-start;
+            gap: 18px;
+            background: var(--bg-clay-light);
+            padding: 24px;
+            border-radius: var(--radius-md);
+            border-left: 5px solid var(--loto-red);
+            transition: var(--transition);
+        }
+        .loto-step:hover {
+            background: var(--bg-clay);
+            box-shadow: var(--shadow-soft);
+        }
+        .loto-number {
+            background: var(--loto-red);
+            color: var(--white);
+            min-width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            font-size: 22px;
+            flex-shrink: 0;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+        }
+        .loto-content h4 {
+            font-weight: 800;
+            margin-bottom: 8px;
+            color: var(--text-dark);
+            font-size: 17px;
+        }
+        .loto-content p {
+            font-size: 15px;
+            color: var(--text-medium);
+            line-height: 1.7;
+            margin: 0;
+        }
+        /* Employee Types */
+        .employee-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin: 28px 0;
+        }
+        .employee-card {
+            background: linear-gradient(135deg, var(--bg-clay-light) 0%, var(--bg-clay) 100%);
+            border: 3px solid var(--bg-clay-dark);
+            border-radius: var(--radius-md);
+            padding: 28px;
+            transition: var(--transition);
+        }
+        .employee-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-medium);
+        }
+        .employee-icon {
+            font-size: 48px;
+            margin-bottom: 14px;
+        }
+        .employee-title {
+            font-weight: 900;
+            font-size: 20px;
+            color: var(--text-dark);
+            margin-bottom: 12px;
+            font-family: var(--font-heading);
+        }
+        .employee-desc {
+            font-size: 15px;
+            color: var(--text-medium);
+            line-height: 1.6;
+            margin-bottom: 14px;
+        }
+        .employee-duties {
+            font-size: 14px;
+            color: var(--text-dark);
+            line-height: 1.6;
+        }
+        /* Device Grid */
+        .device-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin: 28px 0;
+        }
+        .device-card {
+            background: var(--bg-clay-light);
+            border: 3px solid var(--loto-red);
+            border-radius: var(--radius-md);
+            padding: 24px;
+            transition: var(--transition);
+        }
+        .device-card:hover {
+            box-shadow: var(--shadow-medium);
+            transform: translateY(-3px);
+        }
+        .device-title {
+            font-weight: 900;
+            font-size: 18px;
+            color: var(--loto-red);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .device-desc {
+            font-size: 15px;
+            color: var(--text-dark);
+            line-height: 1.6;
+        }
+        /* ═══════════════════════════════════════════
+           QUIZ STYLES
+           ═══════════════════════════════════════════ */
+        .quiz-question {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 28px;
+            line-height: 1.5;
+        }
+        .quiz-options {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            margin-bottom: 24px;
+        }
+        .quiz-option {
+            background: var(--bg-clay-light);
+            border: 3px solid var(--bg-clay-dark);
+            padding: 18px 24px;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 16px;
+            font-weight: 600;
+            position: relative;
+        }
+        .quiz-option:hover:not(.disabled) {
+            background: var(--bg-clay);
+            border-color: var(--primary);
+            transform: translateX(6px);
+        }
+        .quiz-option.selected {
+            background: var(--primary);
+            border-color: var(--primary-dark);
+            color: var(--accent-black);
+        }
+        .quiz-option.correct {
+            background: var(--success);
+            border-color: var(--success-dark);
+            color: var(--white);
+        }
+        .quiz-option.incorrect {
+            background: var(--error);
+            border-color: var(--error-dark);
+            color: var(--white);
+        }
+        .quiz-option.disabled {
+            cursor: default;
+        }
+        .quiz-feedback {
+            display: none;
+            padding: 18px 22px;
+            border-radius: var(--radius-md);
+            font-size: 16px;
+            line-height: 1.7;
+            margin-top: 20px;
+        }
+        .quiz-feedback.show {
+            display: block;
+        }
+        .quiz-feedback.correct-fb {
+            background: #E8F5E9;
+            color: #2E7D32;
+            border-left: 5px solid var(--success);
+        }
+        .quiz-feedback.incorrect-fb {
+            background: #FFEBEE;
+            color: #C62828;
+            border-left: 5px solid var(--error);
+        }
+        /* Quiz Buttons */
+        .quiz-btn-group {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+        }
+        /* Results Screen */
+        .results-card {
+            background: var(--white);
+            border-radius: var(--radius-xl);
+            padding: 60px 50px;
+            box-shadow: var(--shadow-hard);
+            text-align: center;
+        }
+        .results-icon {
+            font-size: 100px;
+            margin-bottom: 24px;
+            animation: scaleIn 0.6s ease;
+        }
+        @keyframes scaleIn {
+            from { transform: scale(0) rotate(-180deg); }
+            to { transform: scale(1) rotate(0); }
+        }
+        .results-score {
+            font-family: var(--font-heading);
+            font-size: 72px;
+            font-weight: 900;
+            color: var(--primary);
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 0 rgba(0,0,0,0.1);
+        }
+        .results-title {
+            font-family: var(--font-heading);
+            font-size: 42px;
+            font-weight: 900;
+            color: var(--text-dark);
+            margin-bottom: 16px;
+        }
+        .results-message {
+            font-size: 19px;
+            color: var(--text-medium);
+            margin-bottom: 36px;
+            line-height: 1.7;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .results-katie {
+            background: linear-gradient(135deg, #FFFDE7 0%, #FFF9C4 100%);
+            border-left: 5px solid var(--primary);
+            padding: 20px 24px;
+            border-radius: var(--radius-md);
+            font-size: 17px;
+            font-style: italic;
+            color: var(--text-dark);
+            margin-bottom: 36px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .results-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+        /* ═══════════════════════════════════════════
+           BUTTONS
+           ═══════════════════════════════════════════ */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 14px 32px;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-family: var(--font-heading);
+            font-size: 16px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+            box-shadow: var(--shadow-clay);
+        }
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .btn-gold {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: var(--accent-black);
+        }
+        .btn-gold:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-hard);
+        }
+        .btn-success {
+            background: var(--success);
+            color: var(--white);
+        }
+        .btn-success:hover:not(:disabled) {
+            background: var(--success-dark);
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-hard);
+        }
+        .btn-outline {
+            background: var(--white);
+            color: var(--text-dark);
+            border: 2px solid var(--bg-clay-dark);
+        }
+        .btn-outline:hover:not(:disabled) {
+            background: var(--bg-clay-light);
+            border-color: var(--primary);
+        }
+        /* ═══════════════════════════════════════════
+           NAVIGATION
+           ═══════════════════════════════════════════ */
+        .nav-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(180deg, rgba(26,26,26,0.97) 0%, rgba(0,0,0,0.98) 100%);
+            border-top: 3px solid var(--primary);
+            padding: 16px 24px;
+            z-index: 100;
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.3);
+        }
+        .nav-inner {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+        }
+        .nav-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            border: 2px solid rgba(255,255,255,0.15);
+            border-radius: var(--radius-sm);
+            font-family: var(--font-heading);
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: var(--transition);
+            background: rgba(255,255,255,0.08);
+            color: var(--white);
+            text-decoration: none;
+        }
+        .nav-btn:hover:not(:disabled) {
+            background: rgba(255,255,255,0.15);
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+        .nav-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+        .nav-btn.nav-next {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: var(--accent-black);
+            border-color: transparent;
+        }
+        .nav-btn.nav-next:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255,215,0,0.4);
+        }
+        .slide-indicator {
+            color: rgba(255,255,255,0.6);
+            font-size: 13px;
+            font-weight: 600;
+        }
+        /* ═══════════════════════════════════════════
+           RESPONSIVE
+           ═══════════════════════════════════════════ */
+        @media (max-width: 768px) {
+            .container { padding: 30px 20px 100px; }
+            .content-card { padding: 32px 24px; }
+            .intro-card { padding: 40px 30px; }
+            .intro-title { font-size: 36px; }
+            .slide-title { font-size: 28px; }
+            .energy-grid { grid-template-columns: 1fr; }
+            .employee-grid { grid-template-columns: 1fr; }
+            .device-grid { grid-template-columns: 1fr; }
+            .nav-inner { flex-direction: column; gap: 12px; }
+            .nav-btn { width: 100%; justify-content: center; }
+            .header-center { position: static; transform: none; }
+        }
+        @media (max-width: 480px) {
+            .intro-meta { flex-direction: column; gap: 16px; }
+            .katie-message { flex-direction: column; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-inner">
+            <a href="../../user-dashboard/index.html" class="logo">
+                <div class="logo-icon"><img src="logo.png?v=2" alt="SafetyVerse Logo"></div>
+                <div class="logo-text">Safety<em>Verse</em></div>
+            </a>
+            <div class="header-center">
+                <span class="header-module-tag">MODULE 11</span>
+                <span class="header-module-title">Lockout/Tagout (LOTO)</span>
+            </div>
+            <a href="../../user-dashboard/index.html" class="back-btn">
+                <span>&#8592;</span>
+                <span>Back to Dashboard</span>
+            </a>
+        </div>
+    </header>
+    <!-- Progress Bar -->
+    <div class="progress-bar">
+        <div class="progress-bar-inner">
+            <span class="progress-label" id="progressLabel">Slide 1 of 15</span>
+            <div class="progress-track">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <span class="progress-pct" id="progressPct">0%</span>
+        </div>
+    </div>
+    <!-- Main Content -->
+    <div class="content-wrapper">
+        <div class="container">
+            <!-- Slide 1: Intro -->
+            <div class="slide active" data-slide="1">
+                <div class="intro-card">
+                    <div class="intro-icon">&#128274;</div>
+                    <h1 class="intro-title">Lockout/Tagout</h1>
+                    <p class="intro-subtitle">Control Hazardous Energy, Save Lives</p>
+                    <div class="intro-meta">
+                        <div class="intro-meta-item">
+                            <span>&#9201;&#65039;</span>
+                            <span>15 minutes</span>
+                        </div>
+                        <div class="intro-meta-item">
+                            <span>&#128218;</span>
+                            <span>Operational Safety Path</span>
+                        </div>
+                        <div class="intro-meta-item">
+                            <span>&#10003;</span>
+                            <span>OSHA 1910.147</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 2: Introduction with Katie -->
+            <div class="slide" data-slide="2">
+                <div class="content-card">
+                    <div class="katie-message">
+                        <img src="katie.png" alt="Katie" class="katie-avatar">
+                        <div class="katie-bubble">
+                            <div class="katie-name">Katie, Your Safety Guide</div>
+                            <div class="katie-text">
+                                Welcome! Lockout/Tagout (LOTO) is one of the most critical safety procedures in any workplace. It prevents unexpected equipment startup during service and maintenance&#8212;a leading cause of serious injuries and deaths. Even if you don't perform LOTO yourself, understanding how it works and respecting locked-out equipment can save lives. Let's learn how to recognize and respect LOTO!
+                            </div>
+                        </div>
+                    </div>
+                    <div class="slide-header">
+                        <div class="slide-number">Slide 2 of 15</div>
+                        <h2 class="slide-title">What is Lockout/Tagout?</h2>
+                    </div>
+                    <div class="slide-content">
+                        <p><strong>Lockout/Tagout (LOTO)</strong> is a safety procedure that ensures hazardous energy is properly isolated and rendered inoperative before employees perform service or maintenance on equipment. It prevents accidental startup, energization, or release of stored energy that could cause injury.</p>
+
+                        <div class="info-box danger">
+                            <div class="info-box-title">&#9888;&#65039; Why LOTO Matters</div>
+                            <div class="info-box-content">
+                                <ul>
+                                    <li><strong>3,000+ injuries</strong> occur annually from failure to control hazardous energy</li>
+                                    <li><strong>120+ fatalities</strong> each year from improper LOTO</li>
+                                    <li><strong>10% of serious workplace accidents</strong> involve failure to control energy</li>
+                                    <li>Injuries include amputations, electrocutions, crushing, burns, and death</li>
+                                    <li><strong>All are preventable</strong> with proper LOTO procedures</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <p><strong>Learning Objectives:</strong></p>
+                        <ul class="content-list">
+                            <li>Understand what hazardous energy is and why it must be controlled</li>
+                            <li>Recognize the types of energy sources requiring LOTO</li>
+                            <li>Identify the three employee classifications for LOTO</li>
+                            <li>Know the six steps of LOTO procedures</li>
+                            <li>Understand critical LOTO rules that protect everyone</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 3: What is Hazardous Energy? -->
+            <div class="slide" data-slide="3">
+                <div class="content-card">
+                    <div class="slide-header">
+                        <div class="slide-number">Slide 3 of 15</div>
+                        <h2 class="slide-title">What is Hazardous Energy?</h2>
+                        <p class="slide-subtitle">Energy that can cause harm</p>
+                    </div>
+                    <div class="slide-content">
+                        <p><strong>Hazardous energy</strong> is any source of energy that, if not controlled, can cause injury or death. This includes both active energy sources and stored energy that can be released unexpectedly.</p>
+                        <div class="energy-grid">
+                            <div class="energy-card">
+                                <div class="energy-icon">&#9889;</div>
+                                <div class="energy-title">Electrical</div>
+                                <div class="energy-desc">Current flowing through wires, motors, controls, capacitors that store charge. Can cause shock, electrocution, burns, arc flash.</div>
+                            </div>
+                            <div class="energy-card">
+                                <div class="energy-icon">&#9881;&#65039;</div>
+                                <div class="energy-title">Mechanical</div>
+                                <div class="energy-desc">Moving parts&#8212;motors, gears, shafts, pulleys, belts, chains, rotating equipment. Can cause crushing, cutting, amputation, entanglement.</div>
+                            </div>
+                            <div class="energy-card">
+                                <div class="energy-icon">&#128168;</div>
+                                <div class="energy-title">Pneumatic</div>
+                                <div class="energy-desc">Compressed air in lines, cylinders, actuators, tools. High pressure can cause parts to move violently or projectiles to launch.</div>
+                            </div>
+                            <div class="energy-card">
+                                <div class="energy-icon">&#128167;</div>
+                                <div class="energy-title">Hydraulic</div>
+                                <div class="energy-desc">Pressurized fluid in lines, cylinders, presses, lifts. Extreme pressure can inject fluid through skin, cause severe burns, move heavy loads.</div>
+                            </div>
+                            <div class="energy-card">
+                                <div class="energy-icon">&#128293;</div>
+                                <div class="energy-title">Thermal</div>
+                                <div class="energy-desc">Heat in equipment, pipes, surfaces, furnaces, steam lines. Can cause severe burns, fires, steam release injuries.</div>
+                            </div>
+                            <div class="energy-card">
+                                <div class="energy-icon">&#9879;&#65039;</div>
+                                <div class="energy-title">Chemical</div>
+                                <div class="energy-desc">Chemicals under pressure, reactive materials, hazardous substances in lines or vessels. Can cause burns, poisoning, explosions.</div>
+                            </div>
+                            <div class="energy-card">
+                                <div class="energy-icon">&#129704;</div>
+                                <div class="energy-title">Gravitational</div>
+                                <div class="energy-desc">Raised or suspended equipment, counterweights, springs under tension. Can fall, drop, or release suddenly causing crushing injuries.</div>
+                            </div>
+                            <div class="energy-card">
+                                <div class="energy-icon">&#128225;</div>
+                                <div class="energy-title">Other Energy</div>
+                                <div class="energy-desc">Radiation, laser, acoustic, magnetic fields. Each requires specific control measures based on hazard type.</div>
+                            </div>
+                        </div>
+                        <div class="info-box warning">
+                            <div class="info-box-title">&#9888;&#65039; Stored Energy is Especially Dangerous</div>
+                            <div class="info-box-content">
+                                Many serious injuries occur from <strong>stored energy</strong> that workers don't realize is present:
+                                <ul>
+                                    <li>Capacitors holding electrical charge after power is off</li>
+                                    <li>Springs under tension</li>
+                                    <li>Compressed air or hydraulic pressure trapped in lines</li>
+                                    <li>Flywheels still spinning after power is cut</li>
+                                    <li>Suspended loads that can fall</li>
+                                </ul>
+                                <strong>Simply turning off power doesn't make equipment safe!</strong> All energy must be isolated and dissipated.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 4: Employee Classifications -->
+            <div class="slide" data-slide="4">
+                <div class="content-card">
+                    <div class="slide-header">
+                        <div class="slide-number">Slide 4 of 15</div>
+                        <h2 class="slide-title">Three Types of Employees</h2>
+                        <p class="slide-subtitle">Understanding roles and responsibilities</p>
+                    </div>
+                    <div class="slide-content">
+                        <p>OSHA defines three categories of employees based on their relationship to LOTO procedures. <strong>Knowing which category you're in determines what you can and cannot do.</strong></p>
+                        <div class="employee-grid">
+                            <div class="employee-card">
+                                <div class="employee-icon">&#128119;</div>
+                                <div class="employee-title">Authorized Employee</div>
+                                <div class="employee-desc">A person who has been trained and authorized to perform lockout/tagout procedures on equipment.</div>
+                                <div class="employee-duties">
+                                    <strong>Can do:</strong><br>
+                                    &#8226; Apply and remove their own locks/tags<br>
+                                    &#8226; Perform service and maintenance on locked-out equipment<br>
+                                    &#8226; Verify energy isolation<br>
+                                    &#8226; Work inside LOTO boundaries<br><br>
+                                    <strong>Requirements:</strong><br>
+                                    &#8226; Specific LOTO training<br>
+                                    &#8226; Employer authorization<br>
+                                    &#8226; Knowledge of energy sources and isolation methods
+                                </div>
+                            </div>
+                            <div class="employee-card">
+                                <div class="employee-icon">&#128100;</div>
+                                <div class="employee-title">Affected Employee</div>
+                                <div class="employee-desc">A person whose job requires them to operate or use equipment that is being serviced under LOTO, or who works in areas where LOTO is performed.</div>
+                                <div class="employee-duties">
+                                    <strong>Can do:</strong><br>
+                                    &#8226; Recognize when LOTO is in use<br>
+                                    &#8226; Understand the purpose of LOTO<br>
+                                    &#8226; Know not to restart locked-out equipment<br><br>
+                                    <strong>Cannot do:</strong><br>
+                                    &#8226; Apply or remove locks/tags<br>
+                                    &#8226; Service locked-out equipment<br>
+                                    &#8226; Bypass or defeat LOTO devices<br><br>
+                                    <strong>Requirements:</strong><br>
+                                    &#8226; Awareness training on LOTO purpose and procedures
+                                </div>
+                            </div>
+                            <div class="employee-card">
+                                <div class="employee-icon">&#128101;</div>
+                                <div class="employee-title">Other Employee</div>
+                                <div class="employee-desc">Anyone else who may encounter locked-out equipment in the workplace but doesn't operate it or work in LOTO areas.</div>
+                                <div class="employee-duties">
+                                    <strong>Can do:</strong><br>
+                                    &#8226; Recognize lockout/tagout devices<br>
+                                    &#8226; Understand they should not touch locked-out equipment<br><br>
+                                    <strong>Cannot do:</strong><br>
+                                    &#8226; Remove any locks or tags<br>
+                                    &#8226; Operate locked-out equipment<br>
+                                    &#8226; Enter LOTO work areas without authorization<br><br>
+                                    <strong>Requirements:</strong><br>
+                                    &#8226; Basic awareness that LOTO exists and should never be interfered with
+                                </div>
+                            </div>
+                        </div>
+                        <div class="info-box danger">
+                            <div class="info-box-title">&#128680; Know Your Role</div>
+                            <div class="info-box-content">
+                                <strong>If you have not received specific LOTO training and authorization, you are NOT an authorized employee.</strong> Do not attempt to perform LOTO procedures. Even well-meaning employees can cause fatal injuries by improperly applying or removing LOTO devices.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 5: The Six Steps of LOTO -->
+            <div class="slide" data-slide="5">
+                <div class="content-card">
+                    <div class="slide-header">
+                        <div class="slide-number">Slide 5 of 15</div>
+                        <h2 class="slide-title">The Six Steps of LOTO</h2>
+                        <p class="slide-subtitle">The proper energy control sequence</p>
+                    </div>
+                    <div class="slide-content">
+                        <p>OSHA requires a specific sequence for controlling hazardous energy. <strong>This overview is for awareness&#8212;only authorized employees perform these steps.</strong></p>
+                        <div class="loto-steps">
+                            <div class="loto-step">
+                                <div class="loto-number">1</div>
+                                <div class="loto-content">
+                                    <h4>Preparation</h4>
+                                    <p><strong>Survey the equipment to identify all energy sources.</strong> Review equipment manuals, diagrams, and procedures. Identify all energy isolation points (breakers, valves, switches). Gather necessary locks, tags, and tools. Notify all affected employees that lockout will occur.</p>
+                                </div>
+                            </div>
+                            <div class="loto-step">
+                                <div class="loto-number">2</div>
+                                <div class="loto-content">
+                                    <h4>Notification</h4>
+                                    <p><strong>Inform all affected employees before beginning LOTO.</strong> Notify operators, maintenance staff, and anyone working nearby. Explain what equipment will be locked out, why, how long it will take, and who to contact with questions. Post signs if needed.</p>
+                                </div>
+                            </div>
+                            <div class="loto-step">
+                                <div class="loto-number">3</div>
+                                <div class="loto-content">
+                                    <h4>Shutdown</h4>
+                                    <p><strong>Shut down equipment using normal operating procedures.</strong> Use proper shutdown sequence per manufacturer instructions. Allow equipment to come to complete stop. Never force equipment off in a way that could cause damage or create additional hazards. Verify shutdown is complete.</p>
+                                </div>
+                            </div>
+                            <div class="loto-step">
+                                <div class="loto-number">4</div>
+                                <div class="loto-content">
+                                    <h4>Isolation</h4>
+                                    <p><strong>Disconnect equipment from ALL energy sources.</strong> Open circuit breakers, close valves, disconnect power supplies. Isolate every identified energy source. Block or secure mechanical components. Relieve or block stored energy (springs, hydraulic pressure, elevated components). Verify isolation is complete.</p>
+                                </div>
+                            </div>
+                            <div class="loto-step">
+                                <div class="loto-number">5</div>
+                                <div class="loto-content">
+                                    <h4>Lockout/Tagout</h4>
+                                    <p><strong>Apply lockout or tagout devices to energy isolation points.</strong> Each authorized employee working on equipment applies their own lock and tag. Locks must prevent operation of isolation device. Tags identify who applied the lock and warn against re-energization. Use standardized locks and tags per company procedures.</p>
+                                </div>
+                            </div>
+                            <div class="loto-step">
+                                <div class="loto-number">6</div>
+                                <div class="loto-content">
+                                    <h4>Verification</h4>
+                                    <p><strong>Test to confirm equipment is de-energized and cannot restart.</strong> Check that all personnel are clear. Try to operate equipment using normal controls&#8212;it should NOT start. Test for presence of energy using appropriate instruments (voltmeter for electrical, pressure gauge for pneumatic/hydraulic). Verify stored energy is released. Only after verification is work safe to begin.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="info-box success">
+                            <div class="info-box-title">&#10003; Why All Six Steps Matter</div>
+                            <div class="info-box-content">
+                                Skipping or rushing any step can be fatal. Each step builds on the previous one to ensure complete protection. Most LOTO accidents happen when someone bypasses verification or fails to identify all energy sources.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 6: Lockout Devices -->
+            <div class="slide" data-slide="6">
+                <div class="content-card">
+                    <div class="slide-header">
+                        <div class="slide-number">Slide 6 of 15</div>
+                        <h2 class="slide-title">Lockout and Tagout Devices</h2>
+                        <p class="slide-subtitle">Hardware that prevents re-energization</p>
+                    </div>
+                    <div class="slide-content">
+                        <p>LOTO devices physically prevent energy isolation devices from being operated. <strong>Recognizing these devices helps you know when equipment is locked out.</strong></p>
+                        <div class="device-grid">
+                            <div class="device-card">
+                                <div class="device-title">&#128274; Locks</div>
+                                <div class="device-desc">
+                                    <strong>Purpose:</strong> Physically prevent operation of isolation devices.<br><br>
+                                    <strong>Requirements:</strong><br>
+                                    &#8226; Must be durable and substantial<br>
+                                    &#8226; Each worker uses their own unique lock<br>
+                                    &#8226; Only the person who applied the lock can remove it<br>
+                                    &#8226; Usually red with "DANGER - DO NOT OPERATE" marking<br>
+                                    &#8226; Must withstand environment and force<br><br>
+                                    <strong>Common types:</strong> Padlocks, hasps (for multiple locks), circuit breaker locks, valve lockouts, plug lockouts, cable lockouts
+                                </div>
+                            </div>
+                            <div class="device-card">
+                                <div class="device-title">&#127991;&#65039; Tags</div>
+                                <div class="device-desc">
+                                    <strong>Purpose:</strong> Warn that equipment must not be operated. Identify who applied the lockout.<br><br>
+                                    <strong>Requirements:</strong><br>
+                                    &#8226; Attached to every lock<br>
+                                    &#8226; Must include "DANGER - DO NOT OPERATE" or similar<br>
+                                    &#8226; Lists employee's name, date, and reason<br>
+                                    &#8226; Made of durable material<br>
+                                    &#8226; Cannot be removed without destroying<br><br>
+                                    <strong>Important:</strong> Tags ALONE are not sufficient&#8212;they must accompany locks. Tags warn but don't physically prevent operation.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="info-box warning">
+                            <div class="info-box-title">&#9888;&#65039; Standardized LOTO Devices</div>
+                            <div class="info-box-content">
+                                <strong>OSHA requires LOTO devices to be:</strong>
+                                <ul>
+                                    <li><strong>Durable:</strong> Withstand the environment for the expected service period</li>
+                                    <li><strong>Standardized:</strong> Consistent in color (usually red), shape, or size across the facility</li>
+                                    <li><strong>Substantial:</strong> Cannot be easily removed without tools</li>
+                                    <li><strong>Identifiable:</strong> Used only for energy control, never for other purposes</li>
+                                    <li><strong>Legible:</strong> Tags must remain readable in all conditions</li>
+                                </ul>
+                                Your employer should provide all necessary LOTO devices&#8212;never improvise with random locks or homemade tags.
+                            </div>
+                        </div>
+                        <div class="info-box danger">
+                            <div class="info-box-title">&#128680; What You Should Never Do</div>
+                            <div class="info-box-content">
+                                <ul>
+                                    <li>Never remove someone else's lock or tag&#8212;<strong>even if you think they forgot it</strong></li>
+                                    <li>Never operate equipment that has locks or tags on it</li>
+                                    <li>Never cut off locks or bypass LOTO devices</li>
+                                    <li>Never use regular locks or non-LOTO locks for lockout</li>
+                                    <li>Never remove your own lock until work is complete and equipment can safely restart</li>
+                                </ul>
+                                <strong>Removing someone's lock can kill them. It's one of the deadliest mistakes in industrial safety.</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 7: Critical LOTO Rules -->
+            <div class="slide" data-slide="7">
+                <div class="content-card">
+                    <div class="slide-header">
+                        <div class="slide-number">Slide 7 of 15</div>
+                        <h2 class="slide-title">Critical LOTO Rules Everyone Must Follow</h2>
+                        <p class="slide-subtitle">Non-negotiable safety requirements</p>
+                    </div>
+                    <div class="slide-content">
+                        <p>These rules apply to <strong>everyone</strong>&#8212;authorized, affected, and other employees. Violating any of these can result in death or serious injury.</p>
+                        <div class="info-box danger">
+                            <div class="info-box-title">&#128680; Rule #1: Never Remove Someone Else's Lock</div>
+                            <div class="info-box-content">
+                                <strong>This is the most important LOTO rule.</strong> Each lock represents a person working on the equipment. Removing their lock could:
+                                <ul>
+                                    <li>Allow equipment to start while they're inside or working on it</li>
+                                    <li>Cause electrocution, crushing, amputation, or death</li>
+                                    <li>Result in criminal charges and termination</li>
+                                </ul>
+                                <strong>If you find a lock that seems abandoned:</strong> Contact the person whose name is on the tag. Contact your supervisor. Never remove it yourself&#8212;even if you think it's been there too long. There are strict procedures for removing locks in emergencies, and only authorized managers can do this.
+                            </div>
+                        </div>
+                        <div class="info-box danger">
+                            <div class="info-box-title">&#128680; Rule #2: Never Operate Locked-Out Equipment</div>
+                            <div class="info-box-content">
+                                If equipment has locks or tags on any energy isolation points:
+                                <ul>
+                                    <li>Do NOT attempt to start or operate it</li>
+                                    <li>Do NOT remove locks or tags to "test" if it works</li>
+                                    <li>Do NOT bypass isolation devices</li>
+                                    <li>Do NOT assume the lockout doesn't apply to you</li>
+                                </ul>
+                                <strong>Even if you need the equipment urgently, wait.</strong> Contact your supervisor to find out when it will be available. Starting locked-out equipment can kill the person working on it.
+                            </div>
+                        </div>
+                        <div class="info-box danger">
+                            <div class="info-box-title">&#128680; Rule #3: One Person, One Lock</div>
+                            <div class="info-box-content">
+                                <strong>Each authorized employee working on equipment must apply their own individual lock.</strong> You cannot:
+                                <ul>
+                                    <li>Share locks with coworkers</li>
+                                    <li>Work under someone else's lock</li>
+                                    <li>Apply locks for other people</li>
+                                    <li>Use a "group lock" unless specifically trained on group lockout procedures</li>
+                                </ul>
+                                <strong>Your lock protects YOUR life.</strong> Only you can apply it, and only you can remove it. If multiple people work on equipment, there should be multiple locks (using a lockout hasp).
+                            </div>
+                        </div>
+                        <div class="info-box danger">
+                            <div class="info-box-title">&#128680; Rule #4: Locks Stay On Until Work is Complete</div>
+                            <div class="info-box-content">
+                                <strong>Do not remove your lock until:</strong>
+                                <ul>
+                                    <li>Your work is completely finished</li>
+                                    <li>All tools and materials are removed from equipment</li>
+                                    <li>All personnel are clear of danger zones</li>
+                                    <li>All guards and safety devices are reinstalled</li>
+                                    <li>You've verified equipment can safely restart</li>
+                                </ul>
+                                Never remove your lock "temporarily" to let someone test equipment, then plan to reapply it. Once removed, full LOTO procedures must be repeated to restart work.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 8: Recognizing LOTO in Progress -->
+            <div class="slide" data-slide="8">
+                <div class="content-card">
+                    <div class="slide-header">
+                        <div class="slide-number">Slide 8 of 15</div>
+                        <h2 class="slide-title">How to Recognize LOTO in Progress</h2>
+                        <p class="slide-subtitle">Signs that equipment is locked out</p>
+                    </div>
+                    <div class="slide-content">
+                        <p>As an affected or other employee, you need to recognize when LOTO is in effect so you can stay away from equipment and avoid interfering with the lockout.</p>
+                        <ul class="content-list">
+                            <li><strong>Locks on electrical panels, breakers, or disconnects:</strong> Usually bright red padlocks with "DANGER - DO NOT OPERATE" tags attached. May be single locks or multiple locks on a hasp.</li>
+                            <li><strong>Lockout devices on valves:</strong> Valve lockouts prevent the valve handle from being turned. Tags will be attached to the lockout device or valve handle.</li>
+                            <li><strong>Lockout devices on plugs and cords:</strong> Special covers or locks prevent electrical plugs from being inserted into outlets or equipment from being plugged in.</li>
+                            <li><strong>Warning tags on equipment controls:</strong> Even without locks, you may see "DO NOT OPERATE" tags on start buttons, control panels, or equipment. Treat these with the same respect as locks.</li>
+                            <li><strong>Barriers or barricades around equipment:</strong> Caution tape, cones, or barriers may surround locked-out equipment to keep unauthorized personnel away.</li>
+                            <li><strong>Signs posted on or near equipment:</strong> "LOCKOUT IN PROGRESS," "MAINTENANCE IN PROGRESS - DO NOT OPERATE," or similar warnings.</li>
+                            <li><strong>Workers performing maintenance:</strong> If you see maintenance or service personnel working on equipment, assume it's locked out even if you don't see the locks.</li>
+                        </ul>
+                        <div class="info-box warning">
+                            <div class="info-box-title">&#9888;&#65039; When in Doubt, Don't Touch It</div>
+                            <div class="info-box-content">
+                                <strong>If you're unsure whether equipment is locked out:</strong>
+                                <ul>
+                                    <li>Assume it IS locked out and don't touch it</li>
+                                    <li>Contact your supervisor before operating any equipment</li>
+                                    <li>Look for locks, tags, or workers before starting equipment</li>
+                                    <li>Read all warning signs and tags</li>
+                                </ul>
+                                It's better to ask and be wrong than to restart equipment and kill someone.
+                            </div>
+                        </div>
+                        <div class="info-box">
+                            <div class="info-box-title">&#128161; What to Do If You Need Locked-Out Equipment</div>
+                            <div class="info-box-content">
+                                <strong>If you need to use equipment that's locked out:</strong><br>
+                                1. Contact the person named on the tag (if visible)<br>
+                                2. Contact your supervisor or maintenance supervisor<br>
+                                3. Find out when equipment will be available<br>
+                                4. Plan alternative work or wait<br>
+                                5. <strong>Never remove locks or attempt to operate equipment</strong><br><br>
+                                Authorized employees will remove their locks when work is complete and equipment is safe to operate.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 9: Restoring Equipment to Service -->
+            <div class="slide" data-slide="9">
+                <div class="content-card">
+                    <div class="slide-header">
+                        <div class="slide-number">Slide 9 of 15</div>
+                        <h2 class="slide-title">Restoring Equipment to Service</h2>
+                        <p class="slide-subtitle">Safely re-energizing equipment</p>
+                    </div>
+                    <div class="slide-content">
+                        <p><strong>For awareness:</strong> Removing locks and restarting equipment is just as critical as applying them. Only authorized employees can perform these steps.</p>
+                        <div class="loto-steps">
+                            <div class="loto-step">
+                                <div class="loto-number">1</div>
+                                <div class="loto-content">
+                                    <h4>Inspect the Work Area</h4>
+                                    <p>Ensure all tools, materials, and equipment have been removed. Verify all guards, safety devices, and covers are properly reinstalled. Check that no one is in or near the equipment. Confirm work is complete.</p>
+                                </div>
+                            </div>
+                            <div class="loto-step">
+                                <div class="loto-number">2</div>
+                                <div class="loto-content">
+                                    <h4>Notify Affected Employees</h4>
+                                    <p>Inform all employees that lockout is being removed and equipment will be re-energized. Ensure everyone is clear of the equipment and aware it's about to start. Give adequate warning time.</p>
+                                </div>
+                            </div>
+                            <div class="loto-step">
+                                <div class="loto-number">3</div>
+                                <div class="loto-content">
+                                    <h4>Remove Lockout/Tagout Devices</h4>
+                                    <p>Each authorized employee removes their own lock and tag in reverse order of application. Verify all locks have been removed by all workers. Return energy isolation devices to operating positions.</p>
+                                </div>
+                            </div>
+                            <div class="loto-step">
+                                <div class="loto-number">4</div>
+                                <div class="loto-content">
+                                    <h4>Re-Energize and Test</h4>
+                                    <p>Restore energy following proper startup procedures. Test equipment for proper operation. Verify all functions work correctly. Ensure no damage or hazards remain before releasing equipment for production use.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="info-box danger">
+                            <div class="info-box-title">&#128680; Emergency Lock Removal</div>
+                            <div class="info-box-content">
+                                <strong>What if someone's lock is left on after they leave for the day?</strong><br><br>
+                                Only a designated manager or supervisor can remove someone else's lock under strict emergency procedures:
+                                <ul>
+                                    <li>Attempt to contact the employee</li>
+                                    <li>Verify the employee is not at the facility</li>
+                                    <li>Inspect equipment to ensure work is complete</li>
+                                    <li>Have another authorized employee verify it's safe</li>
+                                    <li>Document the removal in writing</li>
+                                    <li>Inform the employee before they return to work</li>
+                                </ul>
+                                <strong>Regular employees can NEVER remove someone else's lock, even in an emergency.</strong> Get a supervisor.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 10: Real-World LOTO Failures -->
+            <div class="slide" data-slide="10">
+                <div class="content-card">
+                    <div class="slide-header">
+                        <div class="slide-number">Slide 10 of 15</div>
+                        <h2 class="slide-title">Real LOTO Failures and Lessons</h2>
+                        <p class="slide-subtitle">Learning from tragic mistakes</p>
+                    </div>
+                    <div class="slide-content">
+                        <p>These real incidents (details changed for privacy) show what happens when LOTO is bypassed or performed incorrectly:</p>
+                        <div class="info-box danger">
+                            <div class="info-box-title">&#128148; Case 1: The Removed Lock</div>
+                            <div class="info-box-content">
+                                <strong>What happened:</strong> A maintenance worker was inside a large industrial mixer performing repairs. He had locked out the main power switch. A production supervisor, pressured to meet deadlines and believing the worker had left for the day, removed the lock and restarted the equipment. The worker was killed instantly.<br><br>
+                                <strong>Lesson:</strong> Never remove someone else's lock. Always verify the person who applied the lock knows it's being removed. Locks represent lives, not inconveniences.
+                            </div>
+                        </div>
+                        <div class="info-box danger">
+                            <div class="info-box-title">&#128148; Case 2: The "Quick Test"</div>
+                            <div class="info-box-content">
+                                <strong>What happened:</strong> An electrician was working inside an electrical panel. His coworker removed the lockout "just for a second" to test if a circuit was working, planning to immediately reapply it. The electrician was electrocuted.<br><br>
+                                <strong>Lesson:</strong> Locks must stay on until ALL work is complete. No "quick tests" or "temporary" removals. If equipment needs testing, stop work, remove all workers, follow full lockout removal procedures, test, then restart LOTO before resuming work.
+                            </div>
+                        </div>
+                        <div class="info-box danger">
+                            <div class="info-box-title">&#128148; Case 3: The Missed Energy Source</div>
+                            <div class="info-box-content">
+                                <strong>What happened:</strong> A worker locked out electrical power to a hydraulic press but didn't realize there was stored hydraulic pressure in the lines. When he removed a component, the stored energy released violently, crushing his hand.<br><br>
+                                <strong>Lesson:</strong> Identify ALL energy sources, including stored energy. Pressure must be released, capacitors discharged, springs released, and elevated components blocked or lowered. Verification testing is critical.
+                            </div>
+                        </div>
+                        <div class="info-box danger">
+                            <div class="info-box-title">&#128148; Case 4: The Assumed Lockout</div>
+                            <div class="info-box-content">
+                                <strong>What happened:</strong> A worker assumed his supervisor had locked out a machine and began working on it without applying his own lock. The supervisor's work finished early, and he removed his lock and restarted the equipment. The worker lost three fingers.<br><br>
+                                <strong>Lesson:</strong> Each person must apply their own lock. Never work under someone else's protection. Never assume equipment is locked out&#8212;verify it yourself.
+                            </div>
+                        </div>
+                        <p style="margin-top: 30px;"><strong>Common thread:</strong> In every case, people thought they could skip steps or bend rules "just this once." LOTO procedures exist because the consequences of failure are deadly. There are no shortcuts in energy control.</p>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 11: Your Responsibilities -->
+            <div class="slide" data-slide="11">
+                <div class="content-card">
+                    <div class="slide-header">
+                        <div class="slide-number">Slide 11 of 15</div>
+                        <h2 class="slide-title">Your Responsibilities</h2>
+                        <p class="slide-subtitle">What every employee must do</p>
+                    </div>
+                    <div class="slide-content">
+                        <p>Regardless of your employee classification, you have important responsibilities that protect yourself and your coworkers:</p>
+                        <div class="loto-steps">
+                            <div class="loto-step">
+                                <div class="loto-number">&#10003;</div>
+                                <div class="loto-content">
+                                    <h4>Respect All Lockout/Tagout Devices</h4>
+                                    <p>Treat every lock and tag as if it's protecting someone's life&#8212;because it is. Never remove, bypass, or defeat LOTO devices. Never operate equipment that has locks or tags on it. When you see locks or tags, stay away.</p>
+                                </div>
+                            </div>
+                            <div class="loto-step">
+                                <div class="loto-number">&#10003;</div>
+                                <div class="loto-content">
+                                    <h4>Know Your Limits</h4>
+                                    <p>If you're not trained and authorized to perform LOTO, don't attempt it. Don't work on equipment unless you're qualified. Don't assume you know how to lock out equipment "because it seems simple." Ask for help if unsure.</p>
+                                </div>
+                            </div>
+                            <div class="loto-step">
+                                <div class="loto-number">&#10003;</div>
+                                <div class="loto-content">
+                                    <h4>Communicate</h4>
+                                    <p>If you need locked-out equipment, talk to the person who locked it out (name on tag). Coordinate with supervisors about when equipment will be available. Never try to rush or pressure someone to remove their lock early.</p>
+                                </div>
+                            </div>
+                            <div class="loto-step">
+                                <div class="loto-number">&#10003;</div>
+                                <div class="loto-content">
+                                    <h4>Report Problems</h4>
+                                    <p>Report damaged or missing LOTO devices immediately. Report equipment that needs service. Report any violations of LOTO procedures you witness. Report "near misses" where someone almost restarted locked-out equipment.</p>
+                                </div>
+                            </div>
+                            <div class="loto-step">
+                                <div class="loto-number">&#10003;</div>
+                                <div class="loto-content">
+                                    <h4>Follow Training</h4>
+                                    <p>Attend all required LOTO training. Ask questions if procedures are unclear. Request retraining if you're unsure about anything. Stay current on your employer's specific LOTO procedures&#8212;they may differ from this general training.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="info-box success">
+                            <div class="info-box-title">&#10003; The Bottom Line</div>
+                            <div class="info-box-content">
+                                <strong>LOTO protects lives.</strong> Your coworker's life depends on you respecting their lockout. Your life depends on them respecting yours. These aren't just "rules"&#8212;they're the difference between going home safe and never going home at all.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 12: Summary -->
+            <div class="slide" data-slide="12">
+                <div class="content-card">
+                    <div class="slide-header">
+                        <div class="slide-number">Slide 12 of 15</div>
+                        <h2 class="slide-title">LOTO Key Takeaways</h2>
+                        <p class="slide-subtitle">Remember these critical points</p>
+                    </div>
+                    <div class="slide-content">
+                        <p><strong>Essential LOTO knowledge for all employees:</strong></p>
+                        <ul class="content-list">
+                            <li><strong>LOTO controls hazardous energy</strong> during service and maintenance to prevent unexpected startup, energization, or stored energy release</li>
+                            <li><strong>Eight types of energy</strong> require control: electrical, mechanical, pneumatic, hydraulic, thermal, chemical, gravitational, and others</li>
+                            <li><strong>Three employee types:</strong> Authorized (can perform LOTO), Affected (work in LOTO areas), Other (general awareness)</li>
+                            <li><strong>Six LOTO steps:</strong> Preparation, Notification, Shutdown, Isolation, Lockout/Tagout, Verification</li>
+                            <li><strong>Never remove someone else's lock or tag</strong>&#8212;this is the #1 rule that protects lives</li>
+                            <li><strong>Never operate locked-out equipment</strong>&#8212;even if you need it urgently, wait for proper removal</li>
+                            <li><strong>One person, one lock</strong>&#8212;each worker must apply their own individual lock</li>
+                            <li><strong>Locks stay on until work is complete</strong>&#8212;no temporary removals or "quick tests"</li>
+                            <li><strong>Recognize LOTO in progress</strong>&#8212;red locks, tags, barriers, and warning signs mean stay away</li>
+                            <li><strong>Stored energy is dangerous</strong>&#8212;turning off power doesn't make equipment safe; all energy must be isolated and dissipated</li>
+                        </ul>
+                        <div class="info-box danger">
+                            <div class="info-box-title">&#128680; Final Warning</div>
+                            <div class="info-box-content">
+                                <strong>LOTO violations kill people.</strong> Not "might harm," not "could injure"&#8212;they KILL. Every year, dozens of workers die because someone removed a lock, operated locked-out equipment, or failed to properly control energy. Don't be the person who causes a coworker's death. Don't be the victim of someone else's violation. Take LOTO seriously. Your life&#8212;and your coworkers' lives&#8212;depend on it.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 13: Quiz Question 1 -->
+            <div class="slide" data-slide="13">
+                <div class="content-card">
+                    <div class="slide-header">
+                        <div class="slide-number">Quiz Question 1 of 3</div>
+                        <h2 class="slide-title">Knowledge Check</h2>
+                    </div>
+                    <div class="slide-content">
+                        <div class="quiz-question">
+                            What is the MOST important rule about lockout/tagout devices?
+                        </div>
+                        <div class="quiz-options" id="q1-options">
+                            <div class="quiz-option" data-q="1" data-val="A">Always use red locks and tags</div>
+                            <div class="quiz-option" data-q="1" data-val="B">Never remove someone else's lock or tag</div>
+                            <div class="quiz-option" data-q="1" data-val="C">Apply locks to all equipment before leaving work</div>
+                            <div class="quiz-option" data-q="1" data-val="D">Use the same lock for all lockout situations</div>
+                        </div>
+                        <div class="quiz-feedback" id="fb-1"></div>
+                        <div class="quiz-btn-group">
+                            <button class="btn btn-gold" id="submit-1" onclick="submitQuiz(1)" disabled>Submit Answer</button>
+                            <button class="btn btn-outline" id="next-q-1" onclick="nextSlide()" style="display: none;">Next Question &#8594;</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 14: Quiz Question 2 -->
+            <div class="slide" data-slide="14">
+                <div class="content-card">
+                    <div class="slide-header">
+                        <div class="slide-number">Quiz Question 2 of 3</div>
+                        <h2 class="slide-title">Knowledge Check</h2>
+                    </div>
+                    <div class="slide-content">
+                        <div class="quiz-question">
+                            Which of the following is NOT one of the six steps of LOTO procedures?
+                        </div>
+                        <div class="quiz-options" id="q2-options">
+                            <div class="quiz-option" data-q="2" data-val="A">Preparation</div>
+                            <div class="quiz-option" data-q="2" data-val="B">Verification</div>
+                            <div class="quiz-option" data-q="2" data-val="C">Notification</div>
+                            <div class="quiz-option" data-q="2" data-val="D">Inspection</div>
+                        </div>
+                        <div class="quiz-feedback" id="fb-2"></div>
+                        <div class="quiz-btn-group">
+                            <button class="btn btn-gold" id="submit-2" onclick="submitQuiz(2)" disabled>Submit Answer</button>
+                            <button class="btn btn-outline" id="next-q-2" onclick="nextSlide()" style="display: none;">Next Question &#8594;</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 15: Quiz Question 3 -->
+            <div class="slide" data-slide="15">
+                <div class="content-card">
+                    <div class="slide-header">
+                        <div class="slide-number">Quiz Question 3 of 3</div>
+                        <h2 class="slide-title">Knowledge Check</h2>
+                    </div>
+                    <div class="slide-content">
+                        <div class="quiz-question">
+                            What is an "affected employee" in LOTO terminology?
+                        </div>
+                        <div class="quiz-options" id="q3-options">
+                            <div class="quiz-option" data-q="3" data-val="A">An employee who performs lockout/tagout procedures</div>
+                            <div class="quiz-option" data-q="3" data-val="B">An employee who operates equipment or works in areas where LOTO is performed</div>
+                            <div class="quiz-option" data-q="3" data-val="C">An employee who was injured in a LOTO accident</div>
+                            <div class="quiz-option" data-q="3" data-val="D">An employee who manages the LOTO program</div>
+                        </div>
+                        <div class="quiz-feedback" id="fb-3"></div>
+                        <div class="quiz-btn-group">
+                            <button class="btn btn-gold" id="submit-3" onclick="submitQuiz(3)" disabled>Submit Answer</button>
+                            <button class="btn btn-outline" id="next-q-3" onclick="nextSlide()" style="display: none;">View Results &#8594;</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 16: Results -->
+            <div class="slide" data-slide="16">
+                <div class="results-card">
+                    <div class="results-icon" id="rIcon">&#127919;</div>
+                    <div class="results-score" id="rScore">0 / 3</div>
+                    <h2 class="results-title" id="rTitle">Quiz Complete</h2>
+                    <p class="results-message" id="rMsg">Calculating your results...</p>
+                    <div class="results-katie" id="rKatie">"Let's see how you did!"</div>
+                    <div class="results-buttons" id="rBtns">
+                        <button class="btn btn-gold">Loading...</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Navigation Bar -->
+    <nav class="nav-bar">
+        <div class="nav-inner">
+            <button class="nav-btn" id="prevBtn" onclick="prevSlide()">
+                &#8592; Previous
+            </button>
+            <span class="slide-indicator" id="slideIndicator">Slide 1 of 15</span>
+            <button class="nav-btn nav-next" id="nextBtn" onclick="nextSlide()">
+                Next &#8594;
+            </button>
+        </div>
+    </nav>
+    <script>
+    (function() {
+        'use strict';
+        // ═══ CONFIG ═══
+        var TOTAL_SLIDES = 16;
+        var TOTAL_CONTENT = 15;
+        var MODULE_KEY = 'loto';
+        // ═══ STATE ═══
+        var currentSlide = 1;
+        var quizAnswers = { 1: null, 2: null, 3: null };
+        var quizSubmitted = { 1: false, 2: false, 3: false };
+        var quizScore = 0;
+        // Quiz correct answers
+        var quizCorrectAnswers = {
+            1: 'B',  // Never remove someone else's lock or tag
+            2: 'D',  // Inspection (not one of the six steps)
+            3: 'B'   // Employee who operates equipment or works in LOTO areas
+        };
+        // Feedback messages
+        var feedbackMessages = {
+            1: {
+                correct: '&#10003; Correct! Never remove someone else\'s lock or tag. This is the most critical LOTO rule&#8212;removing someone\'s lock can kill them.',
+                incorrect: '&#10007; Incorrect. The most important rule is: NEVER remove someone else\'s lock or tag. Doing so can cause fatal injuries to the person who applied it.'
+            },
+            2: {
+                correct: '&#10003; Correct! The six steps are: Preparation, Notification, Shutdown, Isolation, Lockout/Tagout, and Verification. Inspection is not one of them.',
+                incorrect: '&#10007; Incorrect. Inspection is not one of the six LOTO steps. The six steps are: Preparation, Notification, Shutdown, Isolation, Lockout/Tagout, Verification.'
+            },
+            3: {
+                correct: '&#10003; Correct! Affected employees are those who operate equipment or work in areas where LOTO is performed. They must recognize and respect LOTO.',
+                incorrect: '&#10007; Incorrect. Affected employees are those who operate equipment or work in areas where LOTO is performed, but do not perform LOTO themselves.'
+            }
+        };
+        // ═══ NAVIGATION ═══
+        function goToSlide(n) {
+            if (n < 1 || n > TOTAL_SLIDES) return;
+            currentSlide = n;
+            updateUI();
+            saveSlideProgress();
+        }
+        window.nextSlide = function() {
+            goToSlide(currentSlide + 1);
+        };
+        window.prevSlide = function() {
+            goToSlide(currentSlide - 1);
+        };
+        // ═══ UI UPDATE ═══
+        function updateUI() {
+            document.querySelectorAll('.slide').forEach(function(s) {
+                s.classList.remove('active');
+            });
+            var activeSlide = document.querySelector('[data-slide="' + currentSlide + '"]');
+            if (activeSlide) {
+                activeSlide.classList.add('active');
+            }
+            var progressPct = ((currentSlide - 1) / (TOTAL_CONTENT - 1)) * 100;
+            document.getElementById('progressFill').style.width = Math.min(100, progressPct) + '%';
+            document.getElementById('progressPct').textContent = Math.round(Math.min(100, progressPct)) + '%';
+
+            if (currentSlide <= TOTAL_CONTENT) {
+                document.getElementById('progressLabel').textContent = 'Slide ' + currentSlide + ' of ' + TOTAL_CONTENT;
+                document.getElementById('slideIndicator').textContent = 'Slide ' + currentSlide + ' of ' + TOTAL_CONTENT;
+            } else {
+                document.getElementById('progressLabel').textContent = 'Results';
+                document.getElementById('slideIndicator').textContent = 'Results';
+            }
+            var prevBtn = document.getElementById('prevBtn');
+            var nextBtn = document.getElementById('nextBtn');
+
+            prevBtn.disabled = currentSlide === 1;
+            nextBtn.disabled = currentSlide === TOTAL_SLIDES;
+            if (currentSlide === 16) {
+                buildResults();
+            }
+            document.querySelector('.content-wrapper').scrollTop = 0;
+        }
+        // ═══ KEYBOARD NAV ═══
+        document.addEventListener('keydown', function(e) {
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+            if (e.key === 'ArrowRight' || e.key === 'Right') {
+                e.preventDefault();
+                nextSlide();
+            } else if (e.key === 'ArrowLeft' || e.key === 'Left') {
+                e.preventDefault();
+                prevSlide();
+            }
+        });
+        // ═══ QUIZ HANDLING ═══
+        document.querySelectorAll('.quiz-option').forEach(function(opt) {
+            opt.addEventListener('click', function() {
+                var qNum = parseInt(this.getAttribute('data-q'));
+                if (quizSubmitted[qNum]) return;
+                var container = document.getElementById('q' + qNum + '-options');
+                container.querySelectorAll('.quiz-option').forEach(function(o) {
+                    o.classList.remove('selected');
+                });
+                this.classList.add('selected');
+                quizAnswers[qNum] = this.getAttribute('data-val');
+                document.getElementById('submit-' + qNum).disabled = false;
+            });
+        });
+        window.submitQuiz = function(qNum) {
+            if (quizSubmitted[qNum]) return;
+            quizSubmitted[qNum] = true;
+            var userAnswer = quizAnswers[qNum];
+            var correctAnswer = quizCorrectAnswers[qNum];
+            var isCorrect = (userAnswer === correctAnswer);
+            var container = document.getElementById('q' + qNum + '-options');
+            container.querySelectorAll('.quiz-option').forEach(function(opt) {
+                opt.classList.add('disabled');
+                var val = opt.getAttribute('data-val');
+                if (val === correctAnswer) {
+                    opt.classList.add('correct');
+                } else if (opt.classList.contains('selected') && !isCorrect) {
+                    opt.classList.add('incorrect');
+                }
+            });
+            var fb = document.getElementById('fb-' + qNum);
+            if (isCorrect) {
+                fb.textContent = feedbackMessages[qNum].correct;
+                fb.className = 'quiz-feedback show correct-fb';
+                quizScore++;
+            } else {
+                fb.textContent = feedbackMessages[qNum].incorrect;
+                fb.className = 'quiz-feedback show incorrect-fb';
+            }
+            document.getElementById('submit-' + qNum).style.display = 'none';
+            document.getElementById('next-q-' + qNum).style.display = '';
+        };
+        // ═══ BUILD RESULTS ═══
+        function buildResults() {
+            var icon = document.getElementById('rIcon');
+            var score = document.getElementById('rScore');
+            var title = document.getElementById('rTitle');
+            var msg = document.getElementById('rMsg');
+            var btns = document.getElementById('rBtns');
+            var katie = document.getElementById('rKatie');
+            score.textContent = quizScore + ' / 3';
+            if (quizScore === 3) {
+                icon.textContent = '&#127881;';
+                title.textContent = 'Perfect Score!';
+                msg.textContent = 'Outstanding! You understand LOTO principles and know how to recognize and respect lockout/tagout in your workplace.';
+                btns.innerHTML = '<button class="btn btn-success" onclick="completeModule()">&#10003; Complete Module & Return to Dashboard</button>';
+                katie.textContent = '"Excellent work! Remember: never remove someone else\'s lock. Respect LOTO and you\'ll help keep everyone safe!"';
+            } else if (quizScore >= 2) {
+                icon.textContent = '&#9989;';
+                title.textContent = 'You Passed!';
+                msg.textContent = 'Great job! You demonstrated solid understanding of LOTO awareness and your responsibilities.';
+                btns.innerHTML = '<button class="btn btn-success" onclick="completeModule()">&#10003; Complete Module & Return to Dashboard</button>';
+                katie.textContent = '"Well done! LOTO saves lives. Always respect locked-out equipment and never remove someone else\'s lock!"';
+            } else {
+                icon.textContent = '&#128218;';
+                title.textContent = 'Not Quite Yet';
+                msg.textContent = 'You need 2 out of 3 correct to pass this module. Review the lesson and try again!';
+                btns.innerHTML = '<button class="btn btn-gold" onclick="retakeQuiz()">&#8634; Retake Quiz</button>' +
+                    '<button class="btn btn-outline" onclick="goToSlide(3)">&#11014; Review Lesson</button>';
+                katie.textContent = '"Don\'t worry! LOTO is critical for safety. Review the slides carefully&#8212;lives depend on understanding this!"';
+            }
+            saveQuizProgress();
+        }
+        // ═══ RETAKE QUIZ ═══
+        window.retakeQuiz = function() {
+            quizAnswers = { 1: null, 2: null, 3: null };
+            quizSubmitted = { 1: false, 2: false, 3: false };
+            quizScore = 0;
+            for (var q = 1; q <= 3; q++) {
+                var container = document.getElementById('q' + q + '-options');
+                container.querySelectorAll('.quiz-option').forEach(function(opt) {
+                    opt.classList.remove('selected', 'correct', 'incorrect', 'disabled');
+                });
+                document.getElementById('fb-' + q).className = 'quiz-feedback';
+                document.getElementById('fb-' + q).textContent = '';
+                document.getElementById('submit-' + q).style.display = '';
+                document.getElementById('submit-' + q).disabled = true;
+                document.getElementById('next-q-' + q).style.display = 'none';
+            }
+            goToSlide(13);
+        };
+        // ═══ LOCAL STORAGE ═══
+        function getProgress() {
+            try {
+                var d = localStorage.getItem('safetyverse-progress');
+                return d ? JSON.parse(d) : {};
+            } catch(e) { return {}; }
+        }
+        function saveSlideProgress() {
+            try {
+                var p = getProgress();
+                if (!p.modules) p.modules = {};
+                if (!p.modules[MODULE_KEY]) {
+                    p.modules[MODULE_KEY] = { completed: false, quizScore: 0, attempts: 0, lastAttempt: null };
+                }
+                p.modules[MODULE_KEY].currentSlide = currentSlide;
+                p.modules[MODULE_KEY].totalSlides = TOTAL_SLIDES;
+                localStorage.setItem('safetyverse-progress', JSON.stringify(p));
+            } catch(e) {}
+        }
+        function saveQuizProgress() {
+            try {
+                var p = getProgress();
+                if (!p.modules) p.modules = {};
+                if (!p.modules[MODULE_KEY]) {
+                    p.modules[MODULE_KEY] = { completed: false, quizScore: 0, attempts: 0 };
+                }
+                var mod = p.modules[MODULE_KEY];
+                mod.quizScore = quizScore;
+                mod.attempts = (mod.attempts || 0) + 1;
+                mod.lastAttempt = new Date().toISOString();
+                if (quizScore >= 2) mod.completed = true;
+                localStorage.setItem('safetyverse-progress', JSON.stringify(p));
+            } catch(e) {}
+        }
+        window.completeModule = function() {
+            try {
+                var p = getProgress();
+                if (!p.modules) p.modules = {};
+                if (!p.modules[MODULE_KEY]) {
+                    p.modules[MODULE_KEY] = { quizScore: 0, attempts: 0 };
+                }
+                p.modules[MODULE_KEY].completed = true;
+                p.modules[MODULE_KEY].completedAt = new Date().toISOString();
+                p.modules[MODULE_KEY].quizScore = quizScore;
+                localStorage.setItem('safetyverse-progress', JSON.stringify(p));
+            } catch(e) {}
+            window.location.href = '../../user-dashboard/index.html';
+        };
+        // ═══ RESTORE PROGRESS ON LOAD ═══
+        function restoreProgress() {
+            try {
+                var p = getProgress();
+                if (p.modules && p.modules[MODULE_KEY]) {
+                    var mod = p.modules[MODULE_KEY];
+                    if (mod.completed) {
+                        var introCard = document.querySelector('.intro-card');
+                        if (introCard) {
+                            var badge = document.createElement('div');
+                            badge.style.cssText = 'position:absolute;top:20px;right:20px;background:var(--success);color:white;font-size:12px;font-weight:700;padding:5px 16px;border-radius:20px;z-index:5;';
+                            badge.textContent = '&#10003; Completed';
+                            introCard.appendChild(badge);
+                        }
+                    }
+                }
+            } catch(e) {}
+        }
+        // ═══ INIT ═══
+        restoreProgress();
+        updateUI();
+    })();
+    </script>
+</body>
+</html>

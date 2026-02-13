@@ -1,0 +1,2029 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="logo.png?v=2">
+    <title>Module 18: Infectious Disease - SafetyVerse</title>
+    <style>
+        /* ═══════════════════════════════════════════
+           CSS VARIABLES & RESET
+           ═══════════════════════════════════════════ */
+        :root {
+            --primary: #FFD700;
+            --primary-dark: #E6C200;
+            --secondary: #FF8C00;
+            --secondary-dark: #E67A00;
+            --bg-clay: #F5E6D3;
+            --bg-clay-dark: #E8D5C0;
+            --bg-clay-light: #FAF0E6;
+            --text-dark: #333333;
+            --text-medium: #555555;
+            --text-light: #777777;
+            --accent-black: #1A1A1A;
+            --white: #FFFFFF;
+            --success: #4CAF50;
+            --success-dark: #388E3C;
+            --error: #E53935;
+            --error-dark: #C62828;
+            --info: #2196F3;
+            --warning: #FF9800;
+            --disease-green: #00897B;
+            --shadow-soft: 0 4px 15px rgba(0,0,0,0.1);
+            --shadow-medium: 0 6px 25px rgba(0,0,0,0.15);
+            --shadow-hard: 0 8px 30px rgba(0,0,0,0.2);
+            --shadow-clay: 4px 4px 0px rgba(0,0,0,0.15), inset 0 2px 4px rgba(255,255,255,0.3);
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 20px;
+            --radius-xl: 28px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --font-heading: 'Segoe UI', 'Arial Black', sans-serif;
+            --font-body: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body {
+            height: 100%;
+            overflow: hidden;
+        }
+        body {
+            font-family: var(--font-body);
+            background-color: var(--bg-clay);
+            color: var(--text-dark);
+            line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+        }
+        /* Clay texture */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 9999;
+            background-image:
+                radial-gradient(circle at 20% 50%, rgba(139,90,43,0.03) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(139,90,43,0.02) 0%, transparent 50%),
+                radial-gradient(circle at 50% 80%, rgba(139,90,43,0.03) 0%, transparent 50%);
+        }
+        /* ═══════════════════════════════════════════
+           HEADER
+           ═══════════════════════════════════════════ */
+        .header {
+            background: linear-gradient(180deg, var(--accent-black) 0%, #2A2A2A 100%);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            border-bottom: 4px solid var(--primary);
+            z-index: 100;
+            flex-shrink: 0;
+        }
+        .header-inner {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 64px;
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            flex-shrink: 0;
+        }
+        .logo-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .logo-icon img {
+            display: block;
+            height: 50px;
+            width: auto;
+            image-rendering: -webkit-optimize-contrast;
+            image-rendering: crisp-edges;
+            box-shadow: 4px 4px 0px rgba(0,0,0,0.15);
+            border-radius: 12px;
+            transition: transform 0.2s ease;
+        }
+        .logo-text {
+            font-family: var(--font-heading);
+            font-size: 22px; font-weight: 900;
+            color: var(--white);
+            letter-spacing: -0.5px;
+        }
+        .logo-text em {
+            color: var(--primary);
+            font-style: normal;
+        }
+        .header-center {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        .header-module-tag {
+            background: rgba(255,215,0,0.15);
+            color: var(--primary);
+            font-size: 11px; font-weight: 800;
+            padding: 3px 10px;
+            border-radius: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+        }
+        .header-module-title {
+            color: rgba(255,255,255,0.8);
+            font-size: 14px; font-weight: 600;
+        }
+        .back-btn {
+            display: flex; align-items: center; gap: 6px;
+            text-decoration: none;
+            color: rgba(255,255,255,0.7);
+            font-size: 13px; font-weight: 600;
+            padding: 7px 14px;
+            border-radius: var(--radius-sm);
+            transition: var(--transition);
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .back-btn:hover {
+            color: var(--white);
+            background: rgba(255,255,255,0.12);
+            border-color: rgba(255,255,255,0.2);
+        }
+        /* ═══════════════════════════════════════════
+           PROGRESS BAR
+           ═══════════════════════════════════════════ */
+        .progress-bar {
+            background: var(--accent-black);
+            border-bottom: 1px solid rgba(255,215,0,0.15);
+            flex-shrink: 0;
+            z-index: 99;
+        }
+        .progress-bar-inner {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 8px 24px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+        .progress-label {
+            font-size: 12px; font-weight: 700;
+            color: rgba(255,255,255,0.5);
+            white-space: nowrap;
+            min-width: 90px;
+        }
+        .progress-track {
+            flex: 1;
+            height: 6px;
+            background: rgba(255,255,255,0.08);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 3px;
+            transition: width 0.4s ease;
+        }
+        .progress-pct {
+            font-size: 12px; font-weight: 700;
+            color: var(--primary);
+            min-width: 40px;
+            text-align: right;
+        }
+        /* ═══════════════════════════════════════════
+           MAIN CONTENT AREA
+           ═══════════════════════════════════════════ */
+        .content-wrapper {
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 40px 24px 100px;
+        }
+        /* ═══════════════════════════════════════════
+           SLIDES
+           ═══════════════════════════════════════════ */
+        .slide {
+            display: none;
+            animation: slideIn 0.3s ease;
+        }
+        .slide.active { display: block; }
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        /* Intro Card (Slide 1) */
+        .intro-card {
+            background: linear-gradient(135deg, #00897B 0%, #00695C 100%);
+            border-radius: var(--radius-xl);
+            padding: 60px 50px;
+            box-shadow: var(--shadow-hard);
+            color: var(--white);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .intro-card::before {
+            content: '';
+            position: absolute;
+            top: -100px; right: -100px;
+            width: 300px; height: 300px;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+        }
+        .intro-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+        }
+        .intro-title {
+            font-family: var(--font-heading);
+            font-size: 48px; font-weight: 900;
+            margin-bottom: 12px;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.2);
+        }
+        .intro-subtitle {
+            font-size: 20px;
+            margin-bottom: 30px;
+            opacity: 0.95;
+        }
+        .intro-meta {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            flex-wrap: wrap;
+        }
+        .intro-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 15px; font-weight: 600;
+        }
+        .intro-meta-item span:first-child {
+            font-size: 20px;
+        }
+        /* Content Card */
+        .content-card {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            padding: 50px;
+            box-shadow: var(--shadow-medium);
+            margin-bottom: 30px;
+        }
+        .slide-header {
+            margin-bottom: 35px;
+        }
+        .slide-number {
+            font-size: 11px; font-weight: 800;
+            color: var(--text-light);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 10px;
+        }
+        .slide-title {
+            font-family: var(--font-heading);
+            font-size: 36px; font-weight: 900;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+            line-height: 1.2;
+        }
+        .slide-subtitle {
+            font-size: 17px;
+            color: var(--text-medium);
+        }
+        .slide-content {
+            font-size: 17px;
+            line-height: 1.8;
+            color: var(--text-dark);
+        }
+        .slide-content p {
+            margin-bottom: 20px;
+        }
+        .slide-content strong {
+            color: var(--disease-green);
+            font-weight: 700;
+        }
+        /* Katie Message */
+        .katie-message {
+            display: flex;
+            align-items: flex-start;
+            gap: 18px;
+            background: linear-gradient(135deg, #FFFDE7 0%, #FFF9C4 100%);
+            border-left: 5px solid var(--primary);
+            padding: 24px;
+            border-radius: var(--radius-md);
+            margin-bottom: 35px;
+            box-shadow: 0 3px 12px rgba(255,215,0,0.15);
+        }
+        .katie-avatar {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            object-fit: cover;
+            object-position: center 48%;
+            background: white;
+            border: 4px solid var(--primary);
+            padding: 6px;
+            flex-shrink: 0;
+            box-shadow: var(--shadow-soft);
+        }
+        .katie-bubble {
+            flex: 1;
+        }
+        .katie-name {
+            font-weight: 800;
+            color: var(--secondary);
+            margin-bottom: 8px;
+            font-size: 15px;
+        }
+        .katie-text {
+            font-size: 16px;
+            color: var(--text-dark);
+            line-height: 1.7;
+        }
+        /* Info Boxes */
+        .info-box {
+            background: linear-gradient(135deg, #E3F2FD 0%, #BBDEFB 100%);
+            border-left: 5px solid var(--info);
+            padding: 22px 24px;
+            border-radius: var(--radius-md);
+            margin: 28px 0;
+        }
+        .info-box.warning {
+            background: linear-gradient(135deg, #FFF3E0 0%, #FFE0B2 100%);
+            border-left-color: var(--warning);
+        }
+        .info-box.danger {
+            background: linear-gradient(135deg, #FFEBEE 0%, #FFCDD2 100%);
+            border-left-color: var(--error);
+        }
+        .info-box.success {
+            background: linear-gradient(135deg, #E8F5E9 0%, #C8E6C9 100%);
+            border-left-color: var(--success);
+        }
+        .info-box-title {
+            font-weight: 800;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 16px;
+        }
+        .info-box-content {
+            font-size: 15px;
+            line-height: 1.7;
+        }
+        .info-box-content ul, .info-box-content ol {
+            margin-top: 10px;
+            padding-left: 20px;
+        }
+        .info-box-content li {
+            margin-bottom: 6px;
+        }
+        /* Lists */
+        .content-list {
+            list-style: none;
+            margin: 28px 0;
+        }
+        .content-list li {
+            padding: 14px 0 14px 36px;
+            position: relative;
+            border-bottom: 1px solid rgba(0,0,0,0.06);
+            font-size: 16px;
+        }
+        .content-list li:last-child {
+            border-bottom: none;
+        }
+        .content-list li::before {
+            content: '&#x1F9A0;';
+            position: absolute;
+            left: 8px;
+            font-size: 18px;
+        }
+        /* Transmission Grid */
+        .transmission-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin: 28px 0;
+        }
+        .transmission-card {
+            background: var(--bg-clay-light);
+            border: 3px solid var(--disease-green);
+            border-radius: var(--radius-md);
+            padding: 26px;
+            transition: var(--transition);
+        }
+        .transmission-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-medium);
+        }
+        .transmission-icon {
+            font-size: 48px;
+            margin-bottom: 14px;
+            text-align: center;
+        }
+        .transmission-title {
+            font-weight: 900;
+            font-size: 20px;
+            color: var(--text-dark);
+            margin-bottom: 12px;
+            font-family: var(--font-heading);
+            text-align: center;
+        }
+        .transmission-desc {
+            font-size: 15px;
+            color: var(--text-dark);
+            line-height: 1.6;
+        }
+        /* Steps Grid */
+        .steps-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin: 28px 0;
+        }
+        .step-card {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            background: var(--bg-clay-light);
+            padding: 20px;
+            border-radius: var(--radius-md);
+            border-left: 5px solid var(--disease-green);
+        }
+        .step-number {
+            background: var(--disease-green);
+            color: var(--white);
+            min-width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+        .step-content h5 {
+            font-weight: 800;
+            margin-bottom: 6px;
+            color: var(--text-dark);
+            font-size: 16px;
+        }
+        .step-content p {
+            font-size: 14px;
+            color: var(--text-medium);
+            line-height: 1.6;
+            margin: 0;
+        }
+        /* Disease Grid */
+        .disease-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 28px 0;
+        }
+        .disease-card {
+            background: var(--bg-clay-light);
+            border: 3px solid var(--bg-clay-dark);
+            border-radius: var(--radius-md);
+            padding: 24px;
+        }
+        .disease-title {
+            font-weight: 900;
+            font-size: 20px;
+            color: var(--disease-green);
+            margin-bottom: 14px;
+            font-family: var(--font-heading);
+        }
+        .disease-info {
+            font-size: 15px;
+            color: var(--text-dark);
+            line-height: 1.7;
+        }
+        /* ═══════════════════════════════════════════
+           QUIZ STYLES
+           ═══════════════════════════════════════════ */
+        .quiz-question {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 28px;
+            line-height: 1.5;
+        }
+        .quiz-options {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            margin-bottom: 24px;
+        }
+        .quiz-option {
+            background: var(--bg-clay-light);
+            border: 3px solid var(--bg-clay-dark);
+            padding: 18px 24px;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 16px;
+            font-weight: 600;
+            position: relative;
+        }
+        .quiz-option:hover:not(.disabled) {
+            background: var(--bg-clay);
+            border-color: var(--primary);
+            transform: translateX(6px);
+        }
+        .quiz-option.selected {
+            background: var(--primary);
+            border-color: var(--primary-dark);
+            color: var(--accent-black);
+        }
+        .quiz-option.correct {
+            background: var(--success);
+            border-color: var(--success-dark);
+            color: var(--white);
+        }
+        .quiz-option.incorrect {
+            background: var(--error);
+            border-color: var(--error-dark);
+            color: var(--white);
+        }
+        .quiz-option.disabled {
+            cursor: default;
+        }
+        .quiz-feedback {
+            display: none;
+            padding: 18px 22px;
+            border-radius: var(--radius-md);
+            font-size: 16px;
+            line-height: 1.7;
+            margin-top: 20px;
+        }
+        .quiz-feedback.show {
+            display: block;
+        }
+        .quiz-feedback.correct-fb {
+            background: #E8F5E9;
+            color: #2E7D32;
+            border-left: 5px solid var(--success);
+        }
+        .quiz-feedback.incorrect-fb {
+            background: #FFEBEE;
+            color: #C62828;
+            border-left: 5px solid var(--error);
+        }
+        /* Quiz Buttons */
+        .quiz-btn-group {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+        }
+        /* Results Screen */
+        .results-card {
+            background: var(--white);
+            border-radius: var(--radius-xl);
+            padding: 60px 50px;
+            box-shadow: var(--shadow-hard);
+            text-align: center;
+        }
+        .results-icon {
+            font-size: 100px;
+            margin-bottom: 24px;
+            animation: scaleIn 0.6s ease;
+        }
+        @keyframes scaleIn {
+            from { transform: scale(0) rotate(-180deg); }
+            to { transform: scale(1) rotate(0); }
+        }
+        .results-score {
+            font-family: var(--font-heading);
+            font-size: 72px;
+            font-weight: 900;
+            color: var(--primary);
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 0 rgba(0,0,0,0.1);
+        }
+        .results-title {
+            font-family: var(--font-heading);
+            font-size: 42px;
+            font-weight: 900;
+            color: var(--text-dark);
+            margin-bottom: 16px;
+        }
+        .results-message {
+            font-size: 19px;
+            color: var(--text-medium);
+            margin-bottom: 36px;
+            line-height: 1.7;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .results-katie {
+            background: linear-gradient(135deg, #FFFDE7 0%, #FFF9C4 100%);
+            border-left: 5px solid var(--primary);
+            padding: 20px 24px;
+            border-radius: var(--radius-md);
+            font-size: 17px;
+            font-style: italic;
+            color: var(--text-dark);
+            margin-bottom: 36px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .results-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+        /* ═══════════════════════════════════════════
+           BUTTONS
+           ═══════════════════════════════════════════ */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 14px 32px;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-family: var(--font-heading);
+            font-size: 16px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+            box-shadow: var(--shadow-clay);
+        }
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .btn-gold {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: var(--accent-black);
+        }
+        .btn-gold:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-hard);
+        }
+        .btn-success {
+            background: var(--success);
+            color: var(--white);
+        }
+        .btn-success:hover:not(:disabled) {
+            background: var(--success-dark);
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-hard);
+        }
+        .btn-outline {
+            background: var(--white);
+            color: var(--text-dark);
+            border: 2px solid var(--bg-clay-dark);
+        }
+        .btn-outline:hover:not(:disabled) {
+            background: var(--bg-clay-light);
+            border-color: var(--primary);
+        }
+        /* ═══════════════════════════════════════════
+           NAVIGATION
+           ═══════════════════════════════════════════ */
+        .nav-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(180deg, rgba(26,26,26,0.97) 0%, rgba(0,0,0,0.98) 100%);
+            border-top: 3px solid var(--primary);
+            padding: 16px 24px;
+            z-index: 100;
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.3);
+        }
+        .nav-inner {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+        }
+        .nav-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            border: 2px solid rgba(255,255,255,0.15);
+            border-radius: var(--radius-sm);
+            font-family: var(--font-heading);
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: var(--transition);
+            background: rgba(255,255,255,0.08);
+            color: var(--white);
+            text-decoration: none;
+        }
+        .nav-btn:hover:not(:disabled) {
+            background: rgba(255,255,255,0.15);
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+        .nav-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+        .nav-btn.nav-next {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: var(--accent-black);
+            border-color: transparent;
+        }
+        .nav-btn.nav-next:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255,215,0,0.4);
+        }
+        .slide-indicator {
+            color: rgba(255,255,255,0.6);
+            font-size: 13px;
+            font-weight: 600;
+        }
+        /* ═══════════════════════════════════════════
+           RESPONSIVE
+           ═══════════════════════════════════════════ */
+        @media (max-width: 768px) {
+            .container { padding: 30px 20px 100px; }
+            .content-card { padding: 32px 24px; }
+            .intro-card { padding: 40px 30px; }
+            .intro-title { font-size: 36px; }
+            .slide-title { font-size: 28px; }
+            .transmission-grid { grid-template-columns: 1fr; }
+            .disease-grid { grid-template-columns: 1fr; }
+            .nav-inner { flex-direction: column; gap: 12px; }
+            .nav-btn { width: 100%; justify-content: center; }
+            .header-center { position: static; transform: none; }
+        }
+        @media (max-width: 480px) {
+            .intro-meta { flex-direction: column; gap: 16px; }
+            .katie-message { flex-direction: column; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-inner">
+            <a href="../../user-dashboard/index.html" class="logo">
+                <div class="logo-icon"><img src="logo.png?v=2" alt="SafetyVerse Logo"></div>
+                <div class="logo-text">Safety<em>Verse</em></div>
+            </a>
+            <div class="header-center">
+                <span class="header-module-tag">MODULE 18</span>
+                <span class="header-module-title">Infectious Disease</span>
+            </div>
+            <a href="../../user-dashboard/index.html" class="back-btn">
+                <span>←</span>
+                <span>Back to Dashboard</span>
+            </a>
+        </div>
+    </header>
+    <!-- Progress Bar -->
+    <div class="progress-bar">
+        <div class="progress-bar-inner">
+            <span class="progress-label" id="progressLabel">Slide 1 of 15</span>
+            <div class="progress-track">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <span class="progress-pct" id="progressPct">0%</span>
+        </div>
+    </div>
+    <!-- Main Content -->
+    <div class="content-wrapper">
+        <div class="container">
+            <!-- Slide 1: Intro -->
+            <div class="slide active" data-slide="1">
+                <div class="intro-card">
+                    <div class="intro-icon">&#x1F9A0;</div>
+                    <h1 class="intro-title">Infectious Disease</h1>
+                    <p class="intro-subtitle">Prevention, Protection, Preparedness</p>
+                    <div class="intro-meta">
+                        <div class="intro-meta-item">
+                            <span>⏱</span>
+                            <span>15 minutes</span>
+                        </div>
+                        <div class="intro-meta-item">
+                            <span>&#x1F4DA;</span>
+                            <span>Occupational Health Path</span>
+                        </div>
+                        <div class="intro-meta-item">
+                            <span>✓</span>
+                            <span>CDC/OSHA Guidelines</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+ <!-- Slide 2: Introduction with Katie -->
+            <div class="slide" data-slide="2">
+                <div class="content-card">
+                    <div class="katie-message">
+                        <img src="katie.png" alt="Katie" class="katie-avatar">
+                        <div class="katie-bubble">
+                            <div class="katie-name">Katie, Your Safety Guide</div>
+                            <div class="katie-text">
+                                Welcome! Infectious diseases are illnesses caused by germs—bacteria, viruses, fungi, or parasites—that can spread from person to person. Whether it's the common cold, flu, or more serious illnesses, understanding how diseases spread and how to protect yourself is essential for everyone. The lessons learned from COVID-19 showed us how important prevention is. In this module, you'll learn practical steps to protect yourself, your coworkers, and your family from infectious diseases.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="slide-header">
+                        <div class="slide-number">Slide 2 of 15</div>
+                        <h2 class="slide-title">Why Infectious Disease Prevention Matters</h2>
+                    </div>
+                    <div class="slide-content">
+                        <p><strong>Infectious diseases</strong> are illnesses caused by pathogenic microorganisms—bacteria, viruses, parasites, or fungi—that can be transmitted directly or indirectly from one person to another.</p>
+                        
+                        <div class="info-box danger">
+                            <div class="info-box-title">&#x1F6A8; Infectious Disease Impact</div>
+                            <div class="info-box-content">
+                                According to CDC and WHO:
+                                <ul>
+                                    <li><strong>Millions of workdays lost</strong> annually due to infectious diseases</li>
+                                    <li><strong>Respiratory illnesses (flu, COVID-19, colds)</strong> are leading cause of employee absences</li>
+                                    <li><strong>Workplace outbreaks</strong> can affect entire teams and operations</li>
+                                    <li><strong>Vulnerable populations</strong> at higher risk for complications</li>
+                                    <li><strong>Prevention is cost-effective:</strong> $1 spent on flu vaccines saves $3 in medical costs and lost productivity</li>
+                                    <li><strong>Simple measures</strong> (handwashing, staying home when sick) reduce transmission by 50%+</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="info-box">
+                            <div class="info-box-title">&#x1F4A1; Why Workplace Prevention Matters</div>
+                            <div class="info-box-content">
+                                <strong>Workplaces are high-risk environments for disease transmission because:</strong>
+                                <ul>
+                                    <li>Close contact between employees in shared spaces</li>
+                                    <li>Shared surfaces (doorknobs, keyboards, break room equipment)</li>
+                                    <li>Enclosed spaces with recirculated air</li>
+                                    <li>Workers coming to work sick (presenteeism)</li>
+                                    <li>Diverse workforce with varying immunity levels</li>
+                                </ul>
+                                <strong>One sick employee can quickly spread illness to others, affecting productivity and health.</strong>
+                            </div>
+                        </div>
+                        <p><strong>Learning Objectives:</strong></p>
+                        <ul class="content-list">
+                            <li>Understand what infectious diseases are and how they spread</li>
+                            <li>Recognize common respiratory illnesses (COVID-19, flu, colds)</li>
+                            <li>Practice proper hand hygiene and respiratory etiquette</li>
+                            <li>Know when to stay home and isolation protocols</li>
+                            <li>Implement personal protective measures</li>
+                            <li>Understand workplace pandemic preparedness</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 3: How Infectious Diseases Spread -->
+            <div class="slide" data-slide="3">
+                <div class="content-card">
+                    <div class="slide-header">
+                        <div class="slide-number">Slide 3 of 15</div>
+                        <h2 class="slide-title">How Infectious Diseases Spread</h2>
+                        <p class="slide-subtitle">Understanding transmission routes</p>
+                    </div>
+                    <div class="slide-content">
+                        <p><strong>Knowing how diseases spread helps you protect yourself.</strong> Most workplace infectious diseases spread through these routes:</p>
+                        <div class="transmission-grid">
+                            <div class="transmission-card">
+                                <div class="transmission-icon">&#x1F4A7;</div>
+                                <div class="transmission-title">Respiratory Droplets</div>
+                                <div class="transmission-desc">
+                                    <strong>How:</strong> When infected person coughs, sneezes, talks, or breathes, they release droplets containing germs. Droplets can land in mouths/noses of nearby people or be inhaled.<br><br>
+                                    <strong>Distance:</strong> Usually within 6 feet.<br><br>
+                                    <strong>Diseases:</strong> COVID-19, influenza, common cold, strep throat, whooping cough.<br><br>
+                                    <strong>Prevention:</strong> Physical distancing, masks, covering coughs/sneezes, ventilation.
+                                </div>
+                            </div>
+                            <div class="transmission-card">
+                                <div class="transmission-icon">&#x1F32C;</div>
+                                <div class="transmission-title">Airborne Transmission</div>
+                                <div class="transmission-desc">
+                                    <strong>How:</strong> Very small particles (aerosols) stay suspended in air for hours and can travel long distances. Can be inhaled even when infected person is no longer present.<br><br>
+                                    <strong>Distance:</strong> Can spread beyond 6 feet.<br><br>
+                                    <strong>Diseases:</strong> COVID-19 (especially), tuberculosis, measles, chickenpox.<br><br>
+                                    <strong>Prevention:</strong> Proper ventilation, air filtration, masks (N95/KN95 for high risk), outdoor settings.
+                                </div>
+                            </div>
+                            <div class="transmission-card">
+                                <div class="transmission-icon">&#x1F446;</div>
+                                <div class="transmission-title">Contact Transmission</div>
+                                <div class="transmission-desc">
+                                    <strong>Direct contact:</strong> Touching infected person (handshake, hug) then touching your face.<br><br>
+                                    <strong>Indirect contact:</strong> Touching contaminated surfaces (doorknobs, phones, keyboards, elevator buttons) then touching face.<br><br>
+                                    <strong>Diseases:</strong> Many respiratory illnesses, norovirus, staph infections, pink eye.<br><br>
+                                    <strong>Prevention:</strong> Hand hygiene, surface disinfection, avoid touching face, don't share personal items.
+                                </div>
+                            </div>
+                            <div class="transmission-card">
+                                <div class="transmission-icon">&#x1F37D;</div>
+                                <div class="transmission-title">Fecal-Oral Route</div>
+                                <div class="transmission-desc">
+                                    <strong>How:</strong> Germs from infected person's stool contaminate hands, food, or water. Others ingest the germs.<br><br>
+                                    <strong>Common in:</strong> Food service, childcare, healthcare settings with poor hand hygiene.<br><br>
+                                    <strong>Diseases:</strong> Norovirus, hepatitis A, E. coli, salmonella, cholera.<br><br>
+                                    <strong>Prevention:</strong> Thorough handwashing after bathroom use, proper food handling, safe water sources.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="info-box warning">
+                            <div class="info-box-title">&#x26A0; The "Touching Your Face" Problem</div>
+                            <div class="info-box-content">
+                                <strong>People touch their face an average of 23 times per hour!</strong> Eyes, nose, and mouth are entry points for germs. Even if you wash your hands regularly, touching your face transfers germs from surfaces to mucous membranes. <strong>Breaking this habit significantly reduces infection risk.</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 4: Common Respiratory Illnesses -->
+            <div class="slide" data-slide="4">
+                <div class="content-card">
+                    <div class="slide-header">
+                        <div class="slide-number">Slide 4 of 15</div>
+                        <h2 class="slide-title">Common Respiratory Illnesses</h2>
+                        <p class="slide-subtitle">COVID-19, Influenza, and Common Cold</p>
+                    </div>
+                    <div class="slide-content">
+                        <p><strong>Respiratory illnesses are the most common infectious diseases in workplaces.</strong> Understanding symptoms and differences helps with appropriate response.</p>
+                        <div class="disease-grid">
+                            <div class="disease-card">
+                                <div class="disease-title">COVID-19 (SARS-CoV-2)</div>
+                                <div class="disease-info">
+                                    <strong>Common Symptoms:</strong><br>
+                                    • Fever or chills<br>
+                                    • Cough (often dry)<br>
+                                    • Shortness of breath<br>
+                                    • Fatigue<br>
+                                    • Body aches<br>
+                                    • Loss of taste or smell (distinctive)<br>
+                                    • Sore throat, congestion<br>
+                                    • Nausea, vomiting, diarrhea<br><br>
+                                    <strong>Onset:</strong> 2-14 days after exposure (average 5 days)<br><br>
+                                    <strong>Contagious Period:</strong> 2 days before symptoms through at least 5 days after symptom onset<br><br>
+                                    <strong>Key Actions:</strong> Test if symptomatic or exposed. Isolate if positive. Follow CDC guidance for isolation duration. Vaccines and boosters reduce severity.
+                                </div>
+                            </div>
+                            <div class="disease-card">
+                                <div class="disease-title">Influenza (Flu)</div>
+                                <div class="disease-info">
+                                    <strong>Common Symptoms:</strong><br>
+                                    • Sudden high fever (100-104°F)<br>
+                                    • Dry cough<br>
+                                    • Severe body aches and fatigue<br>
+                                    • Headache<br>
+                                    • Sore throat<br>
+                                    • Runny or stuffy nose (less common)<br>
+                                    • Sometimes vomiting/diarrhea (especially children)<br><br>
+                                    <strong>Onset:</strong> Sudden, 1-4 days after exposure<br><br>
+                                    <strong>Contagious Period:</strong> 1 day before symptoms through 5-7 days after<br><br>
+                                    <strong>Key Actions:</strong> Stay home. Annual flu vaccine recommended. Antiviral medications (Tamiflu) most effective within 48 hours of symptom onset.
+                                </div>
+                            </div>
+                            <div class="disease-card">
+                                <div class="disease-title">Common Cold (Rhinovirus)</div>
+                                <div class="disease-info">
+                                    <strong>Common Symptoms:</strong><br>
+                                    • Runny or stuffy nose (primary symptom)<br>
+                                    • Sore throat<br>
+                                    • Sneezing<br>
+                                    • Mild cough<br>
+                                    • Mild fatigue<br>
+                                    • Rarely fever (more common in children)<br>
+                                    • Symptoms milder than flu<br><br>
+                                    <strong>Onset:</strong> Gradual, 1-3 days after exposure<br><br>
+                                    <strong>Contagious Period:</strong> 1-2 days before symptoms through duration of illness (usually 7-10 days)<br><br>
+                                    <strong>Key Actions:</strong> Stay home if symptoms interfere with work. No cure—treat symptoms. Rest and fluids.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="info-box">
+                            <div class="info-box-title">&#x1F4A1; Can't Tell the Difference? That's Normal!</div>
+                            <div class="info-box-content">
+                                <strong>Symptoms of COVID-19, flu, and colds overlap significantly.</strong> You cannot reliably distinguish them based on symptoms alone. <strong>Key points:</strong><br>
+                                • Test for COVID-19 if you have respiratory symptoms<br>
+                                • Stay home regardless of which illness you have<br>
+                                • Follow your workplace's sick leave policy<br>
+                                • Consult healthcare provider if symptoms are severe or worsening
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 5: Hand Hygiene - The Foundation -->
+            <div class="slide" data-slide="5">
+                <div class="content-card">
+                    <div class="slide-header">
+                        <div class="slide-number">Slide 5 of 15</div>
+                        <h2 class="slide-title">Hand Hygiene: Your Best Defense</h2>
+                        <p class="slide-subtitle">Proper handwashing technique</p>
+                    </div>
+                    <div class="slide-content">
+                        <p><strong>Hand hygiene is the single most effective way to prevent infectious disease transmission.</strong> Proper technique matters!</p>
+                        <div class="steps-grid">
+                            <div class="step-card">
+                                <div class="step-number">1</div>
+                                <div class="step-content">
+                                    <h5>Wet Hands with Clean Running Water</h5>
+                                    <p>Turn on tap and wet hands completely with clean water (warm or cold). Water alone doesn't kill germs—soap is essential.</p>
+                                </div>
+                            </div>
+                            <div class="step-card">
+                                <div class="step-number">2</div>
+                                <div class="step-content">
+                                    <h5>Apply Soap</h5>
+                                    <p>Apply enough soap to cover all hand surfaces. Any soap works—antibacterial soap is not necessary for most situations.</p>
+                                </div>
+                            </div>
+                            <div class="step-card">
+                                <div class="step-number">3</div>
+                                <div class="step-content">
+                                    <h5>Lather and Scrub for 20 Seconds</h5>
+                                    <p><strong>Scrub all surfaces:</strong> palms, backs of hands, between fingers, under nails, wrists. <strong>20 seconds minimum</strong>—sing "Happy Birthday" twice or count slowly to 20. Most people wash for only 6 seconds!</p>
+                                </div>
+                            </div>
+                            <div class="step-card">
+                                <div class="step-number">4</div>
+                                <div class="step-content">
+                                    <h5>Rinse Thoroughly</h5>
+                                    <p>Rinse hands completely under clean running water. Ensure all soap is removed—residual soap can cause skin irritation.</p>
+                                </div>
+                            </div>
+                            <div class="step-card">
+                                <div class="step-number">5</div>
+                                <div class="step-content">
+                                    <h5>Dry Hands Completely</h5>
+                                    <p>Use clean towel or air dryer. Wet hands spread germs more easily than dry hands. In public restrooms, use paper towel to turn off faucet and open door.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="info-box success">
+                            <div class="info-box-title">✓ When to Wash Hands</div>
+                            <div class="info-box-content">
+                                <strong>ALWAYS wash hands:</strong><br>
+                                • Before, during, and after preparing food<br>
+                                • Before eating<br>
+                                • After using the restroom<br>
+                                • After blowing your nose, coughing, or sneezing<br>
+                                • Before and after caring for someone who is sick<br>
+                                • After touching garbage or contaminated surfaces<br>
+                                • After touching shared surfaces (doorknobs, elevator buttons, shared equipment)<br>
+                                • When hands are visibly dirty<br>
+                                • Before and after your work shift
+                            </div>
+                        </div>
+                        <div class="info-box">
+                            <div class="info-box-title">&#x1F9F4; Hand Sanitizer as Alternative</div>
+                            <div class="info-box-content">
+                                <strong>When soap and water aren't available, use alcohol-based hand sanitizer (60%+ alcohol):</strong><br>
+                                • Apply enough to cover all hand surfaces (size of a quarter)<br>
+                                • Rub hands together, covering all surfaces, until dry (20 seconds)<br>
+                                • Don't wipe or rinse off before dry<br><br>
+                                <strong>Limitations:</strong> Less effective on visibly dirty or greasy hands. Doesn't eliminate all types of germs. <strong>Soap and water is always preferred when available.</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 6: Respiratory Etiquette -->
+            <div class="slide" data-slide="6">
+                <div class="content-card">
+                    <div class="slide-header">
+                        <div class="slide-number">Slide 6 of 15</div>
+                        <h2 class="slide-title">Respiratory Etiquette</h2>
+                        <p class="slide-subtitle">Covering coughs and sneezes</p>
+                    </div>
+                    <div class="slide-content">
+                        <p><strong>How you cough and sneeze affects everyone around you.</strong> One uncovered sneeze can spread germs up to 26 feet!</p>
+                        <div class="info-box danger">
+                            <div class="info-box-title">&#x274C; DON'T Do These Things</div>
+                            <div class="info-box-content">
+                                <strong>Never cough or sneeze:</strong><br>
+                                • Into your hands (then you contaminate everything you touch)<br>
+                                • Openly into the air (spreads droplets to everyone nearby)<br>
+                                • Toward another person<br>
+                                • Into shared spaces without covering<br><br>
+                                <strong>A single uncovered cough releases 3,000 droplets. A sneeze releases 40,000 droplets at 100 mph!</strong>
+                            </div>
+                        </div>
+                        <div class="info-box success">
+                            <div class="info-box-title">✓ DO Practice Proper Technique</div>
+                            <div class="info-box-content">
+                                <strong>When you need to cough or sneeze:</strong><br><br>
+                                <strong>Best Option: Cover with tissue</strong><br>
+                                • Use tissue to cover nose and mouth<br>
+                                • Throw tissue in trash immediately<br>
+                                • Wash hands or use hand sanitizer right after<br><br>
+                                <strong>If no tissue available: Use your elbow</strong><br>
+                                • Cough or sneeze into inner elbow/upper sleeve<br>
+                                • NOT your hands (you use hands to touch things)<br>
+                                • Turn away from others<br>
+                                • Wash hands as soon as possible<br><br>
+                                <strong>If wearing a mask:</strong><br>
+                                • Keep mask on when coughing/sneezing<br>
+                                • Mask catches most droplets<br>
+                                • Wash hands after<br>
+                                • Replace mask if it becomes damp
+                            </div>
+                        </div>
+                        <div class="info-box warning">
+                            <div class="info-box-title">&#x26A0; Additional Respiratory Etiquette</div>
+                            <div class="info-box-content">
+                                <ul>
+                                    <li><strong>Dispose of tissues properly:</strong> Use lined trash can. Don't leave used tissues on desks or surfaces.</li>
+                                    <li><strong>Avoid touching your face:</strong> Eyes, nose, and mouth are entry points for germs. Keep hands away.</li>
+                                    <li><strong>Don't share items that touch your mouth/nose:</strong> Drinks, utensils, phones, masks, towels.</li>
+                                    <li><strong>Clean your workspace:</strong> Disinfect phone, keyboard, desk regularly—especially if you're sick.</li>
+                                    <li><strong>Create distance:</strong> If coughing/sneezing frequently, maintain 6+ feet from others when possible.</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <p><strong>Remember: Respiratory etiquette protects others from YOUR germs and yourself from THEIR germs. Everyone benefits!</strong></p>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 7: When to Stay Home -->
+            <div class="slide" data-slide="7">
+                <div class="content-card">
+                    <div class="slide-header">
+                        <div class="slide-number">Slide 7 of 15</div>
+                        <h2 class="slide-title">When to Stay Home from Work</h2>
+                        <p class="slide-subtitle">Protecting yourself and coworkers</p>
+                    </div>
+                    <div class="slide-content">
+                        <p><strong>Coming to work sick spreads illness to coworkers and customers.</strong> Staying home when contagious protects everyone and helps you recover faster.</p>
+                        <div class="info-box danger">
+                            <div class="info-box-title">&#x1F3E0; STAY HOME if you have:</div>
+                            <div class="info-box-content">
+                                <strong>Fever:</strong><br>
+                                • Temperature 100.4°F (38°C) or higher<br>
+                                • Stay home until fever-free for 24 hours WITHOUT fever-reducing medication<br>
+                                • Fever indicates your body is fighting infection—you're likely contagious<br><br>
+                                
+                                <strong>Vomiting or Diarrhea:</strong><br>
+                                • Stay home until 24-48 hours after last episode<br>
+                                • Highly contagious (norovirus, food poisoning)<br>
+                                • Cannot perform work duties effectively<br><br>
+                                
+                                <strong>COVID-19 Positive Test:</strong><br>
+                                • Stay home minimum 5 days from symptom onset or positive test<br>
+                                • Can return after Day 5 if fever-free 24 hours and symptoms improving<br>
+                                • Wear mask around others through Day 10<br>
+                                • Follow updated CDC/workplace guidance<br><br>
+                                
+                                <strong>Severe Symptoms:</strong><br>
+                                • Difficulty breathing or shortness of breath<br>
+                                • Chest pain or persistent pressure<br>
+                                • Severe or persistent vomiting<br>
+                                • Confusion or inability to stay awake<br>
+                                • Seek immediate medical attention!<br><br>
+                                
+                                <strong>Productive Cough with Colored Mucus:</strong><br>
+                                • Yellow, green, or bloody mucus indicates infection<br>
+                                • Likely bacterial infection—see doctor<br>
+                                • Contagious to others<br><br>
+                                
+                                <strong>Known Exposure to Contagious Disease:</strong><br>
+                                • Direct exposure to COVID-19, flu, strep throat, etc.<br>
+                                • Monitor for symptoms<br>
+                                • Test if recommended<br>
+                                • May need to quarantine depending on exposure and vaccination status
+                            </div>
+                        </div>
+                        <div class="info-box success">
+                            <div class="info-box-title">✓ When You CAN Return to Work</div>
+                            <div class="info-box-content">
+                                <strong>Generally safe to return when:</strong><br>
+                                • Fever-free for 24 hours without medication<br>
+                                • Symptoms significantly improved<br>
+                                • No vomiting/diarrhea for 24-48 hours<br>
+                                • Able to perform job duties effectively<br>
+                                • No longer in recommended isolation/quarantine period<br>
+                                • Healthcare provider clears you (if needed)<br><br>
+                                <strong>Note:</strong> Mild residual symptoms (slight cough, runny nose) may persist. Check with supervisor if unsure.
+                            </div>
+                        </div>
+                        <div class="info-box warning">
+                            <div class="info-box-title">&#x26A0; "Presenteeism" Costs More Than Sick Leave</div>
+                            <div class="info-box-content">
+                                <strong>Coming to work sick:</strong><br>
+                                • Spreads illness to an average of 4-6 coworkers<br>
+                                • Reduces YOUR productivity by 30-60%<br>
+                                • Prolongs YOUR illness<br>
+                                • Creates outbreak that affects entire team<br>
+                                • Costs employers MORE than if you'd stayed home<br><br>
+                                <strong>Don't feel guilty for staying home when sick—it's the right thing to do for everyone!</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 8: Isolation vs Quarantine -->
+            <div class="slide" data-slide="8">
+                <div class="content-card">
+                    <div class="slide-header">
+                        <div class="slide-number">Slide 8 of 15</div>
+                        <h2 class="slide-title">Isolation vs. Quarantine</h2>
+                        <p class="slide-subtitle">Understanding the difference</p>
+                    </div>
+                    <div class="slide-content">
+                        <p><strong>Isolation and quarantine are public health practices used to prevent spread of contagious diseases.</strong> They're different:</p>
+                        <div class="disease-grid">
+                            <div class="disease-card">
+                                <div class="disease-title">Isolation</div>
+                                <div class="disease-info">
+                                    <strong>Definition:</strong> Separating people who ARE sick with a contagious disease from those who are not sick.<br><br>
+                                    <strong>Who:</strong> People who have tested positive for COVID-19 or have confirmed contagious illness.<br><br>
+                                    <strong>Duration:</strong> Varies by disease. For COVID-19: minimum 5 days from symptom onset or positive test.<br><br>
+                                    <strong>Requirements:</strong><br>
+                                    • Stay home (or in designated room if hospitalized)<br>
+                                    • Avoid contact with others, even household members when possible<br>
+                                    • Wear mask if you must be around others<br>
+                                    • Don't share personal items<br>
+                                    • Use separate bathroom if possible<br>
+                                    • Notify close contacts<br><br>
+                                    <strong>End of isolation:</strong> Based on symptom improvement and time since positive test/symptom onset. Follow CDC and workplace guidance.
+                                </div>
+                            </div>
+                            <div class="disease-card">
+                                <div class="disease-title">Quarantine</div>
+                                <div class="disease-info">
+                                    <strong>Definition:</strong> Separating people who MIGHT have been exposed to a contagious disease to see if they get sick.<br><br>
+                                    <strong>Who:</strong> People exposed to contagious disease but not (yet) showing symptoms or testing positive.<br><br>
+                                    <strong>Duration:</strong> Varies by disease and vaccination status. Previously 14 days; now often shorter with testing.<br><br>
+                                    <strong>Requirements:</strong><br>
+                                    • Stay home and monitor for symptoms<br>
+                                    • Avoid contact with others, especially high-risk individuals<br>
+                                    • Get tested if symptoms develop<br>
+                                    • May be able to continue work if no symptoms (depending on exposure level and workplace policy)<br><br>
+                                    <strong>Note:</strong> Quarantine recommendations vary based on vaccination status, previous infection, and type of exposure. <strong>Check current CDC guidance and your workplace policy.</strong>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="info-box">
+                            <div class="info-box-title">&#x1F4A1; Simple Way to Remember</div>
+                            <div class="info-box-content">
+                                <strong>ISOLATION = I am sick</strong> (confirmed illness, keeping sick people away from healthy)<br>
+                                <strong>QUARANTINE = I might get sick</strong> (possible exposure, monitoring period to see if symptoms develop)
+                            </div>
+                        </div>
+                        <div class="info-box warning">
+                            <div class="info-box-title">&#x26A0; Know Your Workplace Policy</div>
+                            <div class="info-box-content">
+                                <strong>Your employer should have policies for:</strong><br>
+                                • When employees must isolate or quarantine<br>
+                                • How to report illness or exposure<br>
+                                • Sick leave and paid time off during isolation/quarantine<br>
+                                • Return-to-work requirements (testing, symptom screening)<br>
+                                • Remote work options during quarantine<br><br>
+                                <strong>Ask your supervisor or HR if you're unsure about these policies!</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+<!-- Slide 9: Masks and Face Coverings -->
+            <div class="slide" data-slide="9">
+                <div class="content-card">
+                    <div class="slide-header">
+                        <div class="slide-number">Slide 9 of 15</div>
+                        <h2 class="slide-title">Masks and Face Coverings</h2>
+                        <p class="slide-subtitle">When and how to use them</p>
+                    </div>
+                    <div class="slide-content">
+                        <p><strong>Masks reduce transmission of respiratory illnesses by blocking droplets and aerosols.</strong> Different situations call for different levels of protection.</p>
+                        <div class="info-box">
+                            <div class="info-box-title">&#x1F637; Types of Masks</div>
+                            <div class="info-box-content">
+                                <strong>Cloth Masks:</strong><br>
+                                • Multiple layers of tightly woven fabric<br>
+                                • Blocks large droplets<br>
+                                • Less effective than medical masks<br>
+                                • Washable and reusable<br>
+                                • Good for low-risk community settings<br><br>
+                                
+                                <strong>Surgical/Medical Masks:</strong><br>
+                                • Disposable three-layer masks<br>
+                                • Better filtration than cloth<br>
+                                • Blocks droplets in both directions<br>
+                                • Single use (dispose after each use)<br>
+                                • Standard for healthcare and higher-risk settings<br><br>
+                                
+                                <strong>N95/KN95 Respirators:</strong><br>
+                                • Filters at least 95% of airborne particles<br>
+                                • Tight seal around nose and mouth<br>
+                                • Best protection against aerosols<br>
+                                • Required for some healthcare settings<br>
+                                • Can be used in high-risk situations (crowded indoor spaces, caring for sick person)
+                            </div>
+                        </div>
+                        <div class="info-box success">
+                            <div class="info-box-title">✓ When to Wear a Mask</div>
+                            <div class="info-box-content">
+                                <strong>Consider wearing a mask when:</strong><br>
+                                • Required by your workplace or local regulations<br>
+                                • You have respiratory symptoms but must leave home (medical appointment)<br>
+                                • Caring for someone who is sick<br>
+                                • In crowded indoor spaces during high transmission periods<br>
+                                • You're at high risk for severe illness<br>
+                                • Community transmission levels are high<br>
+                                • Returning to work after COVID-19 (Days 6-10 after positive test)<br><br>
+                                <strong>Masks are most effective when worn by both infected and uninfected people.</strong>
+                            </div>
+                        </div>
+                        <div class="info-box warning">
+                            <div class="info-box-title">&#x26A0; Proper Mask Use</div>
+                            <div class="info-box-content">
+                                <strong>DO:</strong><br>
+                                • Wash hands before putting on mask<br>
+                                • Cover both nose and mouth completely<br>
+                                • Fit snugly against sides of face with no gaps<br>
+                                • Secure with ties or ear loops<br>
+                                • Avoid touching mask while wearing it<br>
+                                • Remove by ear loops/ties (don't touch front)<br>
+                                • Wash cloth masks after each use<br>
+                                • Dispose of surgical masks after use<br><br>
+                                
+                                <strong>DON'T:</strong><br>
+                                • Wear mask under nose (defeats the purpose!)<br>
+                                • Touch front of mask with hands<br>
+                                • Share masks with others<br>
+                                • Reuse disposable masks<br>
+                                • Wear damaged or wet masks
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 10: Workplace Cleaning and Disinfection -->
+            <div class="slide" data-slide="10">
+                <div class="content-card">
+                    <div class="slide-header">
+                        <div class="slide-number">Slide 10 of 15</div>
+                        <h2 class="slide-title">Workplace Cleaning and Disinfection</h2>
+                        <p class="slide-subtitle">Reducing surface transmission</p>
+                    </div>
+                    <div class="slide-content">
+                        <p><strong>While respiratory transmission is primary, contaminated surfaces can still spread germs.</strong> Regular cleaning reduces risk.</p>
+                        <div class="info-box">
+                            <div class="info-box-title">&#x1F9FC; Cleaning vs. Disinfecting</div>
+                            <div class="info-box-content">
+                                <strong>Cleaning:</strong> Removing dirt, debris, and some germs from surfaces using soap/detergent and water. Reduces number of germs but doesn't kill them all.<br><br>
+                                <strong>Disinfecting:</strong> Using chemicals (EPA-registered disinfectants) to kill germs on surfaces. Most effective after cleaning.<br><br>
+                                <strong>Best practice: Clean first, then disinfect high-touch surfaces.</strong>
+                            </div>
+                        </div>
+                        <div class="info-box success">
+                            <div class="info-box-title">✓ High-Touch Surfaces to Clean Frequently</div>
+                            <div class="info-box-content">
+                                <strong>Clean and disinfect these surfaces at least daily (more often if heavily used):</strong><br>
+                                • Doorknobs and handles<br>
+                                • Light switches<br>
+                                • Desks and workstations<br>
+                                • Keyboards, mice, phones<br>
+                                • Elevator buttons<br>
+                                • Handrails and grab bars<br>
+                                • Break room: tables, chairs, refrigerator handles, microwave buttons, coffee maker<br>
+                                • Bathroom: faucets, toilet handles, soap dispensers<br>
+                                • Shared equipment: copiers, printers, tools, machinery controls<br>
+                                • Conference room tables and chairs
+                            </div>
+                        </div>
+                        <div class="info-box warning">
+                            <div class="info-box-title">&#x26A0; Personal Workspace Hygiene</div>
+                            <div class="info-box-content">
+                                <strong>YOU are responsible for your personal workspace:</strong><br><br>
+                                <strong>Daily cleaning:</strong><br>
+                                • Wipe down your desk, phone, keyboard, mouse with disinfectant wipes<br>
+                                • Don't eat at your desk (keeps workspace cleaner)<br>
+                                • Dispose of trash daily<br>
+                                • Keep personal items organized<br><br>
+                                <strong>Don't share:</strong><br>
+                                • Phones, headsets<br>
+                                • Keyboards, mice<br>
+                                • Pens, staplers, scissors<br>
+                                • Food, drinks, utensils<br>
+                                • Towels, personal care items<br><br>
+                                <strong>If you must share equipment, disinfect before and after each use!</strong>
+                            </div>
+                        </div>
+                        <div class="info-box">
+                            <div class="info-box-title">&#x1F4A1; Disinfectant Contact Time</div>
+                            <div class="info-box-content">
+                                <strong>Most people don't use disinfectants correctly!</strong> Disinfectants need "contact time" (dwell time) to kill germs—usually 3-10 minutes. <strong>Don't just spray and immediately wipe dry.</strong> Surface must stay visibly wet for the time specified on product label. Read and follow instructions!
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 11: Ventilation and Air Quality -->
+            <div class="slide" data-slide="11">
+                <div class="content-card">
+                    <div class="slide-header">
+                        <div class="slide-number">Slide 11 of 15</div>
+                        <h2 class="slide-title">Ventilation and Air Quality</h2>
+                        <p class="slide-subtitle">Fresh air reduces disease transmission</p>
+                    </div>
+                    <div class="slide-content">
+                        <p><strong>Indoor air quality significantly affects infectious disease transmission.</strong> Better ventilation = lower risk.</p>
+                        <div class="info-box">
+                            <div class="info-box-title">&#x1F32C; Why Ventilation Matters</div>
+                            <div class="info-box-content">
+                                <strong>Indoor air can have 2-5x higher concentrations of pollutants and pathogens than outdoor air.</strong><br><br>
+                                • Infectious aerosols accumulate in poorly ventilated spaces<br>
+                                • Fresh air dilutes and removes contaminated air<br>
+                                • Outdoor air typically has much lower pathogen levels<br>
+                                • Risk of airborne transmission is 20x higher indoors than outdoors<br><br>
+                                <strong>Good ventilation is a key layer of protection against respiratory illnesses.</strong>
+                            </div>
+                        </div>
+                        <div class="info-box success">
+                            <div class="info-box-title">✓ Improving Ventilation (What You Can Do)</div>
+                            <div class="info-box-content">
+                                <strong>Actions employees can take:</strong><br>
+                                • Open windows when weather permits (even slightly open helps)<br>
+                                • Open doors to improve cross-ventilation<br>
+                                • Position fans to bring in outdoor air or improve air circulation<br>
+                                • Use outdoor spaces for meetings when possible<br>
+                                • Take breaks outside<br>
+                                • Request ventilation assessment if air feels stale/stuffy<br>
+                                • Report HVAC issues (strange smells, no airflow, temperature problems)<br><br>
+                                
+                                <strong>What employers should do:</strong><br>
+                                • Maintain HVAC systems properly<br>
+                                • Upgrade air filters (MERV-13 or higher recommended)<br>
+                                • Increase outdoor air percentage in HVAC systems<br>
+                                • Use portable HEPA air purifiers in high-traffic areas<br>
+                                • Ensure adequate air changes per hour (ACH)<br>
+                                • Consider upper-room UV-C disinfection in some settings
+                            </div>
+                        </div>
+                        <div class="info-box warning">
+                            <div class="info-box-title">&#x26A0; Signs of Poor Ventilation</div>
+                            <div class="info-box-content">
+                                <strong>Indicators your workspace may have ventilation problems:</strong><br>
+                                • Stuffy, stale air<br>
+                                • Persistent odors<br>
+                                • Temperature too hot or too cold<br>
+                                • Humidity too high (feels damp) or too low (dry, static electricity)<br>
+                                • Frequent headaches, fatigue, or respiratory symptoms in workers<br>
+                                • Visible mold or moisture problems<br>
+                                • Windows/doors that don't open<br>
+                                • HVAC system rarely runs or has weak airflow<br><br>
+                                <strong>Report these issues to building maintenance or facilities management!</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 12: Vaccination -->
+            <div class="slide" data-slide="12">
+                <div class="content-card">
+                    <div class="slide-header">
+                        <div class="slide-number">Slide 12 of 15</div>
+                        <h2 class="slide-title">Vaccination</h2>
+                        <p class="slide-subtitle">Your best protection against serious illness</p>
+                    </div>
+                    <div class="slide-content">
+                        <p><strong>Vaccines are the most effective tool we have to prevent serious illness from infectious diseases.</strong></p>
+                        <div class="disease-grid">
+                            <div class="disease-card">
+                                <div class="disease-title">Annual Flu Vaccine</div>
+                                <div class="disease-info">
+                                    <strong>Why get it:</strong><br>
+                                    • Flu hospitalizes 100,000-700,000 Americans annually<br>
+                                    • Vaccine reduces flu illness by 40-60%<br>
+                                    • Even if you get flu, symptoms are milder if vaccinated<br>
+                                    • Protects vulnerable people around you<br><br>
+                                    <strong>When:</strong> Get vaccinated in early fall (September-October) before flu season peaks<br><br>
+                                    <strong>Who:</strong> Everyone 6 months and older, especially:<br>
+                                    • Adults 65+<br>
+                                    • Pregnant women<br>
+                                    • People with chronic health conditions<br>
+                                    • Healthcare workers<br>
+                                    • Caregivers<br><br>
+                                    <strong>Where:</strong> Doctor's office, pharmacy, workplace flu clinics, health departments (often free or low-cost)
+                                </div>
+                            </div>
+                            <div class="disease-card">
+                                <div class="disease-title">COVID-19 Vaccine</div>
+                                <div class="disease-info">
+                                    <strong>Why get it:</strong><br>
+                                    • Dramatically reduces risk of severe illness, hospitalization, and death<br>
+                                    • Reduces (but doesn't eliminate) risk of infection<br>
+                                    • Shortens illness duration if you do get sick<br>
+                                    • Reduces long COVID risk<br><br>
+                                    <strong>When:</strong> Stay up-to-date with recommended boosters. Check CDC guidance for current recommendations based on age and health status.<br><br>
+                                    <strong>Who:</strong> Everyone 6 months and older. Especially important for:<br>
+                                    • Adults 65+<br>
+                                    • People with weakened immune systems<br>
+                                    • People with chronic health conditions<br>
+                                    • Pregnant women<br><br>
+                                    <strong>Where:</strong> Widely available at pharmacies, doctor's offices, health departments (free)
+                                </div>
+                            </div>
+                        </div>
+                        <div class="info-box success">
+                            <div class="info-box-title">✓ Workplace Vaccination Programs</div>
+                            <div class="info-box-content">
+                                <strong>Many employers offer:</strong><br>
+                                • On-site flu vaccination clinics (free or low-cost)<br>
+                                • Paid time off for vaccination appointments<br>
+                                • Information about vaccine availability<br>
+                                • Incentives for getting vaccinated<br><br>
+                                <strong>Check with your HR department about available programs!</strong>
+                            </div>
+                        </div>
+                        <div class="info-box warning">
+                            <div class="info-box-title">&#x26A0; Vaccine Misconceptions</div>
+                            <div class="info-box-content">
+                                <strong>Common myths (all FALSE):</strong><br>
+                                • "Flu vaccine gives you the flu" – False. Vaccine contains inactivated virus that cannot cause flu.<br>
+                                • "I'm healthy, I don't need vaccines" – False. Healthy people can get seriously ill and spread disease to vulnerable people.<br>
+                                • "Natural immunity is better than vaccine" – False. Vaccines provide safer, more reliable protection without risk of severe illness.<br>
+                                • "Vaccines have dangerous side effects" – False. Serious side effects are extremely rare. Benefits far outweigh risks.<br><br>
+                                <strong>Talk to your healthcare provider if you have concerns about vaccines!</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 13: Pandemic Preparedness -->
+            <div class="slide" data-slide="13">
+                <div class="content-card">
+                    <div class="slide-header">
+                        <div class="slide-number">Slide 13 of 15</div>
+                        <h2 class="slide-title">Pandemic Preparedness</h2>
+                        <p class="slide-subtitle">Being ready for future outbreaks</p>
+                    </div>
+                    <div class="slide-content">
+                        <p><strong>COVID-19 taught us valuable lessons about pandemic response.</strong> Being prepared helps workplaces respond effectively to future outbreaks.</p>
+                        <div class="info-box">
+                            <div class="info-box-title">&#x1F4CB; Workplace Pandemic Plans Should Include</div>
+                            <div class="info-box-content">
+                                <strong>1. Communication Plan</strong><br>
+                                • How employees will be notified of outbreaks<br>
+                                • Regular updates on workplace cases and precautions<br>
+                                • Clear point of contact for questions/concerns<br>
+                                • Confidential reporting mechanisms<br><br>
+                                
+                                <strong>2. Flexible Work Arrangements</strong><br>
+                                • Remote work options for positions that allow it<br>
+                                • Staggered shifts to reduce crowding<br>
+                                • Flexible sick leave policies<br>
+                                • Cross-training to cover essential functions<br><br>
+                                
+                                <strong>3. Infection Control Measures</strong><br>
+                                • Hand hygiene stations and supplies<br>
+                                • Enhanced cleaning and disinfection protocols<br>
+                                • Physical distancing measures when needed<br>
+                                • Ventilation improvements<br>
+                                • PPE availability (masks, gloves)<br><br>
+                                
+                                <strong>4. Screening and Testing</strong><br>
+                                • Symptom screening procedures<br>
+                                • Access to testing<br>
+                                • Protocols for confirmed cases<br>
+                                • Contact tracing procedures<br><br>
+                                
+                                <strong>5. Training and Education</strong><br>
+                                • Regular infectious disease training<br>
+                                • Updated guidance as situations evolve<br>
+                                • Clear procedures everyone understands
+                            </div>
+                        </div>
+                        <div class="info-box success">
+                            <div class="info-box-title">✓ What You Can Do to Prepare</div>
+                            <div class="info-box-content">
+                                <strong>Personal preparedness:</strong><br>
+                                • Stay informed about infectious disease threats<br>
+                                • Keep vaccinations up-to-date<br>
+                                • Practice good hygiene habits consistently (not just during outbreaks)<br>
+                                • Maintain emergency supplies at home (medications, thermometer, basic supplies)<br>
+                                • Know your workplace's emergency procedures<br>
+                                • Have a plan for childcare/eldercare if schools/facilities close<br>
+                                • Build financial reserves if possible<br>
+                                • Identify if you can work remotely if needed
+                            </div>
+                        </div>
+                        <div class="info-box warning">
+                            <div class="info-box-title">&#x26A0; Early Warning Signs of Outbreaks</div>
+                            <div class="info-box-content">
+                                <strong>Recognize these patterns that may indicate an outbreak:</strong><br>
+                                • Multiple coworkers with similar symptoms in short time period<br>
+                                • Increased absenteeism due to illness<br>
+                                • Local health department reports of disease clusters<br>
+                                • News reports of emerging infectious disease threats<br><br>
+                                <strong>Report unusual patterns to your supervisor and occupational health department!</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 14: Summary -->
+            <div class="slide" data-slide="14">
+                <div class="content-card">
+                    <div class="slide-header">
+                        <div class="slide-number">Slide 14 of 15</div>
+                        <h2 class="slide-title">Infectious Disease Key Takeaways</h2>
+                        <p class="slide-subtitle">Remember these critical points</p>
+                    </div>
+                    <div class="slide-content">
+                        <p><strong>Essential infectious disease prevention knowledge:</strong></p>
+                        <ul class="content-list">
+                            <li><strong>How diseases spread:</strong> Respiratory droplets, airborne transmission, contact (direct and surface), fecal-oral route. Understanding transmission helps you prevent it.</li>
+                            <li><strong>Common respiratory illnesses:</strong> COVID-19, influenza, common cold have overlapping symptoms. Test when symptomatic. Can't tell difference by symptoms alone.</li>
+                            <li><strong>Hand hygiene is #1 defense:</strong> Wash with soap and water for 20 seconds. Scrub all surfaces. Wash after bathroom, before eating, after coughing/sneezing, frequently throughout day.</li>
+                            <li><strong>Respiratory etiquette matters:</strong> Cover coughs/sneezes with tissue or elbow (not hands). Dispose of tissues immediately. Wash hands after. Don't touch your face.</li>
+                            <li><strong>Stay home when sick:</strong> Fever 100.4°F+, vomiting/diarrhea, COVID-positive, severe symptoms. Stay home until fever-free 24 hours and symptoms improving. Presenteeism spreads disease.</li>
+                            <li><strong>Isolation vs. quarantine:</strong> Isolation = you are sick (confirmed). Quarantine = you might be sick (exposed, monitoring). Different requirements for each.</li>
+                            <li><strong>Masks reduce transmission:</strong> Most effective when worn correctly (cover nose and mouth). Useful in crowded indoor spaces, when sick, caring for sick person, during outbreaks.</li>
+                            <li><strong>Clean high-touch surfaces:</strong> Doorknobs, phones, keyboards, break room equipment daily or more. Your workspace is your responsibility. Don't share personal items.</li>
+                            <li><strong>Ventilation reduces risk:</strong> Open windows when possible. Fresh air dilutes pathogens. Report poor ventilation. Outdoor activities safer than indoor.</li>
+                            <li><strong>Get vaccinated:</strong> Annual flu shot and COVID boosters. Reduces severe illness, hospitalization, death. Protects you and vulnerable people around you.</li>
+                        </ul>
+                        <div class="info-box success">
+                            <div class="info-box-title">✓ Layered Protection Works Best</div>
+                            <div class="info-box-content">
+                                <strong>No single measure provides 100% protection. Use multiple layers:</strong><br>
+                                • Vaccination (reduces severity)<br>
+                                • Hand hygiene (prevents transmission)<br>
+                                • Respiratory etiquette (protects others)<br>
+                                • Staying home when sick (breaks transmission chain)<br>
+                                • Masks when appropriate (blocks droplets)<br>
+                                • Ventilation (dilutes aerosols)<br>
+                                • Cleaning surfaces (reduces contact transmission)<br><br>
+                                <strong>Together, these create a strong defense against infectious disease!</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Quiz Question 1 -->
+            <div class="slide" data-slide="15">
+                <div class="content-card">
+                    <div class="slide-header">
+                        <div class="slide-number">Quiz Question 1 of 3</div>
+                        <h2 class="slide-title">Knowledge Check</h2>
+                    </div>
+                    <div class="slide-content">
+                        <div class="quiz-question">
+                            What is the most effective way to prevent the spread of infectious diseases in the workplace?
+                        </div>
+                        <div class="quiz-options" id="q1-options">
+                            <div class="quiz-option" data-q="1" data-val="A">Wearing a mask at all times</div>
+                            <div class="quiz-option" data-q="1" data-val="B">Proper hand hygiene (washing hands with soap and water for 20 seconds)</div>
+                            <div class="quiz-option" data-q="1" data-val="C">Taking vitamins and supplements</div>
+                            <div class="quiz-option" data-q="1" data-val="D">Avoiding all contact with coworkers</div>
+                        </div>
+                        <div class="quiz-feedback" id="fb-1"></div>
+                        <div class="quiz-btn-group">
+                            <button class="btn btn-gold" id="submit-1" onclick="submitQuiz(1)" disabled>Submit Answer</button>
+                            <button class="btn btn-outline" id="next-q-1" onclick="nextSlide()" style="display: none;">Next Question →</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Quiz Question 2 -->
+            <div class="slide" data-slide="16">
+                <div class="content-card">
+                    <div class="slide-header">
+                        <div class="slide-number">Quiz Question 2 of 3</div>
+                        <h2 class="slide-title">Knowledge Check</h2>
+                    </div>
+                    <div class="slide-content">
+                        <div class="quiz-question">
+                            When should you stay home from work due to illness?
+                        </div>
+                        <div class="quiz-options" id="q2-options">
+                            <div class="quiz-option" data-q="2" data-val="A">Only if you can't get out of bed</div>
+                            <div class="quiz-option" data-q="2" data-val="B">When you have a fever of 100.4°F or higher, vomiting/diarrhea, or COVID-19 positive test</div>
+                            <div class="quiz-option" data-q="2" data-val="C">Never - always come to work to show dedication</div>
+                            <div class="quiz-option" data-q="2" data-val="D">Only during a declared pandemic</div>
+                        </div>
+                        <div class="quiz-feedback" id="fb-2"></div>
+                        <div class="quiz-btn-group">
+                            <button class="btn btn-gold" id="submit-2" onclick="submitQuiz(2)" disabled>Submit Answer</button>
+                            <button class="btn btn-outline" id="next-q-2" onclick="nextSlide()" style="display: none;">Next Question →</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Quiz Question 3 -->
+            <div class="slide" data-slide="17">
+                <div class="content-card">
+                    <div class="slide-header">
+                        <div class="slide-number">Quiz Question 3 of 3</div>
+                        <h2 class="slide-title">Knowledge Check</h2>
+                    </div>
+                    <div class="slide-content">
+                        <div class="quiz-question">
+                            What is the difference between isolation and quarantine?
+                        </div>
+                        <div class="quiz-options" id="q3-options">
+                            <div class="quiz-option" data-q="3" data-val="A">They are the same thing</div>
+                            <div class="quiz-option" data-q="3" data-val="B">Isolation is for people who ARE sick; quarantine is for people who MIGHT be sick (exposed but not symptomatic)</div>
+                            <div class="quiz-option" data-q="3" data-val="C">Quarantine is more strict than isolation</div>
+                            <div class="quiz-option" data-q="3" data-val="D">Isolation is only for COVID-19</div>
+                        </div>
+                        <div class="quiz-feedback" id="fb-3"></div>
+                        <div class="quiz-btn-group">
+                            <button class="btn btn-gold" id="submit-3" onclick="submitQuiz(3)" disabled>Submit Answer</button>
+                            <button class="btn btn-outline" id="next-q-3" onclick="nextSlide()" style="display: none;">View Results →</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 18: Results -->
+            <div class="slide" data-slide="18">
+                <div class="results-card">
+                    <div class="results-icon" id="rIcon">&#x1F3AF;</div>
+                    <div class="results-score" id="rScore">0 / 3</div>
+                    <h2 class="results-title" id="rTitle">Quiz Complete</h2>
+                    <p class="results-message" id="rMsg">Calculating your results...</p>
+                    <div class="results-katie" id="rKatie">"Let's see how you did!"</div>
+                    <div class="results-buttons" id="rBtns">
+                        <button class="btn btn-gold">Loading...</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Navigation Bar -->
+    <nav class="nav-bar">
+        <div class="nav-inner">
+            <button class="nav-btn" id="prevBtn" onclick="prevSlide()">
+                ← Previous
+            </button>
+            <span class="slide-indicator" id="slideIndicator">Slide 1 of 14</span>
+            <button class="nav-btn nav-next" id="nextBtn" onclick="nextSlide()">
+                Next →
+            </button>
+        </div>
+    </nav>
+    <script>
+    (function() {
+        'use strict';
+        // ═══ CONFIG ═══
+        var TOTAL_SLIDES = 18;
+        var TOTAL_CONTENT = 14;
+        var MODULE_KEY = 'infectious-disease';
+        // ═══ STATE ═══
+        var currentSlide = 1;
+        var quizAnswers = { 1: null, 2: null, 3: null };
+        var quizSubmitted = { 1: false, 2: false, 3: false };
+        var quizScore = 0;
+        // Quiz correct answers
+        var quizCorrectAnswers = {
+            1: 'B',  // Hand hygiene is most effective
+            2: 'B',  // Stay home with fever, vomiting/diarrhea, or positive test
+            3: 'B'   // Isolation vs quarantine difference
+        };
+        // Feedback messages
+        var feedbackMessages = {
+            1: {
+                correct: '✓ Correct! Proper hand hygiene (washing with soap and water for 20 seconds) is the single most effective way to prevent infectious disease transmission.',
+                incorrect: '✗ Incorrect. While other measures help, hand hygiene is the #1 most effective prevention method. Wash hands with soap and water for 20 seconds frequently throughout the day.'
+            },
+            2: {
+                correct: '✓ Correct! Stay home when you have a fever of 100.4°F or higher, vomiting/diarrhea, COVID-positive test, or other severe symptoms. Coming to work sick spreads illness to coworkers.',
+                incorrect: '✗ Incorrect. You should stay home when you have a fever (100.4°F+), vomiting/diarrhea, positive COVID test, or severe symptoms. Staying home protects your coworkers and helps you recover faster.'
+            },
+            3: {
+                correct: '✓ Correct! Isolation separates people who ARE sick (confirmed illness) from healthy people. Quarantine separates people who were exposed but aren\'t yet sick to monitor for symptoms.',
+                incorrect: '✗ Incorrect. Isolation is for people who ARE sick with confirmed illness. Quarantine is for people who MIGHT be sick (exposed but not yet symptomatic). Different requirements apply to each.'
+            }
+        };
+        // ═══ NAVIGATION ═══
+        function goToSlide(n) {
+            if (n < 1 || n > TOTAL_SLIDES) return;
+            currentSlide = n;
+            updateUI();
+            saveSlideProgress();
+        }
+        window.nextSlide = function() {
+            goToSlide(currentSlide + 1);
+        };
+        window.prevSlide = function() {
+            goToSlide(currentSlide - 1);
+        };
+        // ═══ UI UPDATE ═══
+        function updateUI() {
+            document.querySelectorAll('.slide').forEach(function(s) {
+                s.classList.remove('active');
+            });
+            var activeSlide = document.querySelector('[data-slide="' + currentSlide + '"]');
+            if (activeSlide) {
+                activeSlide.classList.add('active');
+            }
+            var progressPct = ((currentSlide - 1) / (TOTAL_CONTENT - 1)) * 100;
+            document.getElementById('progressFill').style.width = Math.min(100, progressPct) + '%';
+            document.getElementById('progressPct').textContent = Math.round(Math.min(100, progressPct)) + '%';
+            
+            if (currentSlide <= TOTAL_CONTENT) {
+                document.getElementById('progressLabel').textContent = 'Slide ' + currentSlide + ' of ' + TOTAL_CONTENT;
+                document.getElementById('slideIndicator').textContent = 'Slide ' + currentSlide + ' of ' + TOTAL_CONTENT;
+            } else {
+                document.getElementById('progressLabel').textContent = 'Results';
+                document.getElementById('slideIndicator').textContent = 'Results';
+            }
+            var prevBtn = document.getElementById('prevBtn');
+            var nextBtn = document.getElementById('nextBtn');
+            
+            prevBtn.disabled = currentSlide === 1;
+            nextBtn.disabled = currentSlide === TOTAL_SLIDES;
+            if (currentSlide === 18) {
+                buildResults();
+            }
+            document.querySelector('.content-wrapper').scrollTop = 0;
+        }
+        // ═══ KEYBOARD NAV ═══
+        document.addEventListener('keydown', function(e) {
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+            if (e.key === 'ArrowRight' || e.key === 'Right') {
+                e.preventDefault();
+                nextSlide();
+            } else if (e.key === 'ArrowLeft' || e.key === 'Left') {
+                e.preventDefault();
+                prevSlide();
+            }
+        });
+        // ═══ QUIZ HANDLING ═══
+        document.querySelectorAll('.quiz-option').forEach(function(opt) {
+            opt.addEventListener('click', function() {
+                var qNum = parseInt(this.getAttribute('data-q'));
+                if (quizSubmitted[qNum]) return;
+                var container = document.getElementById('q' + qNum + '-options');
+                container.querySelectorAll('.quiz-option').forEach(function(o) {
+                    o.classList.remove('selected');
+                });
+                this.classList.add('selected');
+                quizAnswers[qNum] = this.getAttribute('data-val');
+                document.getElementById('submit-' + qNum).disabled = false;
+            });
+        });
+        window.submitQuiz = function(qNum) {
+            if (quizSubmitted[qNum]) return;
+            quizSubmitted[qNum] = true;
+            var userAnswer = quizAnswers[qNum];
+            var correctAnswer = quizCorrectAnswers[qNum];
+            var isCorrect = (userAnswer === correctAnswer);
+            var container = document.getElementById('q' + qNum + '-options');
+            container.querySelectorAll('.quiz-option').forEach(function(opt) {
+                opt.classList.add('disabled');
+                var val = opt.getAttribute('data-val');
+                if (val === correctAnswer) {
+                    opt.classList.add('correct');
+                } else if (opt.classList.contains('selected') && !isCorrect) {
+                    opt.classList.add('incorrect');
+                }
+            });
+            var fb = document.getElementById('fb-' + qNum);
+            if (isCorrect) {
+                fb.textContent = feedbackMessages[qNum].correct;
+                fb.className = 'quiz-feedback show correct-fb';
+                quizScore++;
+            } else {
+                fb.textContent = feedbackMessages[qNum].incorrect;
+                fb.className = 'quiz-feedback show incorrect-fb';
+            }
+            document.getElementById('submit-' + qNum).style.display = 'none';
+            document.getElementById('next-q-' + qNum).style.display = '';
+        };
+        // ═══ BUILD RESULTS ═══
+        function buildResults() {
+            var icon = document.getElementById('rIcon');
+            var score = document.getElementById('rScore');
+            var title = document.getElementById('rTitle');
+            var msg = document.getElementById('rMsg');
+            var btns = document.getElementById('rBtns');
+            var katie = document.getElementById('rKatie');
+            score.textContent = quizScore + ' / 3';
+            if (quizScore === 3) {
+                icon.textContent = '&#x1F389;';
+                title.textContent = 'Perfect Score!';
+                msg.textContent = 'Outstanding! You understand infectious disease transmission, prevention measures, hand hygiene, and when to stay home. Protect yourself and others!';
+                btns.innerHTML = '<button class="btn btn-success" onclick="completeModule()">✓ Complete Module & Return to Dashboard</button>';
+                katie.textContent = '"Excellent work! Remember: Wash hands frequently, stay home when sick, cover coughs/sneezes, and get vaccinated!"';
+            } else if (quizScore >= 2) {
+                icon.textContent = '&#x2705;';
+                title.textContent = 'You Passed!';
+                msg.textContent = 'Great job! You demonstrated solid understanding of infectious disease prevention and workplace safety.';
+                btns.innerHTML = '<button class="btn btn-success" onclick="completeModule()">✓ Complete Module & Return to Dashboard</button>';
+                katie.textContent = '"Well done! Practice hand hygiene, stay home when sick, and follow respiratory etiquette!"';
+            } else {
+                icon.textContent = '&#x1F4DA;';
+                title.textContent = 'Not Quite Yet';
+                msg.textContent = 'You need 2 out of 3 correct to pass this module. Review the lesson and try again!';
+                btns.innerHTML = '<button class="btn btn-gold" onclick="retakeQuiz()">↻ Retake Quiz</button>' +
+                    '<button class="btn btn-outline" onclick="goToSlide(3)">↑ Review Lesson</button>';
+                katie.textContent = '"Don\'t worry! Infectious disease prevention is vital. Review hand hygiene and when to stay home!"';
+            }
+            saveQuizProgress();
+        }
+        // ═══ RETAKE QUIZ ═══
+        window.retakeQuiz = function() {
+            quizAnswers = { 1: null, 2: null, 3: null };
+            quizSubmitted = { 1: false, 2: false, 3: false };
+            quizScore = 0;
+            for (var q = 1; q <= 3; q++) {
+                var container = document.getElementById('q' + q + '-options');
+                container.querySelectorAll('.quiz-option').forEach(function(opt) {
+                    opt.classList.remove('selected', 'correct', 'incorrect', 'disabled');
+                });
+                document.getElementById('fb-' + q).className = 'quiz-feedback';
+                document.getElementById('fb-' + q).textContent = '';
+                document.getElementById('submit-' + q).style.display = '';
+                document.getElementById('submit-' + q).disabled = true;
+                document.getElementById('next-q-' + q).style.display = 'none';
+            }
+            goToSlide(15);
+        };
+        // ═══ LOCAL STORAGE ═══
+        function getProgress() {
+            try {
+                var d = localStorage.getItem('safetyverse-progress');
+                return d ? JSON.parse(d) : {};
+            } catch(e) { return {}; }
+        }
+        function saveSlideProgress() {
+            try {
+                var p = getProgress();
+                if (!p.modules) p.modules = {};
+                if (!p.modules[MODULE_KEY]) {
+                    p.modules[MODULE_KEY] = { completed: false, quizScore: 0, attempts: 0, lastAttempt: null };
+                }
+                p.modules[MODULE_KEY].currentSlide = currentSlide;
+                p.modules[MODULE_KEY].totalSlides = TOTAL_SLIDES;
+                localStorage.setItem('safetyverse-progress', JSON.stringify(p));
+            } catch(e) {}
+        }
+        function saveQuizProgress() {
+            try {
+                var p = getProgress();
+                if (!p.modules) p.modules = {};
+                if (!p.modules[MODULE_KEY]) {
+                    p.modules[MODULE_KEY] = { completed: false, quizScore: 0, attempts: 0 };
+                }
+                var mod = p.modules[MODULE_KEY];
+                mod.quizScore = quizScore;
+                mod.attempts = (mod.attempts || 0) + 1;
+                mod.lastAttempt = new Date().toISOString();
+                if (quizScore >= 2) mod.completed = true;
+                localStorage.setItem('safetyverse-progress', JSON.stringify(p));
+            } catch(e) {}
+        }
+        window.completeModule = function() {
+            try {
+                var p = getProgress();
+                if (!p.modules) p.modules = {};
+                if (!p.modules[MODULE_KEY]) {
+                    p.modules[MODULE_KEY] = { quizScore: 0, attempts: 0 };
+                }
+                p.modules[MODULE_KEY].completed = true;
+                p.modules[MODULE_KEY].completedAt = new Date().toISOString();
+                p.modules[MODULE_KEY].quizScore = quizScore;
+                localStorage.setItem('safetyverse-progress', JSON.stringify(p));
+            } catch(e) {}
+            window.location.href = '../../user-dashboard/index.html';
+        };
+        // ═══ RESTORE PROGRESS ON LOAD ═══
+        function restoreProgress() {
+            try {
+                var p = getProgress();
+                if (p.modules && p.modules[MODULE_KEY]) {
+                    var mod = p.modules[MODULE_KEY];
+                    if (mod.completed) {
+                        var introCard = document.querySelector('.intro-card');
+                        if (introCard) {
+                            var badge = document.createElement('div');
+                            badge.style.cssText = 'position:absolute;top:20px;right:20px;background:var(--success);color:white;font-size:12px;font-weight:700;padding:5px 16px;border-radius:20px;z-index:5;';
+                            badge.textContent = '✓ Completed';
+                            introCard.appendChild(badge);
+                        }
+                    }
+                }
+            } catch(e) {}
+        }
+        // ═══ INIT ═══
+        restoreProgress();
+        updateUI();
+    })();
+    </script>
+</body>
+</html>

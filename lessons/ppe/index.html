@@ -1,0 +1,1680 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="logo.png?v=2">
+    <title>Module 9: Personal Protective Equipment - SafetyVerse</title>
+    <style>
+        /* ═══════════════════════════════════════════
+           CSS VARIABLES & RESET
+           ═══════════════════════════════════════════ */
+        :root {
+            --primary: #FFD700;
+            --primary-dark: #E6C200;
+            --secondary: #FF8C00;
+            --secondary-dark: #E67A00;
+            --bg-clay: #F5E6D3;
+            --bg-clay-dark: #E8D5C0;
+            --bg-clay-light: #FAF0E6;
+            --text-dark: #333333;
+            --text-medium: #555555;
+            --text-light: #777777;
+            --accent-black: #1A1A1A;
+            --white: #FFFFFF;
+            --success: #4CAF50;
+            --success-dark: #388E3C;
+            --error: #E53935;
+            --error-dark: #C62828;
+            --info: #2196F3;
+            --shadow-soft: 0 4px 15px rgba(0,0,0,0.1);
+            --shadow-medium: 0 6px 25px rgba(0,0,0,0.15);
+            --shadow-hard: 0 8px 30px rgba(0,0,0,0.2);
+            --shadow-clay: 4px 4px 0px rgba(0,0,0,0.15), inset 0 2px 4px rgba(255,255,255,0.3);
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 20px;
+            --radius-xl: 28px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --font-heading: 'Segoe UI', 'Arial Black', sans-serif;
+            --font-body: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body {
+            height: 100%;
+            overflow: hidden;
+        }
+        body {
+            font-family: var(--font-body);
+            background-color: var(--bg-clay);
+            color: var(--text-dark);
+            line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+        }
+        /* Clay texture */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 9999;
+            background-image:
+                radial-gradient(circle at 20% 50%, rgba(139,90,43,0.03) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(139,90,43,0.02) 0%, transparent 50%),
+                radial-gradient(circle at 50% 80%, rgba(139,90,43,0.03) 0%, transparent 50%);
+        }
+        /* ═══════════════════════════════════════════
+           HEADER
+           ═══════════════════════════════════════════ */
+        .header {
+            background: linear-gradient(180deg, var(--accent-black) 0%, #2A2A2A 100%);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            border-bottom: 4px solid var(--primary);
+            z-index: 100;
+            flex-shrink: 0;
+        }
+        .header-inner {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 64px;
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            flex-shrink: 0;
+        }
+        .logo-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .logo-icon img {
+            display: block;
+            height: 50px;
+            width: auto;
+            image-rendering: -webkit-optimize-contrast;
+            image-rendering: crisp-edges;
+            box-shadow: 4px 4px 0px rgba(0,0,0,0.15);
+            border-radius: 12px;
+            transition: transform 0.2s ease;
+        }
+        .logo-text {
+            font-family: var(--font-heading);
+            font-size: 22px; font-weight: 900;
+            color: var(--white);
+            letter-spacing: -0.5px;
+        }
+        .logo-text em {
+            color: var(--primary);
+            font-style: normal;
+        }
+        .header-center {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        .header-module-tag {
+            background: rgba(255,215,0,0.15);
+            color: var(--primary);
+            font-size: 11px; font-weight: 800;
+            padding: 3px 10px;
+            border-radius: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+        }
+        .header-module-title {
+            color: rgba(255,255,255,0.8);
+            font-size: 14px; font-weight: 600;
+        }
+        .back-btn {
+            display: flex; align-items: center; gap: 6px;
+            text-decoration: none;
+            color: rgba(255,255,255,0.7);
+            font-size: 13px; font-weight: 600;
+            padding: 7px 14px;
+            border-radius: var(--radius-sm);
+            transition: var(--transition);
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .back-btn:hover {
+            color: var(--white);
+            background: rgba(255,255,255,0.12);
+            border-color: rgba(255,255,255,0.2);
+        }
+        /* ═══════════════════════════════════════════
+           PROGRESS BAR
+           ═══════════════════════════════════════════ */
+        .progress-bar {
+            background: var(--accent-black);
+            border-bottom: 1px solid rgba(255,215,0,0.15);
+            flex-shrink: 0;
+            z-index: 99;
+        }
+        .progress-bar-inner {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 8px 24px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+        .progress-label {
+            font-size: 12px; font-weight: 700;
+            color: rgba(255,255,255,0.5);
+            white-space: nowrap;
+            min-width: 90px;
+        }
+        .progress-track {
+            flex: 1;
+            height: 6px;
+            background: rgba(255,255,255,0.08);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 3px;
+            transition: width 0.4s ease;
+        }
+        .progress-pct {
+            font-size: 12px; font-weight: 700;
+            color: var(--primary);
+            min-width: 40px;
+            text-align: right;
+        }
+        /* ═══════════════════════════════════════════
+           MAIN CONTENT AREA
+           ═══════════════════════════════════════════ */
+        .content-wrapper {
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 40px 24px 100px;
+        }
+        /* ═══════════════════════════════════════════
+           SLIDES
+           ═══════════════════════════════════════════ */
+        .slide {
+            display: none;
+            animation: slideIn 0.3s ease;
+        }
+        .slide.active { display: block; }
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        /* Intro Card (Slide 1) */
+        .intro-card {
+            background: linear-gradient(135deg, #FF8C00 0%, #E67A00 100%);
+            border-radius: var(--radius-xl);
+            padding: 60px 50px;
+            box-shadow: var(--shadow-hard);
+            color: var(--white);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .intro-card::before {
+            content: '';
+            position: absolute;
+            top: -100px; right: -100px;
+            width: 300px; height: 300px;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+        }
+        .intro-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+            animation: bounce 2s ease-in-out infinite;
+        }
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        .intro-title {
+            font-family: var(--font-heading);
+            font-size: 48px; font-weight: 900;
+            margin-bottom: 12px;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.2);
+        }
+        .intro-subtitle {
+            font-size: 20px;
+            margin-bottom: 30px;
+            opacity: 0.95;
+        }
+        .intro-meta {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            flex-wrap: wrap;
+        }
+        .intro-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 15px; font-weight: 600;
+        }
+        .intro-meta-item span:first-child {
+            font-size: 20px;
+        }
+        /* Content Card */
+        .content-card {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            padding: 50px;
+            box-shadow: var(--shadow-medium);
+            margin-bottom: 30px;
+        }
+        .slide-header {
+            margin-bottom: 35px;
+        }
+        .slide-number {
+            font-size: 11px; font-weight: 800;
+            color: var(--text-light);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 10px;
+        }
+        .slide-title {
+            font-family: var(--font-heading);
+            font-size: 36px; font-weight: 900;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+            line-height: 1.2;
+        }
+        .slide-subtitle {
+            font-size: 17px;
+            color: var(--text-medium);
+        }
+        .slide-content {
+            font-size: 17px;
+            line-height: 1.8;
+            color: var(--text-dark);
+        }
+        .slide-content p {
+            margin-bottom: 20px;
+        }
+        .slide-content strong {
+            color: var(--secondary);
+            font-weight: 700;
+        }
+        /* Katie Message */
+        .katie-message {
+            display: flex;
+            align-items: flex-start;
+            gap: 18px;
+            background: linear-gradient(135deg, #FFFDE7 0%, #FFF9C4 100%);
+            border-left: 5px solid var(--primary);
+            padding: 24px;
+            border-radius: var(--radius-md);
+            margin-bottom: 35px;
+            box-shadow: 0 3px 12px rgba(255,215,0,0.15);
+        }
+        .katie-avatar {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            object-fit: cover;
+            object-position: center 48%;
+            background: white;
+            border: 4px solid var(--primary);
+            padding: 6px;
+            flex-shrink: 0;
+            box-shadow: var(--shadow-soft);
+        }
+        .katie-bubble {
+            flex: 1;
+        }
+        .katie-name {
+            font-weight: 800;
+            color: var(--secondary);
+            margin-bottom: 8px;
+            font-size: 15px;
+        }
+        .katie-text {
+            font-size: 16px;
+            color: var(--text-dark);
+            line-height: 1.7;
+        }
+        /* Info Boxes */
+        .info-box {
+            background: linear-gradient(135deg, #E3F2FD 0%, #BBDEFB 100%);
+            border-left: 5px solid var(--info);
+            padding: 22px 24px;
+            border-radius: var(--radius-md);
+            margin: 28px 0;
+        }
+        .info-box.warning {
+            background: linear-gradient(135deg, #FFF3E0 0%, #FFE0B2 100%);
+            border-left-color: var(--secondary);
+        }
+        .info-box.danger {
+            background: linear-gradient(135deg, #FFEBEE 0%, #FFCDD2 100%);
+            border-left-color: var(--error);
+        }
+        .info-box.success {
+            background: linear-gradient(135deg, #E8F5E9 0%, #C8E6C9 100%);
+            border-left-color: var(--success);
+        }
+        .info-box-title {
+            font-weight: 800;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 16px;
+        }
+        .info-box-content {
+            font-size: 15px;
+            line-height: 1.7;
+        }
+        .info-box-content ul, .info-box-content ol {
+            margin-top: 10px;
+            padding-left: 20px;
+        }
+        .info-box-content li {
+            margin-bottom: 6px;
+        }
+        /* Lists */
+        .content-list {
+            list-style: none;
+            margin: 28px 0;
+        }
+        .content-list li {
+            padding: 14px 0 14px 36px;
+            position: relative;
+            border-bottom: 1px solid rgba(0,0,0,0.06);
+            font-size: 16px;
+        }
+        .content-list li:last-child {
+            border-bottom: none;
+        }
+        .content-list li::before {
+            content: '\25CF';
+            position: absolute;
+            left: 14px;
+            color: var(--secondary);
+            font-size: 14px;
+        }
+        /* PPE Type Grid */
+        .ppe-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 20px;
+            margin: 28px 0;
+        }
+        .ppe-card {
+            background: var(--bg-clay-light);
+            border: 3px solid var(--bg-clay-dark);
+            border-radius: var(--radius-md);
+            padding: 26px;
+            text-align: center;
+            transition: var(--transition);
+        }
+        .ppe-card:hover {
+            transform: translateY(-6px);
+            box-shadow: var(--shadow-medium);
+            border-color: var(--secondary);
+        }
+        .ppe-icon {
+            font-size: 56px;
+            margin-bottom: 16px;
+        }
+        .ppe-title {
+            font-weight: 900;
+            font-size: 20px;
+            color: var(--text-dark);
+            margin-bottom: 12px;
+            font-family: var(--font-heading);
+        }
+        .ppe-desc {
+            font-size: 15px;
+            color: var(--text-medium);
+            line-height: 1.6;
+            margin-bottom: 14px;
+        }
+        .ppe-examples {
+            font-size: 13px;
+            color: var(--text-light);
+            font-style: italic;
+        }
+        /* Hierarchy of Controls */
+        .hierarchy-steps {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+            margin: 28px 0;
+        }
+        .hierarchy-step {
+            display: flex;
+            align-items: flex-start;
+            gap: 18px;
+            background: var(--bg-clay-light);
+            padding: 24px;
+            border-radius: var(--radius-md);
+            border-left: 5px solid var(--secondary);
+            transition: var(--transition);
+        }
+        .hierarchy-step:hover {
+            background: var(--bg-clay);
+            box-shadow: var(--shadow-soft);
+        }
+        .hierarchy-number {
+            background: var(--secondary);
+            color: var(--white);
+            min-width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            font-size: 22px;
+            flex-shrink: 0;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+        }
+        .hierarchy-content h4 {
+            font-weight: 800;
+            margin-bottom: 8px;
+            color: var(--text-dark);
+            font-size: 17px;
+        }
+        .hierarchy-content p {
+            font-size: 15px;
+            color: var(--text-medium);
+            line-height: 1.7;
+            margin: 0;
+        }
+        /* Common Mistakes Grid */
+        .mistakes-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 18px;
+            margin: 28px 0;
+        }
+        .mistake-card {
+            background: linear-gradient(135deg, #FFEBEE 0%, #FFCDD2 100%);
+            border-left: 5px solid var(--error);
+            border-radius: var(--radius-md);
+            padding: 22px;
+            transition: var(--transition);
+        }
+        .mistake-card:hover {
+            box-shadow: var(--shadow-soft);
+            transform: translateX(4px);
+        }
+        .mistake-title {
+            font-weight: 800;
+            color: var(--error-dark);
+            margin-bottom: 10px;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .mistake-desc {
+            font-size: 14px;
+            color: var(--text-dark);
+            line-height: 1.6;
+        }
+        /* ═══════════════════════════════════════════
+           QUIZ STYLES
+           ═══════════════════════════════════════════ */
+        .quiz-question {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 28px;
+            line-height: 1.5;
+        }
+        .quiz-options {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            margin-bottom: 24px;
+        }
+        .quiz-option {
+            background: var(--bg-clay-light);
+            border: 3px solid var(--bg-clay-dark);
+            padding: 18px 24px;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 16px;
+            font-weight: 600;
+            position: relative;
+        }
+        .quiz-option:hover:not(.disabled) {
+            background: var(--bg-clay);
+            border-color: var(--primary);
+            transform: translateX(6px);
+        }
+        .quiz-option.selected {
+            background: var(--primary);
+            border-color: var(--primary-dark);
+            color: var(--accent-black);
+        }
+        .quiz-option.correct {
+            background: var(--success);
+            border-color: var(--success-dark);
+            color: var(--white);
+        }
+        .quiz-option.incorrect {
+            background: var(--error);
+            border-color: var(--error-dark);
+            color: var(--white);
+        }
+        .quiz-option.disabled {
+            cursor: default;
+        }
+        .quiz-feedback {
+            display: none;
+            padding: 18px 22px;
+            border-radius: var(--radius-md);
+            font-size: 16px;
+            line-height: 1.7;
+            margin-top: 20px;
+        }
+        .quiz-feedback.show {
+            display: block;
+        }
+        .quiz-feedback.correct-fb {
+            background: #E8F5E9;
+            color: #2E7D32;
+            border-left: 5px solid var(--success);
+        }
+        .quiz-feedback.incorrect-fb {
+            background: #FFEBEE;
+            color: #C62828;
+            border-left: 5px solid var(--error);
+        }
+        /* Quiz Buttons */
+        .quiz-btn-group {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+        }
+        /* Results Screen */
+        .results-card {
+            background: var(--white);
+            border-radius: var(--radius-xl);
+            padding: 60px 50px;
+            box-shadow: var(--shadow-hard);
+            text-align: center;
+        }
+        .results-icon {
+            font-size: 100px;
+            margin-bottom: 24px;
+            animation: scaleIn 0.6s ease;
+        }
+        @keyframes scaleIn {
+            from { transform: scale(0) rotate(-180deg); }
+            to { transform: scale(1) rotate(0); }
+        }
+        .results-score {
+            font-family: var(--font-heading);
+            font-size: 72px;
+            font-weight: 900;
+            color: var(--primary);
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 0 rgba(0,0,0,0.1);
+        }
+        .results-title {
+            font-family: var(--font-heading);
+            font-size: 42px;
+            font-weight: 900;
+            color: var(--text-dark);
+            margin-bottom: 16px;
+        }
+        .results-message {
+            font-size: 19px;
+            color: var(--text-medium);
+            margin-bottom: 36px;
+            line-height: 1.7;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .results-katie {
+            background: linear-gradient(135deg, #FFFDE7 0%, #FFF9C4 100%);
+            border-left: 5px solid var(--primary);
+            padding: 20px 24px;
+            border-radius: var(--radius-md);
+            font-size: 17px;
+            font-style: italic;
+            color: var(--text-dark);
+            margin-bottom: 36px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .results-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+        /* ═══════════════════════════════════════════
+           BUTTONS
+           ═══════════════════════════════════════════ */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 14px 32px;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-family: var(--font-heading);
+            font-size: 16px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+            box-shadow: var(--shadow-clay);
+        }
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .btn-gold {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: var(--accent-black);
+        }
+        .btn-gold:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-hard);
+        }
+        .btn-success {
+            background: var(--success);
+            color: var(--white);
+        }
+        .btn-success:hover:not(:disabled) {
+            background: var(--success-dark);
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-hard);
+        }
+        .btn-outline {
+            background: var(--white);
+            color: var(--text-dark);
+            border: 2px solid var(--bg-clay-dark);
+        }
+        .btn-outline:hover:not(:disabled) {
+            background: var(--bg-clay-light);
+            border-color: var(--primary);
+        }
+        /* ═══════════════════════════════════════════
+           NAVIGATION
+           ═══════════════════════════════════════════ */
+        .nav-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(180deg, rgba(26,26,26,0.97) 0%, rgba(0,0,0,0.98) 100%);
+            border-top: 3px solid var(--primary);
+            padding: 16px 24px;
+            z-index: 100;
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.3);
+        }
+        .nav-inner {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+        }
+        .nav-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            border: 2px solid rgba(255,255,255,0.15);
+            border-radius: var(--radius-sm);
+            font-family: var(--font-heading);
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: var(--transition);
+            background: rgba(255,255,255,0.08);
+            color: var(--white);
+            text-decoration: none;
+        }
+        .nav-btn:hover:not(:disabled) {
+            background: rgba(255,255,255,0.15);
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+        .nav-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+        .nav-btn.nav-next {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: var(--accent-black);
+            border-color: transparent;
+        }
+        .nav-btn.nav-next:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255,215,0,0.4);
+        }
+        .slide-indicator {
+            color: rgba(255,255,255,0.6);
+            font-size: 13px;
+            font-weight: 600;
+        }
+        /* ═══════════════════════════════════════════
+           RESPONSIVE
+           ═══════════════════════════════════════════ */
+        @media (max-width: 768px) {
+            .container { padding: 30px 20px 100px; }
+            .content-card { padding: 32px 24px; }
+            .intro-card { padding: 40px 30px; }
+            .intro-title { font-size: 36px; }
+            .slide-title { font-size: 28px; }
+            .ppe-grid { grid-template-columns: 1fr; }
+            .mistakes-grid { grid-template-columns: 1fr; }
+            .nav-inner { flex-direction: column; gap: 12px; }
+            .nav-btn { width: 100%; justify-content: center; }
+            .header-center { position: static; transform: none; }
+        }
+        @media (max-width: 480px) {
+            .intro-meta { flex-direction: column; gap: 16px; }
+            .katie-message { flex-direction: column; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-inner">
+            <a href="../../user-dashboard/index.html" class="logo">
+                <div class="logo-icon"><img src="logo.png?v=2" alt="SafetyVerse Logo"></div>
+                <div class="logo-text">Safety<em>Verse</em></div>
+            </a>
+            <div class="header-center">
+                <span class="header-module-tag">MODULE 9</span>
+                <span class="header-module-title">Personal Protective Equipment</span>
+            </div>
+            <a href="../../user-dashboard/index.html" class="back-btn">
+                <span>&#8592;</span>
+                <span>Back to Dashboard</span>
+            </a>
+        </div>
+    </header>
+    <!-- Progress Bar -->
+    <div class="progress-bar">
+        <div class="progress-bar-inner">
+            <span class="progress-label" id="progressLabel">Slide 1 of 15</span>
+            <div class="progress-track">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <span class="progress-pct" id="progressPct">0%</span>
+        </div>
+    </div>
+    <!-- Main Content -->
+    <div class="content-wrapper">
+        <div class="container">
+            <!-- Slide 1: Intro -->
+            <div class="slide active" data-slide="1">
+                <div class="intro-card">
+                    <div class="intro-icon">&#129466;</div>
+                    <h1 class="intro-title">Personal Protective Equipment</h1>
+                    <p class="intro-subtitle">Your Last Line of Defense</p>
+                    <div class="intro-meta">
+                        <div class="intro-meta-item">
+                            <span>&#9201;</span>
+                            <span>15 minutes</span>
+                        </div>
+                        <div class="intro-meta-item">
+                            <span>&#128218;</span>
+                            <span>Operational Safety Path</span>
+                        </div>
+                        <div class="intro-meta-item">
+                            <span>&#10003;</span>
+                            <span>OSHA Standards</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 2: Introduction with Katie -->
+            <div class="slide" data-slide="2">
+                <div class="content-card">
+                    <div class="katie-message">
+                        <img src="katie.png" alt="Katie" class="katie-avatar">
+                        <div class="katie-bubble">
+                            <div class="katie-name">Katie, Your Safety Guide</div>
+                            <div class="katie-text">
+                                Welcome! Personal Protective Equipment (PPE) is your last line of defense against workplace hazards. While eliminating hazards is always the best approach, PPE protects you when hazards can't be completely removed. In this module, you'll learn about different types of PPE, when to use them, and how to care for them properly.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="slide-header">
+                        <div class="slide-number">Slide 2 of 15</div>
+                        <h2 class="slide-title">What is PPE?</h2>
+                    </div>
+                    <div class="slide-content">
+                        <p><strong>Personal Protective Equipment (PPE)</strong> is specialized clothing or equipment worn by employees for protection against health and safety hazards. PPE is designed to protect specific body parts from specific hazards.</p>
+
+                        <div class="info-box">
+                            <div class="info-box-title">&#128203; OSHA Requirements</div>
+                            <div class="info-box-content">
+                                OSHA requires employers to:
+                                <ul>
+                                    <li>Conduct a hazard assessment to determine PPE needs</li>
+                                    <li>Provide appropriate PPE at no cost to employees</li>
+                                    <li>Train employees on proper PPE use and care</li>
+                                    <li>Ensure PPE fits properly and is maintained</li>
+                                    <li>Enforce PPE use when required</li>
+                                </ul>
+                                <strong>Standard: 29 CFR 1910 Subpart I</strong>
+                            </div>
+                        </div>
+                        <p><strong>Learning Objectives:</strong></p>
+                        <ul class="content-list">
+                            <li>Understand when PPE is necessary and its limitations</li>
+                            <li>Identify the six major categories of PPE</li>
+                            <li>Select appropriate PPE for specific hazards</li>
+                            <li>Properly wear, inspect, and maintain PPE</li>
+                            <li>Recognize and avoid common PPE mistakes</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 3: Hierarchy of Controls -->
+            <div class="slide" data-slide="3">
+                <div class="content-card">
+                    <div class="slide-header">
+                        <div class="slide-number">Slide 3 of 15</div>
+                        <h2 class="slide-title">PPE: Your Last Line of Defense</h2>
+                        <p class="slide-subtitle">The hierarchy of hazard controls</p>
+                    </div>
+                    <div class="slide-content">
+                        <p>PPE is the <strong>least effective</strong> control method because it doesn't eliminate the hazard—it only protects the individual wearing it. OSHA requires employers to use the hierarchy of controls to reduce workplace hazards.</p>
+                        <div class="hierarchy-steps">
+                            <div class="hierarchy-step">
+                                <div class="hierarchy-number">1</div>
+                                <div class="hierarchy-content">
+                                    <h4>Elimination (Most Effective)</h4>
+                                    <p>Physically remove the hazard entirely. Example: Use water-based paints instead of solvent-based paints to eliminate toxic fume exposure.</p>
+                                </div>
+                            </div>
+                            <div class="hierarchy-step">
+                                <div class="hierarchy-number">2</div>
+                                <div class="hierarchy-content">
+                                    <h4>Substitution</h4>
+                                    <p>Replace the hazard with something less dangerous. Example: Use plastic pallets instead of wooden ones to reduce splinter injuries.</p>
+                                </div>
+                            </div>
+                            <div class="hierarchy-step">
+                                <div class="hierarchy-number">3</div>
+                                <div class="hierarchy-content">
+                                    <h4>Engineering Controls</h4>
+                                    <p>Isolate people from the hazard. Example: Install machine guards, local exhaust ventilation, or sound-dampening enclosures.</p>
+                                </div>
+                            </div>
+                            <div class="hierarchy-step">
+                                <div class="hierarchy-number">4</div>
+                                <div class="hierarchy-content">
+                                    <h4>Administrative Controls</h4>
+                                    <p>Change work procedures to reduce exposure. Example: Rotate workers, limit exposure time, implement safety procedures.</p>
+                                </div>
+                            </div>
+                            <div class="hierarchy-step">
+                                <div class="hierarchy-number">5</div>
+                                <div class="hierarchy-content">
+                                    <h4>PPE (Least Effective)</h4>
+                                    <p>Protect individual workers with equipment. Example: Safety glasses, gloves, respirators. Used when other controls aren't feasible or as an additional layer of protection.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="info-box warning">
+                            <div class="info-box-title">&#9888;&#65039; Why PPE is Last</div>
+                            <div class="info-box-content">
+                                PPE relies on proper selection, fit, use, and maintenance by each individual worker. It can fail due to damage, improper use, or poor fit. It doesn't eliminate the hazard for anyone. That's why it should only be used when better controls aren't possible or as backup protection.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 4: Six Types of PPE -->
+            <div class="slide" data-slide="4">
+                <div class="content-card">
+                    <div class="slide-header">
+                        <div class="slide-number">Slide 4 of 15</div>
+                        <h2 class="slide-title">Six Major Categories of PPE</h2>
+                        <p class="slide-subtitle">Protecting your whole body</p>
+                    </div>
+                    <div class="slide-content">
+                        <p>OSHA recognizes six main categories of PPE, each designed to protect specific body parts from specific hazards.</p>
+                        <div class="ppe-grid">
+                            <div class="ppe-card">
+                                <div class="ppe-icon">&#128083;</div>
+                                <div class="ppe-title">Eye &amp; Face</div>
+                                <div class="ppe-desc">Protects against flying particles, chemicals, radiation, and impact.</div>
+                                <div class="ppe-examples">Safety glasses, goggles, face shields, welding helmets</div>
+                            </div>
+                            <div class="ppe-card">
+                                <div class="ppe-icon">&#128119;</div>
+                                <div class="ppe-title">Head</div>
+                                <div class="ppe-desc">Protects against falling objects, bumps, and electrical hazards.</div>
+                                <div class="ppe-examples">Hard hats (Type I &amp; II), bump caps</div>
+                            </div>
+                            <div class="ppe-card">
+                                <div class="ppe-icon">&#129348;</div>
+                                <div class="ppe-title">Hand</div>
+                                <div class="ppe-desc">Protects against cuts, chemicals, temperature extremes, and vibration.</div>
+                                <div class="ppe-examples">Cut-resistant gloves, chemical gloves, heat-resistant gloves</div>
+                            </div>
+                            <div class="ppe-card">
+                                <div class="ppe-icon">&#128098;</div>
+                                <div class="ppe-title">Foot &amp; Leg</div>
+                                <div class="ppe-desc">Protects against crushing, punctures, slips, chemicals, and electrical hazards.</div>
+                                <div class="ppe-examples">Steel-toe boots, metatarsal guards, electrical hazard shoes</div>
+                            </div>
+                            <div class="ppe-card">
+                                <div class="ppe-icon">&#127911;</div>
+                                <div class="ppe-title">Hearing</div>
+                                <div class="ppe-desc">Protects against noise-induced hearing loss in loud environments (85+ dB).</div>
+                                <div class="ppe-examples">Foam earplugs, reusable earplugs, earmuffs</div>
+                            </div>
+                            <div class="ppe-card">
+                                <div class="ppe-icon">&#128567;</div>
+                                <div class="ppe-title">Respiratory</div>
+                                <div class="ppe-desc">Protects against airborne hazards including dust, fumes, gases, and vapors.</div>
+                                <div class="ppe-examples">N95 masks, half-face respirators, full-face respirators, SCBA</div>
+                            </div>
+                        </div>
+                        <div class="info-box">
+                            <div class="info-box-title">&#128161; Selecting the Right PPE</div>
+                            <div class="info-box-content">
+                                PPE must be selected based on the specific hazards present. A hazard assessment identifies what protection is needed. Never assume one type of PPE protects against all hazards—leather gloves won't protect against chemicals, and safety glasses won't protect against chemical splashes.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 5: Eye and Face Protection -->
+            <div class="slide" data-slide="5">
+                <div class="content-card">
+                    <div class="slide-header">
+                        <div class="slide-number">Slide 5 of 15</div>
+                        <h2 class="slide-title">Eye and Face Protection</h2>
+                        <p class="slide-subtitle">Protecting your vision</p>
+                    </div>
+                    <div class="slide-content">
+                        <p>Eye injuries are among the most common and preventable workplace injuries. <strong>Every day, 2,000 U.S. workers sustain job-related eye injuries</strong>—90% of which could be prevented with proper eye protection.</p>
+                        <ul class="content-list">
+                            <li><strong>Safety Glasses:</strong> Basic protection against flying particles and debris. Must have side shields. ANSI Z87.1 rated. Good for general shop work, construction, and maintenance.</li>
+                            <li><strong>Safety Goggles:</strong> Full seal around eyes. Protects against liquids, dust, and chemical splashes. Required when working with chemicals or in dusty environments. Can fit over prescription glasses.</li>
+                            <li><strong>Face Shields:</strong> Protects entire face from splashes, flying particles, and heat. Must be worn WITH safety glasses or goggles (not alone). Required for grinding, chemical handling, and some power tool operations.</li>
+                            <li><strong>Welding Helmets:</strong> Protects eyes and face from intense light, sparks, and UV radiation. Shade number varies by welding type (Shade 10-13 for most arc welding). Auto-darkening lenses available.</li>
+                        </ul>
+                        <div class="info-box warning">
+                            <div class="info-box-title">&#9888;&#65039; Common Eye Protection Mistakes</div>
+                            <div class="info-box-content">
+                                <ul>
+                                    <li>Wearing damaged or scratched eye protection (reduces visibility and protection)</li>
+                                    <li>Wearing safety glasses without side shields</li>
+                                    <li>Using face shields alone without safety glasses underneath</li>
+                                    <li>Choosing wrong lens tint for the task</li>
+                                    <li>Poor fit—gaps allow particles to enter</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="info-box success">
+                            <div class="info-box-title">&#10003; Proper Care</div>
+                            <div class="info-box-content">
+                                Clean lenses regularly with soap and water or approved cleaner. Store in protective case when not in use. Inspect for scratches, cracks, or damage before each use. Replace immediately if damaged. Never modify or alter safety eyewear.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 6: Head Protection -->
+            <div class="slide" data-slide="6">
+                <div class="content-card">
+                    <div class="slide-header">
+                        <div class="slide-number">Slide 6 of 15</div>
+                        <h2 class="slide-title">Head Protection</h2>
+                        <p class="slide-subtitle">Hard hats save lives</p>
+                    </div>
+                    <div class="slide-content">
+                        <p>Head injuries can be fatal or cause permanent disability. <strong>Hard hats are required in areas where there is potential for head injury from falling objects, bumps, or electrical hazards.</strong></p>
+                        <div class="info-box">
+                            <div class="info-box-title">&#128295; Hard Hat Types</div>
+                            <div class="info-box-content">
+                                <strong>Type I:</strong> Protects top of head from impact and penetration. Most common type.<br><br>
+                                <strong>Type II:</strong> Protects top AND sides of head from impact and penetration. Required for confined spaces and areas with side impact risks.<br><br>
+                                <strong>Class G (General):</strong> Low-voltage protection up to 2,200 volts. General purpose use.<br><br>
+                                <strong>Class E (Electrical):</strong> High-voltage protection up to 20,000 volts. Required for electrical work.<br><br>
+                                <strong>Class C (Conductive):</strong> No electrical protection. Lightweight, provides ventilation. NOT for electrical work.
+                            </div>
+                        </div>
+                        <ul class="content-list">
+                            <li><strong>When to wear:</strong> Construction sites, areas with overhead work, around heavy equipment, in confined spaces, near electrical hazards, anywhere required by your employer.</li>
+                            <li><strong>Proper wear:</strong> Wear with bill facing forward. Adjust suspension system for snug fit. Maintain 1-inch clearance between suspension and shell. Don't wear backwards unless designed for reverse wear.</li>
+                            <li><strong>Inspection:</strong> Check shell for cracks, dents, or penetration before each use. Inspect suspension system for tears, fraying, or loss of elasticity. Check for UV damage (chalky appearance, loss of color).</li>
+                            <li><strong>Replacement:</strong> Replace after ANY impact. Manufacturer recommends replacement every 5 years from manufacture date (check inside for date). Replace suspension yearly.</li>
+                        </ul>
+                        <div class="info-box danger">
+                            <div class="info-box-title">&#10060; Never Do This</div>
+                            <div class="info-box-content">
+                                <strong>Don't drill holes, paint, or modify hard hats</strong>—this weakens protection and voids ANSI certification. Don't wear hats, caps, or hoodies under hard hats—they prevent proper fit. Don't store in direct sunlight or extreme heat (degrades plastic). Don't use as a seat or step stool.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 7: Hand Protection -->
+            <div class="slide" data-slide="7">
+                <div class="content-card">
+                    <div class="slide-header">
+                        <div class="slide-number">Slide 7 of 15</div>
+                        <h2 class="slide-title">Hand Protection</h2>
+                        <p class="slide-subtitle">Choose the right glove for the job</p>
+                    </div>
+                    <div class="slide-content">
+                        <p>Hands are the most frequently injured body part. <strong>There is no "universal" glove</strong>—different hazards require different gloves. Using the wrong glove can be worse than no glove at all.</p>
+                        <ul class="content-list">
+                            <li><strong>Cut-resistant gloves (ANSI A1-A9):</strong> Protect against sharp edges, blades, glass. Higher numbers = more cut resistance. Use for handling sheet metal, glass, sharp tools. Don't use around rotating machinery—gloves can get caught.</li>
+                            <li><strong>Chemical-resistant gloves:</strong> Material depends on chemical (nitrile, neoprene, butyl, PVC, latex). Check glove's chemical resistance chart. No glove resists all chemicals. Replace when degraded or permeated.</li>
+                            <li><strong>Heat-resistant gloves:</strong> Protect from hot surfaces, welding, foundry work. Rated by temperature and contact time. Leather, Kevlar, or aluminized materials. Don't use wet—conducts heat.</li>
+                            <li><strong>Electrical-insulating gloves:</strong> Rubber gloves rated by voltage class (Class 00-4). Must be tested regularly. Leather protectors worn over rubber gloves. Only for qualified electrical workers.</li>
+                            <li><strong>General work gloves:</strong> Leather, cotton, or synthetic. Protect from abrasions, splinters, blisters. Not for chemicals or high heat.</li>
+                            <li><strong>Disposable gloves:</strong> Nitrile, latex, vinyl. Protect from light contamination and dirt. Change frequently. Not for chemicals or mechanical hazards.</li>
+                        </ul>
+                        <div class="info-box warning">
+                            <div class="info-box-title">&#9888;&#65039; Glove Safety Rules</div>
+                            <div class="info-box-content">
+                                <strong>Never wear gloves around rotating machinery</strong> (drill press, lathe, grinder)—they can catch and pull your hand in. Remove gloves when climbing ladders—reduces grip. Size matters—loose gloves reduce dexterity and can catch; tight gloves cause fatigue. Inspect before each use for holes, tears, or degradation.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 8: Foot Protection & Hearing Protection -->
+            <div class="slide" data-slide="8">
+                <div class="content-card">
+                    <div class="slide-header">
+                        <div class="slide-number">Slide 8 of 15</div>
+                        <h2 class="slide-title">Foot &amp; Hearing Protection</h2>
+                        <p class="slide-subtitle">Protecting feet and ears</p>
+                    </div>
+                    <div class="slide-content">
+                        <h3 style="font-weight: 800; margin-bottom: 16px; color: var(--secondary);">Foot Protection &#128098;</h3>
+
+                        <ul class="content-list">
+                            <li><strong>Steel-toe boots (ASTM F2413):</strong> Protect from crushing injuries (up to 75 lbs compression). Required in construction, warehouses, manufacturing. Don't wear if toes are exposed—defeats purpose.</li>
+                            <li><strong>Metatarsal guards:</strong> Protect top of foot. External or built-in. Required when heavy objects might fall and roll onto foot.</li>
+                            <li><strong>Puncture-resistant soles:</strong> Protect against nails, screws, sharp objects. Steel or composite plates in sole. Required on construction sites.</li>
+                            <li><strong>Electrical hazard (EH) boots:</strong> Insulate from electrical shock. Must meet ASTM standards. Secondary protection—not for intentional contact with electricity.</li>
+                            <li><strong>Slip-resistant shoes:</strong> Specialized tread patterns for wet or oily surfaces. Required in kitchens, food service, some manufacturing.</li>
+                        </ul>
+                        <h3 style="font-weight: 800; margin: 28px 0 16px; color: var(--secondary);">Hearing Protection &#127911;</h3>
+                        <p>Noise-induced hearing loss is permanent and cumulative. <strong>Hearing protection required at 85 dB (8-hour average)</strong> or above. That's the noise level of heavy city traffic or a kitchen blender.</p>
+                        <ul class="content-list">
+                            <li><strong>Foam earplugs:</strong> Disposable. 29-33 dB noise reduction. Must be rolled, compressed, and inserted properly. Replace daily. Most common and convenient.</li>
+                            <li><strong>Reusable earplugs:</strong> Silicone or rubber. 20-30 dB reduction. Must be cleaned regularly. More comfortable for long-term wear.</li>
+                            <li><strong>Earmuffs:</strong> 20-30+ dB reduction. Easier to fit properly than earplugs. Good for intermittent noise exposure (easy on/off). Can be worn with hard hats.</li>
+                            <li><strong>Combination (plugs + muffs):</strong> 35-40+ dB reduction. Required for extremely loud environments (&gt;105 dB). Provides maximum protection.</li>
+                        </ul>
+                        <div class="info-box danger">
+                            <div class="info-box-title">&#9888;&#65039; Common Mistakes</div>
+                            <div class="info-box-content">
+                                <strong>Foam earplugs:</strong> Most people don't insert them properly. Roll into thin cylinder, pull ear up and back, insert deeply, hold 30 seconds while foam expands. Should not stick out of ear canal.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 9: Respiratory Protection -->
+            <div class="slide" data-slide="9">
+                <div class="content-card">
+                    <div class="slide-header">
+                        <div class="slide-number">Slide 9 of 15</div>
+                        <h2 class="slide-title">Respiratory Protection</h2>
+                        <p class="slide-subtitle">Breathing safely in hazardous atmospheres</p>
+                    </div>
+                    <div class="slide-content">
+                        <p>Respiratory hazards include dust, fumes, mists, gases, vapors, and oxygen-deficient atmospheres. <strong>Respirators are the most complex PPE and have strict OSHA requirements.</strong></p>
+                        <div class="info-box danger">
+                            <div class="info-box-title">&#128680; Critical Respirator Requirements</div>
+                            <div class="info-box-content">
+                                OSHA requires a comprehensive respiratory protection program (29 CFR 1910.134) that includes:
+                                <ul>
+                                    <li>Medical evaluation before respirator use</li>
+                                    <li>Fit testing (qualitative or quantitative) annually</li>
+                                    <li>Training on proper use, limitations, and maintenance</li>
+                                    <li>Written program with SOPs</li>
+                                </ul>
+                                <strong>You cannot just grab a respirator and use it—training and fit testing are mandatory.</strong>
+                            </div>
+                        </div>
+                        <ul class="content-list">
+                            <li><strong>Filtering facepiece (N95, N99, N100):</strong> Disposable masks. Filter airborne particles. N95 = filters 95% of particles &#8805;0.3 microns. Used for dust, mists, non-oil aerosols. NOT for gases/vapors or oxygen-deficient areas. Must pass fit test.</li>
+                            <li><strong>Half-face respirator:</strong> Reusable mask covering nose and mouth. Uses replaceable cartridges/filters. Must match cartridge to hazard (organic vapor, acid gas, particulate, etc.). Requires fit testing and clean-shaven face. Good for 8-hour exposure.</li>
+                            <li><strong>Full-face respirator:</strong> Covers entire face including eyes. Better seal than half-face. Protects eyes from irritants. Provides higher protection factor. Used for higher concentrations or when eye protection needed. Requires fit testing.</li>
+                            <li><strong>Powered Air-Purifying Respirator (PAPR):</strong> Battery-powered fan pulls air through filters. Easier breathing. Works with facial hair. Hood or helmet style. More expensive but more comfortable for long use.</li>
+                            <li><strong>Self-Contained Breathing Apparatus (SCBA):</strong> Supplies own air from tank. Used in IDLH (Immediately Dangerous to Life or Health) atmospheres, oxygen-deficient areas, or unknown atmospheres. Firefighters and emergency responders. Requires extensive training.</li>
+                        </ul>
+                        <div class="info-box warning">
+                            <div class="info-box-title">&#9888;&#65039; Respirator Limitations</div>
+                            <div class="info-box-content">
+                                Air-purifying respirators (N95, half-face, full-face) do NOT supply oxygen. Never use in oxygen-deficient atmospheres (&lt;19.5% O&#8322;). Must have proper cartridge for the specific hazard. Facial hair prevents proper seal—must be clean-shaven. Check valve function before each use.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 10: Employer vs Employee Responsibilities -->
+            <div class="slide" data-slide="10">
+                <div class="content-card">
+                    <div class="slide-header">
+                        <div class="slide-number">Slide 10 of 15</div>
+                        <h2 class="slide-title">Who Pays for PPE?</h2>
+                        <p class="slide-subtitle">Employer and employee responsibilities</p>
+                    </div>
+                    <div class="slide-content">
+                        <p>OSHA requires employers to provide most PPE at no cost to employees. Both employers and employees have specific responsibilities.</p>
+                        <div class="hierarchy-steps">
+                            <div class="hierarchy-step">
+                                <div class="hierarchy-number">&#128104;&#8205;&#128188;</div>
+                                <div class="hierarchy-content">
+                                    <h4>Employer Must Provide (at No Cost)</h4>
+                                    <p>Eye protection, face shields, hard hats, gloves (except for specific exceptions), safety shoes (in some cases), hearing protection, respirators and all components. Employer pays for initial PPE, replacements due to wear or damage, and upgrades when needed.</p>
+                                </div>
+                            </div>
+                            <div class="hierarchy-step">
+                                <div class="hierarchy-number">&#128100;</div>
+                                <div class="hierarchy-content">
+                                    <h4>Employee May Be Required to Pay For</h4>
+                                    <p>Safety shoes (unless specific hazards require employer-provided footwear), prescription safety glasses (employer provides non-prescription), replacement PPE lost or intentionally damaged by employee. Most employers provide these anyway as a benefit.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <p><strong>Employee Responsibilities:</strong></p>
+                        <ul class="content-list">
+                            <li>Wear required PPE whenever it's needed</li>
+                            <li>Properly care for, clean, and maintain PPE</li>
+                            <li>Inspect PPE before each use</li>
+                            <li>Report damaged or worn PPE immediately</li>
+                            <li>Follow all PPE policies and procedures</li>
+                            <li>Participate in required training</li>
+                            <li>Get fit-tested for respirators annually</li>
+                        </ul>
+                        <div class="info-box warning">
+                            <div class="info-box-title">&#9888;&#65039; Discipline for Non-Compliance</div>
+                            <div class="info-box-content">
+                                Employers can discipline employees who refuse to wear required PPE. However, employees have the right to refuse work if they believe PPE is inadequate or unsafe. Report concerns to your supervisor or OSHA.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 11: PPE Inspection & Maintenance -->
+            <div class="slide" data-slide="11">
+                <div class="content-card">
+                    <div class="slide-header">
+                        <div class="slide-number">Slide 11 of 15</div>
+                        <h2 class="slide-title">PPE Inspection &amp; Maintenance</h2>
+                        <p class="slide-subtitle">Keep your PPE in working condition</p>
+                    </div>
+                    <div class="slide-content">
+                        <p><strong>Inspect ALL PPE before each use.</strong> Damaged or worn PPE doesn't protect you. Replace immediately when defects are found.</p>
+                        <div class="hierarchy-steps">
+                            <div class="hierarchy-step">
+                                <div class="hierarchy-number">1</div>
+                                <div class="hierarchy-content">
+                                    <h4>Daily Inspection</h4>
+                                    <p>Before starting work, visually and physically inspect each piece of PPE. Look for cracks, tears, holes, worn spots, missing parts, chemical degradation, or any damage that affects protection. Don't use damaged PPE.</p>
+                                </div>
+                            </div>
+                            <div class="hierarchy-step">
+                                <div class="hierarchy-number">2</div>
+                                <div class="hierarchy-content">
+                                    <h4>Cleaning</h4>
+                                    <p>Clean PPE according to manufacturer instructions. Remove dirt, contaminants, and residues. Use approved cleaners. Allow to dry completely. Never use harsh chemicals that degrade materials. Clean respirators after each use.</p>
+                                </div>
+                            </div>
+                            <div class="hierarchy-step">
+                                <div class="hierarchy-number">3</div>
+                                <div class="hierarchy-content">
+                                    <h4>Storage</h4>
+                                    <p>Store PPE in clean, dry location away from direct sunlight, chemicals, and extreme temperatures. Hard hats stored in hot vehicles degrade faster. Keep in protective bags or cases. Don't leave on floor or in contaminated areas.</p>
+                                </div>
+                            </div>
+                            <div class="hierarchy-step">
+                                <div class="hierarchy-number">4</div>
+                                <div class="hierarchy-content">
+                                    <h4>Replacement Schedule</h4>
+                                    <p>Follow manufacturer replacement schedules. Hard hats: 5 years from manufacture. Respirator cartridges: Based on exposure and use. Safety glasses: When scratched or damaged. Gloves: When degraded, permeated, or damaged. Hearing protection: Per manufacturer guidance.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="info-box danger">
+                            <div class="info-box-title">&#10060; Never Use Damaged PPE</div>
+                            <div class="info-box-content">
+                                <strong>Remove damaged PPE from service immediately.</strong> Don't try to repair it yourself. Tag as "defective" so others don't use it. Report to supervisor for replacement. Using damaged PPE is worse than no PPE—it gives false sense of security.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 12: Common PPE Mistakes -->
+            <div class="slide" data-slide="12">
+                <div class="content-card">
+                    <div class="slide-header">
+                        <div class="slide-number">Slide 12 of 15</div>
+                        <h2 class="slide-title">Common PPE Mistakes</h2>
+                        <p class="slide-subtitle">Learn from others' errors</p>
+                    </div>
+                    <div class="slide-content">
+                        <p>These mistakes happen frequently and can result in serious injuries. Learn to avoid them!</p>
+                        <div class="mistakes-grid">
+                            <div class="mistake-card">
+                                <div class="mistake-title">&#10060; Wrong PPE for the Hazard</div>
+                                <div class="mistake-desc">Using cloth gloves for chemical handling, or safety glasses instead of goggles for liquid chemicals. Always match PPE to the specific hazard. Check your employer's hazard assessment.</div>
+                            </div>
+                            <div class="mistake-card">
+                                <div class="mistake-title">&#10060; Improper Fit</div>
+                                <div class="mistake-desc">PPE that's too large or too small doesn't protect properly. Loose gloves get caught in machinery. Ill-fitting respirators don't seal. Get properly fitted PPE.</div>
+                            </div>
+                            <div class="mistake-card">
+                                <div class="mistake-title">&#10060; Wearing Damaged PPE</div>
+                                <div class="mistake-desc">Scratched safety glasses, cracked hard hats, torn gloves, or expired respirator cartridges compromise protection. Inspect before each use and replace immediately when damaged.</div>
+                            </div>
+                            <div class="mistake-card">
+                                <div class="mistake-title">&#10060; Removing PPE Too Early</div>
+                                <div class="mistake-desc">Taking off gloves before leaving contaminated area, removing respirator while still in hazardous atmosphere. Keep PPE on until completely out of hazard zone.</div>
+                            </div>
+                            <div class="mistake-card">
+                                <div class="mistake-title">&#10060; Poor Maintenance</div>
+                                <div class="mistake-desc">Not cleaning PPE, storing in contaminated areas, leaving in direct sunlight or hot vehicles. PPE degrades faster without proper care. Follow manufacturer maintenance instructions.</div>
+                            </div>
+                            <div class="mistake-card">
+                                <div class="mistake-title">&#10060; Assuming One PPE Protects Against Everything</div>
+                                <div class="mistake-desc">Leather gloves don't protect against chemicals. N95 masks don't protect against vapors. Safety glasses don't protect against liquid splashes. Know your PPE's limitations.</div>
+                            </div>
+                            <div class="mistake-card">
+                                <div class="mistake-title">&#10060; Gloves on Rotating Equipment</div>
+                                <div class="mistake-desc">Wearing gloves around drill presses, lathes, grinders, or other rotating machinery. Gloves can catch and pull hand into machine. Remove gloves for these tasks.</div>
+                            </div>
+                            <div class="mistake-card">
+                                <div class="mistake-title">&#10060; Not Reporting Problems</div>
+                                <div class="mistake-desc">Failing to report ill-fitting PPE, damaged equipment, or inadequate protection. Your safety depends on having proper PPE. Speak up if something isn't right.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 13: Quiz Question 1 -->
+            <div class="slide" data-slide="13">
+                <div class="content-card">
+                    <div class="slide-header">
+                        <div class="slide-number">Quiz Question 1 of 3</div>
+                        <h2 class="slide-title">Knowledge Check</h2>
+                    </div>
+                    <div class="slide-content">
+                        <div class="quiz-question">
+                            According to the hierarchy of controls, where does PPE rank in terms of effectiveness?
+                        </div>
+                        <div class="quiz-options" id="q1-options">
+                            <div class="quiz-option" data-q="1" data-val="A">Most effective - first line of defense</div>
+                            <div class="quiz-option" data-q="1" data-val="B">Moderately effective - third line of defense</div>
+                            <div class="quiz-option" data-q="1" data-val="C">Least effective - last line of defense</div>
+                            <div class="quiz-option" data-q="1" data-val="D">Equally effective as all other controls</div>
+                        </div>
+                        <div class="quiz-feedback" id="fb-1"></div>
+                        <div class="quiz-btn-group">
+                            <button class="btn btn-gold" id="submit-1" onclick="submitQuiz(1)" disabled>Submit Answer</button>
+                            <button class="btn btn-outline" id="next-q-1" onclick="nextSlide()" style="display: none;">Next Question &#8594;</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 14: Quiz Question 2 -->
+            <div class="slide" data-slide="14">
+                <div class="content-card">
+                    <div class="slide-header">
+                        <div class="slide-number">Quiz Question 2 of 3</div>
+                        <h2 class="slide-title">Knowledge Check</h2>
+                    </div>
+                    <div class="slide-content">
+                        <div class="quiz-question">
+                            Which of the following is a common mistake that compromises PPE effectiveness?
+                        </div>
+                        <div class="quiz-options" id="q2-options">
+                            <div class="quiz-option" data-q="2" data-val="A">Inspecting PPE before each use</div>
+                            <div class="quiz-option" data-q="2" data-val="B">Wearing gloves around rotating machinery like drill presses</div>
+                            <div class="quiz-option" data-q="2" data-val="C">Cleaning and storing PPE properly</div>
+                            <div class="quiz-option" data-q="2" data-val="D">Reporting damaged PPE to your supervisor</div>
+                        </div>
+                        <div class="quiz-feedback" id="fb-2"></div>
+                        <div class="quiz-btn-group">
+                            <button class="btn btn-gold" id="submit-2" onclick="submitQuiz(2)" disabled>Submit Answer</button>
+                            <button class="btn btn-outline" id="next-q-2" onclick="nextSlide()" style="display: none;">Next Question &#8594;</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 15: Quiz Question 3 -->
+            <div class="slide" data-slide="15">
+                <div class="content-card">
+                    <div class="slide-header">
+                        <div class="slide-number">Quiz Question 3 of 3</div>
+                        <h2 class="slide-title">Knowledge Check</h2>
+                    </div>
+                    <div class="slide-content">
+                        <div class="quiz-question">
+                            Who is responsible for providing most PPE to employees at no cost?
+                        </div>
+                        <div class="quiz-options" id="q3-options">
+                            <div class="quiz-option" data-q="3" data-val="A">Employees must purchase their own PPE</div>
+                            <div class="quiz-option" data-q="3" data-val="B">Employers must provide most PPE at no cost</div>
+                            <div class="quiz-option" data-q="3" data-val="C">OSHA provides all PPE to workers</div>
+                            <div class="quiz-option" data-q="3" data-val="D">PPE costs are split 50/50 between employer and employee</div>
+                        </div>
+                        <div class="quiz-feedback" id="fb-3"></div>
+                        <div class="quiz-btn-group">
+                            <button class="btn btn-gold" id="submit-3" onclick="submitQuiz(3)" disabled>Submit Answer</button>
+                            <button class="btn btn-outline" id="next-q-3" onclick="nextSlide()" style="display: none;">View Results &#8594;</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 16: Results -->
+            <div class="slide" data-slide="16">
+                <div class="results-card">
+                    <div class="results-icon" id="rIcon">&#127919;</div>
+                    <div class="results-score" id="rScore">0 / 3</div>
+                    <h2 class="results-title" id="rTitle">Quiz Complete</h2>
+                    <p class="results-message" id="rMsg">Calculating your results...</p>
+                    <div class="results-katie" id="rKatie">"Let's see how you did!"</div>
+                    <div class="results-buttons" id="rBtns">
+                        <button class="btn btn-gold">Loading...</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Navigation Bar -->
+    <nav class="nav-bar">
+        <div class="nav-inner">
+            <button class="nav-btn" id="prevBtn" onclick="prevSlide()">
+                &#8592; Previous
+            </button>
+            <span class="slide-indicator" id="slideIndicator">Slide 1 of 15</span>
+            <button class="nav-btn nav-next" id="nextBtn" onclick="nextSlide()">
+                Next &#8594;
+            </button>
+        </div>
+    </nav>
+    <script>
+    (function() {
+        'use strict';
+        // ═══ CONFIG ═══
+        var TOTAL_SLIDES = 16;
+        var TOTAL_CONTENT = 15;
+        var MODULE_KEY = 'ppe';
+        // ═══ STATE ═══
+        var currentSlide = 1;
+        var quizAnswers = { 1: null, 2: null, 3: null };
+        var quizSubmitted = { 1: false, 2: false, 3: false };
+        var quizScore = 0;
+        // Quiz correct answers
+        var quizCorrectAnswers = {
+            1: 'C',  // Least effective - last line of defense
+            2: 'B',  // Wearing gloves around rotating machinery
+            3: 'B'   // Employers must provide most PPE at no cost
+        };
+        // Feedback messages
+        var feedbackMessages = {
+            1: {
+                correct: '\u2713 Correct! PPE is the least effective control because it doesn\'t eliminate the hazard and relies on proper use by each worker.',
+                incorrect: '\u2717 Incorrect. PPE is the LEAST effective control and should only be used when other controls aren\'t feasible or as additional protection.'
+            },
+            2: {
+                correct: '\u2713 Correct! Wearing gloves around rotating machinery is extremely dangerous\u2014they can catch and pull your hand into the machine.',
+                incorrect: '\u2717 Incorrect. Wearing gloves around rotating machinery like drill presses is a serious mistake that can cause severe injuries.'
+            },
+            3: {
+                correct: '\u2713 Correct! OSHA requires employers to provide most PPE at no cost to employees, with limited exceptions.',
+                incorrect: '\u2717 Incorrect. Employers are required by OSHA to provide most PPE at no cost to employees.'
+            }
+        };
+        // ═══ NAVIGATION ═══
+        function goToSlide(n) {
+            if (n < 1 || n > TOTAL_SLIDES) return;
+            currentSlide = n;
+            updateUI();
+            saveSlideProgress();
+        }
+        window.nextSlide = function() {
+            goToSlide(currentSlide + 1);
+        };
+        window.prevSlide = function() {
+            goToSlide(currentSlide - 1);
+        };
+        // ═══ UI UPDATE ═══
+        function updateUI() {
+            document.querySelectorAll('.slide').forEach(function(s) {
+                s.classList.remove('active');
+            });
+            var activeSlide = document.querySelector('[data-slide="' + currentSlide + '"]');
+            if (activeSlide) {
+                activeSlide.classList.add('active');
+            }
+            var progressPct = ((currentSlide - 1) / (TOTAL_CONTENT - 1)) * 100;
+            document.getElementById('progressFill').style.width = Math.min(100, progressPct) + '%';
+            document.getElementById('progressPct').textContent = Math.round(Math.min(100, progressPct)) + '%';
+
+            if (currentSlide <= TOTAL_CONTENT) {
+                document.getElementById('progressLabel').textContent = 'Slide ' + currentSlide + ' of ' + TOTAL_CONTENT;
+                document.getElementById('slideIndicator').textContent = 'Slide ' + currentSlide + ' of ' + TOTAL_CONTENT;
+            } else {
+                document.getElementById('progressLabel').textContent = 'Results';
+                document.getElementById('slideIndicator').textContent = 'Results';
+            }
+            var prevBtn = document.getElementById('prevBtn');
+            var nextBtn = document.getElementById('nextBtn');
+
+            prevBtn.disabled = currentSlide === 1;
+            nextBtn.disabled = currentSlide === TOTAL_SLIDES;
+            if (currentSlide === 16) {
+                buildResults();
+            }
+            document.querySelector('.content-wrapper').scrollTop = 0;
+        }
+        // ═══ KEYBOARD NAV ═══
+        document.addEventListener('keydown', function(e) {
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+            if (e.key === 'ArrowRight' || e.key === 'Right') {
+                e.preventDefault();
+                nextSlide();
+            } else if (e.key === 'ArrowLeft' || e.key === 'Left') {
+                e.preventDefault();
+                prevSlide();
+            }
+        });
+        // ═══ QUIZ HANDLING ═══
+        document.querySelectorAll('.quiz-option').forEach(function(opt) {
+            opt.addEventListener('click', function() {
+                var qNum = parseInt(this.getAttribute('data-q'));
+                if (quizSubmitted[qNum]) return;
+                var container = document.getElementById('q' + qNum + '-options');
+                container.querySelectorAll('.quiz-option').forEach(function(o) {
+                    o.classList.remove('selected');
+                });
+                this.classList.add('selected');
+                quizAnswers[qNum] = this.getAttribute('data-val');
+                document.getElementById('submit-' + qNum).disabled = false;
+            });
+        });
+        window.submitQuiz = function(qNum) {
+            if (quizSubmitted[qNum]) return;
+            quizSubmitted[qNum] = true;
+            var userAnswer = quizAnswers[qNum];
+            var correctAnswer = quizCorrectAnswers[qNum];
+            var isCorrect = (userAnswer === correctAnswer);
+            var container = document.getElementById('q' + qNum + '-options');
+            container.querySelectorAll('.quiz-option').forEach(function(opt) {
+                opt.classList.add('disabled');
+                var val = opt.getAttribute('data-val');
+                if (val === correctAnswer) {
+                    opt.classList.add('correct');
+                } else if (opt.classList.contains('selected') && !isCorrect) {
+                    opt.classList.add('incorrect');
+                }
+            });
+            var fb = document.getElementById('fb-' + qNum);
+            if (isCorrect) {
+                fb.textContent = feedbackMessages[qNum].correct;
+                fb.className = 'quiz-feedback show correct-fb';
+                quizScore++;
+            } else {
+                fb.textContent = feedbackMessages[qNum].incorrect;
+                fb.className = 'quiz-feedback show incorrect-fb';
+            }
+            document.getElementById('submit-' + qNum).style.display = 'none';
+            document.getElementById('next-q-' + qNum).style.display = '';
+        };
+        // ═══ BUILD RESULTS ═══
+        function buildResults() {
+            var icon = document.getElementById('rIcon');
+            var score = document.getElementById('rScore');
+            var title = document.getElementById('rTitle');
+            var msg = document.getElementById('rMsg');
+            var btns = document.getElementById('rBtns');
+            var katie = document.getElementById('rKatie');
+            score.textContent = quizScore + ' / 3';
+            if (quizScore === 3) {
+                icon.textContent = '\uD83C\uDF89';
+                title.textContent = 'Perfect Score!';
+                msg.textContent = 'Outstanding! You understand PPE selection, use, and maintenance. You\'re ready to protect yourself properly on the job.';
+                btns.innerHTML = '<button class="btn btn-success" onclick="completeModule()">\u2713 Complete Module & Return to Dashboard</button>';
+                katie.textContent = '"Excellent work! Remember: PPE is your last line of defense. Always inspect before use and report any problems immediately!"';
+            } else if (quizScore >= 2) {
+                icon.textContent = '\u2705';
+                title.textContent = 'You Passed!';
+                msg.textContent = 'Great job! You demonstrated solid understanding of PPE fundamentals.';
+                btns.innerHTML = '<button class="btn btn-success" onclick="completeModule()">\u2713 Complete Module & Return to Dashboard</button>';
+                katie.textContent = '"Well done! Keep these principles in mind every time you use PPE. Your safety depends on it!"';
+            } else {
+                icon.textContent = '\uD83D\uDCDA';
+                title.textContent = 'Not Quite Yet';
+                msg.textContent = 'You need 2 out of 3 correct to pass this module. Review the lesson and try again!';
+                btns.innerHTML = '<button class="btn btn-gold" onclick="retakeQuiz()">\u21BB Retake Quiz</button>' +
+                    '<button class="btn btn-outline" onclick="goToSlide(3)">\u2191 Review Lesson</button>';
+                katie.textContent = '"Don\'t worry! PPE is complex. Review the slides carefully and give it another try!"';
+            }
+            saveQuizProgress();
+        }
+        // ═══ RETAKE QUIZ ═══
+        window.retakeQuiz = function() {
+            quizAnswers = { 1: null, 2: null, 3: null };
+            quizSubmitted = { 1: false, 2: false, 3: false };
+            quizScore = 0;
+            for (var q = 1; q <= 3; q++) {
+                var container = document.getElementById('q' + q + '-options');
+                container.querySelectorAll('.quiz-option').forEach(function(opt) {
+                    opt.classList.remove('selected', 'correct', 'incorrect', 'disabled');
+                });
+                document.getElementById('fb-' + q).className = 'quiz-feedback';
+                document.getElementById('fb-' + q).textContent = '';
+                document.getElementById('submit-' + q).style.display = '';
+                document.getElementById('submit-' + q).disabled = true;
+                document.getElementById('next-q-' + q).style.display = 'none';
+            }
+            goToSlide(13);
+        };
+        // ═══ LOCAL STORAGE ═══
+        function getProgress() {
+            try {
+                var d = localStorage.getItem('safetyverse-progress');
+                return d ? JSON.parse(d) : {};
+            } catch(e) { return {}; }
+        }
+        function saveSlideProgress() {
+            try {
+                var p = getProgress();
+                if (!p.modules) p.modules = {};
+                if (!p.modules[MODULE_KEY]) {
+                    p.modules[MODULE_KEY] = { completed: false, quizScore: 0, attempts: 0, lastAttempt: null };
+                }
+                p.modules[MODULE_KEY].currentSlide = currentSlide;
+                p.modules[MODULE_KEY].totalSlides = TOTAL_SLIDES;
+                localStorage.setItem('safetyverse-progress', JSON.stringify(p));
+            } catch(e) {}
+        }
+        function saveQuizProgress() {
+            try {
+                var p = getProgress();
+                if (!p.modules) p.modules = {};
+                if (!p.modules[MODULE_KEY]) {
+                    p.modules[MODULE_KEY] = { completed: false, quizScore: 0, attempts: 0 };
+                }
+                var mod = p.modules[MODULE_KEY];
+                mod.quizScore = quizScore;
+                mod.attempts = (mod.attempts || 0) + 1;
+                mod.lastAttempt = new Date().toISOString();
+                if (quizScore >= 2) mod.completed = true;
+                localStorage.setItem('safetyverse-progress', JSON.stringify(p));
+            } catch(e) {}
+        }
+        window.completeModule = function() {
+            try {
+                var p = getProgress();
+                if (!p.modules) p.modules = {};
+                if (!p.modules[MODULE_KEY]) {
+                    p.modules[MODULE_KEY] = { quizScore: 0, attempts: 0 };
+                }
+                p.modules[MODULE_KEY].completed = true;
+                p.modules[MODULE_KEY].completedAt = new Date().toISOString();
+                p.modules[MODULE_KEY].quizScore = quizScore;
+                localStorage.setItem('safetyverse-progress', JSON.stringify(p));
+            } catch(e) {}
+            window.location.href = '../../user-dashboard/index.html';
+        };
+        // ═══ RESTORE PROGRESS ON LOAD ═══
+        function restoreProgress() {
+            try {
+                var p = getProgress();
+                if (p.modules && p.modules[MODULE_KEY]) {
+                    var mod = p.modules[MODULE_KEY];
+                    if (mod.completed) {
+                        var introCard = document.querySelector('.intro-card');
+                        if (introCard) {
+                            var badge = document.createElement('div');
+                            badge.style.cssText = 'position:absolute;top:20px;right:20px;background:var(--success);color:white;font-size:12px;font-weight:700;padding:5px 16px;border-radius:20px;z-index:5;';
+                            badge.textContent = '\u2713 Completed';
+                            introCard.appendChild(badge);
+                        }
+                    }
+                }
+            } catch(e) {}
+        }
+        // ═══ INIT ═══
+        restoreProgress();
+        updateUI();
+    })();
+    </script>
+</body>
+</html>

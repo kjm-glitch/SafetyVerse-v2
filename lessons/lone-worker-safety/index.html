@@ -1,0 +1,2059 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="logo.png?v=2">
+    <title>Module 19: Lone Worker Safety - SafetyVerse</title>
+    <style>
+        /* ═══════════════════════════════════════════
+           CSS VARIABLES & RESET
+           ═══════════════════════════════════════════ */
+        :root {
+            --primary: #FFD700;
+            --primary-dark: #E6C200;
+            --secondary: #FF8C00;
+            --secondary-dark: #E67A00;
+            --bg-clay: #F5E6D3;
+            --bg-clay-dark: #E8D5C0;
+            --bg-clay-light: #FAF0E6;
+            --text-dark: #333333;
+            --text-medium: #555555;
+            --text-light: #777777;
+            --accent-black: #1A1A1A;
+            --white: #FFFFFF;
+            --success: #4CAF50;
+            --success-dark: #388E3C;
+            --error: #E53935;
+            --error-dark: #C62828;
+            --info: #2196F3;
+            --warning: #FF9800;
+            --lone-blue: #1565C0;
+            --shadow-soft: 0 4px 15px rgba(0,0,0,0.1);
+            --shadow-medium: 0 6px 25px rgba(0,0,0,0.15);
+            --shadow-hard: 0 8px 30px rgba(0,0,0,0.2);
+            --shadow-clay: 4px 4px 0px rgba(0,0,0,0.15), inset 0 2px 4px rgba(255,255,255,0.3);
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 20px;
+            --radius-xl: 28px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --font-heading: 'Segoe UI', 'Arial Black', sans-serif;
+            --font-body: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body {
+            height: 100%;
+            overflow: hidden;
+        }
+        body {
+            font-family: var(--font-body);
+            background-color: var(--bg-clay);
+            color: var(--text-dark);
+            line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+        }
+        /* Clay texture */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 9999;
+            background-image:
+                radial-gradient(circle at 20% 50%, rgba(139,90,43,0.03) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(139,90,43,0.02) 0%, transparent 50%),
+                radial-gradient(circle at 50% 80%, rgba(139,90,43,0.03) 0%, transparent 50%);
+        }
+        /* ═══════════════════════════════════════════
+           HEADER
+           ═══════════════════════════════════════════ */
+        .header {
+            background: linear-gradient(180deg, var(--accent-black) 0%, #2A2A2A 100%);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            border-bottom: 4px solid var(--primary);
+            z-index: 100;
+            flex-shrink: 0;
+        }
+        .header-inner {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 64px;
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            flex-shrink: 0;
+        }
+        .logo-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .logo-icon img {
+            display: block;
+            height: 50px;
+            width: auto;
+            image-rendering: -webkit-optimize-contrast;
+            image-rendering: crisp-edges;
+            box-shadow: 4px 4px 0px rgba(0,0,0,0.15);
+            border-radius: 12px;
+            transition: transform 0.2s ease;
+        }
+        .logo-text {
+            font-family: var(--font-heading);
+            font-size: 22px; font-weight: 900;
+            color: var(--white);
+            letter-spacing: -0.5px;
+        }
+        .logo-text em {
+            color: var(--primary);
+            font-style: normal;
+        }
+        .header-center {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        .header-module-tag {
+            background: rgba(255,215,0,0.15);
+            color: var(--primary);
+            font-size: 11px; font-weight: 800;
+            padding: 3px 10px;
+            border-radius: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+        }
+        .header-module-title {
+            color: rgba(255,255,255,0.8);
+            font-size: 14px; font-weight: 600;
+        }
+        .back-btn {
+            display: flex; align-items: center; gap: 6px;
+            text-decoration: none;
+            color: rgba(255,255,255,0.7);
+            font-size: 13px; font-weight: 600;
+            padding: 7px 14px;
+            border-radius: var(--radius-sm);
+            transition: var(--transition);
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .back-btn:hover {
+            color: var(--white);
+            background: rgba(255,255,255,0.12);
+            border-color: rgba(255,255,255,0.2);
+        }
+        /* ═══════════════════════════════════════════
+           PROGRESS BAR
+           ═══════════════════════════════════════════ */
+        .progress-bar {
+            background: var(--accent-black);
+            border-bottom: 1px solid rgba(255,215,0,0.15);
+            flex-shrink: 0;
+            z-index: 99;
+        }
+        .progress-bar-inner {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 8px 24px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+        .progress-label {
+            font-size: 12px; font-weight: 700;
+            color: rgba(255,255,255,0.5);
+            white-space: nowrap;
+            min-width: 90px;
+        }
+        .progress-track {
+            flex: 1;
+            height: 6px;
+            background: rgba(255,255,255,0.08);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 3px;
+            transition: width 0.4s ease;
+        }
+        .progress-pct {
+            font-size: 12px; font-weight: 700;
+            color: var(--primary);
+            min-width: 40px;
+            text-align: right;
+        }
+        /* ═══════════════════════════════════════════
+           MAIN CONTENT AREA
+           ═══════════════════════════════════════════ */
+        .content-wrapper {
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 40px 24px 100px;
+        }
+        /* ═══════════════════════════════════════════
+           SLIDES
+           ═══════════════════════════════════════════ */
+        .slide {
+            display: none;
+            animation: slideIn 0.3s ease;
+        }
+        .slide.active { display: block; }
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        /* Intro Card (Slide 1) */
+        .intro-card {
+            background: linear-gradient(135deg, #1565C0 0%, #0D47A1 100%);
+            border-radius: var(--radius-xl);
+            padding: 60px 50px;
+            box-shadow: var(--shadow-hard);
+            color: var(--white);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .intro-card::before {
+            content: '';
+            position: absolute;
+            top: -100px; right: -100px;
+            width: 300px; height: 300px;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+        }
+        .intro-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+        }
+        .intro-title {
+            font-family: var(--font-heading);
+            font-size: 48px; font-weight: 900;
+            margin-bottom: 12px;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.2);
+        }
+        .intro-subtitle {
+            font-size: 20px;
+            margin-bottom: 30px;
+            opacity: 0.95;
+        }
+        .intro-meta {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            flex-wrap: wrap;
+        }
+        .intro-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 15px; font-weight: 600;
+        }
+        .intro-meta-item span:first-child {
+            font-size: 20px;
+        }
+        /* Content Card */
+        .content-card {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            padding: 50px;
+            box-shadow: var(--shadow-medium);
+            margin-bottom: 30px;
+        }
+        .slide-header {
+            margin-bottom: 35px;
+        }
+        .slide-number {
+            font-size: 11px; font-weight: 800;
+            color: var(--text-light);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 10px;
+        }
+        .slide-title {
+            font-family: var(--font-heading);
+            font-size: 36px; font-weight: 900;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+            line-height: 1.2;
+        }
+        .slide-subtitle {
+            font-size: 17px;
+            color: var(--text-medium);
+        }
+        .slide-content {
+            font-size: 17px;
+            line-height: 1.8;
+            color: var(--text-dark);
+        }
+        .slide-content p {
+            margin-bottom: 20px;
+        }
+        .slide-content strong {
+            color: var(--lone-blue);
+            font-weight: 700;
+        }
+        /* Katie Message */
+        .katie-message {
+            display: flex;
+            align-items: flex-start;
+            gap: 18px;
+            background: linear-gradient(135deg, #FFFDE7 0%, #FFF9C4 100%);
+            border-left: 5px solid var(--primary);
+            padding: 24px;
+            border-radius: var(--radius-md);
+            margin-bottom: 35px;
+            box-shadow: 0 3px 12px rgba(255,215,0,0.15);
+        }
+        .katie-avatar {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            object-fit: cover;
+            object-position: center 48%;
+            background: white;
+            border: 4px solid var(--primary);
+            padding: 6px;
+            flex-shrink: 0;
+            box-shadow: var(--shadow-soft);
+        }
+        .katie-bubble {
+            flex: 1;
+        }
+        .katie-name {
+            font-weight: 800;
+            color: var(--secondary);
+            margin-bottom: 8px;
+            font-size: 15px;
+        }
+        .katie-text {
+            font-size: 16px;
+            color: var(--text-dark);
+            line-height: 1.7;
+        }
+        /* Info Boxes */
+        .info-box {
+            background: linear-gradient(135deg, #E3F2FD 0%, #BBDEFB 100%);
+            border-left: 5px solid var(--info);
+            padding: 22px 24px;
+            border-radius: var(--radius-md);
+            margin: 28px 0;
+        }
+        .info-box.warning {
+            background: linear-gradient(135deg, #FFF3E0 0%, #FFE0B2 100%);
+            border-left-color: var(--warning);
+        }
+        .info-box.danger {
+            background: linear-gradient(135deg, #FFEBEE 0%, #FFCDD2 100%);
+            border-left-color: var(--error);
+        }
+        .info-box.success {
+            background: linear-gradient(135deg, #E8F5E9 0%, #C8E6C9 100%);
+            border-left-color: var(--success);
+        }
+        .info-box-title {
+            font-weight: 800;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 16px;
+        }
+        .info-box-content {
+            font-size: 15px;
+            line-height: 1.7;
+        }
+        .info-box-content ul, .info-box-content ol {
+            margin-top: 10px;
+            padding-left: 20px;
+        }
+        .info-box-content li {
+            margin-bottom: 6px;
+        }
+        /* Lists */
+        .content-list {
+            list-style: none;
+            margin: 28px 0;
+        }
+        .content-list li {
+            padding: 14px 0 14px 36px;
+            position: relative;
+            border-bottom: 1px solid rgba(0,0,0,0.06);
+            font-size: 16px;
+        }
+        .content-list li:last-child {
+            border-bottom: none;
+        }
+        .content-list li::before {
+            content: '&#x1F464;';
+            position: absolute;
+            left: 8px;
+            font-size: 18px;
+        }
+        /* Worker Types Grid */
+        .worker-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin: 28px 0;
+        }
+        .worker-card {
+            background: var(--bg-clay-light);
+            border: 3px solid var(--lone-blue);
+            border-radius: var(--radius-md);
+            padding: 24px;
+            transition: var(--transition);
+        }
+        .worker-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-medium);
+        }
+        .worker-icon {
+            font-size: 40px;
+            margin-bottom: 12px;
+            text-align: center;
+        }
+        .worker-title {
+            font-weight: 900;
+            font-size: 18px;
+            color: var(--lone-blue);
+            margin-bottom: 10px;
+            font-family: var(--font-heading);
+            text-align: center;
+        }
+        .worker-desc {
+            font-size: 14px;
+            color: var(--text-dark);
+            line-height: 1.6;
+        }
+        /* Hazard Grid */
+        .hazard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 18px;
+            margin: 28px 0;
+        }
+        .hazard-card {
+            background: linear-gradient(135deg, #FFEBEE 0%, #FFCDD2 100%);
+            border-left: 5px solid var(--error);
+            border-radius: var(--radius-md);
+            padding: 20px;
+        }
+        .hazard-title {
+            font-weight: 800;
+            font-size: 16px;
+            color: var(--error);
+            margin-bottom: 8px;
+        }
+        .hazard-desc {
+            font-size: 14px;
+            color: var(--text-dark);
+            line-height: 1.6;
+        }
+        /* Steps Grid */
+        .steps-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin: 28px 0;
+        }
+        .step-card {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            background: var(--bg-clay-light);
+            padding: 20px;
+            border-radius: var(--radius-md);
+            border-left: 5px solid var(--lone-blue);
+        }
+        .step-number {
+            background: var(--lone-blue);
+            color: var(--white);
+            min-width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+        .step-content h5 {
+            font-weight: 800;
+            margin-bottom: 6px;
+            color: var(--text-dark);
+            font-size: 16px;
+        }
+        .step-content p {
+            font-size: 14px;
+            color: var(--text-medium);
+            line-height: 1.6;
+            margin: 0;
+        }
+        /* Device Grid */
+        .device-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 18px;
+            margin: 28px 0;
+        }
+        .device-card {
+            background: var(--bg-clay-light);
+            border: 3px solid var(--success);
+            border-radius: var(--radius-md);
+            padding: 20px;
+            text-align: center;
+        }
+        .device-icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+        }
+        .device-title {
+            font-weight: 900;
+            font-size: 16px;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+        }
+        .device-desc {
+            font-size: 13px;
+            color: var(--text-medium);
+            line-height: 1.5;
+        }
+        /* ═══════════════════════════════════════════
+           QUIZ STYLES
+           ═══════════════════════════════════════════ */
+        .quiz-question {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 28px;
+            line-height: 1.5;
+        }
+        .quiz-options {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            margin-bottom: 24px;
+        }
+        .quiz-option {
+            background: var(--bg-clay-light);
+            border: 3px solid var(--bg-clay-dark);
+            padding: 18px 24px;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 16px;
+            font-weight: 600;
+            position: relative;
+        }
+        .quiz-option:hover:not(.disabled) {
+            background: var(--bg-clay);
+            border-color: var(--primary);
+            transform: translateX(6px);
+        }
+        .quiz-option.selected {
+            background: var(--primary);
+            border-color: var(--primary-dark);
+            color: var(--accent-black);
+        }
+        .quiz-option.correct {
+            background: var(--success);
+            border-color: var(--success-dark);
+            color: var(--white);
+        }
+        .quiz-option.incorrect {
+            background: var(--error);
+            border-color: var(--error-dark);
+            color: var(--white);
+        }
+        .quiz-option.disabled {
+            cursor: default;
+        }
+        .quiz-feedback {
+            display: none;
+            padding: 18px 22px;
+            border-radius: var(--radius-md);
+            font-size: 16px;
+            line-height: 1.7;
+            margin-top: 20px;
+        }
+        .quiz-feedback.show {
+            display: block;
+        }
+        .quiz-feedback.correct-fb {
+            background: #E8F5E9;
+            color: #2E7D32;
+            border-left: 5px solid var(--success);
+        }
+        .quiz-feedback.incorrect-fb {
+            background: #FFEBEE;
+            color: #C62828;
+            border-left: 5px solid var(--error);
+        }
+        /* Quiz Buttons */
+        .quiz-btn-group {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+        }
+        /* Results Screen */
+        .results-card {
+            background: var(--white);
+            border-radius: var(--radius-xl);
+            padding: 60px 50px;
+            box-shadow: var(--shadow-hard);
+            text-align: center;
+        }
+        .results-icon {
+            font-size: 100px;
+            margin-bottom: 24px;
+            animation: scaleIn 0.6s ease;
+        }
+        @keyframes scaleIn {
+            from { transform: scale(0) rotate(-180deg); }
+            to { transform: scale(1) rotate(0); }
+        }
+        .results-score {
+            font-family: var(--font-heading);
+            font-size: 72px;
+            font-weight: 900;
+            color: var(--primary);
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 0 rgba(0,0,0,0.1);
+        }
+        .results-title {
+            font-family: var(--font-heading);
+            font-size: 42px;
+            font-weight: 900;
+            color: var(--text-dark);
+            margin-bottom: 16px;
+        }
+        .results-message {
+            font-size: 19px;
+            color: var(--text-medium);
+            margin-bottom: 36px;
+            line-height: 1.7;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .results-katie {
+            background: linear-gradient(135deg, #FFFDE7 0%, #FFF9C4 100%);
+            border-left: 5px solid var(--primary);
+            padding: 20px 24px;
+            border-radius: var(--radius-md);
+            font-size: 17px;
+            font-style: italic;
+            color: var(--text-dark);
+            margin-bottom: 36px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .results-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+        /* ═══════════════════════════════════════════
+           BUTTONS
+           ═══════════════════════════════════════════ */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 14px 32px;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-family: var(--font-heading);
+            font-size: 16px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+            box-shadow: var(--shadow-clay);
+        }
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .btn-gold {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: var(--accent-black);
+        }
+        .btn-gold:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-hard);
+        }
+        .btn-success {
+            background: var(--success);
+            color: var(--white);
+        }
+        .btn-success:hover:not(:disabled) {
+            background: var(--success-dark);
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-hard);
+        }
+        .btn-outline {
+            background: var(--white);
+            color: var(--text-dark);
+            border: 2px solid var(--bg-clay-dark);
+        }
+        .btn-outline:hover:not(:disabled) {
+            background: var(--bg-clay-light);
+            border-color: var(--primary);
+        }
+        /* ═══════════════════════════════════════════
+           NAVIGATION
+           ═══════════════════════════════════════════ */
+        .nav-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(180deg, rgba(26,26,26,0.97) 0%, rgba(0,0,0,0.98) 100%);
+            border-top: 3px solid var(--primary);
+            padding: 16px 24px;
+            z-index: 100;
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.3);
+        }
+        .nav-inner {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+        }
+        .nav-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            border: 2px solid rgba(255,255,255,0.15);
+            border-radius: var(--radius-sm);
+            font-family: var(--font-heading);
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: var(--transition);
+            background: rgba(255,255,255,0.08);
+            color: var(--white);
+            text-decoration: none;
+        }
+        .nav-btn:hover:not(:disabled) {
+            background: rgba(255,255,255,0.15);
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+        .nav-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+        .nav-btn.nav-next {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: var(--accent-black);
+            border-color: transparent;
+        }
+        .nav-btn.nav-next:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255,215,0,0.4);
+        }
+        .slide-indicator {
+            color: rgba(255,255,255,0.6);
+            font-size: 13px;
+            font-weight: 600;
+        }
+        /* ═══════════════════════════════════════════
+           RESPONSIVE
+           ═══════════════════════════════════════════ */
+        @media (max-width: 768px) {
+            .container { padding: 30px 20px 100px; }
+            .content-card { padding: 32px 24px; }
+            .intro-card { padding: 40px 30px; }
+            .intro-title { font-size: 36px; }
+            .slide-title { font-size: 28px; }
+            .worker-grid { grid-template-columns: 1fr; }
+            .hazard-grid { grid-template-columns: 1fr; }
+            .device-grid { grid-template-columns: repeat(2, 1fr); }
+            .nav-inner { flex-direction: column; gap: 12px; }
+            .nav-btn { width: 100%; justify-content: center; }
+            .header-center { position: static; transform: none; }
+        }
+        @media (max-width: 480px) {
+            .intro-meta { flex-direction: column; gap: 16px; }
+            .katie-message { flex-direction: column; text-align: center; }
+            .device-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-inner">
+            <a href="../../user-dashboard/index.html" class="logo">
+                <div class="logo-icon"><img src="logo.png?v=2" alt="SafetyVerse Logo"></div>
+                <div class="logo-text">Safety<em>Verse</em></div>
+            </a>
+            <div class="header-center">
+                <span class="header-module-tag">MODULE 19</span>
+                <span class="header-module-title">Lone Worker Safety</span>
+            </div>
+            <a href="../../user-dashboard/index.html" class="back-btn">
+                <span>&#x2190;</span>
+                <span>Back to Dashboard</span>
+            </a>
+        </div>
+    </header>
+    <!-- Progress Bar -->
+    <div class="progress-bar">
+        <div class="progress-bar-inner">
+            <span class="progress-label" id="progressLabel">Slide 1 of 15</span>
+            <div class="progress-track">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <span class="progress-pct" id="progressPct">0%</span>
+        </div>
+    </div>
+    <!-- Main Content -->
+    <div class="content-wrapper">
+        <div class="container">
+            <!-- Slide 1: Intro -->
+            <div class="slide active" data-slide="1">
+                <div class="intro-card">
+                    <div class="intro-icon">&#x1F464;</div>
+                    <h1 class="intro-title">Lone Worker Safety</h1>
+                    <p class="intro-subtitle">Staying Safe When Working Alone</p>
+                    <div class="intro-meta">
+                        <div class="intro-meta-item">
+                            <span>&#x23F1;</span>
+                            <span>15 minutes</span>
+                        </div>
+                        <div class="intro-meta-item">
+                            <span>&#x1F4DA;</span>
+                            <span>Occupational Health Path</span>
+                        </div>
+                        <div class="intro-meta-item">
+                            <span>&#x2713;</span>
+                            <span>OSHA/Industry Guidelines</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+<!-- Slide 2: Introduction with Katie -->
+            <div class="slide" data-slide="2">
+                <div class="content-card">
+                    <div class="katie-message">
+                        <img src="katie.png" alt="Katie" class="katie-avatar">
+                        <div class="katie-bubble">
+                            <div class="katie-name">Katie, Your Safety Guide</div>
+                            <div class="katie-text">
+                                Welcome! A lone worker is anyone who works by themselves without close or direct supervision. This could be working alone in a building after hours, traveling to remote locations, working from home, or being the only person on a shift. Lone workers face unique safety challenges—if something goes wrong, help isn't immediately available. Understanding these risks and implementing proper safety measures protects you when you're on your own. Let's learn how to stay safe when working alone!
+                            </div>
+                        </div>
+                    </div>
+                    <div class="slide-header">
+                        <div class="slide-number">Slide 2 of 15</div>
+                        <h2 class="slide-title">What is a Lone Worker?</h2>
+                    </div>
+                    <div class="slide-content">
+                        <p><strong>A lone worker is an employee who performs work activities alone, without close or direct supervision, in situations where assistance is not readily available in case of emergency, injury, or illness.</strong></p>
+                        
+                        <div class="info-box">
+                            <div class="info-box-title">&#x1F4A1; You Might Be a Lone Worker If You:</div>
+                            <div class="info-box-content">
+                                <ul>
+                                    <li>Work alone in a building or workspace outside normal business hours</li>
+                                    <li>Work in isolated areas where others cannot see or hear you</li>
+                                    <li>Travel alone for work (sales calls, deliveries, home visits)</li>
+                                    <li>Work from home or remotely without direct supervision</li>
+                                    <li>Perform maintenance, security, or custodial work alone</li>
+                                    <li>Are the only employee on a shift</li>
+                                    <li>Work in the field (inspections, surveys, repairs) without a partner</li>
+                                    <li>Cannot be seen or heard by another worker for extended periods</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="worker-grid">
+                            <div class="worker-card">
+                                <div class="worker-icon">&#x1F3E2;</div>
+                                <div class="worker-title">Office Workers</div>
+                                <div class="worker-desc">Working late, early mornings, or weekends alone in office building. Opening/closing procedures. Remote work from home.</div>
+                            </div>
+                            <div class="worker-card">
+                                <div class="worker-icon">&#x1F527;</div>
+                                <div class="worker-title">Maintenance & Facilities</div>
+                                <div class="worker-desc">Performing repairs, inspections, or maintenance tasks alone in buildings, rooftops, basements, or remote facilities.</div>
+                            </div>
+                            <div class="worker-card">
+                                <div class="worker-icon">&#x1F697;</div>
+                                <div class="worker-title">Field Workers</div>
+                                <div class="worker-desc">Sales representatives, delivery drivers, home healthcare workers, inspectors, meter readers traveling alone.</div>
+                            </div>
+                            <div class="worker-card">
+                                <div class="worker-icon">&#x1F6E1;</div>
+                                <div class="worker-title">Security & Patrol</div>
+                                <div class="worker-desc">Security guards, patrol officers working alone on night shifts or remote locations.</div>
+                            </div>
+                            <div class="worker-card">
+                                <div class="worker-icon">&#x1F3EA;</div>
+                                <div class="worker-title">Retail Workers</div>
+                                <div class="worker-desc">Store employees working alone during opening/closing, late-night shifts, or in isolated areas of large stores.</div>
+                            </div>
+                            <div class="worker-card">
+                                <div class="worker-icon">&#x1F9F9;</div>
+                                <div class="worker-title">Custodial Staff</div>
+                                <div class="worker-desc">Cleaners working alone in buildings after hours or in isolated areas during regular hours.</div>
+                            </div>
+                        </div>
+                        <p><strong>Learning Objectives:</strong></p>
+                        <ul class="content-list">
+                            <li>Understand unique hazards faced by lone workers</li>
+                            <li>Implement communication and check-in procedures</li>
+                            <li>Know emergency response protocols when working alone</li>
+                            <li>Use personal safety devices and technology effectively</li>
+                            <li>Recognize and report safety concerns</li>
+                            <li>Develop situational awareness and personal safety habits</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 3: Unique Hazards for Lone Workers -->
+            <div class="slide" data-slide="3">
+                <div class="content-card">
+                    <div class="slide-header">
+                        <div class="slide-number">Slide 3 of 15</div>
+                        <h2 class="slide-title">Unique Hazards for Lone Workers</h2>
+                        <p class="slide-subtitle">Risks amplified when working alone</p>
+                    </div>
+                    <div class="slide-content">
+                        <p><strong>Lone workers face the same hazards as other workers, but the risks are amplified because help is not readily available.</strong></p>
+                        <div class="hazard-grid">
+                            <div class="hazard-card">
+                                <div class="hazard-title">&#x1F691; Medical Emergencies</div>
+                                <div class="hazard-desc">
+                                    Heart attack, stroke, allergic reaction, diabetic emergency, or sudden illness with no one nearby to call for help or provide first aid. Delayed discovery and treatment can be fatal.
+                                </div>
+                            </div>
+                            <div class="hazard-card">
+                                <div class="hazard-title">&#x1F915; Accidents & Injuries</div>
+                                <div class="hazard-desc">
+                                    Slips, trips, falls, cuts, burns, or equipment injuries with no one to assist or summon help. Cannot perform self-rescue from certain situations (trapped, unconscious).
+                                </div>
+                            </div>
+                            <div class="hazard-card">
+                                <div class="hazard-title">&#x1F525; Fire & Evacuation</div>
+                                <div class="hazard-desc">
+                                    Being alone during fire, gas leak, or other emergency requiring evacuation. No one to alert, assist, or verify you've evacuated safely.
+                                </div>
+                            </div>
+                            <div class="hazard-card">
+                                <div class="hazard-title">&#x1F44A; Violence & Assault</div>
+                                <div class="hazard-desc">
+                                    Higher risk of assault, robbery, or harassment with no coworkers nearby to intervene, deter, or witness. Increased vulnerability working late hours or in isolated locations.
+                                </div>
+                            </div>
+                            <div class="hazard-card">
+                                <div class="hazard-title">&#x1F512; Confined Spaces</div>
+                                <div class="hazard-desc">
+                                    Working in confined spaces (tanks, vaults, crawl spaces) alone is extremely dangerous. No one to monitor, rescue, or call for help if atmosphere becomes hazardous.
+                                </div>
+                            </div>
+                            <div class="hazard-card">
+                                <div class="hazard-title">&#x26A1; Electrical Hazards</div>
+                                <div class="hazard-desc">
+                                    Electrical shock or arc flash with no one to de-energize equipment, perform CPR, or call emergency services immediately.
+                                </div>
+                            </div>
+                            <div class="hazard-card">
+                                <div class="hazard-title">&#x1F697; Vehicle Incidents</div>
+                                <div class="hazard-desc">
+                                    Car accidents, breakdowns in remote areas, or becoming lost/stranded without communication or someone aware of your location.
+                                </div>
+                            </div>
+                            <div class="hazard-card">
+                                <div class="hazard-title">&#x1F9E0; Mental Health</div>
+                                <div class="hazard-desc">
+                                    Isolation, stress, and lack of support can affect mental well-being. Reduced ability to make sound decisions during emergencies when stressed and alone.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="info-box danger">
+                            <div class="info-box-title">&#x1F6A8; The Critical Difference</div>
+                            <div class="info-box-content">
+                                <strong>When working with others:</strong> Injury or emergency &#x2192; Immediate assistance, someone calls 911, first aid provided, rescue possible.<br><br>
+                                <strong>When working alone:</strong> Injury or emergency &#x2192; Must self-rescue, delayed discovery, delayed medical response, potential for situation to worsen.<br><br>
+                                <strong>This is why lone worker safety procedures are critical—they bridge the gap when you can't help yourself.</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 4: Communication & Check-In Procedures -->
+            <div class="slide" data-slide="4">
+                <div class="content-card">
+                    <div class="slide-header">
+                        <div class="slide-number">Slide 4 of 15</div>
+                        <h2 class="slide-title">Communication & Check-In Procedures</h2>
+                        <p class="slide-subtitle">Staying connected when alone</p>
+                    </div>
+                    <div class="slide-content">
+                        <p><strong>Regular communication and check-ins are your lifeline when working alone.</strong> They ensure someone knows where you are, what you're doing, and that you're safe.</p>
+                        <div class="steps-grid">
+                            <div class="step-card">
+                                <div class="step-number">1</div>
+                                <div class="step-content">
+                                    <h5>Notify Someone Before Starting</h5>
+                                    <p><strong>Before beginning lone work, inform your supervisor, designated contact, or monitoring person:</strong> Where you'll be (exact location, building, floor, room). What tasks you'll be doing. Expected start and end time. How to contact you (phone number, radio). Any special hazards or concerns.</p>
+                                </div>
+                            </div>
+                            <div class="step-card">
+                                <div class="step-number">2</div>
+                                <div class="step-content">
+                                    <h5>Scheduled Check-Ins</h5>
+                                    <p><strong>Establish regular check-in schedule based on risk level:</strong> High-risk work: Every 15-30 minutes. Moderate risk: Every 1-2 hours. Low risk: At start, midpoint, and end of shift. <strong>Stick to the schedule!</strong> Missed check-ins trigger welfare checks.</p>
+                                </div>
+                            </div>
+                            <div class="step-card">
+                                <div class="step-number">3</div>
+                                <div class="step-content">
+                                    <h5>Change Notifications</h5>
+                                    <p><strong>Immediately notify your contact if:</strong> You change locations. Tasks change or take longer than expected. You encounter hazards or problems. You need to extend your work time. You're leaving the site early. <strong>Never assume "they'll figure it out"—communicate changes!</strong></p>
+                                </div>
+                            </div>
+                            <div class="step-card">
+                                <div class="step-number">4</div>
+                                <div class="step-content">
+                                    <h5>Final Check-Out</h5>
+                                    <p><strong>At the end of work:</strong> Notify your contact that you've completed tasks and are leaving safely. Confirm you don't need assistance. Report any incidents or near-misses. <strong>Don't forget this step—it closes the loop and prevents unnecessary welfare checks.</strong></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="info-box success">
+                            <div class="info-box-title">&#x2713; Check-In Methods</div>
+                            <div class="info-box-content">
+                                <strong>Communication tools for lone workers:</strong><br>
+                                • <strong>Phone calls:</strong> Direct voice communication with supervisor or monitoring person<br>
+                                • <strong>Text/SMS:</strong> Quick status updates (less reliable—ensure messages are received/acknowledged)<br>
+                                • <strong>Two-way radio:</strong> Instant communication in areas with coverage<br>
+                                • <strong>Automated check-in apps:</strong> Scheduled prompts, automatic alerts if check-in missed<br>
+                                • <strong>GPS tracking devices:</strong> Real-time location monitoring<br>
+                                • <strong>Panic buttons/personal alarms:</strong> Emergency alert capability<br><br>
+                                <strong>Use multiple methods if possible for redundancy!</strong>
+                            </div>
+                        </div>
+                        <div class="info-box warning">
+                            <div class="info-box-title">&#x26A0; What Happens If You Miss a Check-In?</div>
+                            <div class="info-box-content">
+                                <strong>Your employer should have escalation procedures:</strong><br>
+                                1. <strong>Attempt to contact you</strong> via phone, radio, text (multiple attempts)<br>
+                                2. <strong>Check last known location</strong> if GPS tracking available<br>
+                                3. <strong>Dispatch someone to check on you</strong> at last known location<br>
+                                4. <strong>Contact emergency services</strong> if you cannot be located or situation appears serious<br><br>
+                                <strong>This is why checking in on schedule is critical—missed check-ins trigger welfare checks and emergency response!</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 5: Before You Start - Planning & Preparation -->
+            <div class="slide" data-slide="5">
+                <div class="content-card">
+                    <div class="slide-header">
+                        <div class="slide-number">Slide 5 of 15</div>
+                        <h2 class="slide-title">Before You Start: Planning & Preparation</h2>
+                        <p class="slide-subtitle">Setting yourself up for success</p>
+                    </div>
+                    <div class="slide-content">
+                        <p><strong>Proper planning reduces risks before you even begin working alone.</strong></p>
+                        <div class="info-box success">
+                            <div class="info-box-title">&#x2713; Pre-Work Checklist for Lone Workers</div>
+                            <div class="info-box-content">
+                                <strong>Risk Assessment:</strong><br>
+                                • Identify hazards specific to your task and location<br>
+                                • Determine if the work can be done safely alone (some tasks require a partner!)<br>
+                                • Review any site-specific safety procedures<br>
+                                • Check weather conditions if working outdoors<br><br>
+                                
+                                <strong>Communication Setup:</strong><br>
+                                • Ensure phone/radio is fully charged<br>
+                                • Test communication devices<br>
+                                • Have backup communication method<br>
+                                • Program emergency contacts into phone<br>
+                                • Confirm who your check-in contact is and their availability<br><br>
+                                
+                                <strong>Emergency Preparation:</strong><br>
+                                • Know location of nearest first aid kit, AED, fire extinguisher<br>
+                                • Know emergency exits and evacuation routes<br>
+                                • Know exact address/location to give to 911<br>
+                                • Carry personal emergency info (medical conditions, medications, emergency contacts)<br>
+                                • Have access to emergency phone numbers<br><br>
+                                
+                                <strong>Tools & Equipment:</strong><br>
+                                • Ensure all tools/equipment are in good working condition<br>
+                                • Have proper PPE for the task<br>
+                                • Bring flashlight/headlamp if working in low-light areas<br>
+                                • Have supplies needed to complete work (avoid multiple trips to get items)<br><br>
+                                
+                                <strong>Personal Safety:</strong><br>
+                                • Tell someone your plans (work and personal contacts)<br>
+                                • Dress appropriately for environment and weather<br>
+                                • Eat and hydrate properly before starting<br>
+                                • Be well-rested (fatigue increases risk)<br>
+                                • Don't work alone if you're ill or impaired
+                            </div>
+                        </div>
+                        <div class="info-box danger">
+                            <div class="info-box-title">&#x1F6A8; When Working Alone is NOT Permitted</div>
+                            <div class="info-box-content">
+                                <strong>Some tasks are too dangerous to perform alone and require a partner or spotter:</strong><br>
+                                • Confined space entry<br>
+                                • Working at heights (ladders, scaffolding, roofs) above certain height<br>
+                                • Electrical work on energized equipment<br>
+                                • Handling hazardous chemicals or materials<br>
+                                • Operating heavy machinery or forklifts in some situations<br>
+                                • Work in areas with known violence risks (late-night retail, home visits to unknown locations)<br>
+                                • Tasks requiring lifting/moving heavy objects<br>
+                                • Work in extreme weather conditions<br><br>
+                                <strong>Check your company policy and OSHA regulations. If unsure, ask your supervisor!</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 6: Personal Safety Devices & Technology -->
+            <div class="slide" data-slide="6">
+                <div class="content-card">
+                    <div class="slide-header">
+                        <div class="slide-number">Slide 6 of 15</div>
+                        <h2 class="slide-title">Personal Safety Devices & Technology</h2>
+                        <p class="slide-subtitle">Tools to keep you connected and protected</p>
+                    </div>
+                    <div class="slide-content">
+                        <p><strong>Technology can provide an extra layer of protection for lone workers.</strong> Many employers provide these devices; know how to use them!</p>
+                        <div class="device-grid">
+                            <div class="device-card">
+                                <div class="device-icon">&#x1F4F1;</div>
+                                <div class="device-title">Mobile Phone</div>
+                                <div class="device-desc">
+                                    Most basic tool. Keep charged, program emergency contacts, enable location services. Consider apps with check-in features or panic buttons.
+                                </div>
+                            </div>
+                            <div class="device-card">
+                                <div class="device-icon">&#x1F4E1;</div>
+                                <div class="device-title">Two-Way Radio</div>
+                                <div class="device-desc">
+                                    Instant communication with dispatch/security. Works where cell service doesn't. Test before shift, carry spare battery, know your channel.
+                                </div>
+                            </div>
+                            <div class="device-card">
+                                <div class="device-icon">&#x1F198;</div>
+                                <div class="device-title">Panic Button / Personal Alarm</div>
+                                <div class="device-desc">
+                                    Wearable device (pendant, clip, watch) with button that sends immediate alert to monitoring center or designated contacts. Some include GPS location.
+                                </div>
+                            </div>
+                            <div class="device-card">
+                                <div class="device-icon">&#x1F4CD;</div>
+                                <div class="device-title">GPS Tracking Device</div>
+                                <div class="device-desc">
+                                    Real-time location tracking allows monitoring center to see where you are. Geofencing can alert if you enter/leave designated areas. Essential for field workers.
+                                </div>
+                            </div>
+                            <div class="device-card">
+                                <div class="device-icon">&#x23F0;</div>
+                                <div class="device-title">Man-Down / Fall Detection</div>
+                                <div class="device-desc">
+                                    Sensors detect if worker falls, becomes horizontal, or remains motionless. Automatically sends alert if no response to alarm within set time.
+                                </div>
+                            </div>
+                            <div class="device-card">
+                                <div class="device-icon">&#x1F4F2;</div>
+                                <div class="device-title">Check-In Apps</div>
+                                <div class="device-desc">
+                                    Smartphone apps that prompt scheduled check-ins. If missed, automated escalation to supervisor. Some include GPS, messaging, panic button features.
+                                </div>
+                            </div>
+                            <div class="device-card">
+                                <div class="device-icon">&#x1F3A5;</div>
+                                <div class="device-title">Body Cameras</div>
+                                <div class="device-desc">
+                                    Wearable cameras that record video/audio. Deters violence, provides evidence if incidents occur. Used by security, enforcement, home visit workers.
+                                </div>
+                            </div>
+                            <div class="device-card">
+                                <div class="device-icon">&#x1F4A1;</div>
+                                <div class="device-title">Personal Safety Lights</div>
+                                <div class="device-desc">
+                                    Flashlight, headlamp, or emergency beacon. Critical for working in low-light or isolated areas. Carry extra batteries.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="info-box">
+                            <div class="info-box-title">&#x1F4A1; How to Use Safety Devices Effectively</div>
+                            <div class="info-box-content">
+                                <strong>Best practices:</strong><br>
+                                • <strong>Test before each shift:</strong> Ensure device is working, charged, and you remember how to use it<br>
+                                • <strong>Keep accessible:</strong> Don't bury panic button in backpack—wear it or keep within immediate reach<br>
+                                • <strong>Know the response:</strong> Understand what happens when you activate alarm (who is notified, expected response time)<br>
+                                • <strong>Use as designed:</strong> Don't disable features or ignore prompts<br>
+                                • <strong>Report problems immediately:</strong> Malfunctioning device = no protection<br>
+                                • <strong>Don't rely solely on technology:</strong> Devices can fail—still follow check-in procedures and use judgment
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 7: Emergency Response When Alone -->
+            <div class="slide" data-slide="7">
+                <div class="content-card">
+                    <div class="slide-header">
+                        <div class="slide-number">Slide 7 of 15</div>
+                        <h2 class="slide-title">Emergency Response When Working Alone</h2>
+                        <p class="slide-subtitle">What to do when something goes wrong</p>
+                    </div>
+                    <div class="slide-content">
+                        <p><strong>Knowing how to respond to emergencies when alone can save your life.</strong></p>
+                        <div class="steps-grid">
+                            <div class="step-card">
+                                <div class="step-number">1</div>
+                                <div class="step-content">
+                                    <h5>Medical Emergency (You or Someone Else)</h5>
+                                    <p><strong>If YOU have medical emergency:</strong> Call 911 immediately (or activate panic button). Give exact location. Describe emergency. Unlock doors if possible so responders can enter. If able, move to visible/accessible location. Contact your supervisor/check-in person. <strong>If you find SOMEONE ELSE:</strong> Call 911 first. Then provide first aid if trained. Stay with person until help arrives. Notify site security/management.</p>
+                                </div>
+                            </div>
+                            <div class="step-card">
+                                <div class="step-number">2</div>
+                                <div class="step-content">
+                                    <h5>Fire or Hazardous Materials Release</h5>
+                                    <p><strong>Immediate actions:</strong> Activate fire alarm if available. Call 911 and report exact location and nature of emergency. Evacuate immediately via nearest safe exit. DO NOT use elevators during fire. Once safe, account for yourself (call supervisor/check-in contact so they know you're safe). Do not re-enter building. Provide information to emergency responders.</p>
+                                </div>
+                            </div>
+                            <div class="step-card">
+                                <div class="step-number">3</div>
+                                <div class="step-content">
+                                    <h5>Injury (Unable to Call for Help)</h5>
+                                    <p><strong>If you're injured and cannot immediately call for help:</strong> This is why check-in procedures are critical—missed check-in will trigger welfare check. Try to make noise, activate any automatic alarms (if equipped with man-down device). Move toward areas where you might be found if possible. If you regain ability to call, do so immediately. <strong>Prevention: This scenario shows why high-risk lone work should have very frequent check-ins or continuous monitoring.</strong></p>
+                                </div>
+                            </div>
+                            <div class="step-card">
+                                <div class="step-number">4</div>
+                                <div class="step-content">
+                                    <h5>Violence or Threatening Situation</h5>
+                                    <p><strong>Personal safety is priority:</strong> Trust your instincts—if situation feels wrong, leave. Call 911 if threatened or assaulted. Activate panic button if equipped. Get to safe location (locked room, exit building, public area). Notify supervisor/security immediately. Don't confront or chase perpetrator. Provide description to police. Report ALL incidents even if "nothing happened"—threats are serious.</p>
+                                </div>
+                            </div>
+                            <div class="step-card">
+                                <div class="step-number">5</div>
+                                <div class="step-content">
+                                    <h5>Equipment Failure or Being Trapped</h5>
+                                    <p><strong>If trapped in elevator, room, or confined space:</strong> Call for help using phone, intercom, or emergency button. Call 911 and your supervisor. Give exact location. Stay calm and conserve air if in confined space. Do not attempt self-rescue that could worsen situation. Wait for professional rescue. <strong>This is why lone work in confined spaces is generally prohibited!</strong></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="info-box danger">
+                            <div class="info-box-title">&#x1F6A8; Critical Emergency Information to Have Ready</div>
+                            <div class="info-box-content">
+                                <strong>Know this information BEFORE emergencies happen:</strong><br>
+                                • <strong>Exact address/location:</strong> Building name/number, floor, room, nearest cross-streets<br>
+                                • <strong>911 and emergency contacts:</strong> Programmed in phone, written down as backup<br>
+                                • <strong>Building access codes:</strong> How to unlock doors for emergency responders<br>
+                                • <strong>Your medical information:</strong> Allergies, medications, conditions, emergency contacts<br>
+                                • <strong>Evacuation routes:</strong> Primary and alternate exits, assembly points<br>
+                                • <strong>Emergency equipment locations:</strong> First aid, AED, fire extinguisher, emergency exits<br><br>
+                                <strong>Don't wait until you need this information to figure it out!</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+<!-- Slide 8: Situational Awareness -->
+            <div class="slide" data-slide="8">
+                <div class="content-card">
+                    <div class="slide-header">
+                        <div class="slide-number">Slide 8 of 15</div>
+                        <h2 class="slide-title">Situational Awareness</h2>
+                        <p class="slide-subtitle">Staying alert to your surroundings</p>
+                    </div>
+                    <div class="slide-content">
+                        <p><strong>Situational awareness means paying attention to your environment and recognizing potential threats before they become dangerous.</strong></p>
+                        <div class="info-box success">
+                            <div class="info-box-title">&#x2713; What is Situational Awareness?</div>
+                            <div class="info-box-content">
+                                <strong>Three levels of awareness:</strong><br><br>
+                                <strong>1. Perception:</strong> Noticing what's around you (people, sounds, objects, changes)<br>
+                                <strong>2. Comprehension:</strong> Understanding what you observe (Is this normal? Does something seem off?)<br>
+                                <strong>3. Projection:</strong> Anticipating what might happen next (If X continues, Y might occur)<br><br>
+                                Example: You notice a person loitering near the entrance (perception) &#x2192; This is unusual for this time of night (comprehension) &#x2192; This person might be waiting to approach me when I leave (projection) &#x2192; Action: Use different exit or call for escort.
+                            </div>
+                        </div>
+                        <div class="info-box">
+                            <div class="info-box-title">&#x1F4A1; Developing Situational Awareness</div>
+                            <div class="info-box-content">
+                                <strong>Before entering a location:</strong><br>
+                                • Survey the area—who is present, what exits are available<br>
+                                • Identify anything unusual or out of place<br>
+                                • Note potential hazards (wet floors, equipment, obstacles)<br>
+                                • Plan your route in and out<br><br>
+                                
+                                <strong>While working:</strong><br>
+                                • Periodically scan your environment (every few minutes)<br>
+                                • Notice changes (new people arriving, sounds, smells)<br>
+                                • Position yourself where you can see entrances/exits<br>
+                                • Keep work area organized—clutter hides hazards<br>
+                                • Listen for alarms, unusual sounds, voices<br><br>
+                                
+                                <strong>Avoid distractions that reduce awareness:</strong><br>
+                                • Earbuds/headphones (can't hear approaching people or alarms)<br>
+                                • Being absorbed in phone or computer<br>
+                                • Fatigue or illness (impairs perception and judgment)<br>
+                                • Working in unfamiliar areas without taking time to orient yourself
+                            </div>
+                        </div>
+                        <div class="info-box warning">
+                            <div class="info-box-title">&#x26A0; Trust Your Instincts</div>
+                            <div class="info-box-content">
+                                <strong>If something feels wrong, it probably is.</strong><br><br>
+                                Your subconscious picks up on subtle cues that your conscious mind might not immediately recognize. If you feel uncomfortable, unsafe, or that something is "off":<br><br>
+                                • <strong>Don't dismiss your feelings</strong> as being paranoid or overreacting<br>
+                                • <strong>Take action</strong> to increase your safety (leave area, call for help, get to public space)<br>
+                                • <strong>Report concerns</strong> even if nothing happens—pattern recognition helps prevent future incidents<br><br>
+                                <strong>Better to be wrong and safe than ignore warnings and get hurt!</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 9: Personal Safety Tips -->
+            <div class="slide" data-slide="9">
+                <div class="content-card">
+                    <div class="slide-header">
+                        <div class="slide-number">Slide 9 of 15</div>
+                        <h2 class="slide-title">Personal Safety Tips for Lone Workers</h2>
+                        <p class="slide-subtitle">Practical strategies to stay safe</p>
+                    </div>
+                    <div class="slide-content">
+                        <p><strong>Small behavioral changes can significantly reduce your risk when working alone.</strong></p>
+                        <div class="info-box success">
+                            <div class="info-box-title">&#x2713; Securing Your Workspace</div>
+                            <div class="info-box-content">
+                                <strong>When working alone in a building:</strong><br>
+                                • Lock doors behind you when entering/exiting<br>
+                                • Know who has keys/access codes (limit to essential personnel)<br>
+                                • Don't prop doors open for "convenience"<br>
+                                • Close blinds/curtains at night so people can't see you're alone<br>
+                                • Keep emergency exits clear and accessible<br>
+                                • Have escape route planned before you need it<br>
+                                • Work in well-lit areas visible from outside when possible<br>
+                                • Keep desk/workspace facing entrance so you see people approaching<br>
+                                • Have phone readily accessible (not buried in bag)<br>
+                                • Lock valuables out of sight to avoid attracting theft
+                            </div>
+                        </div>
+                        <div class="info-box success">
+                            <div class="info-box-title">&#x2713; Meeting Unknown People</div>
+                            <div class="info-box-content">
+                                <strong>If your lone work involves meeting clients, customers, or public (home visits, service calls, late-night retail):</strong><br>
+                                • Screen appointments when possible—verify identity, get contact info<br>
+                                • Tell someone where you're going and who you're meeting<br>
+                                • Meet in public/visible areas rather than isolated locations<br>
+                                • Position yourself near exits, don't let person block your way out<br>
+                                • Trust instincts—if person makes you uncomfortable, end meeting<br>
+                                • Don't share personal information (where you live, when you work alone)<br>
+                                • Keep professional distance—don't accept gifts, invitations, personal contact<br>
+                                • Have code word/phrase to signal distress to check-in person<br>
+                                • Consider video calls instead of in-person for initial contacts
+                            </div>
+                        </div>
+                        <div class="info-box success">
+                            <div class="info-box-title">&#x2713; Traveling Alone</div>
+                            <div class="info-box-content">
+                                <strong>For field workers driving to remote locations:</strong><br>
+                                • Share your route and schedule with supervisor<br>
+                                • Keep vehicle maintained (fuel, fluids, tires) to avoid breakdowns<br>
+                                • Carry emergency supplies (phone charger, water, first aid, flashlight)<br>
+                                • Park in well-lit, visible areas<br>
+                                • Lock doors immediately after getting in vehicle<br>
+                                • Be aware of surroundings before exiting vehicle<br>
+                                • Have GPS or map apps available—don't get lost<br>
+                                • If followed, drive to police station or public area—don't go home<br>
+                                • Don't pick up hitchhikers or stop for strangers<br>
+                                • If vehicle breaks down, stay in locked car and call for help
+                            </div>
+                        </div>
+                        <div class="info-box warning">
+                            <div class="info-box-title">&#x26A0; Avoid Risky Behaviors</div>
+                            <div class="info-box-content">
+                                <strong>Don't:</strong><br>
+                                • Share on social media that you're working alone or your schedule<br>
+                                • Leave building alone late at night without escort if available<br>
+                                • Take shortcuts through isolated areas (parking garages, alleys)<br>
+                                • Wear headphones/earbuds that prevent you from hearing surroundings<br>
+                                • Leave doors unlocked "just for a minute"<br>
+                                • Assume every person you encounter has good intentions<br>
+                                • Ignore safety procedures because "nothing has ever happened"
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 10: Working Alone at Night -->
+            <div class="slide" data-slide="10">
+                <div class="content-card">
+                    <div class="slide-header">
+                        <div class="slide-number">Slide 10 of 15</div>
+                        <h2 class="slide-title">Working Alone at Night</h2>
+                        <p class="slide-subtitle">Additional precautions for after-hours work</p>
+                    </div>
+                    <div class="slide-content">
+                        <p><strong>Working alone at night presents additional risks—reduced visibility, fewer people around, higher crime rates.</strong></p>
+                        <div class="info-box danger">
+                            <div class="info-box-title">&#x1F319; Night Work Safety Measures</div>
+                            <div class="info-box-content">
+                                <strong>Lighting:</strong><br>
+                                • Ensure all work areas are well-lit before you start<br>
+                                • Carry flashlight/headlamp even if building has lights (backup if power fails)<br>
+                                • Turn on exterior lights so building looks occupied<br>
+                                • Light parking areas and pathways to/from vehicle<br>
+                                • Report burned-out lights immediately<br><br>
+                                
+                                <strong>Visibility:</strong><br>
+                                • Let people know you're there (lights on, radio playing at reasonable volume)<br>
+                                • Occupied buildings deter intruders better than appearing empty<br>
+                                • Close blinds/curtains so outsiders can't watch you<br>
+                                • Work in areas visible from street/parking lot when possible<br><br>
+                                
+                                <strong>Security:</strong><br>
+                                • Lock all entrances—check doors periodically to ensure they're still secured<br>
+                                • Know locations of panic buttons/alarms<br>
+                                • More frequent check-ins (every 30-60 minutes for night work)<br>
+                                • Have security escort to vehicle when leaving, if available<br>
+                                • Don't leave building alone late at night if you can avoid it<br><br>
+                                
+                                <strong>Parking:</strong><br>
+                                • Park in well-lit areas close to building entrance<br>
+                                • Back into space for quick exit if needed<br>
+                                • Have keys ready before walking to car<br>
+                                • Check back seat before getting in vehicle<br>
+                                • Lock doors immediately after entering vehicle
+                            </div>
+                        </div>
+                        <div class="info-box warning">
+                            <div class="info-box-title">&#x26A0; Higher Risk Factors at Night</div>
+                            <div class="info-box-content">
+                                <strong>Be especially vigilant because:</strong><br>
+                                • Fewer people around to help or witness emergencies<br>
+                                • Higher rates of crime occur at night<br>
+                                • Reduced visibility makes it harder to see hazards or threats<br>
+                                • Fatigue affects decision-making and reaction time<br>
+                                • If you're injured or have medical emergency, discovery may be delayed until morning<br>
+                                • Responders may have difficulty finding you in dark building<br><br>
+                                <strong>Some employers have policies prohibiting lone work during certain night hours—know your company's policy!</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 11: Remote Work & Work from Home -->
+            <div class="slide" data-slide="11">
+                <div class="content-card">
+                    <div class="slide-header">
+                        <div class="slide-number">Slide 11 of 15</div>
+                        <h2 class="slide-title">Remote Work & Work from Home</h2>
+                        <p class="slide-subtitle">Lone worker considerations for telecommuters</p>
+                    </div>
+                    <div class="slide-content">
+                        <p><strong>Remote workers are also lone workers and face unique safety considerations.</strong></p>
+                        <div class="info-box">
+                            <div class="info-box-title">&#x1F4A1; Home Office Safety</div>
+                            <div class="info-box-content">
+                                <strong>Ergonomics and physical safety:</strong><br>
+                                • Set up proper workstation (ergonomic chair, monitor at eye level, good lighting)<br>
+                                • Take regular breaks to move and stretch<br>
+                                • Keep work area clear of trip hazards<br>
+                                • Ensure electrical outlets and cords are safe<br>
+                                • Have working smoke detectors and fire extinguisher accessible<br>
+                                • Keep emergency numbers posted<br><br>
+                                
+                                <strong>Medical emergencies:</strong><br>
+                                • If you have medical condition, inform supervisor and have emergency plan<br>
+                                • Keep phone accessible during work hours<br>
+                                • Consider medical alert device if at risk<br>
+                                • Inform household members of your work schedule and check-in needs<br><br>
+                                
+                                <strong>Mental health and isolation:</strong><br>
+                                • Schedule regular video check-ins with team (not just email/chat)<br>
+                                • Take breaks to interact with others (walk, call friend, etc.)<br>
+                                • Maintain work-life boundaries (separate workspace, set hours)<br>
+                                • Reach out if feeling isolated or overwhelmed<br>
+                                • Participate in virtual team activities
+                            </div>
+                        </div>
+                        <div class="info-box success">
+                            <div class="info-box-title">&#x2713; Check-In Procedures for Remote Workers</div>
+                            <div class="info-box-content">
+                                <strong>Even when working from home, maintain communication:</strong><br>
+                                • Log in/start video at beginning of shift to confirm you're working<br>
+                                • Respond promptly to messages from supervisor/team<br>
+                                • Attend scheduled meetings (camera on when possible)<br>
+                                • Check in at end of day to close out<br>
+                                • Notify supervisor if leaving during work hours or experiencing problems<br>
+                                • Set status indicators (available, in meeting, away) accurately<br><br>
+                                <strong>If you don't respond to messages/calls during work hours, supervisor should have procedure to check on your welfare.</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 12: Employer Responsibilities -->
+            <div class="slide" data-slide="12">
+                <div class="content-card">
+                    <div class="slide-header">
+                        <div class="slide-number">Slide 12 of 15</div>
+                        <h2 class="slide-title">Employer Responsibilities for Lone Workers</h2>
+                        <p class="slide-subtitle">What your employer should provide</p>
+                    </div>
+                    <div class="slide-content">
+                        <p><strong>Employers have legal and ethical obligations to protect lone workers.</strong></p>
+                        <div class="info-box">
+                            <div class="info-box-title">&#x1F4CB; Required Employer Actions</div>
+                            <div class="info-box-content">
+                                <strong>1. Risk Assessment</strong><br>
+                                • Identify all positions/situations involving lone work<br>
+                                • Assess hazards specific to lone work (medical emergencies, violence, isolation)<br>
+                                • Determine if work can be done safely alone or requires partner<br>
+                                • Implement controls to reduce risks<br><br>
+                                
+                                <strong>2. Written Policies and Procedures</strong><br>
+                                • Lone worker safety policy<br>
+                                • Check-in/check-out procedures<br>
+                                • Emergency response protocols<br>
+                                • Incident reporting requirements<br>
+                                • Clear guidelines on when lone work is prohibited<br><br>
+                                
+                                <strong>3. Communication Systems</strong><br>
+                                • Provide reliable communication devices (phones, radios, panic buttons)<br>
+                                • Establish check-in schedule and monitoring<br>
+                                • Ensure someone is available to receive check-ins and respond to emergencies<br>
+                                • Have escalation procedures for missed check-ins<br><br>
+                                
+                                <strong>4. Training</strong><br>
+                                • Train all lone workers on safety procedures<br>
+                                • Emergency response training<br>
+                                • How to use safety devices and communication equipment<br>
+                                • Situational awareness and personal safety<br>
+                                • Specific hazards of their work environment<br><br>
+                                
+                                <strong>5. Supervision and Monitoring</strong><br>
+                                • Regular welfare checks during lone work<br>
+                                • Supervision appropriate to risk level<br>
+                                • Periodic site visits to lone workers when feasible<br>
+                                • Review and update procedures based on incidents/near-misses<br><br>
+                                
+                                <strong>6. Emergency Response</strong><br>
+                                • Clear procedures for responding to emergencies<br>
+                                • Contact information readily available<br>
+                                • First aid equipment accessible<br>
+                                • Rescue/assistance capability for high-risk work
+                            </div>
+                        </div>
+                        <div class="info-box success">
+                            <div class="info-box-title">&#x2713; Your Rights as a Lone Worker</div>
+                            <div class="info-box-content">
+                                <strong>You have the right to:</strong><br>
+                                • A safe work environment even when alone<br>
+                                • Proper training before working alone<br>
+                                • Communication devices and safety equipment<br>
+                                • Clearly defined check-in procedures<br>
+                                • Refuse work that is unreasonably dangerous to perform alone<br>
+                                • Report safety concerns without retaliation<br>
+                                • Request additional safety measures if you feel at risk<br><br>
+                                <strong>If you believe your employer is not adequately protecting lone workers, report concerns to your supervisor, safety committee, or OSHA.</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 13: Reporting and Documentation -->
+            <div class="slide" data-slide="13">
+                <div class="content-card">
+                    <div class="slide-header">
+                        <div class="slide-number">Slide 13 of 15</div>
+                        <h2 class="slide-title">Reporting and Documentation</h2>
+                        <p class="slide-subtitle">Why and how to report incidents and concerns</p>
+                    </div>
+                    <div class="slide-content">
+                        <p><strong>Reporting incidents, near-misses, and safety concerns helps prevent future injuries.</strong></p>
+                        <div class="info-box danger">
+                            <div class="info-box-title">&#x1F6A8; What to Report</div>
+                            <div class="info-box-content">
+                                <strong>ALWAYS report these situations:</strong><br><br>
+                                <strong>Incidents:</strong><br>
+                                • Any injury, illness, or medical emergency while working alone<br>
+                                • Assaults, threats, harassment, or violent behavior<br>
+                                • Property damage or theft<br>
+                                • Fires, chemical spills, or other emergencies<br>
+                                • Equipment failures that created hazards<br><br>
+                                
+                                <strong>Near-Misses:</strong><br>
+                                • Situations where you were almost injured<br>
+                                • Equipment malfunctions that could have caused harm<br>
+                                • Times when you felt threatened or unsafe<br>
+                                • Communication device failures<br>
+                                • Close calls (slips that didn't result in falls, etc.)<br><br>
+                                
+                                <strong>Hazards and Safety Concerns:</strong><br>
+                                • Unsafe conditions (poor lighting, broken locks, trip hazards)<br>
+                                • Inadequate safety equipment or communication devices<br>
+                                • Situations that feel unsafe but haven't resulted in incidents yet<br>
+                                • Patterns of suspicious activity or concerning individuals<br>
+                                • Problems with check-in procedures or response times<br><br>
+                                
+                                <strong>Don't wait for something bad to happen—report concerns proactively!</strong>
+                            </div>
+                        </div>
+                        <div class="info-box success">
+                            <div class="info-box-title">&#x2713; How to Report</div>
+                            <div class="info-box-content">
+                                <strong>Reporting procedure:</strong><br>
+                                1. <strong>Immediate emergencies:</strong> Call 911 first, then notify supervisor<br>
+                                2. <strong>Non-emergency incidents:</strong> Report to supervisor as soon as safely possible<br>
+                                3. <strong>Complete incident report:</strong> Fill out required documentation while details are fresh<br>
+                                4. <strong>Provide details:</strong> Date, time, location, what happened, witnesses, injuries, actions taken<br>
+                                5. <strong>Follow up:</strong> Participate in investigation if requested<br>
+                                6. <strong>Don't downplay:</strong> Report accurately—don't minimize or exaggerate<br><br>
+                                
+                                <strong>What happens after reporting:</strong><br>
+                                • Employer investigates incident<br>
+                                • Root causes identified<br>
+                                • Corrective actions implemented<br>
+                                • Procedures updated if needed<br>
+                                • Training provided if gaps identified<br><br>
+                                
+                                <strong>Your reports help protect you AND other lone workers!</strong>
+                            </div>
+                        </div>
+                        <div class="info-box warning">
+                            <div class="info-box-title">&#x26A0; Why Reporting Matters</div>
+                            <div class="info-box-content">
+                                <strong>Many serious incidents are preceded by warning signs that went unreported.</strong><br><br>
+                                Example: Employee feels uncomfortable about person loitering near building but doesn't report it &#x2192; Person returns multiple times &#x2192; Eventually assaults employee<br><br>
+                                <strong>If the first concern had been reported:</strong> Security could have been notified, police could have checked on person, employee could have been escorted, incident might have been prevented.<br><br>
+                                <strong>Never think "it's probably nothing" or "I don't want to bother anyone." Report it!</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 14: Summary -->
+            <div class="slide" data-slide="14">
+                <div class="content-card">
+                    <div class="slide-header">
+                        <div class="slide-number">Slide 14 of 15</div>
+                        <h2 class="slide-title">Lone Worker Safety Key Takeaways</h2>
+                        <p class="slide-subtitle">Remember these critical points</p>
+                    </div>
+                    <div class="slide-content">
+                        <p><strong>Essential lone worker safety knowledge:</strong></p>
+                        <ul class="content-list">
+                            <li><strong>Lone workers = anyone working without close supervision:</strong> Includes after-hours office work, field work, remote work, maintenance, security, and many other situations.</li>
+                            <li><strong>Unique hazards when alone:</strong> Medical emergencies, injuries, violence, fires with no immediate help available. Risks are amplified without others nearby to assist.</li>
+                            <li><strong>Communication is your lifeline:</strong> Notify someone before starting, scheduled check-ins during work, report changes, final check-out when done. Missed check-ins trigger welfare checks.</li>
+                            <li><strong>Plan and prepare before starting:</strong> Risk assessment, communication setup, emergency preparation, proper equipment. Some tasks cannot be done safely alone—know your limits.</li>
+                            <li><strong>Use safety devices properly:</strong> Phones, radios, panic buttons, GPS tracking, check-in apps. Test before each shift, keep accessible, know the response protocol.</li>
+                            <li><strong>Emergency response when alone:</strong> Call 911 first for serious emergencies. Know exact location to give responders. Have emergency contacts and procedures ready before you need them.</li>
+                            <li><strong>Situational awareness saves lives:</strong> Pay attention to surroundings, notice changes, trust your instincts. If something feels wrong, take action to increase your safety.</li>
+                            <li><strong>Personal safety practices:</strong> Lock doors, work in well-lit visible areas, avoid isolation, don't share schedule on social media, have escape routes planned.</li>
+                            <li><strong>Night work requires extra precautions:</strong> Better lighting, more frequent check-ins, security escorts, parking safety. Higher risks require higher vigilance.</li>
+                            <li><strong>Report everything:</strong> Incidents, near-misses, hazards, and concerns. Your reports protect you and other lone workers. Don't wait for something bad to happen!</li>
+                        </ul>
+                        <div class="info-box success">
+                            <div class="info-box-title">&#x2713; The Lone Worker Safety Mindset</div>
+                            <div class="info-box-content">
+                                <strong>When working alone, remember:</strong><br>
+                                • <strong>You are responsible for your own safety</strong> more than when working with others<br>
+                                • <strong>Help is not immediately available</strong> so prevention and preparation are critical<br>
+                                • <strong>Communication and check-ins are not optional</strong> they're your safety net<br>
+                                • <strong>Trust your instincts</strong> if something feels unsafe, it probably is<br>
+                                • <strong>Speak up about concerns</strong> reporting prevents incidents<br>
+                                • <strong>You have the right to be safe</strong> even when working alone<br><br>
+                                <strong>Stay connected, stay aware, stay safe!</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Quiz Question 1 -->
+            <div class="slide" data-slide="15">
+                <div class="content-card">
+                    <div class="slide-header">
+                        <div class="slide-number">Quiz Question 1 of 3</div>
+                        <h2 class="slide-title">Knowledge Check</h2>
+                    </div>
+                    <div class="slide-content">
+                        <div class="quiz-question">
+                            What is the primary purpose of regular check-in procedures for lone workers?
+                        </div>
+                        <div class="quiz-options" id="q1-options">
+                            <div class="quiz-option" data-q="1" data-val="A">To monitor employee productivity</div>
+                            <div class="quiz-option" data-q="1" data-val="B">To ensure someone knows where you are and can respond if you don't check in (welfare check)</div>
+                            <div class="quiz-option" data-q="1" data-val="C">To comply with company policy</div>
+                            <div class="quiz-option" data-q="1" data-val="D">To track work hours</div>
+                        </div>
+                        <div class="quiz-feedback" id="fb-1"></div>
+                        <div class="quiz-btn-group">
+                            <button class="btn btn-gold" id="submit-1" onclick="submitQuiz(1)" disabled>Submit Answer</button>
+                            <button class="btn btn-outline" id="next-q-1" onclick="nextSlide()" style="display: none;">Next Question &#x2192;</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Quiz Question 2 -->
+            <div class="slide" data-slide="16">
+                <div class="content-card">
+                    <div class="slide-header">
+                        <div class="slide-number">Quiz Question 2 of 3</div>
+                        <h2 class="slide-title">Knowledge Check</h2>
+                    </div>
+                    <div class="slide-content">
+                        <div class="quiz-question">
+                            Which of the following is a critical action to take BEFORE starting lone work?
+                        </div>
+                        <div class="quiz-options" id="q2-options">
+                            <div class="quiz-option" data-q="2" data-val="A">Post your location on social media</div>
+                            <div class="quiz-option" data-q="2" data-val="B">Notify someone of your location, tasks, schedule, and how to contact you</div>
+                            <div class="quiz-option" data-q="2" data-val="C">Turn off your phone to avoid distractions</div>
+                            <div class="quiz-option" data-q="2" data-val="D">Work as quickly as possible to minimize time alone</div>
+                        </div>
+                        <div class="quiz-feedback" id="fb-2"></div>
+                        <div class="quiz-btn-group">
+                            <button class="btn btn-gold" id="submit-2" onclick="submitQuiz(2)" disabled>Submit Answer</button>
+                            <button class="btn btn-outline" id="next-q-2" onclick="nextSlide()" style="display: none;">Next Question &#x2192;</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Quiz Question 3 -->
+            <div class="slide" data-slide="17">
+                <div class="content-card">
+                    <div class="slide-header">
+                        <div class="slide-number">Quiz Question 3 of 3</div>
+                        <h2 class="slide-title">Knowledge Check</h2>
+                    </div>
+                    <div class="slide-content">
+                        <div class="quiz-question">
+                            What should you do if something "feels wrong" or unsafe while working alone?
+                        </div>
+                        <div class="quiz-options" id="q3-options">
+                            <div class="quiz-option" data-q="3" data-val="A">Ignore it and continue working - you're probably just being paranoid</div>
+                            <div class="quiz-option" data-q="3" data-val="B">Trust your instincts and take action to increase your safety (leave area, call for help, get to safe location)</div>
+                            <div class="quiz-option" data-q="3" data-val="C">Wait to see if something actually happens before reacting</div>
+                            <div class="quiz-option" data-q="3" data-val="D">Continue working but move faster to finish sooner</div>
+                        </div>
+                        <div class="quiz-feedback" id="fb-3"></div>
+                        <div class="quiz-btn-group">
+                            <button class="btn btn-gold" id="submit-3" onclick="submitQuiz(3)" disabled>Submit Answer</button>
+                            <button class="btn btn-outline" id="next-q-3" onclick="nextSlide()" style="display: none;">View Results &#x2192;</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 18: Results -->
+            <div class="slide" data-slide="18">
+                <div class="results-card">
+                    <div class="results-icon" id="rIcon">&#x1F3AF;</div>
+                    <div class="results-score" id="rScore">0 / 3</div>
+                    <h2 class="results-title" id="rTitle">Quiz Complete</h2>
+                    <p class="results-message" id="rMsg">Calculating your results...</p>
+                    <div class="results-katie" id="rKatie">"Let's see how you did!"</div>
+                    <div class="results-buttons" id="rBtns">
+                        <button class="btn btn-gold">Loading...</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Navigation Bar -->
+    <nav class="nav-bar">
+        <div class="nav-inner">
+            <button class="nav-btn" id="prevBtn" onclick="prevSlide()">
+                &#x2190; Previous
+            </button>
+            <span class="slide-indicator" id="slideIndicator">Slide 1 of 14</span>
+            <button class="nav-btn nav-next" id="nextBtn" onclick="nextSlide()">
+                Next &#x2192;
+            </button>
+        </div>
+    </nav>
+    <script>
+    (function() {
+        'use strict';
+        // ═══ CONFIG ═══
+        var TOTAL_SLIDES = 18;
+        var TOTAL_CONTENT = 14;
+        var MODULE_KEY = 'lone-worker-safety';
+        // ═══ STATE ═══
+        var currentSlide = 1;
+        var quizAnswers = { 1: null, 2: null, 3: null };
+        var quizSubmitted = { 1: false, 2: false, 3: false };
+        var quizScore = 0;
+        // Quiz correct answers
+        var quizCorrectAnswers = {
+            1: 'B',  // Check-ins ensure welfare monitoring
+            2: 'B',  // Notify someone before starting
+            3: 'B'   // Trust instincts, take action
+        };
+        // Feedback messages
+        var feedbackMessages = {
+            1: {
+                correct: '&#x2713; Correct! Check-in procedures ensure someone knows where you are and can respond if you miss a check-in. This is your safety net when help isn\'t immediately available.',
+                incorrect: '&#x2717; Incorrect. Check-ins are a safety measure—if you don\'t check in on schedule, it triggers a welfare check to make sure you\'re okay. This is critical when working alone!'
+            },
+            2: {
+                correct: '&#x2713; Correct! Before starting lone work, notify someone of your location, tasks, schedule, and contact info. This ensures help can find you if needed and someone knows to check if you don\'t return.',
+                incorrect: '&#x2717; Incorrect. You must notify someone (supervisor, designated contact) of your location, tasks, schedule, and how to contact you BEFORE starting lone work. This is essential for your safety!'
+            },
+            3: {
+                correct: '&#x2713; Correct! Trust your instincts! If something feels wrong or unsafe, take action to increase your safety. Leave the area, call for help, or get to a safe location. Better safe than sorry!',
+                incorrect: '&#x2717; Incorrect. Always trust your instincts! If something feels wrong, take action immediately—leave the area, call for help, or get to safety. Your subconscious picks up on subtle danger cues.'
+            }
+        };
+        // ═══ NAVIGATION ═══
+        function goToSlide(n) {
+            if (n < 1 || n > TOTAL_SLIDES) return;
+            currentSlide = n;
+            updateUI();
+            saveSlideProgress();
+        }
+        window.nextSlide = function() {
+            goToSlide(currentSlide + 1);
+        };
+        window.prevSlide = function() {
+            goToSlide(currentSlide - 1);
+        };
+        // ═══ UI UPDATE ═══
+        function updateUI() {
+            document.querySelectorAll('.slide').forEach(function(s) {
+                s.classList.remove('active');
+            });
+            var activeSlide = document.querySelector('[data-slide="' + currentSlide + '"]');
+            if (activeSlide) {
+                activeSlide.classList.add('active');
+            }
+            var progressPct = ((currentSlide - 1) / (TOTAL_CONTENT - 1)) * 100;
+            document.getElementById('progressFill').style.width = Math.min(100, progressPct) + '%';
+            document.getElementById('progressPct').textContent = Math.round(Math.min(100, progressPct)) + '%';
+            
+            if (currentSlide <= TOTAL_CONTENT) {
+                document.getElementById('progressLabel').textContent = 'Slide ' + currentSlide + ' of ' + TOTAL_CONTENT;
+                document.getElementById('slideIndicator').textContent = 'Slide ' + currentSlide + ' of ' + TOTAL_CONTENT;
+            } else {
+                document.getElementById('progressLabel').textContent = 'Results';
+                document.getElementById('slideIndicator').textContent = 'Results';
+            }
+            var prevBtn = document.getElementById('prevBtn');
+            var nextBtn = document.getElementById('nextBtn');
+            
+            prevBtn.disabled = currentSlide === 1;
+            nextBtn.disabled = currentSlide === TOTAL_SLIDES;
+            if (currentSlide === 18) {
+                buildResults();
+            }
+            document.querySelector('.content-wrapper').scrollTop = 0;
+        }
+        // ═══ KEYBOARD NAV ═══
+        document.addEventListener('keydown', function(e) {
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+            if (e.key === 'ArrowRight' || e.key === 'Right') {
+                e.preventDefault();
+                nextSlide();
+            } else if (e.key === 'ArrowLeft' || e.key === 'Left') {
+                e.preventDefault();
+                prevSlide();
+            }
+        });
+        // ═══ QUIZ HANDLING ═══
+        document.querySelectorAll('.quiz-option').forEach(function(opt) {
+            opt.addEventListener('click', function() {
+                var qNum = parseInt(this.getAttribute('data-q'));
+                if (quizSubmitted[qNum]) return;
+                var container = document.getElementById('q' + qNum + '-options');
+                container.querySelectorAll('.quiz-option').forEach(function(o) {
+                    o.classList.remove('selected');
+                });
+                this.classList.add('selected');
+                quizAnswers[qNum] = this.getAttribute('data-val');
+                document.getElementById('submit-' + qNum).disabled = false;
+            });
+        });
+        window.submitQuiz = function(qNum) {
+            if (quizSubmitted[qNum]) return;
+            quizSubmitted[qNum] = true;
+            var userAnswer = quizAnswers[qNum];
+            var correctAnswer = quizCorrectAnswers[qNum];
+            var isCorrect = (userAnswer === correctAnswer);
+            var container = document.getElementById('q' + qNum + '-options');
+            container.querySelectorAll('.quiz-option').forEach(function(opt) {
+                opt.classList.add('disabled');
+                var val = opt.getAttribute('data-val');
+                if (val === correctAnswer) {
+                    opt.classList.add('correct');
+                } else if (opt.classList.contains('selected') && !isCorrect) {
+                    opt.classList.add('incorrect');
+                }
+            });
+            var fb = document.getElementById('fb-' + qNum);
+            if (isCorrect) {
+                fb.textContent = feedbackMessages[qNum].correct;
+                fb.className = 'quiz-feedback show correct-fb';
+                quizScore++;
+            } else {
+                fb.textContent = feedbackMessages[qNum].incorrect;
+                fb.className = 'quiz-feedback show incorrect-fb';
+            }
+            document.getElementById('submit-' + qNum).style.display = 'none';
+            document.getElementById('next-q-' + qNum).style.display = '';
+        };
+        // ═══ BUILD RESULTS ═══
+        function buildResults() {
+            var icon = document.getElementById('rIcon');
+            var score = document.getElementById('rScore');
+            var title = document.getElementById('rTitle');
+            var msg = document.getElementById('rMsg');
+            var btns = document.getElementById('rBtns');
+            var katie = document.getElementById('rKatie');
+            score.textContent = quizScore + ' / 3';
+            if (quizScore === 3) {
+                icon.textContent = '&#x1F389;';
+                title.textContent = 'Perfect Score!';
+                msg.textContent = 'Outstanding! You understand lone worker hazards, check-in procedures, emergency response, and personal safety practices. Stay safe when working alone!';
+                btns.innerHTML = '<button class="btn btn-success" onclick="completeModule()">&#x2713; Complete Module & Return to Dashboard</button>';
+                katie.textContent = '"Excellent work! Remember: Check in regularly, trust your instincts, and always notify someone before starting lone work!"';
+            } else if (quizScore >= 2) {
+                icon.textContent = '&#x2705;';
+                title.textContent = 'You Passed!';
+                msg.textContent = 'Great job! You demonstrated solid understanding of lone worker safety principles and procedures.';
+                btns.innerHTML = '<button class="btn btn-success" onclick="completeModule()">&#x2713; Complete Module & Return to Dashboard</button>';
+                katie.textContent = '"Well done! Always check in on schedule, notify someone before starting, and trust your instincts!"';
+            } else {
+                icon.textContent = '&#x1F4DA;';
+                title.textContent = 'Not Quite Yet';
+                msg.textContent = 'You need 2 out of 3 correct to pass this module. Review the lesson and try again!';
+                btns.innerHTML = '<button class="btn btn-gold" onclick="retakeQuiz()">&#x21BB; Retake Quiz</button>' +
+                    '<button class="btn btn-outline" onclick="goToSlide(3)">&#x2191; Review Lesson</button>';
+                katie.textContent = '"Don\'t worry! Lone worker safety is critical. Review check-in procedures and trusting your instincts!"';
+            }
+            saveQuizProgress();
+        }
+        // ═══ RETAKE QUIZ ═══
+        window.retakeQuiz = function() {
+            quizAnswers = { 1: null, 2: null, 3: null };
+            quizSubmitted = { 1: false, 2: false, 3: false };
+            quizScore = 0;
+            for (var q = 1; q <= 3; q++) {
+                var container = document.getElementById('q' + q + '-options');
+                container.querySelectorAll('.quiz-option').forEach(function(opt) {
+                    opt.classList.remove('selected', 'correct', 'incorrect', 'disabled');
+                });
+                document.getElementById('fb-' + q).className = 'quiz-feedback';
+                document.getElementById('fb-' + q).textContent = '';
+                document.getElementById('submit-' + q).style.display = '';
+                document.getElementById('submit-' + q).disabled = true;
+                document.getElementById('next-q-' + q).style.display = 'none';
+            }
+            goToSlide(15);
+        };
+        // ═══ LOCAL STORAGE ═══
+        function getProgress() {
+            try {
+                var d = localStorage.getItem('safetyverse-progress');
+                return d ? JSON.parse(d) : {};
+            } catch(e) { return {}; }
+        }
+        function saveSlideProgress() {
+            try {
+                var p = getProgress();
+                if (!p.modules) p.modules = {};
+                if (!p.modules[MODULE_KEY]) {
+                    p.modules[MODULE_KEY] = { completed: false, quizScore: 0, attempts: 0, lastAttempt: null };
+                }
+                p.modules[MODULE_KEY].currentSlide = currentSlide;
+                p.modules[MODULE_KEY].totalSlides = TOTAL_SLIDES;
+                localStorage.setItem('safetyverse-progress', JSON.stringify(p));
+            } catch(e) {}
+        }
+        function saveQuizProgress() {
+            try {
+                var p = getProgress();
+                if (!p.modules) p.modules = {};
+                if (!p.modules[MODULE_KEY]) {
+                    p.modules[MODULE_KEY] = { completed: false, quizScore: 0, attempts: 0 };
+                }
+                var mod = p.modules[MODULE_KEY];
+                mod.quizScore = quizScore;
+                mod.attempts = (mod.attempts || 0) + 1;
+                mod.lastAttempt = new Date().toISOString();
+                if (quizScore >= 2) mod.completed = true;
+                localStorage.setItem('safetyverse-progress', JSON.stringify(p));
+            } catch(e) {}
+        }
+        window.completeModule = function() {
+            try {
+                var p = getProgress();
+                if (!p.modules) p.modules = {};
+                if (!p.modules[MODULE_KEY]) {
+                    p.modules[MODULE_KEY] = { quizScore: 0, attempts: 0 };
+                }
+                p.modules[MODULE_KEY].completed = true;
+                p.modules[MODULE_KEY].completedAt = new Date().toISOString();
+                p.modules[MODULE_KEY].quizScore = quizScore;
+                localStorage.setItem('safetyverse-progress', JSON.stringify(p));
+            } catch(e) {}
+            window.location.href = '../../user-dashboard/index.html';
+        };
+        // ═══ RESTORE PROGRESS ON LOAD ═══
+        function restoreProgress() {
+            try {
+                var p = getProgress();
+                if (p.modules && p.modules[MODULE_KEY]) {
+                    var mod = p.modules[MODULE_KEY];
+                    if (mod.completed) {
+                        var introCard = document.querySelector('.intro-card');
+                        if (introCard) {
+                            var badge = document.createElement('div');
+                            badge.style.cssText = 'position:absolute;top:20px;right:20px;background:var(--success);color:white;font-size:12px;font-weight:700;padding:5px 16px;border-radius:20px;z-index:5;';
+                            badge.textContent = '&#x2713; Completed';
+                            introCard.appendChild(badge);
+                        }
+                    }
+                }
+            } catch(e) {}
+        }
+        // ═══ INIT ═══
+        restoreProgress();
+        updateUI();
+    })();
+    </script>
+</body>
+</html>

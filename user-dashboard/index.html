@@ -1,0 +1,2276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="logo.png?v=2">
+    <title>SafetyVerse - Workplace Safety Training LMS</title>
+    <style>
+        /* ═══════════════════════════════════════════
+           CSS VARIABLES & RESET
+           ═══════════════════════════════════════════ */
+        :root {
+            --primary: #FFD700;
+            --primary-dark: #E6C200;
+            --primary-light: #FFF3B0;
+            --secondary: #FF8C00;
+            --secondary-dark: #E67A00;
+            --bg-clay: #F5E6D3;
+            --bg-clay-dark: #E8D5C0;
+            --bg-clay-light: #FAF0E6;
+            --text-dark: #1A1A1A;
+            --text-medium: #444444;
+            --text-light: #777777;
+            --accent-black: #1A1A1A;
+            --white: #FFFFFF;
+            --success: #4CAF50;
+            --success-dark: #388E3C;
+            --error: #E53935;
+            --info: #2196F3;
+            --locked-gray: #9E9E9E;
+            --shadow-soft: 0 4px 15px rgba(0,0,0,0.08);
+            --shadow-medium: 0 6px 25px rgba(0,0,0,0.12);
+            --shadow-hard: 0 8px 35px rgba(0,0,0,0.18);
+            --shadow-clay: 4px 4px 0px rgba(0,0,0,0.12), inset 0 2px 4px rgba(255,255,255,0.3);
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 20px;
+            --radius-xl: 28px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --font-heading: 'Segoe UI', 'Arial Black', sans-serif;
+            --font-body: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: var(--font-body);
+            background-color: var(--bg-clay);
+            color: var(--text-dark);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Clay texture overlay */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 9999;
+            background-image:
+                radial-gradient(circle at 20% 50%, rgba(139,90,43,0.03) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(139,90,43,0.02) 0%, transparent 50%),
+                radial-gradient(circle at 50% 80%, rgba(139,90,43,0.03) 0%, transparent 50%);
+        }
+
+        /* ═══════════════════════════════════════════
+           HEADER
+           ═══════════════════════════════════════════ */
+        .header {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: linear-gradient(180deg, var(--accent-black) 0%, #2A2A2A 100%);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            border-bottom: 4px solid var(--primary);
+        }
+
+        .header-inner {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 64px;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 32px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            flex-shrink: 0;
+        }
+
+        .logo-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .logo-icon img {
+            display: block;
+            height: 50px;
+            width: auto;
+            image-rendering: -webkit-optimize-contrast;
+            image-rendering: crisp-edges;
+            box-shadow: 4px 4px 0px rgba(0,0,0,0.15);
+            border-radius: 12px;
+            transition: transform 0.2s ease;
+        }
+
+        .logo-text {
+            font-family: var(--font-heading);
+            font-size: 22px; font-weight: 900;
+            color: var(--white);
+            letter-spacing: -0.5px;
+        }
+
+        .logo-text em { color: var(--primary); font-style: normal; }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: rgba(255,255,255,0.65);
+            padding: 8px 14px;
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+            font-size: 14px;
+            transition: var(--transition);
+        }
+
+        .nav-links a:hover { color: var(--white); background: rgba(255,255,255,0.08); }
+        .nav-links a.active { color: var(--accent-black); background: var(--primary); }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .header-avatar {
+            width: 36px; height: auto;
+            border-radius: 8px;
+            border: 2px solid var(--primary);
+            background: #fff;
+            padding: 2px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .header-avatar:hover { box-shadow: 0 0 0 3px rgba(255,215,0,0.3); }
+
+        .header-greeting {
+            font-size: 13px;
+            color: rgba(255,255,255,0.5);
+            font-weight: 600;
+        }
+
+        /* Mobile hamburger */
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+            padding: 6px;
+            border: none;
+            background: none;
+        }
+
+        .hamburger span {
+            display: block;
+            width: 24px; height: 2.5px;
+            background: var(--white);
+            border-radius: 2px;
+            transition: var(--transition);
+        }
+
+        .mobile-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0; right: 0;
+            background: var(--accent-black);
+            border-bottom: 3px solid var(--primary);
+            padding: 16px 24px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+        }
+
+        .mobile-menu.open { display: block; }
+
+        .mobile-menu a {
+            display: block;
+            color: rgba(255,255,255,0.7);
+            text-decoration: none;
+            padding: 12px 0;
+            font-weight: 600;
+            font-size: 15px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            transition: var(--transition);
+        }
+
+        .mobile-menu a:hover { color: var(--primary); }
+        .mobile-menu a:last-child { border-bottom: none; }
+
+        /* ═══════════════════════════════════════════
+           HERO SECTION
+           ═══════════════════════════════════════════ */
+        .hero {
+            background: linear-gradient(135deg, var(--accent-black) 0%, #222 40%, #2D2D2D 100%);
+            padding: 48px 24px 56px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -30%; right: -8%;
+            width: 600px; height: 600px;
+            background: radial-gradient(circle, rgba(255,215,0,0.06) 0%, transparent 65%);
+            pointer-events: none;
+        }
+
+        .hero::after {
+            content: '';
+            position: absolute;
+            bottom: -20%; left: -5%;
+            width: 400px; height: 400px;
+            background: radial-gradient(circle, rgba(255,140,0,0.04) 0%, transparent 65%);
+            pointer-events: none;
+        }
+
+        .hero-inner {
+            max-width: 1280px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Progress Dashboard (Left) */
+        .hero-dashboard {
+            text-align: center;
+        }
+
+        .hero-dashboard h1 {
+            font-family: var(--font-heading);
+            font-size: 28px; font-weight: 900;
+            color: var(--white);
+            margin-bottom: 28px;
+            text-align: left;
+        }
+
+        .hero-dashboard h1 em { color: var(--primary); font-style: normal; }
+
+        .progress-ring-wrap {
+            position: relative;
+            width: 200px; height: 200px;
+            margin: 0 auto 24px;
+        }
+
+        .progress-ring-svg {
+            width: 200px; height: 200px;
+            transform: rotate(-90deg);
+        }
+
+        .progress-ring-bg {
+            fill: none;
+            stroke: rgba(255,255,255,0.08);
+            stroke-width: 12;
+        }
+
+        .progress-ring-fill {
+            fill: none;
+            stroke: url(#progressGradient);
+            stroke-width: 12;
+            stroke-linecap: round;
+            transition: stroke-dashoffset 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .progress-ring-text {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+
+        .progress-ring-pct {
+            font-family: var(--font-heading);
+            font-size: 42px; font-weight: 900;
+            color: var(--primary);
+            line-height: 1;
+            display: block;
+        }
+
+        .progress-ring-label {
+            font-size: 13px;
+            color: rgba(255,255,255,0.5);
+            font-weight: 600;
+            margin-top: 4px;
+            display: block;
+        }
+
+        .hero-stats-row {
+            display: flex;
+            justify-content: center;
+            gap: 32px;
+        }
+
+        .hero-stat {
+            text-align: center;
+        }
+
+        .hero-stat-val {
+            font-family: var(--font-heading);
+            font-size: 22px; font-weight: 900;
+            color: var(--white);
+        }
+
+        .hero-stat-lbl {
+            font-size: 11px; font-weight: 700;
+            color: rgba(255,255,255,0.35);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 2px;
+        }
+
+        /* Continue Learning Card (Right) */
+        .continue-card {
+            background: linear-gradient(135deg, #2A2A2A, #333);
+            border-radius: var(--radius-lg);
+            border: 1px solid rgba(255,215,0,0.15);
+            padding: 28px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .continue-card::before {
+            content: '';
+            position: absolute;
+            top: 0; right: 0;
+            width: 120px; height: 120px;
+            background: radial-gradient(circle, rgba(255,215,0,0.08) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .continue-badge {
+            display: inline-block;
+            font-size: 10px; font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--primary);
+            background: rgba(255,215,0,0.12);
+            padding: 4px 12px;
+            border-radius: 20px;
+            margin-bottom: 16px;
+        }
+
+        .continue-module-title {
+            font-family: var(--font-heading);
+            font-size: 20px; font-weight: 800;
+            color: var(--white);
+            margin-bottom: 8px;
+        }
+
+        .continue-module-path {
+            font-size: 13px;
+            color: rgba(255,255,255,0.4);
+            margin-bottom: 16px;
+        }
+
+        .continue-progress-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+
+        .continue-progress-track {
+            flex: 1;
+            height: 8px;
+            background: rgba(255,255,255,0.08);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .continue-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 4px;
+            transition: width 0.8s ease;
+        }
+
+        .continue-progress-pct {
+            font-family: var(--font-heading);
+            font-size: 14px; font-weight: 800;
+            color: var(--primary);
+            min-width: 36px;
+        }
+
+        .continue-time {
+            font-size: 12px;
+            color: rgba(255,255,255,0.35);
+            margin-bottom: 20px;
+        }
+
+        .continue-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 28px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: var(--accent-black);
+            border: none;
+            border-radius: var(--radius-sm);
+            font-family: var(--font-heading);
+            font-size: 15px; font-weight: 800;
+            cursor: pointer;
+            text-decoration: none;
+            transition: var(--transition);
+            box-shadow: var(--shadow-clay);
+        }
+
+        .continue-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-medium);
+        }
+
+        /* Katie tip in hero */
+        .katie-tip {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin-top: 20px;
+            padding: 14px;
+            background: rgba(255,215,0,0.06);
+            border-radius: var(--radius-md);
+            border-left: 3px solid var(--primary);
+        }
+
+        .katie-tip-avatar {
+            width: 36px; height: auto;
+            border-radius: 8px;
+            background: #fff;
+            padding: 2px;
+            flex-shrink: 0;
+        }
+
+        .katie-tip-text {
+            font-size: 13px;
+            color: rgba(255,255,255,0.6);
+            font-style: italic;
+            line-height: 1.5;
+        }
+
+        .katie-tip-text strong { color: var(--primary); font-style: normal; }
+
+        /* No-continue state */
+        .continue-card.all-done .continue-badge { background: rgba(76,175,80,0.15); color: var(--success); }
+
+        /* ═══════════════════════════════════════════
+           SECTION COMMON
+           ═══════════════════════════════════════════ */
+        .section {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 48px 24px;
+        }
+
+        .section-header {
+            margin-bottom: 28px;
+        }
+
+        .section-label {
+            font-size: 11px; font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--text-light);
+            margin-bottom: 6px;
+        }
+
+        .section-title {
+            font-family: var(--font-heading);
+            font-size: 26px; font-weight: 900;
+            color: var(--text-dark);
+        }
+
+        .section-subtitle {
+            font-size: 15px;
+            color: var(--text-light);
+            margin-top: 4px;
+        }
+
+        /* ═══════════════════════════════════════════
+           LEARNING PATHS
+           ═══════════════════════════════════════════ */
+        .paths-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+        }
+
+        /* Path Card */
+        .path-card {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-soft);
+            overflow: hidden;
+            transition: var(--transition);
+            border: 2px solid transparent;
+        }
+
+        .path-card:hover {
+            box-shadow: var(--shadow-medium);
+            transform: translateY(-3px);
+        }
+
+        .path-card.locked {
+            opacity: 0.75;
+        }
+
+        .path-card.locked:hover {
+            transform: none;
+            box-shadow: var(--shadow-soft);
+        }
+
+        .path-card.active { border-color: var(--primary); }
+        .path-card.completed-path { border-color: var(--success); }
+
+        .path-card-header {
+            padding: 24px 24px 20px;
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            position: relative;
+        }
+
+        .path-icon-wrap {
+            width: 52px; height: 52px;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 26px;
+            flex-shrink: 0;
+            box-shadow: var(--shadow-clay);
+        }
+
+        .path-icon-wrap.foundation { background: linear-gradient(135deg, #FFD700, #FFA000); }
+        .path-icon-wrap.operational { background: linear-gradient(135deg, #FF6B35, #E53935); }
+        .path-icon-wrap.occupational { background: linear-gradient(135deg, #42A5F5, #1565C0); }
+        .path-icon-wrap.specialized { background: linear-gradient(135deg, #66BB6A, #2E7D32); }
+
+        .path-card.locked .path-icon-wrap { filter: grayscale(0.6); opacity: 0.6; }
+
+        .path-header-text { flex: 1; min-width: 0; }
+
+        .path-header-text h3 {
+            font-family: var(--font-heading);
+            font-size: 18px; font-weight: 800;
+            color: var(--text-dark);
+            margin-bottom: 3px;
+        }
+
+        .path-card.locked .path-header-text h3 { color: var(--text-light); }
+
+        .path-header-text p {
+            font-size: 13px;
+            color: var(--text-light);
+        }
+
+        .path-badge {
+            position: absolute;
+            top: 16px; right: 16px;
+            font-size: 10px; font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            padding: 4px 10px;
+            border-radius: 12px;
+            white-space: nowrap;
+        }
+
+        .path-badge.required { background: var(--primary); color: var(--accent-black); }
+        .path-badge.in-progress { background: rgba(255,140,0,0.15); color: var(--secondary); }
+        .path-badge.completed-badge { background: rgba(76,175,80,0.15); color: var(--success); }
+        .path-badge.locked-badge { background: rgba(0,0,0,0.06); color: var(--text-light); }
+
+        /* Path progress bar */
+        .path-progress-section {
+            padding: 0 24px 16px;
+        }
+
+        .path-progress-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 6px;
+        }
+
+        .path-progress-label {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text-medium);
+        }
+
+        .path-progress-count {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text-light);
+        }
+
+        .path-progress-track {
+            height: 6px;
+            background: var(--bg-clay);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .path-progress-fill {
+            height: 100%;
+            border-radius: 3px;
+            transition: width 0.8s ease;
+        }
+
+        .path-progress-fill.foundation-fill { background: linear-gradient(90deg, var(--primary), var(--secondary)); }
+        .path-progress-fill.operational-fill { background: linear-gradient(90deg, #FF6B35, #E53935); }
+        .path-progress-fill.occupational-fill { background: linear-gradient(90deg, #42A5F5, #1565C0); }
+        .path-progress-fill.specialized-fill { background: linear-gradient(90deg, #66BB6A, #2E7D32); }
+        .path-progress-fill.locked-fill { background: var(--locked-gray); }
+
+        /* Expand/Collapse button */
+        .path-expand-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            width: 100%;
+            padding: 12px;
+            background: var(--bg-clay-light);
+            border: none;
+            border-top: 1px solid rgba(0,0,0,0.04);
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-medium);
+            transition: var(--transition);
+        }
+
+        .path-expand-btn:hover { background: var(--bg-clay); }
+
+        .path-card.locked .path-expand-btn {
+            color: var(--text-light);
+        }
+
+        .path-expand-arrow {
+            transition: transform 0.3s ease;
+            font-size: 11px;
+        }
+
+        .path-expand-btn.expanded .path-expand-arrow { transform: rotate(180deg); }
+
+        /* Module list */
+        .module-list {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            background: var(--bg-clay-light);
+        }
+
+        .module-list-inner {
+            padding: 8px 16px 16px;
+        }
+
+        /* Module item */
+        .module-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 12px 14px;
+            border-radius: var(--radius-md);
+            margin-bottom: 6px;
+            background: var(--white);
+            transition: var(--transition);
+        }
+
+        .module-item:last-child { margin-bottom: 0; }
+        .module-item:hover { box-shadow: var(--shadow-soft); }
+        .module-item.locked-module { opacity: 0.55; }
+        .module-item.locked-module:hover { box-shadow: none; }
+
+        .module-status-icon {
+            width: 32px; height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+
+        .module-status-icon.done { background: rgba(76,175,80,0.12); color: var(--success); }
+        .module-status-icon.in-prog { background: rgba(255,140,0,0.12); color: var(--secondary); }
+        .module-status-icon.available-icon { background: rgba(33,150,243,0.1); color: var(--info); }
+        .module-status-icon.locked-icon { background: rgba(0,0,0,0.04); color: var(--locked-gray); }
+
+        .module-item-info { flex: 1; min-width: 0; }
+
+        .module-item-name {
+            font-size: 14px; font-weight: 700;
+            color: var(--text-dark);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .module-item.locked-module .module-item-name { color: var(--text-light); }
+
+        .module-item-meta {
+            font-size: 11px;
+            color: var(--text-light);
+            display: flex;
+            gap: 10px;
+            margin-top: 2px;
+        }
+
+        .module-item-btn {
+            padding: 6px 16px;
+            border-radius: var(--radius-sm);
+            font-size: 12px; font-weight: 700;
+            text-decoration: none;
+            transition: var(--transition);
+            white-space: nowrap;
+            border: none;
+            cursor: pointer;
+        }
+
+        .module-item-btn.start-btn {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: var(--accent-black);
+            box-shadow: 2px 2px 0px rgba(0,0,0,0.08);
+        }
+
+        .module-item-btn.start-btn:hover { transform: translateY(-1px); box-shadow: var(--shadow-soft); }
+
+        .module-item-btn.continue-btn {
+            background: var(--primary);
+            color: var(--accent-black);
+        }
+
+        .module-item-btn.continue-btn:hover { background: var(--primary-dark); }
+
+        .module-item-btn.review-btn {
+            background: var(--bg-clay-light);
+            color: var(--text-medium);
+            border: 1px solid rgba(0,0,0,0.08);
+        }
+
+        .module-item-btn.review-btn:hover { border-color: var(--primary); background: #FFFDE7; }
+
+        .module-item-btn.locked-btn {
+            background: rgba(0,0,0,0.03);
+            color: var(--locked-gray);
+            cursor: default;
+        }
+
+        /* Path footer / certificate */
+        .path-footer {
+            padding: 14px 24px;
+            border-top: 1px solid rgba(0,0,0,0.04);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-light);
+        }
+
+        .path-footer .cert-icon { font-size: 16px; }
+
+        .path-card.locked .path-footer {
+            font-size: 12px;
+            color: var(--locked-gray);
+        }
+
+        /* ═══════════════════════════════════════════
+           GAMES SECTION
+           ═══════════════════════════════════════════ */
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+
+        .game-card {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-soft);
+            overflow: hidden;
+            transition: var(--transition);
+            border: 2px solid transparent;
+        }
+
+        .game-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-hard);
+        }
+
+        .game-card.locked-game {
+            opacity: 0.55;
+        }
+
+        .game-card.locked-game:hover {
+            transform: none;
+            box-shadow: var(--shadow-soft);
+        }
+
+        .game-card.available-game { border-color: rgba(255,215,0,0.3); }
+
+        .game-thumb {
+            height: 160px;
+            background: linear-gradient(135deg, var(--accent-black), #333);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            position: relative;
+        }
+
+        .game-badge {
+            position: absolute;
+            top: 12px; left: 12px;
+            font-size: 10px; font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            padding: 4px 10px;
+            border-radius: 10px;
+        }
+
+        .game-badge.available-badge { background: var(--primary); color: var(--accent-black); }
+        .game-badge.coming-badge { background: rgba(255,255,255,0.15); color: rgba(255,255,255,0.5); }
+
+        .game-card-body { padding: 20px; }
+
+        .game-card-body h3 {
+            font-family: var(--font-heading);
+            font-size: 17px; font-weight: 800;
+            color: var(--text-dark);
+            margin-bottom: 2px;
+        }
+
+        .game-card-body .game-type {
+            font-size: 12px;
+            color: var(--text-light);
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .game-card-body .game-desc {
+            font-size: 13px;
+            color: var(--text-medium);
+            margin-bottom: 14px;
+            line-height: 1.5;
+        }
+
+        .game-card.locked-game .game-card-body h3 { color: var(--text-light); }
+
+        .game-chars {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 14px;
+        }
+
+        .game-char-avatar {
+            width: 28px; height: auto;
+            border-radius: 6px;
+            border: 2px solid var(--bg-clay);
+            background: #fff;
+            padding: 1px;
+        }
+
+        .game-play-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 10px 22px;
+            border-radius: var(--radius-sm);
+            font-size: 13px; font-weight: 700;
+            text-decoration: none;
+            transition: var(--transition);
+            border: none;
+            cursor: pointer;
+        }
+
+        .game-play-btn.play-now {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: var(--accent-black);
+            box-shadow: var(--shadow-clay);
+        }
+
+        .game-play-btn.play-now:hover { transform: translateY(-2px); box-shadow: var(--shadow-medium); }
+
+        .game-play-btn.locked-play {
+            background: var(--bg-clay);
+            color: var(--text-light);
+            cursor: default;
+        }
+
+        /* ═══════════════════════════════════════════
+           CERTIFICATES SECTION
+           ═══════════════════════════════════════════ */
+        .certs-section {
+            background: linear-gradient(135deg, var(--accent-black) 0%, #2A2A2A 100%);
+            padding: 48px 24px;
+        }
+
+        .certs-inner {
+            max-width: 1280px;
+            margin: 0 auto;
+        }
+
+        .certs-section .section-title { color: var(--white); }
+        .certs-section .section-subtitle { color: rgba(255,255,255,0.4); }
+        .certs-section .section-label { color: rgba(255,255,255,0.3); }
+
+        .certs-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 16px;
+            margin-top: 28px;
+        }
+
+        .cert-card {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: var(--radius-lg);
+            padding: 24px 18px;
+            text-align: center;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .cert-card:hover { background: rgba(255,255,255,0.07); }
+
+        .cert-card.earned {
+            border-color: rgba(255,215,0,0.3);
+            background: rgba(255,215,0,0.05);
+        }
+
+        .cert-card.master-cert {
+            border-color: rgba(255,215,0,0.2);
+        }
+
+        .cert-icon {
+            width: 56px; height: 56px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 26px;
+            margin: 0 auto 12px;
+        }
+
+        .cert-icon.earned-icon { background: rgba(255,215,0,0.15); }
+        .cert-icon.locked-cert-icon { background: rgba(255,255,255,0.05); filter: grayscale(1); opacity: 0.4; }
+        .cert-icon.master-icon { background: rgba(255,215,0,0.12); }
+
+        .cert-card h4 {
+            font-family: var(--font-heading);
+            font-size: 14px; font-weight: 800;
+            color: var(--white);
+            margin-bottom: 6px;
+        }
+
+        .cert-card.locked-cert h4 { color: rgba(255,255,255,0.3); }
+
+        .cert-card .cert-status {
+            font-size: 11px; font-weight: 700;
+            color: rgba(255,255,255,0.3);
+        }
+
+        .cert-card.earned .cert-status { color: var(--primary); }
+
+        /* ═══════════════════════════════════════════
+           FOOTER
+           ═══════════════════════════════════════════ */
+        .footer {
+            background: #111;
+            border-top: 4px solid var(--primary);
+            padding: 48px 24px 24px;
+        }
+
+        .footer-inner {
+            max-width: 1280px;
+            margin: 0 auto;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr 1fr;
+            gap: 40px;
+            margin-bottom: 32px;
+        }
+
+        .footer-col h4 {
+            font-family: var(--font-heading);
+            font-size: 14px; font-weight: 800;
+            color: var(--white);
+            margin-bottom: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .footer-col p {
+            font-size: 13px;
+            color: rgba(255,255,255,0.35);
+            line-height: 1.6;
+        }
+
+        .footer-col ul {
+            list-style: none;
+        }
+
+        .footer-col li { margin-bottom: 8px; }
+
+        .footer-col a {
+            font-size: 13px;
+            color: rgba(255,255,255,0.4);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .footer-col a:hover { color: var(--primary); }
+
+        .footer-bottom {
+            border-top: 1px solid rgba(255,255,255,0.06);
+            padding-top: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .footer-bottom p {
+            font-size: 12px;
+            color: rgba(255,255,255,0.25);
+        }
+
+        .footer-bottom a { color: var(--primary); text-decoration: none; }
+
+        /* ═══════════════════════════════════════════
+           RESPONSIVE
+           ═══════════════════════════════════════════ */
+        @media (max-width: 1024px) {
+            .hero-inner { grid-template-columns: 1fr; gap: 32px; }
+            .hero-dashboard h1 { text-align: center; }
+            .paths-grid { grid-template-columns: 1fr; }
+            .certs-grid { grid-template-columns: repeat(3, 1fr); }
+        }
+
+        @media (max-width: 768px) {
+            .header-inner { height: 56px; }
+            .nav-links { display: none; }
+            .hamburger { display: flex; }
+            .header-greeting { display: none; }
+            .hero { padding: 32px 20px 40px; }
+            .hero-dashboard h1 { font-size: 22px; }
+            .progress-ring-wrap { width: 160px; height: 160px; }
+            .progress-ring-svg { width: 160px; height: 160px; }
+            .progress-ring-pct { font-size: 34px; }
+            .hero-stats-row { gap: 20px; }
+            .hero-stat-val { font-size: 18px; }
+            .games-grid { grid-template-columns: 1fr; }
+            .certs-grid { grid-template-columns: repeat(2, 1fr); }
+            .footer-grid { grid-template-columns: 1fr; gap: 24px; }
+            .section { padding: 36px 16px; }
+            .certs-section { padding: 36px 16px; }
+        }
+
+        @media (max-width: 480px) {
+            .hero-stats-row { flex-direction: column; gap: 10px; }
+            .continue-card { padding: 20px; }
+            .certs-grid { grid-template-columns: 1fr; }
+            .footer-bottom { flex-direction: column; text-align: center; }
+            .path-card-header { flex-direction: column; gap: 12px; }
+            .module-item { flex-wrap: wrap; gap: 10px; }
+            .module-item-btn { width: 100%; text-align: center; justify-content: center; }
+        }
+
+        /* ═══════════════════════════════════════════
+           ANIMATIONS
+           ═══════════════════════════════════════════ */
+        .animate-in {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+
+        .animate-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Katie Circular Avatar Styles */
+        .katie-avatar-small {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            object-fit: cover;
+            object-position: center 48%;
+            background: white;
+            border: 3px solid #FFD700;
+            padding: 5px;
+            display: block;
+            flex-shrink: 0;
+        }
+        .katie-avatar-medium {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            object-position: center 48%;
+            background: white;
+            border: 3px solid #FFD700;
+            padding: 8px;
+            display: block;
+            flex-shrink: 0;
+        }
+        .katie-avatar-large {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            object-position: center 48%;
+            background: white;
+            border: 4px solid #FFD700;
+            padding: 10px;
+            display: block;
+            flex-shrink: 0;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ═══ HEADER ═══ -->
+    <header class="header" role="banner">
+        <div class="header-inner">
+            <div class="header-left">
+                <a href="../index.html" class="logo" aria-label="SafetyVerse Home">
+                    <div class="logo-icon" aria-hidden="true"><img src="logo.png?v=2" alt="SafetyVerse Logo" style="height: 50px; width: auto;"></div>
+                    <div class="logo-text">Safety<em>Verse</em></div>
+                </a>
+                <nav aria-label="Main navigation">
+                    <ul class="nav-links">
+                        <li><a href="index.html" class="active">Home</a></li>
+                        <li><a href="../lessons/index.html">My Progress</a></li>
+                        <li><a href="../games/safety-clue/index.html">Games</a></li>
+                    </ul>
+                </nav>
+            </div>
+            <div class="header-right">
+                <span class="header-greeting">Welcome back!</span>
+                <img src="katie.png" alt="Katie" class="katie-avatar-small">
+            </div>
+            <button class="hamburger" aria-label="Toggle menu" onclick="toggleMobileMenu()">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+        <div class="mobile-menu" id="mobileMenu" role="navigation" aria-label="Mobile navigation">
+            <a href="index.html">Home</a>
+            <a href="../lessons/index.html">My Progress</a>
+            <a href="../games/safety-clue/index.html">Games</a>
+        </div>
+    </header>
+
+    <!-- ═══ HERO SECTION ═══ -->
+    <section class="hero" role="region" aria-label="Training progress overview">
+        <div class="hero-inner">
+            <!-- Left: Progress Dashboard -->
+            <div class="hero-dashboard">
+                <h1>Your Safety <em>Training Journey</em></h1>
+
+                <div class="progress-ring-wrap" role="img" aria-label="Overall progress">
+                    <svg class="progress-ring-svg" viewBox="0 0 200 200">
+                        <defs>
+                            <linearGradient id="progressGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                <stop offset="0%" stop-color="#FFD700"/>
+                                <stop offset="100%" stop-color="#FF8C00"/>
+                            </linearGradient>
+                        </defs>
+                        <circle class="progress-ring-bg" cx="100" cy="100" r="85"/>
+                        <circle class="progress-ring-fill" id="progressRing" cx="100" cy="100" r="85"/>
+                    </svg>
+                    <div class="progress-ring-text">
+                        <span class="progress-ring-pct" id="ringPct">0%</span>
+                        <span class="progress-ring-label" id="ringLabel">0/20 Modules</span>
+                    </div>
+                </div>
+
+                <div class="hero-stats-row">
+                    <div class="hero-stat">
+                        <div class="hero-stat-val" id="statModules">0/20</div>
+                        <div class="hero-stat-lbl">Modules Done</div>
+                    </div>
+                    <div class="hero-stat">
+                        <div class="hero-stat-val" id="statCerts">0/5</div>
+                        <div class="hero-stat-lbl">Certificates</div>
+                    </div>
+                    <div class="hero-stat">
+                        <div class="hero-stat-val" id="statPath">Foundation</div>
+                        <div class="hero-stat-lbl">Current Path</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: Continue Learning Card -->
+            <div class="continue-card" id="continueCard">
+                <span class="continue-badge" id="continueBadge">Continue Learning</span>
+                <div class="continue-module-title" id="continueTitle">Getting Started</div>
+                <div class="continue-module-path" id="continuePath">Foundation Path</div>
+                <div class="continue-progress-row">
+                    <div class="continue-progress-track">
+                        <div class="continue-progress-fill" id="continueFill" style="width: 0%"></div>
+                    </div>
+                    <span class="continue-progress-pct" id="continuePct">0%</span>
+                </div>
+                <div class="continue-time" id="continueTime"></div>
+                <a href="#" class="continue-btn" id="continueBtn">Start Module &#8594;</a>
+
+                <div class="katie-tip">
+                    <img src="katie.png" alt="Katie" class="katie-avatar-small">
+                    <div class="katie-tip-text" id="katieTip">
+                        <strong>Katie says:</strong> Welcome to SafetyVerse! Start with the Foundation path to build your core safety knowledge.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══ LEARNING PATHS ═══ -->
+    <section class="section" role="region" aria-label="Learning paths">
+        <div class="section-header">
+            <div class="section-label">Training Modules</div>
+            <h2 class="section-title">Your Learning Paths</h2>
+            <p class="section-subtitle">Complete Foundation first, then unlock specialized paths</p>
+        </div>
+
+        <div class="paths-grid">
+
+            <!-- ═══ PATH 1: FOUNDATION ═══ -->
+            <div class="path-card active animate-in" id="path-foundation">
+                <div class="path-card-header">
+                    <div class="path-icon-wrap foundation" aria-hidden="true">&#127959;</div>
+                    <div class="path-header-text">
+                        <h3>Foundation</h3>
+                        <p>Essential safety knowledge for everyone</p>
+                    </div>
+                    <span class="path-badge required" id="badge-foundation">Required First</span>
+                </div>
+                <div class="path-progress-section">
+                    <div class="path-progress-row">
+                        <span class="path-progress-label" id="foundation-progress-label">0/5 Modules Complete</span>
+                        <span class="path-progress-count" id="foundation-progress-pct">0%</span>
+                    </div>
+                    <div class="path-progress-track">
+                        <div class="path-progress-fill foundation-fill" id="foundation-fill" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <button class="path-expand-btn" id="expand-foundation" onclick="togglePath('foundation')" aria-expanded="false" aria-controls="modules-foundation">
+                    <span>View Modules</span>
+                    <span class="path-expand-arrow" aria-hidden="true">&#9660;</span>
+                </button>
+
+                <div class="module-list" id="modules-foundation" role="region" aria-label="Foundation modules">
+                    <div class="module-list-inner">
+                        <!-- Module 1 -->
+                        <div class="module-item" id="mod-intro-to-osha" data-key="intro-to-osha">
+                            <div class="module-status-icon available-icon" id="icon-intro-to-osha">&#128221;</div>
+                            <div class="module-item-info">
+                                <div class="module-item-name">Module 1: Introduction to OSHA</div>
+                                <div class="module-item-meta">
+                                    <span>&#9201; 15 min</span>
+                                    <span id="meta-intro-to-osha">Not started</span>
+                                </div>
+                            </div>
+                            <a href="../lessons/intro-to-osha/index.html" class="module-item-btn start-btn" id="btn-intro-to-osha">Start &#8594;</a>
+                        </div>
+                        <!-- Module 2 -->
+                        <div class="module-item" id="mod-hazard-recognition" data-key="hazard-recognition">
+                            <div class="module-status-icon available-icon" id="icon-hazard-recognition">&#128221;</div>
+                            <div class="module-item-info">
+                                <div class="module-item-name">Module 2: Hazard Recognition</div>
+                                <div class="module-item-meta">
+                                    <span>&#9201; 15 min</span>
+                                    <span id="meta-hazard-recognition">Not started</span>
+                                </div>
+                            </div>
+                            <a href="../lessons/hazard-recognition/index.html" class="module-item-btn start-btn" id="btn-hazard-recognition">Start &#8594;</a>
+                        </div>
+                        <!-- Module 3 -->
+                        <div class="module-item" id="mod-safety-reporting" data-key="safety-reporting">
+                            <div class="module-status-icon available-icon" id="icon-safety-reporting">&#128221;</div>
+                            <div class="module-item-info">
+                                <div class="module-item-name">Module 3: Safety Reporting</div>
+                                <div class="module-item-meta">
+                                    <span>&#9201; 10 min</span>
+                                    <span id="meta-safety-reporting">Not started</span>
+                                </div>
+                            </div>
+                            <a href="../lessons/safety-reporting/index.html" class="module-item-btn start-btn" id="btn-safety-reporting">Start &#8594;</a>
+                        </div>
+                        <!-- Module 4 -->
+                        <div class="module-item" id="mod-emergency-action" data-key="emergency-action">
+                            <div class="module-status-icon available-icon" id="icon-emergency-action">&#128680;</div>
+                            <div class="module-item-info">
+                                <div class="module-item-name">Module 4: Emergency Action Plans</div>
+                                <div class="module-item-meta">
+                                    <span>&#9201; 10 min</span>
+                                    <span id="meta-emergency-action">Not started</span>
+                                </div>
+                            </div>
+                            <a href="../lessons/emergency-action-plans/index.html" class="module-item-btn start-btn" id="btn-emergency-action">Start &#8594;</a>
+                        </div>
+                        <!-- Module 5 -->
+                        <div class="module-item" id="mod-first-aid" data-key="first-aid">
+                            <div class="module-status-icon available-icon" id="icon-first-aid">&#127973;</div>
+                            <div class="module-item-info">
+                                <div class="module-item-name">Module 5: First Aid &amp; AED</div>
+                                <div class="module-item-meta">
+                                    <span>&#9201; 12 min</span>
+                                    <span id="meta-first-aid">Not started</span>
+                                </div>
+                            </div>
+                            <a href="../lessons/first-aid/index.html" class="module-item-btn start-btn" id="btn-first-aid">Start &#8594;</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="path-footer">
+                    <span class="cert-icon">&#127942;</span>
+                    <span>Earn Foundation Certificate</span>
+                </div>
+            </div>
+
+            <!-- ═══ PATH 2: OPERATIONAL SAFETY ═══ -->
+            <div class="path-card locked animate-in" id="path-operational">
+                <div class="path-card-header">
+                    <div class="path-icon-wrap operational" aria-hidden="true">&#9935;</div>
+                    <div class="path-header-text">
+                        <h3>Operational Safety - Physical Hazards</h3>
+                        <p>Prevent workplace injuries and accidents</p>
+                    </div>
+                    <span class="path-badge locked-badge" id="badge-operational">&#128274; Locked</span>
+                </div>
+                <div class="path-progress-section">
+                    <div class="path-progress-row">
+                        <span class="path-progress-label" id="operational-progress-label">0/6 Modules Complete</span>
+                        <span class="path-progress-count" id="operational-progress-pct">0%</span>
+                    </div>
+                    <div class="path-progress-track">
+                        <div class="path-progress-fill locked-fill" id="operational-fill" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <button class="path-expand-btn" id="expand-operational" onclick="togglePath('operational')" aria-expanded="false" aria-controls="modules-operational">
+                    <span>View Modules</span>
+                    <span class="path-expand-arrow" aria-hidden="true">&#9660;</span>
+                </button>
+
+                <div class="module-list" id="modules-operational" role="region" aria-label="Operational Safety modules">
+                    <div class="module-list-inner">
+                        <div class="module-item locked-module" id="mod-walking-working-surfaces" data-key="walking-working-surfaces">
+                            <div class="module-status-icon locked-icon" id="icon-walking-working-surfaces">&#128274;</div>
+                            <div class="module-item-info">
+                                <div class="module-item-name">Module 6: Walking-Working Surfaces</div>
+                                <div class="module-item-meta">
+                                    <span>&#9201; 20 min</span>
+                                    <span id="meta-walking-working-surfaces">Complete Foundation first</span>
+                                </div>
+                            </div>
+                            <span class="module-item-btn locked-btn" id="btn-walking-working-surfaces">&#128274; Locked</span>
+                        </div>
+                        <div class="module-item locked-module" id="mod-fire-safety" data-key="fire-safety">
+                            <div class="module-status-icon locked-icon" id="icon-fire-safety">&#128274;</div>
+                            <div class="module-item-info">
+                                <div class="module-item-name">Module 7: Fire Safety</div>
+                                <div class="module-item-meta">
+                                    <span>&#9201; 15 min</span>
+                                    <span id="meta-fire-safety">Complete Foundation first</span>
+                                </div>
+                            </div>
+                            <span class="module-item-btn locked-btn" id="btn-fire-safety">&#128274; Locked</span>
+                        </div>
+                        <div class="module-item locked-module" id="mod-driving-safety" data-key="driving-safety">
+                            <div class="module-status-icon locked-icon" id="icon-driving-safety">&#128274;</div>
+                            <div class="module-item-info">
+                                <div class="module-item-name">Module 8: Driving Safety</div>
+                                <div class="module-item-meta">
+                                    <span>&#9201; 15 min</span>
+                                    <span id="meta-driving-safety">Complete Foundation first</span>
+                                </div>
+                            </div>
+                            <span class="module-item-btn locked-btn" id="btn-driving-safety">&#128274; Locked</span>
+                        </div>
+                        <div class="module-item locked-module" id="mod-ppe" data-key="ppe">
+                            <div class="module-status-icon locked-icon" id="icon-ppe">&#128274;</div>
+                            <div class="module-item-info">
+                                <div class="module-item-name">Module 9: Personal Protective Equipment</div>
+                                <div class="module-item-meta">
+                                    <span>&#9201; 15 min</span>
+                                    <span id="meta-ppe">Complete Foundation first</span>
+                                </div>
+                            </div>
+                            <span class="module-item-btn locked-btn" id="btn-ppe">&#128274; Locked</span>
+                        </div>
+                        <div class="module-item locked-module" id="mod-electrical-safety" data-key="electrical-safety">
+                            <div class="module-status-icon locked-icon" id="icon-electrical-safety">&#128274;</div>
+                            <div class="module-item-info">
+                                <div class="module-item-name">Module 10: Electrical Safety &amp; Arc Flash</div>
+                                <div class="module-item-meta">
+                                    <span>&#9201; 15 min</span>
+                                    <span id="meta-electrical-safety">Complete Foundation first</span>
+                                </div>
+                            </div>
+                            <span class="module-item-btn locked-btn" id="btn-electrical-safety">&#128274; Locked</span>
+                        </div>
+                        <div class="module-item locked-module" id="mod-loto" data-key="loto">
+                            <div class="module-status-icon locked-icon" id="icon-loto">&#128274;</div>
+                            <div class="module-item-info">
+                                <div class="module-item-name">Module 11: Lockout/Tagout (LOTO)</div>
+                                <div class="module-item-meta">
+                                    <span>&#9201; 15 min</span>
+                                    <span id="meta-loto">Complete Foundation first</span>
+                                </div>
+                            </div>
+                            <span class="module-item-btn locked-btn" id="btn-loto">&#128274; Locked</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="path-footer">
+                    <span class="cert-icon">&#127942;</span>
+                    <span>Earn Operational Safety Certificate</span>
+                </div>
+            </div>
+
+            <!-- ═══ PATH 3: OCCUPATIONAL HEALTH ═══ -->
+            <div class="path-card locked animate-in" id="path-occupational">
+                <div class="path-card-header">
+                    <div class="path-icon-wrap occupational" aria-hidden="true">&#127777;</div>
+                    <div class="path-header-text">
+                        <h3>Occupational Health - Environmental Exposure</h3>
+                        <p>Protect yourself from environmental hazards</p>
+                    </div>
+                    <span class="path-badge locked-badge" id="badge-occupational">&#128274; Locked</span>
+                </div>
+                <div class="path-progress-section">
+                    <div class="path-progress-row">
+                        <span class="path-progress-label" id="occupational-progress-label">0/5 Modules Complete</span>
+                        <span class="path-progress-count" id="occupational-progress-pct">0%</span>
+                    </div>
+                    <div class="path-progress-track">
+                        <div class="path-progress-fill locked-fill" id="occupational-fill" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <button class="path-expand-btn" id="expand-occupational" onclick="togglePath('occupational')" aria-expanded="false" aria-controls="modules-occupational">
+                    <span>View Modules</span>
+                    <span class="path-expand-arrow" aria-hidden="true">&#9660;</span>
+                </button>
+
+                <div class="module-list" id="modules-occupational" role="region" aria-label="Occupational Health modules">
+                    <div class="module-list-inner">
+                        <div class="module-item locked-module" id="mod-hazcom" data-key="hazcom">
+                            <div class="module-status-icon locked-icon" id="icon-hazcom">&#128274;</div>
+                            <div class="module-item-info">
+                                <div class="module-item-name">Module 12: Hazard Communication (HazCom)</div>
+                                <div class="module-item-meta">
+                                    <span>&#9201; 15 min</span>
+                                    <span id="meta-hazcom">Complete Foundation first</span>
+                                </div>
+                            </div>
+                            <span class="module-item-btn locked-btn" id="btn-hazcom">&#128274; Locked</span>
+                        </div>
+                        <div class="module-item locked-module" id="mod-heat-stress" data-key="heat-stress">
+                            <div class="module-status-icon locked-icon" id="icon-heat-stress">&#128274;</div>
+                            <div class="module-item-info">
+                                <div class="module-item-name">Module 13: Heat Stress</div>
+                                <div class="module-item-meta">
+                                    <span>&#9201; 12 min</span>
+                                    <span id="meta-heat-stress">Complete Foundation first</span>
+                                </div>
+                            </div>
+                            <span class="module-item-btn locked-btn" id="btn-heat-stress">&#128274; Locked</span>
+                        </div>
+                        <div class="module-item locked-module" id="mod-cold-stress" data-key="cold-stress">
+                            <div class="module-status-icon locked-icon" id="icon-cold-stress">&#128274;</div>
+                            <div class="module-item-info">
+                                <div class="module-item-name">Module 14: Cold Stress</div>
+                                <div class="module-item-meta">
+                                    <span>&#9201; 12 min</span>
+                                    <span id="meta-cold-stress">Complete Foundation first</span>
+                                </div>
+                            </div>
+                            <span class="module-item-btn locked-btn" id="btn-cold-stress">&#128274; Locked</span>
+                        </div>
+                        <div class="module-item locked-module" id="mod-hearing-conservation" data-key="hearing-conservation">
+                            <div class="module-status-icon locked-icon" id="icon-hearing-conservation">&#128274;</div>
+                            <div class="module-item-info">
+                                <div class="module-item-name">Module 15: Hearing Conservation</div>
+                                <div class="module-item-meta">
+                                    <span>&#9201; 12 min</span>
+                                    <span id="meta-hearing-conservation">Complete Foundation first</span>
+                                </div>
+                            </div>
+                            <span class="module-item-btn locked-btn" id="btn-hearing-conservation">&#128274; Locked</span>
+                        </div>
+                        <div class="module-item locked-module" id="mod-ergonomics" data-key="ergonomics">
+                            <div class="module-status-icon locked-icon" id="icon-ergonomics">&#128274;</div>
+                            <div class="module-item-info">
+                                <div class="module-item-name">Module 16: Ergonomics</div>
+                                <div class="module-item-meta">
+                                    <span>&#9201; 15 min</span>
+                                    <span id="meta-ergonomics">Complete Foundation first</span>
+                                </div>
+                            </div>
+                            <span class="module-item-btn locked-btn" id="btn-ergonomics">&#128274; Locked</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="path-footer">
+                    <span class="cert-icon">&#127942;</span>
+                    <span>Earn Occupational Health Certificate</span>
+                </div>
+            </div>
+
+            <!-- ═══ PATH 4: SPECIALIZED HEALTH ═══ -->
+            <div class="path-card locked animate-in" id="path-specialized">
+                <div class="path-card-header">
+                    <div class="path-icon-wrap specialized" aria-hidden="true">&#9968;</div>
+                    <div class="path-header-text">
+                        <h3>Specialized Health and Support</h3>
+                        <p>Advanced health and safety topics</p>
+                    </div>
+                    <span class="path-badge locked-badge" id="badge-specialized">&#128274; Locked</span>
+                </div>
+                <div class="path-progress-section">
+                    <div class="path-progress-row">
+                        <span class="path-progress-label" id="specialized-progress-label">0/4 Modules Complete</span>
+                        <span class="path-progress-count" id="specialized-progress-pct">0%</span>
+                    </div>
+                    <div class="path-progress-track">
+                        <div class="path-progress-fill locked-fill" id="specialized-fill" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <button class="path-expand-btn" id="expand-specialized" onclick="togglePath('specialized')" aria-expanded="false" aria-controls="modules-specialized">
+                    <span>View Modules</span>
+                    <span class="path-expand-arrow" aria-hidden="true">&#9660;</span>
+                </button>
+
+                <div class="module-list" id="modules-specialized" role="region" aria-label="Specialized Health modules">
+                    <div class="module-list-inner">
+                        <div class="module-item locked-module" id="mod-bloodborne-pathogens" data-key="bloodborne-pathogens">
+                            <div class="module-status-icon locked-icon" id="icon-bloodborne-pathogens">&#128274;</div>
+                            <div class="module-item-info">
+                                <div class="module-item-name">Module 17: Bloodborne Pathogens</div>
+                                <div class="module-item-meta">
+                                    <span>&#9201; 15 min</span>
+                                    <span id="meta-bloodborne-pathogens">Complete Foundation first</span>
+                                </div>
+                            </div>
+                            <span class="module-item-btn locked-btn" id="btn-bloodborne-pathogens">&#128274; Locked</span>
+                        </div>
+                        <div class="module-item locked-module" id="mod-infectious-disease" data-key="infectious-disease">
+                            <div class="module-status-icon locked-icon" id="icon-infectious-disease">&#128274;</div>
+                            <div class="module-item-info">
+                                <div class="module-item-name">Module 18: Infectious Disease</div>
+                                <div class="module-item-meta">
+                                    <span>&#9201; 15 min</span>
+                                    <span id="meta-infectious-disease">Complete Foundation first</span>
+                                </div>
+                            </div>
+                            <span class="module-item-btn locked-btn" id="btn-infectious-disease">&#128274; Locked</span>
+                        </div>
+                        <div class="module-item locked-module" id="mod-lone-worker-safety" data-key="lone-worker-safety">
+                            <div class="module-status-icon locked-icon" id="icon-lone-worker-safety">&#128274;</div>
+                            <div class="module-item-info">
+                                <div class="module-item-name">Module 19: Lone Worker Safety</div>
+                                <div class="module-item-meta">
+                                    <span>&#9201; 12 min</span>
+                                    <span id="meta-lone-worker-safety">Complete Foundation first</span>
+                                </div>
+                            </div>
+                            <span class="module-item-btn locked-btn" id="btn-lone-worker-safety">&#128274; Locked</span>
+                        </div>
+                        <div class="module-item locked-module" id="mod-workplace-violence-prevention" data-key="workplace-violence-prevention">
+                            <div class="module-status-icon locked-icon" id="icon-workplace-violence-prevention">&#128274;</div>
+                            <div class="module-item-info">
+                                <div class="module-item-name">Module 20: Workplace Violence Prevention</div>
+                                <div class="module-item-meta">
+                                    <span>&#9201; 15 min</span>
+                                    <span id="meta-workplace-violence-prevention">Complete Foundation first</span>
+                                </div>
+                            </div>
+                            <span class="module-item-btn locked-btn" id="btn-workplace-violence-prevention">&#128274; Locked</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="path-footer">
+                    <span class="cert-icon">&#127942;</span>
+                    <span>Earn Specialized Health Certificate</span>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- ═══ GAMES SECTION ═══ -->
+    <section class="section" role="region" aria-label="Games and activities">
+        <div class="section-header">
+            <div class="section-label">Interactive Learning</div>
+            <h2 class="section-title">Take a Break &mdash; Practice with Games</h2>
+            <p class="section-subtitle">Reinforce your learning through interactive scenarios</p>
+        </div>
+
+        <div class="games-grid">
+            <!-- Game 1: Safety Clue -->
+            <div class="game-card available-game animate-in">
+                <div class="game-thumb">
+                    <span aria-hidden="true">&#128269;</span>
+                    <span class="game-badge available-badge">Available Now</span>
+                </div>
+                <div class="game-card-body">
+                    <h3>Safety Clue</h3>
+                    <div class="game-type">Detective Investigation Game</div>
+                    <p class="game-desc">Test your investigation skills! Find who violated which safety protocol and where it happened.</p>
+                    <div class="game-chars">
+                        <img src="matt.png" alt="Matt" class="game-char-avatar" title="Matt">
+                        <img src="dean.png" alt="Dean" class="game-char-avatar" title="Dean">
+                        <img src="clarence.png" alt="Clarence" class="game-char-avatar" title="Clarence">
+                        <img src="katie.png" alt="Katie" class="katie-avatar-small">
+                    </div>
+                    <a href="../games/safety-clue/index.html" class="game-play-btn play-now">Play Now &#9654;</a>
+                </div>
+            </div>
+
+            <!-- Game 2: Coming Soon -->
+            <div class="game-card locked-game animate-in">
+                <div class="game-thumb" style="opacity:0.4;">
+                    <span aria-hidden="true">&#127918;</span>
+                    <span class="game-badge coming-badge">Coming Soon</span>
+                </div>
+                <div class="game-card-body">
+                    <h3>Hazard Hunt</h3>
+                    <div class="game-type">Interactive Scenario</div>
+                    <p class="game-desc">Explore virtual workplaces and identify hidden hazards before time runs out.</p>
+                    <span class="game-play-btn locked-play">&#128274; Coming Soon</span>
+                </div>
+            </div>
+
+            <!-- Game 3: Coming Soon -->
+            <div class="game-card locked-game animate-in">
+                <div class="game-thumb" style="opacity:0.4;">
+                    <span aria-hidden="true">&#127919;</span>
+                    <span class="game-badge coming-badge">Coming Soon</span>
+                </div>
+                <div class="game-card-body">
+                    <h3>Safety Challenge</h3>
+                    <div class="game-type">Timed Quiz Challenge</div>
+                    <p class="game-desc">Race against the clock answering safety questions. Beat your best score!</p>
+                    <span class="game-play-btn locked-play">&#128274; Coming Soon</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══ CERTIFICATES SECTION ═══ -->
+    <section class="certs-section" role="region" aria-label="Certificates and achievements">
+        <div class="certs-inner">
+            <div class="section-header">
+                <div class="section-label">Achievements</div>
+                <h2 class="section-title">Your Certificates</h2>
+                <p class="section-subtitle">Earn certificates as you complete learning paths</p>
+            </div>
+
+            <div class="certs-grid">
+                <!-- Foundation Certificate -->
+                <div class="cert-card locked-cert" id="cert-foundation">
+                    <div class="cert-icon locked-cert-icon" id="cert-icon-foundation">&#127942;</div>
+                    <h4>Foundation</h4>
+                    <div class="cert-status" id="cert-status-foundation">Complete 5 modules</div>
+                </div>
+
+                <!-- Operational Safety Certificate -->
+                <div class="cert-card locked-cert" id="cert-operational">
+                    <div class="cert-icon locked-cert-icon">&#127942;</div>
+                    <h4>Operational Safety</h4>
+                    <div class="cert-status" id="cert-status-operational">Complete Foundation first</div>
+                </div>
+
+                <!-- Occupational Health Certificate -->
+                <div class="cert-card locked-cert" id="cert-occupational">
+                    <div class="cert-icon locked-cert-icon">&#127942;</div>
+                    <h4>Occupational Health</h4>
+                    <div class="cert-status" id="cert-status-occupational">Complete Foundation first</div>
+                </div>
+
+                <!-- Specialized Health Certificate -->
+                <div class="cert-card locked-cert" id="cert-specialized">
+                    <div class="cert-icon locked-cert-icon">&#127942;</div>
+                    <h4>Specialized Health</h4>
+                    <div class="cert-status" id="cert-status-specialized">Complete Foundation first</div>
+                </div>
+
+                <!-- Master Certificate -->
+                <div class="cert-card master-cert locked-cert" id="cert-master">
+                    <div class="cert-icon master-icon">&#127775;</div>
+                    <h4>Master SafetyVerse</h4>
+                    <div class="cert-status" id="cert-status-master">Complete all 20 modules</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══ FOOTER ═══ -->
+    <footer class="footer" role="contentinfo">
+        <div class="footer-inner">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <h4>About SafetyVerse</h4>
+                    <p>SafetyVerse is a modern workplace safety training platform designed to make OSHA compliance engaging, interactive, and accessible. Our immersive LMS transforms required training into an enjoyable learning experience.</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Resources</h4>
+                    <ul>
+                        <li><a href="#">OSHA Guidelines</a></li>
+                        <li><a href="#">Safety Checklists</a></li>
+                        <li><a href="#">FAQ</a></li>
+                        <li><a href="#">Help Center</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Legal</h4>
+                    <ul>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Terms of Service</a></li>
+                        <li><a href="#">Accessibility</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 SafetyVerse &mdash; Making workplace safety training engaging</p>
+                <p>Built with <a href="https://claude.ai" target="_blank" rel="noopener">Claude Code</a></p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ═══ JAVASCRIPT ═══ -->
+    <script>
+    (function() {
+        'use strict';
+
+        /* ═══════════════════════════════════════════
+           MODULE & PATH DEFINITIONS
+           ═══════════════════════════════════════════ */
+        var PATHS = {
+            foundation: {
+                label: 'Foundation',
+                modules: [
+                    { key: 'intro-to-osha',      num: 1,  name: 'Introduction to OSHA',   totalSlides: 14, built: true },
+                    { key: 'hazard-recognition',  num: 2,  name: 'Hazard Recognition',     totalSlides: 14, built: true },
+                    { key: 'safety-reporting',    num: 3,  name: 'Safety Reporting',       totalSlides: 15, built: true },
+                    { key: 'emergency-action',    num: 4,  name: 'Emergency Action Plans', totalSlides: 15, built: true },
+                    { key: 'first-aid',           num: 5,  name: 'First Aid & AED',        totalSlides: 17, built: true }
+                ]
+            },
+            operational: {
+                label: 'Operational Safety',
+                modules: [
+                    { key: 'walking-working-surfaces', num: 6,  name: 'Walking-Working Surfaces',    totalSlides: 16, built: true },
+                    { key: 'fire-safety',              num: 7,  name: 'Fire Safety',                  totalSlides: 16, built: true },
+                    { key: 'driving-safety',           num: 8,  name: 'Driving Safety',               totalSlides: 16, built: true },
+                    { key: 'ppe',                      num: 9,  name: 'Personal Protective Equipment',totalSlides: 16, built: true },
+                    { key: 'electrical-safety',        num: 10, name: 'Electrical Safety & Arc Flash', totalSlides: 16, built: true },
+                    { key: 'loto',                     num: 11, name: 'Lockout/Tagout (LOTO)',        totalSlides: 16, built: true }
+                ]
+            },
+            occupational: {
+                label: 'Occupational Health',
+                modules: [
+                    { key: 'hazcom',                num: 12, name: 'Hazard Communication (HazCom)', totalSlides: 16, built: true },
+                    { key: 'heat-stress',           num: 13, name: 'Heat Stress',                   totalSlides: 16, built: true },
+                    { key: 'cold-stress',           num: 14, name: 'Cold Stress',                   totalSlides: 16, built: true },
+                    { key: 'hearing-conservation',  num: 15, name: 'Hearing Conservation',           totalSlides: 16, built: true },
+                    { key: 'ergonomics',            num: 16, name: 'Ergonomics',                     totalSlides: 16, built: true }
+                ]
+            },
+            specialized: {
+                label: 'Specialized Health',
+                modules: [
+                    { key: 'bloodborne-pathogens',  num: 17, name: 'Bloodborne Pathogens',           totalSlides: 16, built: true },
+                    { key: 'infectious-disease',    num: 18, name: 'Infectious Disease',              totalSlides: 18, built: true },
+                    { key: 'lone-worker-safety',    num: 19, name: 'Lone Worker Safety',              totalSlides: 18, built: true },
+                    { key: 'workplace-violence-prevention', num: 20, name: 'Workplace Violence Prevention', totalSlides: 16, built: true }
+                ]
+            }
+        };
+
+        // Map module keys to their lesson URLs (only built modules)
+        var MODULE_URLS = {
+            'intro-to-osha':           '../lessons/intro-to-osha/index.html',
+            'hazard-recognition':      '../lessons/hazard-recognition/index.html',
+            'walking-working-surfaces':'../lessons/walking-working-surfaces/index.html',
+            'safety-reporting':        '../lessons/safety-reporting/index.html',
+            'emergency-action':        '../lessons/emergency-action-plans/index.html',
+            'first-aid':               '../lessons/first-aid/index.html',
+            'fire-safety':             '../lessons/fire-safety/index.html',
+            'driving-safety':          '../lessons/driving-safety/index.html',
+            'ppe':                     '../lessons/ppe/index.html',
+            'electrical-safety':       '../lessons/electrical-safety/index.html',
+            'loto':                    '../lessons/loto/index.html',
+            'heat-stress':             '../lessons/heat-stress/index.html',
+            'hazcom':                  '../lessons/hazcom/index.html',
+            'cold-stress':             '../lessons/cold-stress/index.html',
+            'hearing-conservation':    '../lessons/hearing-conservation/index.html',
+            'ergonomics':              '../lessons/ergonomics/index.html',
+            'bloodborne-pathogens':    '../lessons/bloodborne-pathogens/index.html',
+            'infectious-disease':      '../lessons/infectious-disease/index.html',
+            'lone-worker-safety':      '../lessons/lone-worker-safety/index.html',
+            'workplace-violence-prevention': '../lessons/workplace-violence-prevention/index.html'
+        };
+
+        var TOTAL_MODULES = 20;
+
+        /* ═══════════════════════════════════════════
+           LOCALSTORAGE
+           ═══════════════════════════════════════════ */
+        function getProgress() {
+            try {
+                var d = localStorage.getItem('safetyverse-progress');
+                if (d) {
+                    var parsed = JSON.parse(d);
+                    return (parsed && parsed.modules) ? parsed.modules : {};
+                }
+            } catch(e) {}
+            return {};
+        }
+
+        /* ═══════════════════════════════════════════
+           COMPUTE STATE
+           ═══════════════════════════════════════════ */
+        function computeState() {
+            var modules = getProgress();
+            var state = {
+                modules: modules,
+                totalCompleted: 0,
+                foundationCompleted: 0,
+                foundationTotal: PATHS.foundation.modules.length,
+                isFoundationDone: false,
+                pathStats: {},
+                certsEarned: 0,
+                continueModule: null
+            };
+
+            // Count completed per path
+            var pathKeys = ['foundation', 'operational', 'occupational', 'specialized'];
+            pathKeys.forEach(function(pk) {
+                var path = PATHS[pk];
+                var done = 0;
+                path.modules.forEach(function(mod) {
+                    if (modules[mod.key] && modules[mod.key].completed) {
+                        done++;
+                        state.totalCompleted++;
+                    }
+                });
+                state.pathStats[pk] = {
+                    completed: done,
+                    total: path.modules.length,
+                    pct: Math.round((done / path.modules.length) * 100)
+                };
+            });
+
+            state.foundationCompleted = state.pathStats.foundation.completed;
+            state.isFoundationDone = (state.foundationCompleted >= state.foundationTotal);
+
+            // Count certificates
+            if (state.pathStats.foundation.completed >= state.pathStats.foundation.total) state.certsEarned++;
+            if (state.isFoundationDone && state.pathStats.operational.completed >= state.pathStats.operational.total) state.certsEarned++;
+            if (state.isFoundationDone && state.pathStats.occupational.completed >= state.pathStats.occupational.total) state.certsEarned++;
+            if (state.isFoundationDone && state.pathStats.specialized.completed >= state.pathStats.specialized.total) state.certsEarned++;
+            if (state.totalCompleted >= TOTAL_MODULES) state.certsEarned++; // master
+
+            // Find continue module
+            var searchOrder = ['foundation'];
+            if (state.isFoundationDone) {
+                searchOrder.push('operational', 'occupational', 'specialized');
+            }
+
+            // First pass: find in-progress module
+            for (var s = 0; s < searchOrder.length; s++) {
+                var pk2 = searchOrder[s];
+                var pathMods = PATHS[pk2].modules;
+                for (var i = 0; i < pathMods.length; i++) {
+                    var m = pathMods[i];
+                    var md = modules[m.key];
+                    if (md && !md.completed && md.currentSlide && md.currentSlide > 1 && m.built) {
+                        var pct = Math.round((md.currentSlide / m.totalSlides) * 100);
+                        state.continueModule = {
+                            key: m.key, name: m.name, num: m.num,
+                            pathLabel: PATHS[pk2].label,
+                            pct: pct,
+                            totalSlides: m.totalSlides,
+                            currentSlide: md.currentSlide,
+                            url: MODULE_URLS[m.key] || '#'
+                        };
+                        break;
+                    }
+                }
+                if (state.continueModule) break;
+            }
+
+            // Second pass: find first available not completed
+            if (!state.continueModule) {
+                for (var s2 = 0; s2 < searchOrder.length; s2++) {
+                    var pk3 = searchOrder[s2];
+                    var pathMods2 = PATHS[pk3].modules;
+                    for (var j = 0; j < pathMods2.length; j++) {
+                        var m2 = pathMods2[j];
+                        var md2 = modules[m2.key];
+                        if ((!md2 || !md2.completed) && m2.built) {
+                            state.continueModule = {
+                                key: m2.key, name: m2.name, num: m2.num,
+                                pathLabel: PATHS[pk3].label,
+                                pct: 0,
+                                totalSlides: m2.totalSlides,
+                                currentSlide: 1,
+                                url: MODULE_URLS[m2.key] || '#'
+                            };
+                            break;
+                        }
+                    }
+                    if (state.continueModule) break;
+                }
+            }
+
+            // Determine current path label
+            if (!state.isFoundationDone) {
+                state.currentPathLabel = 'Foundation';
+            } else if (state.totalCompleted < TOTAL_MODULES) {
+                if (state.pathStats.operational.completed < state.pathStats.operational.total) state.currentPathLabel = 'Operational';
+                else if (state.pathStats.occupational.completed < state.pathStats.occupational.total) state.currentPathLabel = 'Health';
+                else state.currentPathLabel = 'Specialized';
+            } else {
+                state.currentPathLabel = 'All Complete!';
+            }
+
+            return state;
+        }
+
+        /* ═══════════════════════════════════════════
+           RENDER UI
+           ═══════════════════════════════════════════ */
+        function renderUI() {
+            var state = computeState();
+
+            // ── Progress ring
+            var ring = document.getElementById('progressRing');
+            if (ring) {
+                var radius = 85;
+                var circumference = 2 * Math.PI * radius;
+                var overallPct = Math.round((state.totalCompleted / TOTAL_MODULES) * 100);
+                ring.style.strokeDasharray = circumference;
+                ring.style.strokeDashoffset = circumference - (overallPct / 100) * circumference;
+            }
+
+            setText('ringPct', Math.round((state.totalCompleted / TOTAL_MODULES) * 100) + '%');
+            setText('ringLabel', state.totalCompleted + '/' + TOTAL_MODULES + ' Modules');
+            setText('statModules', state.totalCompleted + '/' + TOTAL_MODULES);
+            setText('statCerts', state.certsEarned + '/5');
+            setText('statPath', state.currentPathLabel);
+
+            // ── Continue card
+            if (state.continueModule) {
+                setText('continueTitle', 'Module ' + state.continueModule.num + ': ' + state.continueModule.name);
+                setText('continuePath', state.continueModule.pathLabel + ' Path');
+                var fillEl = document.getElementById('continueFill');
+                if (fillEl) fillEl.style.width = state.continueModule.pct + '%';
+                setText('continuePct', state.continueModule.pct + '%');
+                var remainSlides = state.continueModule.totalSlides - (state.continueModule.currentSlide || 1);
+                setText('continueTime', '~' + Math.max(1, Math.ceil(remainSlides * 0.8)) + ' minutes remaining');
+                var btn = document.getElementById('continueBtn');
+                if (btn) {
+                    btn.href = state.continueModule.url;
+                    btn.textContent = (state.continueModule.pct > 0 ? 'Continue' : 'Start') + ' Module \u2192';
+                }
+                setText('continueBadge', state.continueModule.pct > 0 ? 'Continue Learning' : 'Start Next Module');
+            } else {
+                setText('continueBadge', 'All Modules Complete!');
+                setText('continueTitle', 'Congratulations!');
+                setText('continuePath', 'You\'ve completed all available training');
+                setText('continuePct', '100%');
+                var fillEl2 = document.getElementById('continueFill');
+                if (fillEl2) fillEl2.style.width = '100%';
+                setText('continueTime', '');
+                var btn2 = document.getElementById('continueBtn');
+                if (btn2) { btn2.textContent = 'View Certificates'; btn2.href = '#cert-foundation'; }
+                var card2 = document.getElementById('continueCard');
+                if (card2) card2.classList.add('all-done');
+            }
+
+            // ── Katie tip
+            updateKatieTip(state);
+
+            // ── Path cards
+            renderPath('foundation', state, false);
+            renderPath('operational', state, !state.isFoundationDone);
+            renderPath('occupational', state, !state.isFoundationDone);
+            renderPath('specialized', state, !state.isFoundationDone);
+
+            // ── Certificates
+            renderCertificates(state);
+        }
+
+        function renderPath(pathKey, state, isLocked) {
+            var pathEl = document.getElementById('path-' + pathKey);
+            var stats = state.pathStats[pathKey];
+            if (!pathEl) return;
+
+            // Update card class
+            pathEl.className = 'path-card animate-in visible';
+            if (isLocked) {
+                pathEl.classList.add('locked');
+            } else if (stats.completed >= stats.total && stats.total > 0) {
+                pathEl.classList.add('completed-path');
+            } else if (stats.completed > 0) {
+                pathEl.classList.add('active');
+            }
+
+            // Badge
+            var badge = document.getElementById('badge-' + pathKey);
+            if (badge) {
+                if (isLocked) {
+                    badge.className = 'path-badge locked-badge';
+                    badge.innerHTML = '&#128274; Locked';
+                } else if (stats.completed >= stats.total) {
+                    badge.className = 'path-badge completed-badge';
+                    badge.innerHTML = '&#10003; Complete';
+                } else if (stats.completed > 0) {
+                    badge.className = 'path-badge in-progress';
+                    badge.textContent = 'In Progress';
+                } else if (pathKey === 'foundation') {
+                    badge.className = 'path-badge required';
+                    badge.textContent = 'Required First';
+                } else {
+                    badge.className = 'path-badge in-progress';
+                    badge.textContent = 'Available';
+                }
+            }
+
+            // Progress
+            setText(pathKey + '-progress-label', stats.completed + '/' + stats.total + ' Modules Complete');
+            setText(pathKey + '-progress-pct', stats.pct + '%');
+            var fill = document.getElementById(pathKey + '-fill');
+            if (fill) {
+                fill.style.width = stats.pct + '%';
+                fill.className = 'path-progress-fill ' + (isLocked ? 'locked-fill' : pathKey + '-fill');
+            }
+
+            // Update each module item
+            var pathDef = PATHS[pathKey];
+            pathDef.modules.forEach(function(mod) {
+                var item = document.getElementById('mod-' + mod.key);
+                if (!item) return;
+
+                var md = state.modules[mod.key];
+                var icon = document.getElementById('icon-' + mod.key);
+                var meta = document.getElementById('meta-' + mod.key);
+                var btnEl = document.getElementById('btn-' + mod.key);
+
+                if (md && md.completed) {
+                    item.className = 'module-item';
+                    if (icon) { icon.className = 'module-status-icon done'; icon.innerHTML = '&#10003;'; }
+                    if (meta) meta.textContent = 'Score: ' + (md.quizScore || 0) + '/3';
+                    if (btnEl) {
+                        var url = MODULE_URLS[mod.key];
+                        if (url) {
+                            btnEl.outerHTML = '<a href="' + url + '" class="module-item-btn review-btn" id="btn-' + mod.key + '">Review &#8594;</a>';
+                        } else {
+                            btnEl.outerHTML = '<span class="module-item-btn review-btn" id="btn-' + mod.key + '">Review &#8594;</span>';
+                        }
+                    }
+                } else if (md && md.currentSlide && md.currentSlide > 1 && mod.built && !isLocked) {
+                    item.className = 'module-item';
+                    if (icon) { icon.className = 'module-status-icon in-prog'; icon.innerHTML = '&#9654;'; }
+                    var ipct = Math.round((md.currentSlide / mod.totalSlides) * 100);
+                    if (meta) meta.textContent = ipct + '% complete';
+                    if (btnEl) {
+                        var url2 = MODULE_URLS[mod.key];
+                        if (url2) {
+                            btnEl.outerHTML = '<a href="' + url2 + '" class="module-item-btn continue-btn" id="btn-' + mod.key + '">Continue &#8594;</a>';
+                        }
+                    }
+                } else if (mod.built && !isLocked) {
+                    item.className = 'module-item';
+                    if (icon) { icon.className = 'module-status-icon available-icon'; icon.innerHTML = '&#128221;'; }
+                    if (meta) meta.textContent = 'Ready to start';
+                    if (btnEl) {
+                        var url3 = MODULE_URLS[mod.key];
+                        if (url3) {
+                            btnEl.outerHTML = '<a href="' + url3 + '" class="module-item-btn start-btn" id="btn-' + mod.key + '">Start &#8594;</a>';
+                        }
+                    }
+                } else {
+                    item.className = 'module-item locked-module';
+                    if (icon) { icon.className = 'module-status-icon locked-icon'; icon.innerHTML = '&#128274;'; }
+                    if (meta) meta.textContent = isLocked ? 'Complete Foundation first' : 'Coming soon';
+                }
+            });
+        }
+
+        function renderCertificates(state) {
+            var pathKeys = ['foundation', 'operational', 'occupational', 'specialized'];
+
+            pathKeys.forEach(function(pk) {
+                var card = document.getElementById('cert-' + pk);
+                var statusEl = document.getElementById('cert-status-' + pk);
+                var iconEl = card ? card.querySelector('.cert-icon') : null;
+                var stats = state.pathStats[pk];
+                var isPathComplete = stats.completed >= stats.total;
+                var isUnlocked = (pk === 'foundation') || state.isFoundationDone;
+
+                if (card && isPathComplete && isUnlocked) {
+                    card.className = 'cert-card earned';
+                    if (iconEl) iconEl.className = 'cert-icon earned-icon';
+                    if (statusEl) statusEl.textContent = '\u2713 Earned!';
+                } else {
+                    if (statusEl) {
+                        if (pk === 'foundation') {
+                            var remaining = stats.total - stats.completed;
+                            statusEl.textContent = 'Complete ' + remaining + ' more module' + (remaining !== 1 ? 's' : '');
+                        } else if (!state.isFoundationDone) {
+                            statusEl.textContent = 'Complete Foundation first';
+                        } else {
+                            statusEl.textContent = stats.completed + '/' + stats.total + ' modules done';
+                        }
+                    }
+                }
+            });
+
+            // Master cert
+            var masterCard = document.getElementById('cert-master');
+            var masterStatus = document.getElementById('cert-status-master');
+            var masterIcon = masterCard ? masterCard.querySelector('.cert-icon') : null;
+            if (state.totalCompleted >= TOTAL_MODULES) {
+                if (masterCard) masterCard.className = 'cert-card earned master-cert';
+                if (masterIcon) masterIcon.className = 'cert-icon earned-icon';
+                if (masterStatus) masterStatus.textContent = '\u2713 Master Certification Earned!';
+            } else {
+                if (masterStatus) masterStatus.textContent = state.totalCompleted + '/' + TOTAL_MODULES + ' modules complete';
+            }
+        }
+
+        function updateKatieTip(state) {
+            var tipEl = document.getElementById('katieTip');
+            if (!tipEl) return;
+
+            var tips = [
+                "Welcome to SafetyVerse! Start with the Foundation path to build your core safety knowledge.",
+                "Great start! You've completed your first module. Keep the momentum going!",
+                "You're building a solid safety foundation! Each module makes you better prepared.",
+                "Almost halfway through Foundation! Your dedication to safety is impressive.",
+                "You're making excellent progress! Safety knowledge protects you and your coworkers.",
+                "Pro tip: Review completed modules from time to time to keep the knowledge fresh!"
+            ];
+
+            if (state.totalCompleted === 0) {
+                tipEl.innerHTML = '<strong>Katie says:</strong> ' + tips[0];
+            } else if (state.totalCompleted >= TOTAL_MODULES) {
+                tipEl.innerHTML = '<strong>Katie says:</strong> Incredible! You\'ve completed every single module! You\'re a true safety champion!';
+            } else if (state.isFoundationDone) {
+                tipEl.innerHTML = '<strong>Katie says:</strong> Foundation complete! You now have access to specialized paths. Pick the one most relevant to your role!';
+            } else {
+                var idx = Math.min(state.totalCompleted, tips.length - 1);
+                tipEl.innerHTML = '<strong>Katie says:</strong> ' + tips[idx];
+            }
+        }
+
+        /* ═══════════════════════════════════════════
+           EXPAND / COLLAPSE
+           ═══════════════════════════════════════════ */
+        window.togglePath = function(pathId) {
+            var moduleList = document.getElementById('modules-' + pathId);
+            var btn = document.getElementById('expand-' + pathId);
+            if (!moduleList || !btn) return;
+
+            var isExpanded = btn.classList.contains('expanded');
+
+            if (isExpanded) {
+                moduleList.style.maxHeight = '0';
+                btn.classList.remove('expanded');
+                btn.querySelector('span:first-child').textContent = 'View Modules';
+                btn.setAttribute('aria-expanded', 'false');
+            } else {
+                moduleList.style.maxHeight = moduleList.scrollHeight + 'px';
+                btn.classList.add('expanded');
+                btn.querySelector('span:first-child').textContent = 'Hide Modules';
+                btn.setAttribute('aria-expanded', 'true');
+            }
+        };
+
+        /* ═══════════════════════════════════════════
+           MOBILE MENU
+           ═══════════════════════════════════════════ */
+        window.toggleMobileMenu = function() {
+            var menu = document.getElementById('mobileMenu');
+            if (menu) menu.classList.toggle('open');
+        };
+
+        /* ═══════════════════════════════════════════
+           SCROLL ANIMATIONS
+           ═══════════════════════════════════════════ */
+        function initAnimations() {
+            var observer = new IntersectionObserver(function(entries) {
+                entries.forEach(function(entry) {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            document.querySelectorAll('.animate-in').forEach(function(el) {
+                observer.observe(el);
+            });
+        }
+
+        /* ═══════════════════════════════════════════
+           HELPERS
+           ═══════════════════════════════════════════ */
+        function setText(id, text) {
+            var el = document.getElementById(id);
+            if (el) el.textContent = text;
+        }
+
+        /* ═══════════════════════════════════════════
+           INIT
+           ═══════════════════════════════════════════ */
+        renderUI();
+        initAnimations();
+
+    })();
+    </script>
+
+</body>
+</html>

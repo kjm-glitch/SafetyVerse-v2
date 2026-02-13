@@ -1,0 +1,1676 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="logo.png?v=2">
+    <title>Module 8: Driving Safety - SafetyVerse</title>
+    <style>
+        /* ═══════════════════════════════════════════
+           CSS VARIABLES & RESET
+           ═══════════════════════════════════════════ */
+        :root {
+            --primary: #FFD700;
+            --primary-dark: #E6C200;
+            --secondary: #FF8C00;
+            --secondary-dark: #E67A00;
+            --bg-clay: #F5E6D3;
+            --bg-clay-dark: #E8D5C0;
+            --bg-clay-light: #FAF0E6;
+            --text-dark: #333333;
+            --text-medium: #555555;
+            --text-light: #777777;
+            --accent-black: #1A1A1A;
+            --white: #FFFFFF;
+            --success: #4CAF50;
+            --success-dark: #388E3C;
+            --error: #E53935;
+            --error-dark: #C62828;
+            --info: #2196F3;
+            --shadow-soft: 0 4px 15px rgba(0,0,0,0.1);
+            --shadow-medium: 0 6px 25px rgba(0,0,0,0.15);
+            --shadow-hard: 0 8px 30px rgba(0,0,0,0.2);
+            --shadow-clay: 4px 4px 0px rgba(0,0,0,0.15), inset 0 2px 4px rgba(255,255,255,0.3);
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 20px;
+            --radius-xl: 28px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --font-heading: 'Segoe UI', 'Arial Black', sans-serif;
+            --font-body: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body {
+            height: 100%;
+            overflow: hidden;
+        }
+        body {
+            font-family: var(--font-body);
+            background-color: var(--bg-clay);
+            color: var(--text-dark);
+            line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+        }
+        /* Clay texture */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 9999;
+            background-image:
+                radial-gradient(circle at 20% 50%, rgba(139,90,43,0.03) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(139,90,43,0.02) 0%, transparent 50%),
+                radial-gradient(circle at 50% 80%, rgba(139,90,43,0.03) 0%, transparent 50%);
+        }
+        /* ═══════════════════════════════════════════
+           HEADER
+           ═══════════════════════════════════════════ */
+        .header {
+            background: linear-gradient(180deg, var(--accent-black) 0%, #2A2A2A 100%);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            border-bottom: 4px solid var(--primary);
+            z-index: 100;
+            flex-shrink: 0;
+        }
+        .header-inner {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 64px;
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            flex-shrink: 0;
+        }
+        .logo-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .logo-icon img {
+            display: block;
+            height: 50px;
+            width: auto;
+            image-rendering: -webkit-optimize-contrast;
+            image-rendering: crisp-edges;
+            box-shadow: 4px 4px 0px rgba(0,0,0,0.15);
+            border-radius: 12px;
+            transition: transform 0.2s ease;
+        }
+        .logo-text {
+            font-family: var(--font-heading);
+            font-size: 22px; font-weight: 900;
+            color: var(--white);
+            letter-spacing: -0.5px;
+        }
+        .logo-text em {
+            color: var(--primary);
+            font-style: normal;
+        }
+        .header-center {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        .header-module-tag {
+            background: rgba(255,215,0,0.15);
+            color: var(--primary);
+            font-size: 11px; font-weight: 800;
+            padding: 3px 10px;
+            border-radius: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+        }
+        .header-module-title {
+            color: rgba(255,255,255,0.8);
+            font-size: 14px; font-weight: 600;
+        }
+        .back-btn {
+            display: flex; align-items: center; gap: 6px;
+            text-decoration: none;
+            color: rgba(255,255,255,0.7);
+            font-size: 13px; font-weight: 600;
+            padding: 7px 14px;
+            border-radius: var(--radius-sm);
+            transition: var(--transition);
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .back-btn:hover {
+            color: var(--white);
+            background: rgba(255,255,255,0.12);
+            border-color: rgba(255,255,255,0.2);
+        }
+        /* ═══════════════════════════════════════════
+           PROGRESS BAR
+           ═══════════════════════════════════════════ */
+        .progress-bar {
+            background: var(--accent-black);
+            border-bottom: 1px solid rgba(255,215,0,0.15);
+            flex-shrink: 0;
+            z-index: 99;
+        }
+        .progress-bar-inner {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 8px 24px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+        .progress-label {
+            font-size: 12px; font-weight: 700;
+            color: rgba(255,255,255,0.5);
+            white-space: nowrap;
+            min-width: 90px;
+        }
+        .progress-track {
+            flex: 1;
+            height: 6px;
+            background: rgba(255,255,255,0.08);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 3px;
+            transition: width 0.4s ease;
+        }
+        .progress-pct {
+            font-size: 12px; font-weight: 700;
+            color: var(--primary);
+            min-width: 40px;
+            text-align: right;
+        }
+        /* ═══════════════════════════════════════════
+           MAIN CONTENT AREA
+           ═══════════════════════════════════════════ */
+        .content-wrapper {
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 40px 24px 100px;
+        }
+        /* ═══════════════════════════════════════════
+           SLIDES
+           ═══════════════════════════════════════════ */
+        .slide {
+            display: none;
+            animation: slideIn 0.3s ease;
+        }
+        .slide.active { display: block; }
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        /* Intro Card (Slide 1) */
+        .intro-card {
+            background: linear-gradient(135deg, #2196F3 0%, #1565C0 100%);
+            border-radius: var(--radius-xl);
+            padding: 60px 50px;
+            box-shadow: var(--shadow-hard);
+            color: var(--white);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .intro-card::before {
+            content: '';
+            position: absolute;
+            top: -100px; right: -100px;
+            width: 300px; height: 300px;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+        }
+        .intro-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+            animation: bounce 2s ease-in-out infinite;
+        }
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        .intro-title {
+            font-family: var(--font-heading);
+            font-size: 48px; font-weight: 900;
+            margin-bottom: 12px;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.2);
+        }
+        .intro-subtitle {
+            font-size: 20px;
+            margin-bottom: 30px;
+            opacity: 0.95;
+        }
+        .intro-meta {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            flex-wrap: wrap;
+        }
+        .intro-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 15px; font-weight: 600;
+        }
+        .intro-meta-item span:first-child {
+            font-size: 20px;
+        }
+        /* Content Card */
+        .content-card {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            padding: 50px;
+            box-shadow: var(--shadow-medium);
+            margin-bottom: 30px;
+        }
+        .slide-header {
+            margin-bottom: 35px;
+        }
+        .slide-number {
+            font-size: 11px; font-weight: 800;
+            color: var(--text-light);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 10px;
+        }
+        .slide-title {
+            font-family: var(--font-heading);
+            font-size: 36px; font-weight: 900;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+            line-height: 1.2;
+        }
+        .slide-subtitle {
+            font-size: 17px;
+            color: var(--text-medium);
+        }
+        .slide-content {
+            font-size: 17px;
+            line-height: 1.8;
+            color: var(--text-dark);
+        }
+        .slide-content p {
+            margin-bottom: 20px;
+        }
+        .slide-content strong {
+            color: var(--secondary);
+            font-weight: 700;
+        }
+        /* Katie Message */
+        .katie-message {
+            display: flex;
+            align-items: flex-start;
+            gap: 18px;
+            background: linear-gradient(135deg, #FFFDE7 0%, #FFF9C4 100%);
+            border-left: 5px solid var(--primary);
+            padding: 24px;
+            border-radius: var(--radius-md);
+            margin-bottom: 35px;
+            box-shadow: 0 3px 12px rgba(255,215,0,0.15);
+        }
+        .katie-avatar {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            object-fit: cover;
+            object-position: center 48%;
+            background: white;
+            border: 4px solid var(--primary);
+            padding: 6px;
+            flex-shrink: 0;
+            box-shadow: var(--shadow-soft);
+        }
+        .katie-bubble {
+            flex: 1;
+        }
+        .katie-name {
+            font-weight: 800;
+            color: var(--secondary);
+            margin-bottom: 8px;
+            font-size: 15px;
+        }
+        .katie-text {
+            font-size: 16px;
+            color: var(--text-dark);
+            line-height: 1.7;
+        }
+        /* Info Boxes */
+        .info-box {
+            background: linear-gradient(135deg, #E3F2FD 0%, #BBDEFB 100%);
+            border-left: 5px solid var(--info);
+            padding: 22px 24px;
+            border-radius: var(--radius-md);
+            margin: 28px 0;
+        }
+        .info-box.warning {
+            background: linear-gradient(135deg, #FFF3E0 0%, #FFE0B2 100%);
+            border-left-color: var(--secondary);
+        }
+        .info-box.danger {
+            background: linear-gradient(135deg, #FFEBEE 0%, #FFCDD2 100%);
+            border-left-color: var(--error);
+        }
+        .info-box.success {
+            background: linear-gradient(135deg, #E8F5E9 0%, #C8E6C9 100%);
+            border-left-color: var(--success);
+        }
+        .info-box-title {
+            font-weight: 800;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 16px;
+        }
+        .info-box-content {
+            font-size: 15px;
+            line-height: 1.7;
+        }
+        .info-box-content ul, .info-box-content ol {
+            margin-top: 10px;
+            padding-left: 20px;
+        }
+        .info-box-content li {
+            margin-bottom: 6px;
+        }
+        /* Lists */
+        .content-list {
+            list-style: none;
+            margin: 28px 0;
+        }
+        .content-list li {
+            padding: 14px 0 14px 36px;
+            position: relative;
+            border-bottom: 1px solid rgba(0,0,0,0.06);
+            font-size: 16px;
+        }
+        .content-list li:last-child {
+            border-bottom: none;
+        }
+        .content-list li::before {
+            content: '\25CF';
+            position: absolute;
+            left: 14px;
+            color: var(--secondary);
+            font-size: 14px;
+        }
+        /* Inspection Checklist Grid */
+        .inspection-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin: 28px 0;
+        }
+        .inspection-card {
+            background: var(--bg-clay-light);
+            border: 2px solid var(--bg-clay-dark);
+            border-radius: var(--radius-md);
+            padding: 24px;
+            transition: var(--transition);
+        }
+        .inspection-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-medium);
+            border-color: var(--info);
+        }
+        .inspection-icon {
+            font-size: 42px;
+            margin-bottom: 14px;
+        }
+        .inspection-title {
+            font-weight: 800;
+            font-size: 18px;
+            color: var(--text-dark);
+            margin-bottom: 10px;
+        }
+        .inspection-list {
+            font-size: 14px;
+            color: var(--text-medium);
+            line-height: 1.6;
+        }
+        .inspection-list li {
+            margin-bottom: 6px;
+        }
+        /* Defensive Driving Grid */
+        .defensive-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 18px;
+            margin: 28px 0;
+        }
+        .defensive-card {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: var(--accent-black);
+            border-radius: var(--radius-md);
+            padding: 26px 22px;
+            box-shadow: var(--shadow-clay);
+            transition: var(--transition);
+        }
+        .defensive-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-hard);
+        }
+        .defensive-number {
+            font-family: var(--font-heading);
+            font-size: 48px;
+            font-weight: 900;
+            margin-bottom: 12px;
+            line-height: 1;
+        }
+        .defensive-title {
+            font-weight: 800;
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+        .defensive-desc {
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        /* Weather Conditions */
+        .weather-steps {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+            margin: 28px 0;
+        }
+        .weather-step {
+            display: flex;
+            align-items: flex-start;
+            gap: 18px;
+            background: var(--bg-clay-light);
+            padding: 24px;
+            border-radius: var(--radius-md);
+            border-left: 5px solid var(--info);
+            transition: var(--transition);
+        }
+        .weather-step:hover {
+            background: var(--bg-clay);
+            box-shadow: var(--shadow-soft);
+        }
+        .weather-icon {
+            font-size: 48px;
+            flex-shrink: 0;
+        }
+        .weather-content h4 {
+            font-weight: 800;
+            margin-bottom: 8px;
+            color: var(--text-dark);
+            font-size: 17px;
+        }
+        .weather-content p {
+            font-size: 15px;
+            color: var(--text-medium);
+            line-height: 1.7;
+            margin: 0;
+        }
+        /* ═══════════════════════════════════════════
+           QUIZ STYLES
+           ═══════════════════════════════════════════ */
+        .quiz-question {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 28px;
+            line-height: 1.5;
+        }
+        .quiz-options {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            margin-bottom: 24px;
+        }
+        .quiz-option {
+            background: var(--bg-clay-light);
+            border: 3px solid var(--bg-clay-dark);
+            padding: 18px 24px;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 16px;
+            font-weight: 600;
+            position: relative;
+        }
+        .quiz-option:hover:not(.disabled) {
+            background: var(--bg-clay);
+            border-color: var(--primary);
+            transform: translateX(6px);
+        }
+        .quiz-option.selected {
+            background: var(--primary);
+            border-color: var(--primary-dark);
+            color: var(--accent-black);
+        }
+        .quiz-option.correct {
+            background: var(--success);
+            border-color: var(--success-dark);
+            color: var(--white);
+        }
+        .quiz-option.incorrect {
+            background: var(--error);
+            border-color: var(--error-dark);
+            color: var(--white);
+        }
+        .quiz-option.disabled {
+            cursor: default;
+        }
+        .quiz-feedback {
+            display: none;
+            padding: 18px 22px;
+            border-radius: var(--radius-md);
+            font-size: 16px;
+            line-height: 1.7;
+            margin-top: 20px;
+        }
+        .quiz-feedback.show {
+            display: block;
+        }
+        .quiz-feedback.correct-fb {
+            background: #E8F5E9;
+            color: #2E7D32;
+            border-left: 5px solid var(--success);
+        }
+        .quiz-feedback.incorrect-fb {
+            background: #FFEBEE;
+            color: #C62828;
+            border-left: 5px solid var(--error);
+        }
+        /* Quiz Buttons */
+        .quiz-btn-group {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+        }
+        /* Results Screen */
+        .results-card {
+            background: var(--white);
+            border-radius: var(--radius-xl);
+            padding: 60px 50px;
+            box-shadow: var(--shadow-hard);
+            text-align: center;
+        }
+        .results-icon {
+            font-size: 100px;
+            margin-bottom: 24px;
+            animation: scaleIn 0.6s ease;
+        }
+        @keyframes scaleIn {
+            from { transform: scale(0) rotate(-180deg); }
+            to { transform: scale(1) rotate(0); }
+        }
+        .results-score {
+            font-family: var(--font-heading);
+            font-size: 72px;
+            font-weight: 900;
+            color: var(--primary);
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 0 rgba(0,0,0,0.1);
+        }
+        .results-title {
+            font-family: var(--font-heading);
+            font-size: 42px;
+            font-weight: 900;
+            color: var(--text-dark);
+            margin-bottom: 16px;
+        }
+        .results-message {
+            font-size: 19px;
+            color: var(--text-medium);
+            margin-bottom: 36px;
+            line-height: 1.7;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .results-katie {
+            background: linear-gradient(135deg, #FFFDE7 0%, #FFF9C4 100%);
+            border-left: 5px solid var(--primary);
+            padding: 20px 24px;
+            border-radius: var(--radius-md);
+            font-size: 17px;
+            font-style: italic;
+            color: var(--text-dark);
+            margin-bottom: 36px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .results-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+        /* ═══════════════════════════════════════════
+           BUTTONS
+           ═══════════════════════════════════════════ */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 14px 32px;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-family: var(--font-heading);
+            font-size: 16px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+            box-shadow: var(--shadow-clay);
+        }
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .btn-gold {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: var(--accent-black);
+        }
+        .btn-gold:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-hard);
+        }
+        .btn-success {
+            background: var(--success);
+            color: var(--white);
+        }
+        .btn-success:hover:not(:disabled) {
+            background: var(--success-dark);
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-hard);
+        }
+        .btn-outline {
+            background: var(--white);
+            color: var(--text-dark);
+            border: 2px solid var(--bg-clay-dark);
+        }
+        .btn-outline:hover:not(:disabled) {
+            background: var(--bg-clay-light);
+            border-color: var(--primary);
+        }
+        /* ═══════════════════════════════════════════
+           NAVIGATION
+           ═══════════════════════════════════════════ */
+        .nav-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(180deg, rgba(26,26,26,0.97) 0%, rgba(0,0,0,0.98) 100%);
+            border-top: 3px solid var(--primary);
+            padding: 16px 24px;
+            z-index: 100;
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.3);
+        }
+        .nav-inner {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+        }
+        .nav-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            border: 2px solid rgba(255,255,255,0.15);
+            border-radius: var(--radius-sm);
+            font-family: var(--font-heading);
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: var(--transition);
+            background: rgba(255,255,255,0.08);
+            color: var(--white);
+            text-decoration: none;
+        }
+        .nav-btn:hover:not(:disabled) {
+            background: rgba(255,255,255,0.15);
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+        .nav-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+        .nav-btn.nav-next {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: var(--accent-black);
+            border-color: transparent;
+        }
+        .nav-btn.nav-next:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255,215,0,0.4);
+        }
+        .slide-indicator {
+            color: rgba(255,255,255,0.6);
+            font-size: 13px;
+            font-weight: 600;
+        }
+        /* ═══════════════════════════════════════════
+           RESPONSIVE
+           ═══════════════════════════════════════════ */
+        @media (max-width: 768px) {
+            .container { padding: 30px 20px 100px; }
+            .content-card { padding: 32px 24px; }
+            .intro-card { padding: 40px 30px; }
+            .intro-title { font-size: 36px; }
+            .slide-title { font-size: 28px; }
+            .defensive-grid { grid-template-columns: 1fr; }
+            .inspection-grid { grid-template-columns: 1fr; }
+            .nav-inner { flex-direction: column; gap: 12px; }
+            .nav-btn { width: 100%; justify-content: center; }
+            .header-center { position: static; transform: none; }
+        }
+        @media (max-width: 480px) {
+            .intro-meta { flex-direction: column; gap: 16px; }
+            .katie-message { flex-direction: column; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-inner">
+            <a href="../../user-dashboard/index.html" class="logo">
+                <div class="logo-icon"><img src="logo.png?v=2" alt="SafetyVerse Logo"></div>
+                <div class="logo-text">Safety<em>Verse</em></div>
+            </a>
+            <div class="header-center">
+                <span class="header-module-tag">MODULE 8</span>
+                <span class="header-module-title">Driving Safety</span>
+            </div>
+            <a href="../../user-dashboard/index.html" class="back-btn">
+                <span>&#8592;</span>
+                <span>Back to Dashboard</span>
+            </a>
+        </div>
+    </header>
+    <!-- Progress Bar -->
+    <div class="progress-bar">
+        <div class="progress-bar-inner">
+            <span class="progress-label" id="progressLabel">Slide 1 of 15</span>
+            <div class="progress-track">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <span class="progress-pct" id="progressPct">0%</span>
+        </div>
+    </div>
+    <!-- Main Content -->
+    <div class="content-wrapper">
+        <div class="container">
+            <!-- Slide 1: Intro -->
+            <div class="slide active" data-slide="1">
+                <div class="intro-card">
+                    <div class="intro-icon">&#128663;</div>
+                    <h1 class="intro-title">Driving Safety</h1>
+                    <p class="intro-subtitle">Safe Vehicle Operation for the Workplace</p>
+                    <div class="intro-meta">
+                        <div class="intro-meta-item">
+                            <span>&#9201;</span>
+                            <span>15 minutes</span>
+                        </div>
+                        <div class="intro-meta-item">
+                            <span>&#128218;</span>
+                            <span>Operational Safety Path</span>
+                        </div>
+                        <div class="intro-meta-item">
+                            <span>&#10003;</span>
+                            <span>OSHA Standards</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 2: Introduction with Katie -->
+            <div class="slide" data-slide="2">
+                <div class="content-card">
+                    <div class="katie-message">
+                        <img src="katie.png" alt="Katie" class="katie-avatar">
+                        <div class="katie-bubble">
+                            <div class="katie-name">Katie, Your Safety Guide</div>
+                            <div class="katie-text">
+                                Welcome! Driving for work—whether in company vehicles, personal cars for business, or fleet vehicles—comes with serious responsibilities. Vehicle crashes are a leading cause of work-related deaths. In this module, you'll learn how to inspect vehicles, drive defensively, avoid distractions, and handle challenging road conditions safely.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="slide-header">
+                        <div class="slide-number">Slide 2 of 15</div>
+                        <h2 class="slide-title">Why Driving Safety Matters</h2>
+                    </div>
+                    <div class="slide-content">
+                        <p>Motor vehicle crashes are the leading cause of work-related deaths in the United States. Whether you're driving a company car, making deliveries, or traveling between job sites, safe driving practices protect you and others on the road.</p>
+
+                        <div class="info-box danger">
+                            <div class="info-box-title">&#9888;&#65039; Workplace Driving Statistics</div>
+                            <div class="info-box-content">
+                                According to OSHA and NHTSA:
+                                <ul>
+                                    <li>1,300+ work-related vehicle deaths annually</li>
+                                    <li>Vehicle crashes are #1 cause of workplace fatalities</li>
+                                    <li>Most crashes are preventable through proper training</li>
+                                    <li>Employers can reduce crashes by 20-40% with safety programs</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <p><strong>Learning Objectives:</strong></p>
+                        <ul class="content-list">
+                            <li>Conduct proper pre-trip vehicle inspections</li>
+                            <li>Apply defensive driving techniques</li>
+                            <li>Recognize and avoid distracted driving behaviors</li>
+                            <li>Adapt to weather and road conditions safely</li>
+                            <li>Understand employer and driver responsibilities</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 3: Pre-Trip Vehicle Inspection -->
+            <div class="slide" data-slide="3">
+                <div class="content-card">
+                    <div class="slide-header">
+                        <div class="slide-number">Slide 3 of 15</div>
+                        <h2 class="slide-title">Pre-Trip Vehicle Inspection</h2>
+                        <p class="slide-subtitle">Never skip your safety check</p>
+                    </div>
+                    <div class="slide-content">
+                        <p>A thorough pre-trip inspection catches problems before they become emergencies. <strong>Always inspect your vehicle before driving</strong>, even if it's just a quick trip.</p>
+                        <div class="inspection-grid">
+                            <div class="inspection-card">
+                                <div class="inspection-icon">&#128295;</div>
+                                <div class="inspection-title">Exterior Checks</div>
+                                <ul class="inspection-list">
+                                    <li>Tires: Pressure, tread depth, damage</li>
+                                    <li>Lights: Headlights, taillights, turn signals, brake lights</li>
+                                    <li>Mirrors: Properly adjusted, clean, undamaged</li>
+                                    <li>Windows: Clean, no cracks or obstructions</li>
+                                    <li>Body: No damage that affects safety</li>
+                                </ul>
+                            </div>
+                            <div class="inspection-card">
+                                <div class="inspection-icon">&#128736;&#65039;</div>
+                                <div class="inspection-title">Under the Hood</div>
+                                <ul class="inspection-list">
+                                    <li>Oil level: Check dipstick</li>
+                                    <li>Coolant: Check reservoir level</li>
+                                    <li>Brake fluid: Adequate level</li>
+                                    <li>Windshield washer fluid: Fill if low</li>
+                                    <li>Battery: No corrosion, secure connections</li>
+                                </ul>
+                            </div>
+                            <div class="inspection-card">
+                                <div class="inspection-icon">&#127899;&#65039;</div>
+                                <div class="inspection-title">Interior Controls</div>
+                                <ul class="inspection-list">
+                                    <li>Seat: Adjusted properly, seatbelt works</li>
+                                    <li>Mirrors: All mirrors adjusted for visibility</li>
+                                    <li>Brakes: Test before moving</li>
+                                    <li>Horn: Works properly</li>
+                                    <li>Wipers: Function correctly, good condition</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="info-box warning">
+                            <div class="info-box-title">&#9888;&#65039; Report Problems Immediately</div>
+                            <div class="info-box-content">
+                                If you discover any defects during your inspection, <strong>report them to your supervisor immediately</strong>. Never drive an unsafe vehicle. Document all issues in writing. It's your employer's responsibility to ensure vehicles are maintained properly.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 4: Vehicle Maintenance Responsibilities -->
+            <div class="slide" data-slide="4">
+                <div class="content-card">
+                    <div class="slide-header">
+                        <div class="slide-number">Slide 4 of 15</div>
+                        <h2 class="slide-title">Vehicle Maintenance Responsibilities</h2>
+                        <p class="slide-subtitle">Shared accountability for safety</p>
+                    </div>
+                    <div class="slide-content">
+                        <p>Safe vehicle operations require cooperation between drivers and employers. Both parties have specific responsibilities.</p>
+                        <div class="weather-steps">
+                            <div class="weather-step">
+                                <div class="weather-icon">&#128104;&#8205;&#128188;</div>
+                                <div class="weather-content">
+                                    <h4>Employer Responsibilities</h4>
+                                    <p><strong>Employers must:</strong> Provide properly maintained vehicles &#8226; Establish written safety policies &#8226; Train drivers on safe operation &#8226; Conduct regular vehicle inspections &#8226; Keep maintenance records &#8226; Remove unsafe vehicles from service &#8226; Provide emergency equipment (first aid kit, fire extinguisher, reflective triangles) &#8226; Monitor driver performance and compliance</p>
+                                </div>
+                            </div>
+                            <div class="weather-step">
+                                <div class="weather-icon">&#128100;</div>
+                                <div class="weather-content">
+                                    <h4>Driver Responsibilities</h4>
+                                    <p><strong>Drivers must:</strong> Complete pre-trip inspections &#8226; Report all defects immediately &#8226; Follow company safety policies &#8226; Maintain valid driver's license &#8226; Obey all traffic laws &#8226; Avoid distractions while driving &#8226; Never drive impaired (drugs, alcohol, fatigue) &#8226; Use seatbelts at all times &#8226; Keep vehicle clean and organized</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="info-box">
+                            <div class="info-box-title">&#128161; Maintenance Schedule</div>
+                            <div class="info-box-content">
+                                Most fleet vehicles require maintenance every 3,000-5,000 miles or 3-6 months. Check your owner's manual for specific intervals. Regular maintenance prevents breakdowns, improves fuel efficiency, and extends vehicle life.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 5: Defensive Driving Fundamentals -->
+            <div class="slide" data-slide="5">
+                <div class="content-card">
+                    <div class="slide-header">
+                        <div class="slide-number">Slide 5 of 15</div>
+                        <h2 class="slide-title">Defensive Driving Fundamentals</h2>
+                        <p class="slide-subtitle">Anticipate, prepare, and prevent</p>
+                    </div>
+                    <div class="slide-content">
+                        <p>Defensive driving means being aware of potential hazards and taking action to avoid them before they become emergencies. It's about expecting the unexpected.</p>
+                        <div class="defensive-grid">
+                            <div class="defensive-card">
+                                <div class="defensive-number">1</div>
+                                <div class="defensive-title">Stay Alert &amp; Focused</div>
+                                <div class="defensive-desc">Keep your eyes moving. Scan the road ahead, check mirrors every 5-8 seconds, and be aware of your blind spots. Eliminate distractions.</div>
+                            </div>
+                            <div class="defensive-card">
+                                <div class="defensive-number">2</div>
+                                <div class="defensive-title">Maintain Safe Following Distance</div>
+                                <div class="defensive-desc">Use the 3-4 second rule. In bad weather or heavy traffic, increase to 6+ seconds. This gives you time to react to sudden stops.</div>
+                            </div>
+                            <div class="defensive-card">
+                                <div class="defensive-number">3</div>
+                                <div class="defensive-title">Control Your Speed</div>
+                                <div class="defensive-desc">Drive at or below speed limits. Adjust speed for weather, visibility, and traffic. Higher speeds reduce reaction time and increase crash severity.</div>
+                            </div>
+                            <div class="defensive-card">
+                                <div class="defensive-number">4</div>
+                                <div class="defensive-title">Plan Your Escape Route</div>
+                                <div class="defensive-desc">Always know where you can go if something unexpected happens. Have an "out" at all times. Don't box yourself in between vehicles.</div>
+                            </div>
+                            <div class="defensive-card">
+                                <div class="defensive-number">5</div>
+                                <div class="defensive-title">Expect the Unexpected</div>
+                                <div class="defensive-desc">Assume other drivers will make mistakes. Be ready for vehicles to run red lights, change lanes suddenly, or brake without warning.</div>
+                            </div>
+                            <div class="defensive-card">
+                                <div class="defensive-number">6</div>
+                                <div class="defensive-title">Signal Your Intentions</div>
+                                <div class="defensive-desc">Use turn signals well in advance. Make eye contact with pedestrians and other drivers. Communicate clearly to prevent confusion.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 6: The Smith System -->
+            <div class="slide" data-slide="6">
+                <div class="content-card">
+                    <div class="slide-header">
+                        <div class="slide-number">Slide 6 of 15</div>
+                        <h2 class="slide-title">The Smith System: 5 Keys to Safety</h2>
+                        <p class="slide-subtitle">Professional driver training method</p>
+                    </div>
+                    <div class="slide-content">
+                        <p>The Smith System is a proven defensive driving method used by professional fleet drivers worldwide. Master these five keys:</p>
+                        <ul class="content-list">
+                            <li><strong>Aim High in Steering:</strong> Look 12-15 seconds ahead, not just at the vehicle in front of you. This gives you time to identify hazards early and plan your response.</li>
+                            <li><strong>Get the Big Picture:</strong> Use your peripheral vision. Check all mirrors frequently. Be aware of what's happening around you—front, sides, and rear. Don't fixate on one thing.</li>
+                            <li><strong>Keep Your Eyes Moving:</strong> Constantly scan your environment. Check mirrors every 5-8 seconds. Look for brake lights, turn signals, pedestrians, road conditions, and potential hazards.</li>
+                            <li><strong>Leave Yourself an Out:</strong> Position your vehicle so you always have an escape route. Don't get boxed in. Maintain space cushions on all sides when possible.</li>
+                            <li><strong>Make Sure They See You:</strong> Use headlights in poor visibility. Signal early and clearly. Make eye contact with pedestrians and other drivers. Position your vehicle where others can see you. Use horn if necessary.</li>
+                        </ul>
+                        <div class="info-box success">
+                            <div class="info-box-title">&#10003; Professional Standard</div>
+                            <div class="info-box-content">
+                                Companies that implement the Smith System report 20-60% reduction in crashes and 40-80% reduction in crash costs. These techniques work—practice them until they become automatic.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 7: Distracted Driving -->
+            <div class="slide" data-slide="7">
+                <div class="content-card">
+                    <div class="slide-header">
+                        <div class="slide-number">Slide 7 of 15</div>
+                        <h2 class="slide-title">Distracted Driving: A Deadly Epidemic</h2>
+                        <p class="slide-subtitle">Your phone can wait—your life can't</p>
+                    </div>
+                    <div class="slide-content">
+                        <p>Distracted driving kills 3,000+ people annually in the U.S. <strong>Any non-driving activity is a potential distraction.</strong> Even a momentary lapse in attention can be fatal.</p>
+                        <div class="info-box danger">
+                            <div class="info-box-title">&#128241; The Cell Phone Danger</div>
+                            <div class="info-box-content">
+                                <strong>Texting while driving:</strong>
+                                <ul>
+                                    <li>Takes your eyes off the road for <strong>5 seconds</strong> (average text)</li>
+                                    <li>At 55 mph, that's the length of a <strong>football field driven blind</strong></li>
+                                    <li>Makes you <strong>23 times more likely</strong> to crash</li>
+                                    <li>Is <strong>illegal in most states</strong> while driving</li>
+                                </ul>
+                                <strong>Hands-free is NOT risk-free.</strong> Talking on the phone (even hands-free) causes cognitive distraction and increases crash risk by 4 times.
+                            </div>
+                        </div>
+                        <p><strong>Three Types of Distraction:</strong></p>
+                        <ul class="content-list">
+                            <li><strong>Visual:</strong> Taking your eyes off the road (looking at phone, reading, watching videos, looking at scenery)</li>
+                            <li><strong>Manual:</strong> Taking your hands off the wheel (texting, eating, adjusting controls, reaching for items)</li>
+                            <li><strong>Cognitive:</strong> Taking your mind off driving (talking on phone, daydreaming, being upset or angry, thinking about problems)</li>
+                        </ul>
+                        <div class="info-box warning">
+                            <div class="info-box-title">&#9888;&#65039; Common Workplace Driving Distractions</div>
+                            <div class="info-box-content">
+                                <ul>
+                                    <li>Cell phones (calls, texts, GPS, emails)</li>
+                                    <li>Two-way radios and dispatch communications</li>
+                                    <li>Eating and drinking while driving</li>
+                                    <li>Reading maps, paperwork, or delivery instructions</li>
+                                    <li>Fatigue and drowsy driving</li>
+                                    <li>Conversations with passengers</li>
+                                    <li>External distractions (crashes, billboards, scenery)</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 8: Eliminating Distractions -->
+            <div class="slide" data-slide="8">
+                <div class="content-card">
+                    <div class="slide-header">
+                        <div class="slide-number">Slide 8 of 15</div>
+                        <h2 class="slide-title">How to Eliminate Distractions</h2>
+                        <p class="slide-subtitle">Practical strategies for focused driving</p>
+                    </div>
+                    <div class="slide-content">
+                        <p>You can't eliminate every distraction, but you can control most of them with smart planning and discipline.</p>
+                        <div class="weather-steps">
+                            <div class="weather-step">
+                                <div class="weather-icon">&#128245;</div>
+                                <div class="weather-content">
+                                    <h4>Put Your Phone Away</h4>
+                                    <p><strong>Best practice:</strong> Turn phone to "Do Not Disturb" mode or place it in the glove box. Pull over in a safe location if you must make a call or text. Many employers have "no cell phone" policies while driving—follow them strictly.</p>
+                                </div>
+                            </div>
+                            <div class="weather-step">
+                                <div class="weather-icon">&#127828;</div>
+                                <div class="weather-content">
+                                    <h4>Don't Eat or Drink While Driving</h4>
+                                    <p><strong>Plan ahead:</strong> Eat meals before you start driving. If you need food or coffee, pull over to a safe location. Hot beverages are especially dangerous—spills cause drivers to swerve or brake suddenly.</p>
+                                </div>
+                            </div>
+                            <div class="weather-step">
+                                <div class="weather-icon">&#128506;&#65039;</div>
+                                <div class="weather-content">
+                                    <h4>Set GPS Before You Drive</h4>
+                                    <p><strong>Pre-program everything:</strong> Enter your destination before putting the vehicle in gear. Review your route. If you need to adjust GPS while driving, pull over safely first. Never try to type addresses while moving.</p>
+                                </div>
+                            </div>
+                            <div class="weather-step">
+                                <div class="weather-icon">&#128564;</div>
+                                <div class="weather-content">
+                                    <h4>Combat Fatigue</h4>
+                                    <p><strong>Know the signs:</strong> Yawning, heavy eyelids, drifting from lane, missing exits, or can't remember the last few miles. If drowsy, pull over immediately. Take a 15-20 minute nap or switch drivers. Coffee provides temporary help but is not a substitute for sleep.</p>
+                                </div>
+                            </div>
+                            <div class="weather-step">
+                                <div class="weather-icon">&#129496;</div>
+                                <div class="weather-content">
+                                    <h4>Manage Your Emotions</h4>
+                                    <p><strong>Stay calm:</strong> Don't drive when angry, upset, or emotionally distressed. Take deep breaths. Pull over if you're too distracted by personal problems. Aggressive driving and road rage increase crash risk significantly.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 9: Seatbelts Save Lives -->
+            <div class="slide" data-slide="9">
+                <div class="content-card">
+                    <div class="slide-header">
+                        <div class="slide-number">Slide 9 of 15</div>
+                        <h2 class="slide-title">Seatbelts Save Lives</h2>
+                        <p class="slide-subtitle">Your #1 protection in a crash</p>
+                    </div>
+                    <div class="slide-content">
+                        <p>Seatbelts are the single most effective way to prevent death in a vehicle crash. <strong>Always buckle up—no exceptions.</strong></p>
+                        <div class="info-box success">
+                            <div class="info-box-title">&#10003; Seatbelt Facts</div>
+                            <div class="info-box-content">
+                                <ul>
+                                    <li><strong>Reduces death risk by 45%</strong> in cars, 60% in trucks/SUVs</li>
+                                    <li><strong>Saves 15,000 lives</strong> annually in the United States</li>
+                                    <li><strong>Takes 3 seconds</strong> to buckle—fastest life-saving action you can take</li>
+                                    <li><strong>Required by law</strong> in all 50 states (some exceptions for classic vehicles)</li>
+                                    <li><strong>Prevents ejection</strong>—being thrown from vehicle is usually fatal</li>
+                                    <li><strong>Works with airbags</strong>—airbags are designed to work WITH seatbelts, not replace them</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <p><strong>Common Seatbelt Excuses (and Why They're Wrong):</strong></p>
+                        <ul class="content-list">
+                            <li><strong>"I'm only going a short distance"</strong> &#8594; Most crashes happen within 5 miles of home at speeds under 40 mph</li>
+                            <li><strong>"I'm a good driver"</strong> &#8594; You can't control other drivers. Even the best drivers get hit by impaired, distracted, or reckless drivers</li>
+                            <li><strong>"It's uncomfortable"</strong> &#8594; Adjust the seatbelt properly. A few seconds of discomfort beats death or severe injury</li>
+                            <li><strong>"I might get trapped in a crash"</strong> &#8594; Being ejected is far more dangerous. Seatbelts are easy to release. Fire and submersion crashes are extremely rare</li>
+                        </ul>
+                        <div class="info-box warning">
+                            <div class="info-box-title">&#9888;&#65039; Proper Seatbelt Use</div>
+                            <div class="info-box-content">
+                                <strong>Wear it correctly:</strong> Lap belt low across hips (not stomach). Shoulder belt across chest and collarbone (not neck). Belt should be snug, not loose. Never put shoulder belt under your arm or behind your back. Pregnant drivers should wear lap belt below belly.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 10: Weather Conditions - Rain -->
+            <div class="slide" data-slide="10">
+                <div class="content-card">
+                    <div class="slide-header">
+                        <div class="slide-number">Slide 10 of 15</div>
+                        <h2 class="slide-title">Driving in Rain</h2>
+                        <p class="slide-subtitle">Wet roads demand extra caution</p>
+                    </div>
+                    <div class="slide-content">
+                        <p>Rain reduces visibility and traction. <strong>The first 10 minutes of rain are the most dangerous</strong>—oil and debris float to the surface, making roads extremely slippery.</p>
+                        <div class="weather-steps">
+                            <div class="weather-step">
+                                <div class="weather-icon">&#127783;&#65039;</div>
+                                <div class="weather-content">
+                                    <h4>Reduce Speed</h4>
+                                    <p>Slow down 5-10 mph below the speed limit in light rain, more in heavy rain. Stopping distances increase by 2-3 times on wet roads. Allow extra following distance (6+ seconds).</p>
+                                </div>
+                            </div>
+                            <div class="weather-step">
+                                <div class="weather-icon">&#128161;</div>
+                                <div class="weather-content">
+                                    <h4>Turn On Headlights</h4>
+                                    <p>Use headlights (not just daytime running lights) in rain—it's the law in most states. Headlights help you see and help others see you. Never use high beams in rain—they reflect off water and reduce visibility.</p>
+                                </div>
+                            </div>
+                            <div class="weather-step">
+                                <div class="weather-icon">&#127754;</div>
+                                <div class="weather-content">
+                                    <h4>Avoid Hydroplaning</h4>
+                                    <p>Hydroplaning occurs when tires lose contact with the road and ride on a layer of water. <strong>If hydroplaning:</strong> Ease off gas (don't brake), steer straight, don't make sudden movements. To prevent: Keep tires properly inflated, replace worn tires, slow down in standing water.</p>
+                                </div>
+                            </div>
+                            <div class="weather-step">
+                                <div class="weather-icon">&#9888;&#65039;</div>
+                                <div class="weather-content">
+                                    <h4>Watch for Standing Water</h4>
+                                    <p>Never drive through flooded areas or standing water if you can't see the road surface. As little as 6 inches of water can cause loss of control. 12 inches can float most vehicles. "Turn around, don't drown."</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="info-box danger">
+                            <div class="info-box-title">&#128680; Severe Weather: Pull Over</div>
+                            <div class="info-box-content">
+                                If rain is so heavy you can't see clearly, pull over to a safe location (rest area, parking lot) and wait for conditions to improve. Turn on hazard lights. Never stop on the shoulder of a highway—find a safe off-road location.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 11: Weather Conditions - Snow & Ice -->
+            <div class="slide" data-slide="11">
+                <div class="content-card">
+                    <div class="slide-header">
+                        <div class="slide-number">Slide 11 of 15</div>
+                        <h2 class="slide-title">Driving in Snow and Ice</h2>
+                        <p class="slide-subtitle">Winter driving requires special skills</p>
+                    </div>
+                    <div class="slide-content">
+                        <p>Snow and ice dramatically reduce traction. <strong>Black ice</strong> (thin, transparent ice) is especially dangerous because it's nearly invisible.</p>
+                        <ul class="content-list">
+                            <li><strong>Reduce speed drastically:</strong> Drive 50% slower than normal. Speed limits are for ideal conditions—not snow and ice. Allow 8-10 seconds following distance.</li>
+                            <li><strong>Accelerate and brake gently:</strong> Sudden movements break traction. Ease on gas, brake early and softly. If you have anti-lock brakes (ABS), press firmly and hold—don't pump.</li>
+                            <li><strong>Watch for ice on bridges and overpasses:</strong> These freeze first because cold air flows above and below. Slow down before entering bridges even if the main road seems fine.</li>
+                            <li><strong>Be extra careful in morning and evening:</strong> Temperatures drop below freezing overnight. Morning commutes often encounter ice. Evening refreezing is common after daytime thaws.</li>
+                            <li><strong>Clear ALL snow and ice from vehicle:</strong> Remove snow from hood, roof, windows, lights, and mirrors. Snow flying off your vehicle can blind other drivers or cause crashes.</li>
+                            <li><strong>Use winter tires if available:</strong> All-season tires lose effectiveness below 45&#176;F. Winter tires dramatically improve traction in snow and ice.</li>
+                        </ul>
+                        <div class="info-box warning">
+                            <div class="info-box-title">&#10052;&#65039; If You Get Stuck</div>
+                            <div class="info-box-content">
+                                <strong>Don't spin your wheels</strong>—this digs you deeper and can damage the transmission. Rock the vehicle gently forward and back. Turn wheels side to side to push snow out of the way. Use sand, salt, or kitty litter for traction. Call for help if unable to free yourself safely.
+                            </div>
+                        </div>
+                        <div class="info-box danger">
+                            <div class="info-box-title">&#128680; Skidding: What to Do</div>
+                            <div class="info-box-content">
+                                If your vehicle starts to skid: <strong>Steer in the direction you want to go</strong> (don't steer into the skid—steer where you want the front of the vehicle to go). Ease off the gas. Don't brake suddenly. Don't overcorrect. Stay calm and make smooth, gentle steering inputs.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 12: Additional Hazards -->
+            <div class="slide" data-slide="12">
+                <div class="content-card">
+                    <div class="slide-header">
+                        <div class="slide-number">Slide 12 of 15</div>
+                        <h2 class="slide-title">Additional Driving Hazards</h2>
+                        <p class="slide-subtitle">Be prepared for anything</p>
+                    </div>
+                    <div class="slide-content">
+                        <p>Beyond weather, drivers face many other hazards. Awareness and preparation keep you safe.</p>
+                        <div class="weather-steps">
+                            <div class="weather-step">
+                                <div class="weather-icon">&#129420;</div>
+                                <div class="weather-content">
+                                    <h4>Wildlife and Animals</h4>
+                                    <p><strong>Peak times:</strong> Dawn and dusk. Watch for deer crossing signs. Scan roadsides. If an animal appears, brake firmly but don't swerve—swerving causes worse crashes. If collision is unavoidable, aim for where the animal came from (they rarely backtrack).</p>
+                                </div>
+                            </div>
+                            <div class="weather-step">
+                                <div class="weather-icon">&#128679;</div>
+                                <div class="weather-content">
+                                    <h4>Construction Zones</h4>
+                                    <p><strong>Slow down immediately.</strong> Workers are present—their lives depend on your attention. Follow posted detours and lane shifts. Merge early when lanes close. Fines are doubled in construction zones. Watch for uneven pavement, narrower lanes, and equipment.</p>
+                                </div>
+                            </div>
+                            <div class="weather-step">
+                                <div class="weather-icon">&#127769;</div>
+                                <div class="weather-content">
+                                    <h4>Night Driving</h4>
+                                    <p><strong>Visibility drops 90%</strong> at night. Use high beams when appropriate (dim for oncoming traffic). Keep windshield clean inside and out. If blinded by oncoming high beams, look at the right edge of the road. Watch for pedestrians wearing dark clothing.</p>
+                                </div>
+                            </div>
+                            <div class="weather-step">
+                                <div class="weather-icon">&#127787;&#65039;</div>
+                                <div class="weather-content">
+                                    <h4>Fog</h4>
+                                    <p><strong>Use low beams only</strong> (high beams reflect off fog and reduce visibility). Slow down significantly. Use right edge of road as a guide. Increase following distance. Use wipers and defrost to maintain visibility. If fog is too thick, pull off completely.</p>
+                                </div>
+                            </div>
+                            <div class="weather-step">
+                                <div class="weather-icon">&#128168;</div>
+                                <div class="weather-content">
+                                    <h4>High Winds</h4>
+                                    <p><strong>Grip wheel firmly.</strong> Expect sudden gusts when passing large trucks or exiting tunnels/buildings. Empty vehicles, high-profile vehicles, and vehicles towing trailers are especially vulnerable. Slow down and be prepared to steer into wind to maintain course.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 13: Quiz Question 1 -->
+            <div class="slide" data-slide="13">
+                <div class="content-card">
+                    <div class="slide-header">
+                        <div class="slide-number">Quiz Question 1 of 3</div>
+                        <h2 class="slide-title">Knowledge Check</h2>
+                    </div>
+                    <div class="slide-content">
+                        <div class="quiz-question">
+                            What is the recommended following distance in normal driving conditions?
+                        </div>
+                        <div class="quiz-options" id="q1-options">
+                            <div class="quiz-option" data-q="1" data-val="A">1-2 seconds</div>
+                            <div class="quiz-option" data-q="1" data-val="B">3-4 seconds</div>
+                            <div class="quiz-option" data-q="1" data-val="C">5-6 seconds</div>
+                            <div class="quiz-option" data-q="1" data-val="D">8-10 seconds</div>
+                        </div>
+                        <div class="quiz-feedback" id="fb-1"></div>
+                        <div class="quiz-btn-group">
+                            <button class="btn btn-gold" id="submit-1" onclick="submitQuiz(1)" disabled>Submit Answer</button>
+                            <button class="btn btn-outline" id="next-q-1" onclick="nextSlide()" style="display: none;">Next Question &#8594;</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 14: Quiz Question 2 -->
+            <div class="slide" data-slide="14">
+                <div class="content-card">
+                    <div class="slide-header">
+                        <div class="slide-number">Quiz Question 2 of 3</div>
+                        <h2 class="slide-title">Knowledge Check</h2>
+                    </div>
+                    <div class="slide-content">
+                        <div class="quiz-question">
+                            Texting while driving makes you how many times more likely to crash?
+                        </div>
+                        <div class="quiz-options" id="q2-options">
+                            <div class="quiz-option" data-q="2" data-val="A">4 times</div>
+                            <div class="quiz-option" data-q="2" data-val="B">10 times</div>
+                            <div class="quiz-option" data-q="2" data-val="C">23 times</div>
+                            <div class="quiz-option" data-q="2" data-val="D">50 times</div>
+                        </div>
+                        <div class="quiz-feedback" id="fb-2"></div>
+                        <div class="quiz-btn-group">
+                            <button class="btn btn-gold" id="submit-2" onclick="submitQuiz(2)" disabled>Submit Answer</button>
+                            <button class="btn btn-outline" id="next-q-2" onclick="nextSlide()" style="display: none;">Next Question &#8594;</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 15: Quiz Question 3 -->
+            <div class="slide" data-slide="15">
+                <div class="content-card">
+                    <div class="slide-header">
+                        <div class="slide-number">Quiz Question 3 of 3</div>
+                        <h2 class="slide-title">Knowledge Check</h2>
+                    </div>
+                    <div class="slide-content">
+                        <div class="quiz-question">
+                            What should you do FIRST during a pre-trip vehicle inspection?
+                        </div>
+                        <div class="quiz-options" id="q3-options">
+                            <div class="quiz-option" data-q="3" data-val="A">Check tire pressure and tread</div>
+                            <div class="quiz-option" data-q="3" data-val="B">Test the brakes while moving</div>
+                            <div class="quiz-option" data-q="3" data-val="C">Walk around the vehicle checking exterior condition</div>
+                            <div class="quiz-option" data-q="3" data-val="D">Check all fluid levels under the hood</div>
+                        </div>
+                        <div class="quiz-feedback" id="fb-3"></div>
+                        <div class="quiz-btn-group">
+                            <button class="btn btn-gold" id="submit-3" onclick="submitQuiz(3)" disabled>Submit Answer</button>
+                            <button class="btn btn-outline" id="next-q-3" onclick="nextSlide()" style="display: none;">View Results &#8594;</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 16: Results -->
+            <div class="slide" data-slide="16">
+                <div class="results-card">
+                    <div class="results-icon" id="rIcon">&#127919;</div>
+                    <div class="results-score" id="rScore">0 / 3</div>
+                    <h2 class="results-title" id="rTitle">Quiz Complete</h2>
+                    <p class="results-message" id="rMsg">Calculating your results...</p>
+                    <div class="results-katie" id="rKatie">"Let's see how you did!"</div>
+                    <div class="results-buttons" id="rBtns">
+                        <button class="btn btn-gold">Loading...</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Navigation Bar -->
+    <nav class="nav-bar">
+        <div class="nav-inner">
+            <button class="nav-btn" id="prevBtn" onclick="prevSlide()">
+                &#8592; Previous
+            </button>
+            <span class="slide-indicator" id="slideIndicator">Slide 1 of 15</span>
+            <button class="nav-btn nav-next" id="nextBtn" onclick="nextSlide()">
+                Next &#8594;
+            </button>
+        </div>
+    </nav>
+    <script>
+    (function() {
+        'use strict';
+        // ═══ CONFIG ═══
+        var TOTAL_SLIDES = 16;
+        var TOTAL_CONTENT = 15; // Don't count results slide
+        var MODULE_KEY = 'driving-safety';
+        // ═══ STATE ═══
+        var currentSlide = 1;
+        var quizAnswers = { 1: null, 2: null, 3: null };
+        var quizSubmitted = { 1: false, 2: false, 3: false };
+        var quizScore = 0;
+        // Quiz correct answers
+        var quizCorrectAnswers = {
+            1: 'B',  // 3-4 seconds
+            2: 'C',  // 23 times
+            3: 'C'   // Walk around the vehicle checking exterior condition
+        };
+        // Feedback messages
+        var feedbackMessages = {
+            1: {
+                correct: '\u2713 Correct! The recommended following distance is 3-4 seconds in normal conditions. This gives you adequate time to react to sudden stops.',
+                incorrect: '\u2717 Incorrect. The correct answer is 3-4 seconds in normal conditions. Increase to 6+ seconds in bad weather or heavy traffic.'
+            },
+            2: {
+                correct: '\u2713 Correct! Texting while driving makes you 23 times more likely to crash. It\'s one of the most dangerous driving behaviors.',
+                incorrect: '\u2717 Incorrect. Texting makes you 23 times more likely to crash\u2014it takes your eyes off the road for an average of 5 seconds.'
+            },
+            3: {
+                correct: '\u2713 Correct! Start by walking around the vehicle to check exterior condition, tires, lights, and mirrors before getting in.',
+                incorrect: '\u2717 Incorrect. Always start with a walk-around inspection of the exterior\u2014checking tires, lights, mirrors, and body damage before entering the vehicle.'
+            }
+        };
+        // ═══ NAVIGATION ═══
+        function goToSlide(n) {
+            if (n < 1 || n > TOTAL_SLIDES) return;
+            currentSlide = n;
+            updateUI();
+            saveSlideProgress();
+        }
+        window.nextSlide = function() {
+            goToSlide(currentSlide + 1);
+        };
+        window.prevSlide = function() {
+            goToSlide(currentSlide - 1);
+        };
+        // ═══ UI UPDATE ═══
+        function updateUI() {
+            // Show/hide slides
+            document.querySelectorAll('.slide').forEach(function(s) {
+                s.classList.remove('active');
+            });
+            var activeSlide = document.querySelector('[data-slide="' + currentSlide + '"]');
+            if (activeSlide) {
+                activeSlide.classList.add('active');
+            }
+            // Update progress bar
+            var progressPct = ((currentSlide - 1) / (TOTAL_CONTENT - 1)) * 100;
+            document.getElementById('progressFill').style.width = Math.min(100, progressPct) + '%';
+            document.getElementById('progressPct').textContent = Math.round(Math.min(100, progressPct)) + '%';
+
+            if (currentSlide <= TOTAL_CONTENT) {
+                document.getElementById('progressLabel').textContent = 'Slide ' + currentSlide + ' of ' + TOTAL_CONTENT;
+                document.getElementById('slideIndicator').textContent = 'Slide ' + currentSlide + ' of ' + TOTAL_CONTENT;
+            } else {
+                document.getElementById('progressLabel').textContent = 'Results';
+                document.getElementById('slideIndicator').textContent = 'Results';
+            }
+            // Update navigation buttons
+            var prevBtn = document.getElementById('prevBtn');
+            var nextBtn = document.getElementById('nextBtn');
+
+            prevBtn.disabled = currentSlide === 1;
+            nextBtn.disabled = currentSlide === TOTAL_SLIDES;
+            // Build results if on results slide
+            if (currentSlide === 16) {
+                buildResults();
+            }
+            // Scroll to top
+            document.querySelector('.content-wrapper').scrollTop = 0;
+        }
+        // ═══ KEYBOARD NAV ═══
+        document.addEventListener('keydown', function(e) {
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+            if (e.key === 'ArrowRight' || e.key === 'Right') {
+                e.preventDefault();
+                nextSlide();
+            } else if (e.key === 'ArrowLeft' || e.key === 'Left') {
+                e.preventDefault();
+                prevSlide();
+            }
+        });
+        // ═══ QUIZ HANDLING ═══
+        document.querySelectorAll('.quiz-option').forEach(function(opt) {
+            opt.addEventListener('click', function() {
+                var qNum = parseInt(this.getAttribute('data-q'));
+                if (quizSubmitted[qNum]) return;
+                // Deselect siblings
+                var container = document.getElementById('q' + qNum + '-options');
+                container.querySelectorAll('.quiz-option').forEach(function(o) {
+                    o.classList.remove('selected');
+                });
+                this.classList.add('selected');
+                quizAnswers[qNum] = this.getAttribute('data-val');
+                document.getElementById('submit-' + qNum).disabled = false;
+            });
+        });
+        window.submitQuiz = function(qNum) {
+            if (quizSubmitted[qNum]) return;
+            quizSubmitted[qNum] = true;
+            var userAnswer = quizAnswers[qNum];
+            var correctAnswer = quizCorrectAnswers[qNum];
+            var isCorrect = (userAnswer === correctAnswer);
+            var container = document.getElementById('q' + qNum + '-options');
+            // Mark options
+            container.querySelectorAll('.quiz-option').forEach(function(opt) {
+                opt.classList.add('disabled');
+                var val = opt.getAttribute('data-val');
+                if (val === correctAnswer) {
+                    opt.classList.add('correct');
+                } else if (opt.classList.contains('selected') && !isCorrect) {
+                    opt.classList.add('incorrect');
+                }
+            });
+            // Show feedback
+            var fb = document.getElementById('fb-' + qNum);
+            if (isCorrect) {
+                fb.textContent = feedbackMessages[qNum].correct;
+                fb.className = 'quiz-feedback show correct-fb';
+                quizScore++;
+            } else {
+                fb.textContent = feedbackMessages[qNum].incorrect;
+                fb.className = 'quiz-feedback show incorrect-fb';
+            }
+            // Toggle buttons
+            document.getElementById('submit-' + qNum).style.display = 'none';
+            document.getElementById('next-q-' + qNum).style.display = '';
+        };
+        // ═══ BUILD RESULTS ═══
+        function buildResults() {
+            var icon = document.getElementById('rIcon');
+            var score = document.getElementById('rScore');
+            var title = document.getElementById('rTitle');
+            var msg = document.getElementById('rMsg');
+            var btns = document.getElementById('rBtns');
+            var katie = document.getElementById('rKatie');
+            score.textContent = quizScore + ' / 3';
+            if (quizScore === 3) {
+                icon.textContent = '\uD83C\uDF89';
+                title.textContent = 'Perfect Score!';
+                msg.textContent = 'Outstanding! You understand the principles of safe driving and are ready to protect yourself and others on the road.';
+                btns.innerHTML = '<button class="btn btn-success" onclick="completeModule()">\u2713 Complete Module & Return to Dashboard</button>';
+                katie.textContent = '"Excellent work! You\'re now equipped with the knowledge to drive safely. Remember: always stay alert, eliminate distractions, and adjust to conditions!"';
+            } else if (quizScore >= 2) {
+                icon.textContent = '\u2705';
+                title.textContent = 'You Passed!';
+                msg.textContent = 'Great job! You demonstrated solid understanding of driving safety fundamentals.';
+                btns.innerHTML = '<button class="btn btn-success" onclick="completeModule()">\u2713 Complete Module & Return to Dashboard</button>';
+                katie.textContent = '"Well done! Keep these principles in mind every time you get behind the wheel. Safe driving!"';
+            } else {
+                icon.textContent = '\uD83D\uDCDA';
+                title.textContent = 'Not Quite Yet';
+                msg.textContent = 'You need 2 out of 3 correct to pass this module. Review the lesson and try again!';
+                btns.innerHTML = '<button class="btn btn-gold" onclick="retakeQuiz()">\u21BB Retake Quiz</button>' +
+                    '<button class="btn btn-outline" onclick="goToSlide(3)">\u2191 Review Lesson</button>';
+                katie.textContent = '"Don\'t worry! Driving safety is critical. Review the slides carefully and give it another try!"';
+            }
+            saveQuizProgress();
+        }
+        // ═══ RETAKE QUIZ ═══
+        window.retakeQuiz = function() {
+            quizAnswers = { 1: null, 2: null, 3: null };
+            quizSubmitted = { 1: false, 2: false, 3: false };
+            quizScore = 0;
+            for (var q = 1; q <= 3; q++) {
+                var container = document.getElementById('q' + q + '-options');
+                container.querySelectorAll('.quiz-option').forEach(function(opt) {
+                    opt.classList.remove('selected', 'correct', 'incorrect', 'disabled');
+                });
+                document.getElementById('fb-' + q).className = 'quiz-feedback';
+                document.getElementById('fb-' + q).textContent = '';
+                document.getElementById('submit-' + q).style.display = '';
+                document.getElementById('submit-' + q).disabled = true;
+                document.getElementById('next-q-' + q).style.display = 'none';
+            }
+            goToSlide(13);
+        };
+        // ═══ LOCAL STORAGE ═══
+        function getProgress() {
+            try {
+                var d = localStorage.getItem('safetyverse-progress');
+                return d ? JSON.parse(d) : {};
+            } catch(e) { return {}; }
+        }
+        function saveSlideProgress() {
+            try {
+                var p = getProgress();
+                if (!p.modules) p.modules = {};
+                if (!p.modules[MODULE_KEY]) {
+                    p.modules[MODULE_KEY] = { completed: false, quizScore: 0, attempts: 0, lastAttempt: null };
+                }
+                p.modules[MODULE_KEY].currentSlide = currentSlide;
+                p.modules[MODULE_KEY].totalSlides = TOTAL_SLIDES;
+                localStorage.setItem('safetyverse-progress', JSON.stringify(p));
+            } catch(e) {}
+        }
+        function saveQuizProgress() {
+            try {
+                var p = getProgress();
+                if (!p.modules) p.modules = {};
+                if (!p.modules[MODULE_KEY]) {
+                    p.modules[MODULE_KEY] = { completed: false, quizScore: 0, attempts: 0 };
+                }
+                var mod = p.modules[MODULE_KEY];
+                mod.quizScore = quizScore;
+                mod.attempts = (mod.attempts || 0) + 1;
+                mod.lastAttempt = new Date().toISOString();
+                if (quizScore >= 2) mod.completed = true;
+                localStorage.setItem('safetyverse-progress', JSON.stringify(p));
+            } catch(e) {}
+        }
+        window.completeModule = function() {
+            try {
+                var p = getProgress();
+                if (!p.modules) p.modules = {};
+                if (!p.modules[MODULE_KEY]) {
+                    p.modules[MODULE_KEY] = { quizScore: 0, attempts: 0 };
+                }
+                p.modules[MODULE_KEY].completed = true;
+                p.modules[MODULE_KEY].completedAt = new Date().toISOString();
+                p.modules[MODULE_KEY].quizScore = quizScore;
+                localStorage.setItem('safetyverse-progress', JSON.stringify(p));
+            } catch(e) {}
+            window.location.href = '../../user-dashboard/index.html';
+        };
+        // ═══ RESTORE PROGRESS ON LOAD ═══
+        function restoreProgress() {
+            try {
+                var p = getProgress();
+                if (p.modules && p.modules[MODULE_KEY]) {
+                    var mod = p.modules[MODULE_KEY];
+                    // If completed, show a badge on slide 1
+                    if (mod.completed) {
+                        var introCard = document.querySelector('.intro-card');
+                        if (introCard) {
+                            var badge = document.createElement('div');
+                            badge.style.cssText = 'position:absolute;top:20px;right:20px;background:var(--success);color:white;font-size:12px;font-weight:700;padding:5px 16px;border-radius:20px;z-index:5;';
+                            badge.textContent = '\u2713 Completed';
+                            introCard.appendChild(badge);
+                        }
+                    }
+                }
+            } catch(e) {}
+        }
+        // ═══ INIT ═══
+        restoreProgress();
+        updateUI();
+    })();
+    </script>
+</body>
+</html>

@@ -1,0 +1,1685 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="logo.png?v=2">
+    <title>Module 10: Electrical Safety & Arc Flash - SafetyVerse</title>
+    <style>
+        /* ═══════════════════════════════════════════
+           CSS VARIABLES & RESET
+           ═══════════════════════════════════════════ */
+        :root {
+            --primary: #FFD700;
+            --primary-dark: #E6C200;
+            --secondary: #FF8C00;
+            --secondary-dark: #E67A00;
+            --bg-clay: #F5E6D3;
+            --bg-clay-dark: #E8D5C0;
+            --bg-clay-light: #FAF0E6;
+            --text-dark: #333333;
+            --text-medium: #555555;
+            --text-light: #777777;
+            --accent-black: #1A1A1A;
+            --white: #FFFFFF;
+            --success: #4CAF50;
+            --success-dark: #388E3C;
+            --error: #E53935;
+            --error-dark: #C62828;
+            --info: #2196F3;
+            --warning: #FF9800;
+            --shadow-soft: 0 4px 15px rgba(0,0,0,0.1);
+            --shadow-medium: 0 6px 25px rgba(0,0,0,0.15);
+            --shadow-hard: 0 8px 30px rgba(0,0,0,0.2);
+            --shadow-clay: 4px 4px 0px rgba(0,0,0,0.15), inset 0 2px 4px rgba(255,255,255,0.3);
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 20px;
+            --radius-xl: 28px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --font-heading: 'Segoe UI', 'Arial Black', sans-serif;
+            --font-body: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body {
+            height: 100%;
+            overflow: hidden;
+        }
+        body {
+            font-family: var(--font-body);
+            background-color: var(--bg-clay);
+            color: var(--text-dark);
+            line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+        }
+        /* Clay texture */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 9999;
+            background-image:
+                radial-gradient(circle at 20% 50%, rgba(139,90,43,0.03) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(139,90,43,0.02) 0%, transparent 50%),
+                radial-gradient(circle at 50% 80%, rgba(139,90,43,0.03) 0%, transparent 50%);
+        }
+        /* ═══════════════════════════════════════════
+           HEADER
+           ═══════════════════════════════════════════ */
+        .header {
+            background: linear-gradient(180deg, var(--accent-black) 0%, #2A2A2A 100%);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            border-bottom: 4px solid var(--primary);
+            z-index: 100;
+            flex-shrink: 0;
+        }
+        .header-inner {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 64px;
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            flex-shrink: 0;
+        }
+        .logo-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .logo-icon img {
+            display: block;
+            height: 50px;
+            width: auto;
+            image-rendering: -webkit-optimize-contrast;
+            image-rendering: crisp-edges;
+            box-shadow: 4px 4px 0px rgba(0,0,0,0.15);
+            border-radius: 12px;
+            transition: transform 0.2s ease;
+        }
+        .logo-text {
+            font-family: var(--font-heading);
+            font-size: 22px; font-weight: 900;
+            color: var(--white);
+            letter-spacing: -0.5px;
+        }
+        .logo-text em {
+            color: var(--primary);
+            font-style: normal;
+        }
+        .header-center {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        .header-module-tag {
+            background: rgba(255,215,0,0.15);
+            color: var(--primary);
+            font-size: 11px; font-weight: 800;
+            padding: 3px 10px;
+            border-radius: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+        }
+        .header-module-title {
+            color: rgba(255,255,255,0.8);
+            font-size: 14px; font-weight: 600;
+        }
+        .back-btn {
+            display: flex; align-items: center; gap: 6px;
+            text-decoration: none;
+            color: rgba(255,255,255,0.7);
+            font-size: 13px; font-weight: 600;
+            padding: 7px 14px;
+            border-radius: var(--radius-sm);
+            transition: var(--transition);
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .back-btn:hover {
+            color: var(--white);
+            background: rgba(255,255,255,0.12);
+            border-color: rgba(255,255,255,0.2);
+        }
+        /* ═══════════════════════════════════════════
+           PROGRESS BAR
+           ═══════════════════════════════════════════ */
+        .progress-bar {
+            background: var(--accent-black);
+            border-bottom: 1px solid rgba(255,215,0,0.15);
+            flex-shrink: 0;
+            z-index: 99;
+        }
+        .progress-bar-inner {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 8px 24px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+        .progress-label {
+            font-size: 12px; font-weight: 700;
+            color: rgba(255,255,255,0.5);
+            white-space: nowrap;
+            min-width: 90px;
+        }
+        .progress-track {
+            flex: 1;
+            height: 6px;
+            background: rgba(255,255,255,0.08);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 3px;
+            transition: width 0.4s ease;
+        }
+        .progress-pct {
+            font-size: 12px; font-weight: 700;
+            color: var(--primary);
+            min-width: 40px;
+            text-align: right;
+        }
+        /* ═══════════════════════════════════════════
+           MAIN CONTENT AREA
+           ═══════════════════════════════════════════ */
+        .content-wrapper {
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 40px 24px 100px;
+        }
+        /* ═══════════════════════════════════════════
+           SLIDES
+           ═══════════════════════════════════════════ */
+        .slide {
+            display: none;
+            animation: slideIn 0.3s ease;
+        }
+        .slide.active { display: block; }
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        /* Intro Card (Slide 1) */
+        .intro-card {
+            background: linear-gradient(135deg, #FFA726 0%, #FB8C00 100%);
+            border-radius: var(--radius-xl);
+            padding: 60px 50px;
+            box-shadow: var(--shadow-hard);
+            color: var(--white);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .intro-card::before {
+            content: '';
+            position: absolute;
+            top: -100px; right: -100px;
+            width: 300px; height: 300px;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+        }
+        .intro-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+            animation: pulse 2s ease-in-out infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        .intro-title {
+            font-family: var(--font-heading);
+            font-size: 48px; font-weight: 900;
+            margin-bottom: 12px;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.2);
+        }
+        .intro-subtitle {
+            font-size: 20px;
+            margin-bottom: 30px;
+            opacity: 0.95;
+        }
+        .intro-meta {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            flex-wrap: wrap;
+        }
+        .intro-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 15px; font-weight: 600;
+        }
+        .intro-meta-item span:first-child {
+            font-size: 20px;
+        }
+        /* Content Card */
+        .content-card {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            padding: 50px;
+            box-shadow: var(--shadow-medium);
+            margin-bottom: 30px;
+        }
+        .slide-header {
+            margin-bottom: 35px;
+        }
+        .slide-number {
+            font-size: 11px; font-weight: 800;
+            color: var(--text-light);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 10px;
+        }
+        .slide-title {
+            font-family: var(--font-heading);
+            font-size: 36px; font-weight: 900;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+            line-height: 1.2;
+        }
+        .slide-subtitle {
+            font-size: 17px;
+            color: var(--text-medium);
+        }
+        .slide-content {
+            font-size: 17px;
+            line-height: 1.8;
+            color: var(--text-dark);
+        }
+        .slide-content p {
+            margin-bottom: 20px;
+        }
+        .slide-content strong {
+            color: var(--secondary);
+            font-weight: 700;
+        }
+        /* Katie Message */
+        .katie-message {
+            display: flex;
+            align-items: flex-start;
+            gap: 18px;
+            background: linear-gradient(135deg, #FFFDE7 0%, #FFF9C4 100%);
+            border-left: 5px solid var(--primary);
+            padding: 24px;
+            border-radius: var(--radius-md);
+            margin-bottom: 35px;
+            box-shadow: 0 3px 12px rgba(255,215,0,0.15);
+        }
+        .katie-avatar {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            object-fit: cover;
+            object-position: center 48%;
+            background: white;
+            border: 4px solid var(--primary);
+            padding: 6px;
+            flex-shrink: 0;
+            box-shadow: var(--shadow-soft);
+        }
+        .katie-bubble {
+            flex: 1;
+        }
+        .katie-name {
+            font-weight: 800;
+            color: var(--secondary);
+            margin-bottom: 8px;
+            font-size: 15px;
+        }
+        .katie-text {
+            font-size: 16px;
+            color: var(--text-dark);
+            line-height: 1.7;
+        }
+        /* Info Boxes */
+        .info-box {
+            background: linear-gradient(135deg, #E3F2FD 0%, #BBDEFB 100%);
+            border-left: 5px solid var(--info);
+            padding: 22px 24px;
+            border-radius: var(--radius-md);
+            margin: 28px 0;
+        }
+        .info-box.warning {
+            background: linear-gradient(135deg, #FFF3E0 0%, #FFE0B2 100%);
+            border-left-color: var(--warning);
+        }
+        .info-box.danger {
+            background: linear-gradient(135deg, #FFEBEE 0%, #FFCDD2 100%);
+            border-left-color: var(--error);
+        }
+        .info-box.success {
+            background: linear-gradient(135deg, #E8F5E9 0%, #C8E6C9 100%);
+            border-left-color: var(--success);
+        }
+        .info-box-title {
+            font-weight: 800;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 16px;
+        }
+        .info-box-content {
+            font-size: 15px;
+            line-height: 1.7;
+        }
+        .info-box-content ul, .info-box-content ol {
+            margin-top: 10px;
+            padding-left: 20px;
+        }
+        .info-box-content li {
+            margin-bottom: 6px;
+        }
+        /* Lists */
+        .content-list {
+            list-style: none;
+            margin: 28px 0;
+        }
+        .content-list li {
+            padding: 14px 0 14px 36px;
+            position: relative;
+            border-bottom: 1px solid rgba(0,0,0,0.06);
+            font-size: 16px;
+        }
+        .content-list li:last-child {
+            border-bottom: none;
+        }
+        .content-list li::before {
+            content: '&#9889;';
+            position: absolute;
+            left: 8px;
+            font-size: 18px;
+        }
+        /* Hazard Grid */
+        .hazard-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin: 28px 0;
+        }
+        .hazard-card {
+            background: var(--bg-clay-light);
+            border: 3px solid var(--bg-clay-dark);
+            border-radius: var(--radius-md);
+            padding: 26px;
+            transition: var(--transition);
+        }
+        .hazard-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-medium);
+            border-color: var(--warning);
+        }
+        .hazard-icon {
+            font-size: 48px;
+            margin-bottom: 14px;
+        }
+        .hazard-title {
+            font-weight: 900;
+            font-size: 20px;
+            color: var(--text-dark);
+            margin-bottom: 12px;
+            font-family: var(--font-heading);
+        }
+        .hazard-desc {
+            font-size: 15px;
+            color: var(--text-medium);
+            line-height: 1.6;
+        }
+        /* Boundary Steps */
+        .boundary-steps {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+            margin: 28px 0;
+        }
+        .boundary-step {
+            display: flex;
+            align-items: flex-start;
+            gap: 18px;
+            background: var(--bg-clay-light);
+            padding: 24px;
+            border-radius: var(--radius-md);
+            border-left: 5px solid var(--warning);
+            transition: var(--transition);
+        }
+        .boundary-step:hover {
+            background: var(--bg-clay);
+            box-shadow: var(--shadow-soft);
+        }
+        .boundary-icon {
+            font-size: 48px;
+            flex-shrink: 0;
+        }
+        .boundary-content h4 {
+            font-weight: 800;
+            margin-bottom: 8px;
+            color: var(--text-dark);
+            font-size: 17px;
+        }
+        .boundary-content p {
+            font-size: 15px;
+            color: var(--text-medium);
+            line-height: 1.7;
+            margin: 0;
+        }
+        /* PPE Category Grid */
+        .ppe-category-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 18px;
+            margin: 28px 0;
+        }
+        .ppe-category-card {
+            background: linear-gradient(135deg, #FFE0B2 0%, #FFCC80 100%);
+            border-left: 5px solid var(--warning);
+            border-radius: var(--radius-md);
+            padding: 22px;
+            transition: var(--transition);
+        }
+        .ppe-category-card:hover {
+            box-shadow: var(--shadow-medium);
+            transform: translateY(-3px);
+        }
+        .ppe-category-num {
+            font-family: var(--font-heading);
+            font-size: 36px;
+            font-weight: 900;
+            color: var(--warning);
+            margin-bottom: 8px;
+        }
+        .ppe-category-title {
+            font-weight: 800;
+            font-size: 17px;
+            color: var(--text-dark);
+            margin-bottom: 10px;
+        }
+        .ppe-category-desc {
+            font-size: 14px;
+            color: var(--text-dark);
+            line-height: 1.6;
+        }
+        /* ═══════════════════════════════════════════
+           QUIZ STYLES
+           ═══════════════════════════════════════════ */
+        .quiz-question {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 28px;
+            line-height: 1.5;
+        }
+        .quiz-options {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            margin-bottom: 24px;
+        }
+        .quiz-option {
+            background: var(--bg-clay-light);
+            border: 3px solid var(--bg-clay-dark);
+            padding: 18px 24px;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 16px;
+            font-weight: 600;
+            position: relative;
+        }
+        .quiz-option:hover:not(.disabled) {
+            background: var(--bg-clay);
+            border-color: var(--primary);
+            transform: translateX(6px);
+        }
+        .quiz-option.selected {
+            background: var(--primary);
+            border-color: var(--primary-dark);
+            color: var(--accent-black);
+        }
+        .quiz-option.correct {
+            background: var(--success);
+            border-color: var(--success-dark);
+            color: var(--white);
+        }
+        .quiz-option.incorrect {
+            background: var(--error);
+            border-color: var(--error-dark);
+            color: var(--white);
+        }
+        .quiz-option.disabled {
+            cursor: default;
+        }
+        .quiz-feedback {
+            display: none;
+            padding: 18px 22px;
+            border-radius: var(--radius-md);
+            font-size: 16px;
+            line-height: 1.7;
+            margin-top: 20px;
+        }
+        .quiz-feedback.show {
+            display: block;
+        }
+        .quiz-feedback.correct-fb {
+            background: #E8F5E9;
+            color: #2E7D32;
+            border-left: 5px solid var(--success);
+        }
+        .quiz-feedback.incorrect-fb {
+            background: #FFEBEE;
+            color: #C62828;
+            border-left: 5px solid var(--error);
+        }
+        /* Quiz Buttons */
+        .quiz-btn-group {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+        }
+        /* Results Screen */
+        .results-card {
+            background: var(--white);
+            border-radius: var(--radius-xl);
+            padding: 60px 50px;
+            box-shadow: var(--shadow-hard);
+            text-align: center;
+        }
+        .results-icon {
+            font-size: 100px;
+            margin-bottom: 24px;
+            animation: scaleIn 0.6s ease;
+        }
+        @keyframes scaleIn {
+            from { transform: scale(0) rotate(-180deg); }
+            to { transform: scale(1) rotate(0); }
+        }
+        .results-score {
+            font-family: var(--font-heading);
+            font-size: 72px;
+            font-weight: 900;
+            color: var(--primary);
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 0 rgba(0,0,0,0.1);
+        }
+        .results-title {
+            font-family: var(--font-heading);
+            font-size: 42px;
+            font-weight: 900;
+            color: var(--text-dark);
+            margin-bottom: 16px;
+        }
+        .results-message {
+            font-size: 19px;
+            color: var(--text-medium);
+            margin-bottom: 36px;
+            line-height: 1.7;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .results-katie {
+            background: linear-gradient(135deg, #FFFDE7 0%, #FFF9C4 100%);
+            border-left: 5px solid var(--primary);
+            padding: 20px 24px;
+            border-radius: var(--radius-md);
+            font-size: 17px;
+            font-style: italic;
+            color: var(--text-dark);
+            margin-bottom: 36px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .results-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+        /* ═══════════════════════════════════════════
+           BUTTONS
+           ═══════════════════════════════════════════ */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 14px 32px;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-family: var(--font-heading);
+            font-size: 16px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+            box-shadow: var(--shadow-clay);
+        }
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .btn-gold {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: var(--accent-black);
+        }
+        .btn-gold:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-hard);
+        }
+        .btn-success {
+            background: var(--success);
+            color: var(--white);
+        }
+        .btn-success:hover:not(:disabled) {
+            background: var(--success-dark);
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-hard);
+        }
+        .btn-outline {
+            background: var(--white);
+            color: var(--text-dark);
+            border: 2px solid var(--bg-clay-dark);
+        }
+        .btn-outline:hover:not(:disabled) {
+            background: var(--bg-clay-light);
+            border-color: var(--primary);
+        }
+        /* ═══════════════════════════════════════════
+           NAVIGATION
+           ═══════════════════════════════════════════ */
+        .nav-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(180deg, rgba(26,26,26,0.97) 0%, rgba(0,0,0,0.98) 100%);
+            border-top: 3px solid var(--primary);
+            padding: 16px 24px;
+            z-index: 100;
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.3);
+        }
+        .nav-inner {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+        }
+        .nav-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            border: 2px solid rgba(255,255,255,0.15);
+            border-radius: var(--radius-sm);
+            font-family: var(--font-heading);
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: var(--transition);
+            background: rgba(255,255,255,0.08);
+            color: var(--white);
+            text-decoration: none;
+        }
+        .nav-btn:hover:not(:disabled) {
+            background: rgba(255,255,255,0.15);
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+        .nav-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+        .nav-btn.nav-next {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: var(--accent-black);
+            border-color: transparent;
+        }
+        .nav-btn.nav-next:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255,215,0,0.4);
+        }
+        .slide-indicator {
+            color: rgba(255,255,255,0.6);
+            font-size: 13px;
+            font-weight: 600;
+        }
+        /* ═══════════════════════════════════════════
+           RESPONSIVE
+           ═══════════════════════════════════════════ */
+        @media (max-width: 768px) {
+            .container { padding: 30px 20px 100px; }
+            .content-card { padding: 32px 24px; }
+            .intro-card { padding: 40px 30px; }
+            .intro-title { font-size: 36px; }
+            .slide-title { font-size: 28px; }
+            .hazard-grid { grid-template-columns: 1fr; }
+            .ppe-category-grid { grid-template-columns: 1fr; }
+            .nav-inner { flex-direction: column; gap: 12px; }
+            .nav-btn { width: 100%; justify-content: center; }
+            .header-center { position: static; transform: none; }
+        }
+        @media (max-width: 480px) {
+            .intro-meta { flex-direction: column; gap: 16px; }
+            .katie-message { flex-direction: column; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-inner">
+            <a href="../../user-dashboard/index.html" class="logo">
+                <div class="logo-icon"><img src="logo.png?v=2" alt="SafetyVerse Logo"></div>
+                <div class="logo-text">Safety<em>Verse</em></div>
+            </a>
+            <div class="header-center">
+                <span class="header-module-tag">MODULE 10</span>
+                <span class="header-module-title">Electrical Safety & Arc Flash</span>
+            </div>
+            <a href="../../user-dashboard/index.html" class="back-btn">
+                <span>&#8592;</span>
+                <span>Back to Dashboard</span>
+            </a>
+        </div>
+    </header>
+    <!-- Progress Bar -->
+    <div class="progress-bar">
+        <div class="progress-bar-inner">
+            <span class="progress-label" id="progressLabel">Slide 1 of 15</span>
+            <div class="progress-track">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <span class="progress-pct" id="progressPct">0%</span>
+        </div>
+    </div>
+    <!-- Main Content -->
+    <div class="content-wrapper">
+        <div class="container">
+            <!-- Slide 1: Intro -->
+            <div class="slide active" data-slide="1">
+                <div class="intro-card">
+                    <div class="intro-icon">&#9889;</div>
+                    <h1 class="intro-title">Electrical Safety & Arc Flash</h1>
+                    <p class="intro-subtitle">Protect Yourself from Electrical Hazards</p>
+                    <div class="intro-meta">
+                        <div class="intro-meta-item">
+                            <span>&#9201;️</span>
+                            <span>15 minutes</span>
+                        </div>
+                        <div class="intro-meta-item">
+                            <span>&#128218;</span>
+                            <span>Operational Safety Path</span>
+                        </div>
+                        <div class="intro-meta-item">
+                            <span>&#10003;</span>
+                            <span>OSHA & NFPA 70E</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 2: Introduction with Katie -->
+            <div class="slide" data-slide="2">
+                <div class="content-card">
+                    <div class="katie-message">
+                        <img src="katie.png" alt="Katie" class="katie-avatar">
+                        <div class="katie-bubble">
+                            <div class="katie-name">Katie, Your Safety Guide</div>
+                            <div class="katie-text">
+                                Welcome! Electricity powers our workplaces, but it's also extremely dangerous. Every year, electrical hazards cause hundreds of deaths and thousands of injuries. In this module, you'll learn to recognize electrical hazards, understand arc flash dangers, and know when to call a qualified electrician. Remember: electricity is unforgiving—when in doubt, stay out!
+                            </div>
+                        </div>
+                    </div>
+                    <div class="slide-header">
+                        <div class="slide-number">Slide 2 of 15</div>
+                        <h2 class="slide-title">Why Electrical Safety Matters</h2>
+                    </div>
+                    <div class="slide-content">
+                        <p>Electrical hazards are invisible, silent, and deadly. You can't see, hear, or smell electricity until it's too late. <strong>Electrical incidents are the 4th leading cause of workplace fatalities.</strong></p>
+                        
+                        <div class="info-box danger">
+                            <div class="info-box-title">&#9888;&#65039; Electrical Injury Statistics</div>
+                            <div class="info-box-content">
+                                According to OSHA and NFPA:
+                                <ul>
+                                    <li>300+ electrical fatalities annually in U.S. workplaces</li>
+                                    <li>4,000+ non-fatal electrical injuries each year</li>
+                                    <li>Arc flash incidents cause severe burns and blindness</li>
+                                    <li>Most victims are NOT electricians—they're general workers</li>
+                                    <li>Nearly all electrical injuries are preventable</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <p><strong>Learning Objectives:</strong></p>
+                        <ul class="content-list">
+                            <li>Recognize the four main electrical hazards</li>
+                            <li>Understand the difference between qualified and unqualified persons</li>
+                            <li>Identify arc flash hazards and warning labels</li>
+                            <li>Know safe approach boundaries around electrical equipment</li>
+                            <li>Practice safe behaviors around electricity</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 3: Four Main Electrical Hazards -->
+            <div class="slide" data-slide="3">
+                <div class="content-card">
+                    <div class="slide-header">
+                        <div class="slide-number">Slide 3 of 15</div>
+                        <h2 class="slide-title">Four Main Electrical Hazards</h2>
+                        <p class="slide-subtitle">What makes electricity dangerous</p>
+                    </div>
+                    <div class="slide-content">
+                        <p>OSHA identifies four primary electrical hazards. Understanding these helps you recognize danger before it's too late.</p>
+                        <div class="hazard-grid">
+                            <div class="hazard-card">
+                                <div class="hazard-icon">&#9889;</div>
+                                <div class="hazard-title">1. Electric Shock</div>
+                                <div class="hazard-desc"><strong>The most common hazard.</strong> Current flowing through the body disrupts normal electrical signals to the heart and muscles. As little as 0.1 amps (100 milliamps) can be fatal. Wet conditions dramatically increase risk. Effects include burns, muscle contractions, paralysis, respiratory failure, and cardiac arrest.</div>
+                            </div>
+                            <div class="hazard-card">
+                                <div class="hazard-icon">&#128293;</div>
+                                <div class="hazard-title">2. Electrical Burns</div>
+                                <div class="hazard-desc"><strong>Can occur without shock.</strong> Heat from electrical current or arc flash causes severe burns. Entry and exit wounds may be small but internal damage extensive. Arc flash temperatures reach 35,000°F (4× hotter than sun's surface). Third-degree burns common. Often require skin grafts or amputation.</div>
+                            </div>
+                            <div class="hazard-card">
+                                <div class="hazard-icon">&#128165;</div>
+                                <div class="hazard-title">3. Arc Flash / Arc Blast</div>
+                                <div class="hazard-desc"><strong>Explosive release of energy.</strong> Occurs when electricity jumps through air between conductors or to ground. Creates intense heat, light, pressure wave, and molten metal spray. Can vaporize equipment and throw workers across rooms. Causes blindness, hearing loss, and severe burns. Discussed in detail later.</div>
+                            </div>
+                            <div class="hazard-card">
+                                <div class="hazard-icon">&#128293;</div>
+                                <div class="hazard-title">4. Electrical Fires</div>
+                                <div class="hazard-desc"><strong>Caused by overheating or arcing.</strong> Faulty wiring, overloaded circuits, or damaged equipment ignites nearby combustibles. Electrical fires can't be extinguished with water (causes electrocution). Require Class C fire extinguishers. Often spread quickly through walls and ceilings.</div>
+                            </div>
+                        </div>
+                        <div class="info-box warning">
+                            <div class="info-box-title">&#9888;&#65039; Current vs Voltage</div>
+                            <div class="info-box-content">
+                                <strong>Voltage pushes, current kills.</strong> While high voltage is dangerous, it's the current (amperage) that causes harm. Low voltage (like 120V outlets) can still be deadly if current flows through vital organs. Even 50 volts can be fatal under the right (wrong) conditions.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 4: Qualified vs Unqualified Persons -->
+            <div class="slide" data-slide="4">
+                <div class="content-card">
+                    <div class="slide-header">
+                        <div class="slide-number">Slide 4 of 15</div>
+                        <h2 class="slide-title">Qualified vs Unqualified Persons</h2>
+                        <p class="slide-subtitle">Who can work on electrical systems?</p>
+                    </div>
+                    <div class="slide-content">
+                        <p>OSHA and NFPA 70E make a critical distinction between who can and cannot work on energized electrical equipment.</p>
+                        <div class="boundary-steps">
+                            <div class="boundary-step">
+                                <div class="boundary-icon">&#128119;</div>
+                                <div class="boundary-content">
+                                    <h4>Qualified Electrical Worker</h4>
+                                    <p><strong>Definition:</strong> A person who has received training and demonstrated skills and knowledge in the construction and operation of electrical equipment and installations, AND has received safety training to identify and avoid electrical hazards.<br><br>
+                                    <strong>Requirements:</strong> Formal electrical training, knowledge of voltage levels, understanding of clearance distances, arc flash training, CPR/first aid certified, authorized by employer.<br><br>
+                                    <strong>Can do:</strong> Work on energized equipment (with proper PPE and procedures), open electrical panels, install/repair electrical systems, test live circuits.</p>
+                                </div>
+                            </div>
+                            <div class="boundary-step">
+                                <div class="boundary-icon">&#128100;</div>
+                                <div class="boundary-content">
+                                    <h4>Unqualified Person (Most Employees)</h4>
+                                    <p><strong>Definition:</strong> Anyone who has NOT received the training and authorization to work on electrical systems. This includes most employees, even if they work near electrical equipment daily.<br><br>
+                                    <strong>Cannot do:</strong> Open electrical panels, work on live circuits, perform electrical repairs or installations, cross restricted approach boundaries, remove warning labels.<br><br>
+                                    <strong>Must do:</strong> Stay outside limited approach boundary, report electrical hazards, never touch or move electrical equipment, call a qualified electrician for all electrical work.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="info-box danger">
+                            <div class="info-box-title">&#128680; Critical Rule</div>
+                            <div class="info-box-content">
+                                <strong>If you are not a qualified electrical worker, you must NEVER:</strong>
+                                <ul>
+                                    <li>Open electrical panels or junction boxes</li>
+                                    <li>Attempt repairs on electrical equipment</li>
+                                    <li>Use damaged electrical tools or cords</li>
+                                    <li>Work on any energized electrical equipment</li>
+                                    <li>Cross restricted or prohibited approach boundaries</li>
+                                </ul>
+                                When in doubt, call a qualified electrician. Your life depends on it.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 5: Common Electrical Hazards -->
+            <div class="slide" data-slide="5">
+                <div class="content-card">
+                    <div class="slide-header">
+                        <div class="slide-number">Slide 5 of 15</div>
+                        <h2 class="slide-title">Recognizing Common Electrical Hazards</h2>
+                        <p class="slide-subtitle">What to look for and report</p>
+                    </div>
+                    <div class="slide-content">
+                        <p>As an unqualified person, your job is to <strong>recognize and report</strong> electrical hazards—not fix them. Here's what to watch for:</p>
+                        <ul class="content-list">
+                            <li><strong>Damaged electrical cords:</strong> Frayed insulation, exposed wires, cracked plugs, missing ground prongs. Never use damaged cords—report and replace immediately.</li>
+                            <li><strong>Overloaded outlets:</strong> Multiple devices plugged into single outlet via adapters or power strips. Causes overheating and fire risk. Use only one high-wattage device per outlet.</li>
+                            <li><strong>Extension cords as permanent wiring:</strong> Extension cords are for temporary use only. Never run through walls, ceilings, or under rugs. Don't daisy-chain multiple extension cords.</li>
+                            <li><strong>Water near electricity:</strong> Wet conditions drastically increase shock risk. Keep electrical equipment away from water sources. Use GFCI (Ground Fault Circuit Interrupter) outlets in wet areas.</li>
+                            <li><strong>Missing outlet covers or panel doors:</strong> Exposed electrical parts are extremely dangerous. Report missing covers immediately. Never reach into uncovered boxes or panels.</li>
+                            <li><strong>Warm or buzzing outlets/panels:</strong> Indicates overheating or loose connections. Do not use—report immediately. May indicate imminent fire or arc flash hazard.</li>
+                            <li><strong>Flickering lights or frequent circuit breaker trips:</strong> Signs of overload, poor wiring, or failing equipment. Requires investigation by qualified electrician.</li>
+                            <li><strong>Improper grounding:</strong> Three-prong plugs with missing ground, "cheater" plugs. Grounding prevents shock by providing safe path for fault current. Never defeat grounding.</li>
+                        </ul>
+                        <div class="info-box danger">
+                            <div class="info-box-title">&#10060; Never Do This</div>
+                            <div class="info-box-content">
+                                <strong>Deadly behaviors to avoid:</strong>
+                                <ul>
+                                    <li>Using electrical equipment with wet hands or while standing in water</li>
+                                    <li>Pulling plugs by the cord instead of the plug itself (damages cord)</li>
+                                    <li>Using indoor-rated equipment outdoors</li>
+                                    <li>Removing or bypassing safety guards or interlocks</li>
+                                    <li>Working on equipment without verifying it's de-energized</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 6: What is Arc Flash? -->
+            <div class="slide" data-slide="6">
+                <div class="content-card">
+                    <div class="slide-header">
+                        <div class="slide-number">Slide 6 of 15</div>
+                        <h2 class="slide-title">What is Arc Flash?</h2>
+                        <p class="slide-subtitle">Understanding this deadly hazard</p>
+                    </div>
+                    <div class="slide-content">
+                        <p><strong>Arc flash</strong> is an explosive release of energy caused by an electric arc. It occurs when electricity jumps through air between conductors or from a conductor to ground.</p>
+                        <div class="info-box danger">
+                            <div class="info-box-title">&#128165; Arc Flash Dangers</div>
+                            <div class="info-box-content">
+                                An arc flash event releases tremendous energy in milliseconds:
+                                <ul>
+                                    <li><strong>Heat:</strong> Temperatures reach 35,000°F (19,400°C)—4× hotter than the sun's surface. Instantly vaporizes metal and causes severe burns.</li>
+                                    <li><strong>Light:</strong> Intense UV and IR radiation can cause permanent blindness and retinal damage, even from indirect exposure.</li>
+                                    <li><strong>Pressure wave (arc blast):</strong> Can reach 2,000 pounds per square foot. Throws workers across rooms, ruptures eardrums, collapses lungs.</li>
+                                    <li><strong>Molten metal:</strong> Vaporized copper and other metals spray outward at high velocity, penetrating skin and clothing.</li>
+                                    <li><strong>Toxic gases:</strong> Vaporized materials create poisonous fumes and plasma.</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <p><strong>What causes arc flash?</strong></p>
+                        <ul class="content-list">
+                            <li>Tools or conductive materials dropped into energized equipment</li>
+                            <li>Accidental contact with energized parts during maintenance</li>
+                            <li>Dust, corrosion, or contaminants on conductors</li>
+                            <li>Equipment failure or insulation breakdown</li>
+                            <li>Improper work procedures on energized equipment</li>
+                            <li>Switching or operating breakers/disconnects under load</li>
+                        </ul>
+                        <div class="info-box warning">
+                            <div class="info-box-title">&#9888;&#65039; Arc Flash Statistics</div>
+                            <div class="info-box-content">
+                                <ul>
+                                    <li>5-10 arc flash incidents occur in the U.S. <strong>every day</strong></li>
+                                    <li>Average of 400 arc flash fatalities per year</li>
+                                    <li>2,000+ people hospitalized annually for arc flash burns</li>
+                                    <li>Survival rate is only 50% for severe arc flash burns</li>
+                                    <li>Most victims require months of hospitalization and multiple surgeries</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 7: Arc Flash Boundaries -->
+            <div class="slide" data-slide="7">
+                <div class="content-card">
+                    <div class="slide-header">
+                        <div class="slide-number">Slide 7 of 15</div>
+                        <h2 class="slide-title">Arc Flash Boundaries</h2>
+                        <p class="slide-subtitle">Safe distances from electrical equipment</p>
+                    </div>
+                    <div class="slide-content">
+                        <p>NFPA 70E establishes approach boundaries around energized electrical equipment. These boundaries determine who can work where and what PPE is required.</p>
+                        <div class="boundary-steps">
+                            <div class="boundary-step">
+                                <div class="boundary-icon">&#128308;</div>
+                                <div class="boundary-content">
+                                    <h4>Arc Flash Boundary (Outermost)</h4>
+                                    <p><strong>Definition:</strong> The distance at which a worker could receive a second-degree burn from an arc flash. Calculated based on equipment voltage and available fault current.<br><br>
+                                    <strong>Distance:</strong> Varies by equipment (typically 4-20+ feet).<br><br>
+                                    <strong>Who can enter:</strong> ONLY qualified workers wearing appropriate arc-rated PPE for the hazard level. Boundary distance marked on arc flash labels.<br><br>
+                                    <strong>Unqualified persons:</strong> Must stay OUTSIDE this boundary at all times.</p>
+                                </div>
+                            </div>
+                            <div class="boundary-step">
+                                <div class="boundary-icon">&#128993;</div>
+                                <div class="boundary-content">
+                                    <h4>Limited Approach Boundary</h4>
+                                    <p><strong>Definition:</strong> Distance from exposed energized parts where shock hazard exists.<br><br>
+                                    <strong>Distance:</strong> Varies by voltage (e.g., 3 feet 6 inches for 480V).<br><br>
+                                    <strong>Who can enter:</strong> ONLY qualified workers or unqualified workers under direct supervision of qualified worker performing specific tasks.<br><br>
+                                    <strong>Unqualified persons:</strong> Should generally stay outside this boundary unless specifically trained and supervised.</p>
+                                </div>
+                            </div>
+                            <div class="boundary-step">
+                                <div class="boundary-icon">&#128992;</div>
+                                <div class="boundary-content">
+                                    <h4>Restricted Approach Boundary</h4>
+                                    <p><strong>Definition:</strong> Distance where increased shock hazard exists. Approaching the energized part as if making contact.<br><br>
+                                    <strong>Distance:</strong> Inches from energized parts (voltage-dependent).<br><br>
+                                    <strong>Who can enter:</strong> ONLY qualified workers with specific training, written plan, and shock PPE.<br><br>
+                                    <strong>Unqualified persons:</strong> Absolutely NEVER cross this boundary.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="info-box success">
+                            <div class="info-box-title">&#10003; Your Responsibility as Unqualified Person</div>
+                            <div class="info-box-content">
+                                <strong>Stay outside ALL approach boundaries.</strong> If you see arc flash warning labels on electrical equipment, stay at least the arc flash boundary distance away (marked on label). Never enter electrical rooms, open panels, or approach exposed energized equipment. When in doubt, stay out!
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 8: Arc Flash Warning Labels -->
+            <div class="slide" data-slide="8">
+                <div class="content-card">
+                    <div class="slide-header">
+                        <div class="slide-number">Slide 8 of 15</div>
+                        <h2 class="slide-title">Arc Flash Warning Labels</h2>
+                        <p class="slide-subtitle">Reading the warning signs</p>
+                    </div>
+                    <div class="slide-content">
+                        <p>NFPA 70E requires arc flash warning labels on electrical equipment. These labels tell qualified workers critical safety information. <strong>For unqualified workers, these labels mean: STAY AWAY.</strong></p>
+                        <div class="info-box warning">
+                            <div class="info-box-title">&#9888;&#65039; What Arc Flash Labels Tell You</div>
+                            <div class="info-box-content">
+                                Arc flash labels typically include:
+                                <ul>
+                                    <li><strong>Warning header:</strong> "DANGER - Arc Flash and Shock Hazard"</li>
+                                    <li><strong>Voltage level:</strong> The system voltage (e.g., 480V, 4160V)</li>
+                                    <li><strong>Arc flash boundary:</strong> Distance you must stay away (e.g., 4 feet, 10 feet)</li>
+                                    <li><strong>Incident energy:</strong> Calories per square centimeter (cal/cm²) at working distance</li>
+                                    <li><strong>PPE category:</strong> What protection qualified workers need (Category 1-4)</li>
+                                    <li><strong>Working distance:</strong> How close qualified workers can safely approach with proper PPE</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="info-box danger">
+                            <div class="info-box-title">&#128680; For Unqualified Persons</div>
+                            <div class="info-box-content">
+                                <strong>If you see an arc flash label:</strong>
+                                <ul>
+                                    <li>Do NOT open the panel or enclosure</li>
+                                    <li>Stay outside the arc flash boundary distance shown on the label</li>
+                                    <li>Call a qualified electrician for any work needed</li>
+                                    <li>Never remove or deface arc flash labels</li>
+                                    <li>Report missing or damaged labels to your supervisor</li>
+                                </ul>
+                                <strong>The label is not permission to proceed—it's a warning to STAY AWAY unless you're qualified and wearing proper arc-rated PPE.</strong>
+                            </div>
+                        </div>
+                        <p><strong>Common locations for arc flash labels:</strong></p>
+                        <ul class="content-list">
+                            <li>Electrical panel doors and switchboards</li>
+                            <li>Motor control centers (MCCs)</li>
+                            <li>Disconnect switches and circuit breakers</li>
+                            <li>Transformers and voltage regulators</li>
+                            <li>Any equipment with exposed energized parts above 50 volts</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 9: Arc Flash PPE Categories -->
+            <div class="slide" data-slide="9">
+                <div class="content-card">
+                    <div class="slide-header">
+                        <div class="slide-number">Slide 9 of 15</div>
+                        <h2 class="slide-title">Arc Flash PPE Categories</h2>
+                        <p class="slide-subtitle">Protection levels for qualified workers</p>
+                    </div>
+                    <div class="slide-content">
+                        <p>NFPA 70E defines PPE categories based on incident energy levels. <strong>This information is for awareness only—unqualified persons should never enter arc flash boundaries.</strong></p>
+                        <div class="ppe-category-grid">
+                            <div class="ppe-category-card">
+                                <div class="ppe-category-num">CAT 1</div>
+                                <div class="ppe-category-title">Category 1 (Lowest Risk)</div>
+                                <div class="ppe-category-desc"><strong>Incident Energy:</strong> 4 cal/cm² or less<br>
+                                <strong>PPE Required:</strong> Arc-rated long-sleeve shirt and pants (4 cal rating), safety glasses, hearing protection, leather gloves, leather work shoes.<br>
+                                <strong>Examples:</strong> Voltage testing, racking breakers in/out on low-voltage equipment.</div>
+                            </div>
+                            <div class="ppe-category-card">
+                                <div class="ppe-category-num">CAT 2</div>
+                                <div class="ppe-category-title">Category 2</div>
+                                <div class="ppe-category-desc"><strong>Incident Energy:</strong> 5-8 cal/cm²<br>
+                                <strong>PPE Required:</strong> Arc-rated clothing (8 cal), arc-rated face shield, hard hat, safety glasses, hearing protection, heavy-duty leather gloves.<br>
+                                <strong>Examples:</strong> Working on energized 480V panels, operating disconnects under load.</div>
+                            </div>
+                            <div class="ppe-category-card">
+                                <div class="ppe-category-num">CAT 3</div>
+                                <div class="ppe-category-title">Category 3</div>
+                                <div class="ppe-category-desc"><strong>Incident Energy:</strong> 9-25 cal/cm²<br>
+                                <strong>PPE Required:</strong> Arc-rated clothing system (25 cal), arc flash suit, arc-rated face shield and balaclava, hard hat, safety glasses, hearing protection.<br>
+                                <strong>Examples:</strong> Medium-voltage switchgear work, work on energized bus.</div>
+                            </div>
+                            <div class="ppe-category-card">
+                                <div class="ppe-category-num">CAT 4</div>
+                                <div class="ppe-category-title">Category 4 (Highest Risk)</div>
+                                <div class="ppe-category-desc"><strong>Incident Energy:</strong> 26-40 cal/cm²<br>
+                                <strong>PPE Required:</strong> Arc-rated clothing system (40 cal), multi-layer arc flash suit, arc-rated face shield and balaclava, hard hat, insulated gloves with leather protectors.<br>
+                                <strong>Examples:</strong> High-voltage equipment, high-fault-current systems. Extremely dangerous work.</div>
+                            </div>
+                        </div>
+                        <div class="info-box">
+                            <div class="info-box-title">&#128161; What This Means for You</div>
+                            <div class="info-box-content">
+                                If you see a PPE category on an arc flash label, it indicates the level of protection qualified electricians need. <strong>Higher categories = more dangerous equipment.</strong> As an unqualified person, you should never be near this equipment when panels are open or work is being performed. The PPE categories show just how serious arc flash hazards are.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 10: Safe Behaviors Around Electricity -->
+            <div class="slide" data-slide="10">
+                <div class="content-card">
+                    <div class="slide-header">
+                        <div class="slide-number">Slide 10 of 15</div>
+                        <h2 class="slide-title">Safe Behaviors Around Electricity</h2>
+                        <p class="slide-subtitle">What you can do to stay safe</p>
+                    </div>
+                    <div class="slide-content">
+                        <p>Even as an unqualified person, you can prevent electrical incidents through safe practices and awareness.</p>
+                        <ul class="content-list">
+                            <li><strong>Inspect tools and equipment daily:</strong> Before use, check electrical tools for damage. Look for frayed cords, cracked housings, broken plugs. Never use damaged equipment—tag it out and report it.</li>
+                            <li><strong>Use tools properly:</strong> Don't force tools to do jobs they're not designed for. Use GFCI protection on all portable tools. Never bypass or defeat safety features.</li>
+                            <li><strong>Keep work areas dry:</strong> Water and electricity are a deadly combination. If you must work in wet conditions, use GFCI-protected circuits and stay on dry surfaces when possible.</li>
+                            <li><strong>Maintain safe clearances:</strong> Keep ladders, scaffolds, cranes, and boom lifts at least 10 feet away from overhead power lines (more for higher voltages). Never assume lines are de-energized.</li>
+                            <li><strong>Use proper extension cords:</strong> Match extension cord gauge to tool amperage. Use outdoor-rated cords outdoors. Never run cords through doorways, walls, or under rugs. Unplug when not in use.</li>
+                            <li><strong>Never use "cheater plugs":</strong> Three-prong plugs require ground connection. Don't defeat this safety feature with adapters. If outlet only has two prongs, have electrician install proper outlet.</li>
+                            <li><strong>Report all hazards immediately:</strong> Damaged equipment, missing covers, warm outlets, buzzing sounds, burning smells. Don't wait—report right away.</li>
+                            <li><strong>Know emergency procedures:</strong> Location of emergency shutoffs, how to call for help, basic first aid. Know where fire extinguishers are located.</li>
+                        </ul>
+                        <div class="info-box success">
+                            <div class="info-box-title">&#10003; Questions to Ask Before Working</div>
+                            <div class="info-box-content">
+                                <ul>
+                                    <li>Are there electrical hazards in my work area?</li>
+                                    <li>Do I need to work near electrical equipment?</li>
+                                    <li>Is my equipment properly grounded?</li>
+                                    <li>Am I using GFCI protection where required?</li>
+                                    <li>Have I inspected my tools today?</li>
+                                    <li>Do I know how to shut off power in an emergency?</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 11: Lockout/Tagout Preview -->
+            <div class="slide" data-slide="11">
+                <div class="content-card">
+                    <div class="slide-header">
+                        <div class="slide-number">Slide 11 of 15</div>
+                        <h2 class="slide-title">Lockout/Tagout (LOTO)</h2>
+                        <p class="slide-subtitle">Controlling hazardous energy</p>
+                    </div>
+                    <div class="slide-content">
+                        <p><strong>Lockout/Tagout (LOTO)</strong> is the process of controlling hazardous energy during service and maintenance. LOTO applies to electrical, mechanical, hydraulic, pneumatic, chemical, thermal, and other energy sources.</p>
+                        <div class="info-box">
+                            <div class="info-box-title">&#128274; LOTO Basics</div>
+                            <div class="info-box-content">
+                                <strong>The Six Steps of LOTO:</strong>
+                                <ol>
+                                    <li><strong>Preparation:</strong> Identify all energy sources and required locks/tags</li>
+                                    <li><strong>Notification:</strong> Inform affected employees</li>
+                                    <li><strong>Shutdown:</strong> Properly shut down equipment using normal procedures</li>
+                                    <li><strong>Isolation:</strong> Disconnect from ALL energy sources</li>
+                                    <li><strong>Lockout/Tagout:</strong> Apply locks and tags to energy isolation devices</li>
+                                    <li><strong>Verification:</strong> Test to ensure equipment is de-energized and cannot restart</li>
+                                </ol>
+                            </div>
+                        </div>
+                        <div class="info-box warning">
+                            <div class="info-box-title">&#9888;&#65039; Who Can Perform LOTO?</div>
+                            <div class="info-box-content">
+                                <strong>Only "authorized employees"</strong> who have received specific LOTO training can apply or remove lockout/tagout devices. Even if you're qualified to work on electrical systems, you need separate LOTO training and authorization.<br><br>
+                                <strong>Affected employees</strong> (those who work in areas where LOTO is performed) must understand LOTO but cannot apply/remove locks.<br><br>
+                                <strong>Never remove someone else's lock or tag.</strong> This can result in serious injury or death to the person who applied it.
+                            </div>
+                        </div>
+                        <div class="info-box success">
+                            <div class="info-box-title">&#128218; Module 11 Coming Next</div>
+                            <div class="info-box-content">
+                                <strong>Lockout/Tagout (Module 11)</strong> will cover LOTO procedures in detail, including:<br>
+                                • Energy control procedures<br>
+                                • Lockout devices and hardware<br>
+                                • Group lockout and shift changes<br>
+                                • Testing and verification<br>
+                                • Removing locks and restoring energy<br><br>
+                                LOTO is one of the most important safety procedures—proper energy control prevents hundreds of deaths and thousands of injuries annually.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 12: Emergency Response -->
+            <div class="slide" data-slide="12">
+                <div class="content-card">
+                    <div class="slide-header">
+                        <div class="slide-number">Slide 12 of 15</div>
+                        <h2 class="slide-title">Electrical Emergency Response</h2>
+                        <p class="slide-subtitle">What to do when incidents occur</p>
+                    </div>
+                    <div class="slide-content">
+                        <p>Knowing how to respond to electrical emergencies can save lives. <strong>Your safety comes first—never put yourself at risk trying to help.</strong></p>
+                        <div class="boundary-steps">
+                            <div class="boundary-step">
+                                <div class="boundary-icon">&#9889;</div>
+                                <div class="boundary-content">
+                                    <h4>If Someone is Being Shocked</h4>
+                                    <p><strong>DO NOT TOUCH THE PERSON!</strong> You will also be shocked. Their body is conducting electricity.<br><br>
+                                    <strong>Actions to take:</strong><br>
+                                    1. Shut off power at breaker/disconnect if safe to do so<br>
+                                    2. Call 911 immediately<br>
+                                    3. Only after power is OFF, check for pulse and breathing<br>
+                                    4. Begin CPR if trained and victim is not breathing<br>
+                                    5. Treat for shock—keep victim warm and lying down<br><br>
+                                    <strong>Never use a wooden stick, rope, or other item to "pull them free"—these can conduct electricity.</strong></p>
+                                </div>
+                            </div>
+                            <div class="boundary-step">
+                                <div class="boundary-icon">
+<div class="info-box danger">
+                        <div class="info-box-title">&#128680; Critical Safety Rules</div>
+                        <div class="info-box-content">
+                            <ul>
+                                <li>Never touch a shock victim until power is confirmed OFF</li>
+                                <li>Never use water on electrical fires</li>
+                                <li>Don't assume power is off—verify with qualified person</li>
+                                <li>Don't approach arc flash areas until confirmed safe</li>
+                                <li>Always call 911 for electrical emergencies</li>
+                                <li>Know location of emergency shutoffs and fire extinguishers</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Slide 13: Quiz Question 1 -->
+        <div class="slide" data-slide="13">
+            <div class="content-card">
+                <div class="slide-header">
+                    <div class="slide-number">Quiz Question 1 of 3</div>
+                    <h2 class="slide-title">Knowledge Check</h2>
+                </div>
+                <div class="slide-content">
+                    <div class="quiz-question">
+                        What is the MOST important rule for unqualified persons around electrical equipment?
+                    </div>
+                    <div class="quiz-options" id="q1-options">
+                        <div class="quiz-option" data-q="1" data-val="A">Always wear rubber gloves when working near electricity</div>
+                        <div class="quiz-option" data-q="1" data-val="B">Never open electrical panels or work on energized equipment - call a qualified electrician</div>
+                        <div class="quiz-option" data-q="1" data-val="C">You can work on electrical equipment if you turn off the breaker first</div>
+                        <div class="quiz-option" data-q="1" data-val="D">Electrical work is safe as long as you use insulated tools</div>
+                    </div>
+                    <div class="quiz-feedback" id="fb-1"></div>
+                    <div class="quiz-btn-group">
+                        <button class="btn btn-gold" id="submit-1" onclick="submitQuiz(1)" disabled>Submit Answer</button>
+                        <button class="btn btn-outline" id="next-q-1" onclick="nextSlide()" style="display: none;">Next Question &#8594;</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Slide 14: Quiz Question 2 -->
+        <div class="slide" data-slide="14">
+            <div class="content-card">
+                <div class="slide-header">
+                    <div class="slide-number">Quiz Question 2 of 3</div>
+                    <h2 class="slide-title">Knowledge Check</h2>
+                </div>
+                <div class="slide-content">
+                    <div class="quiz-question">
+                        Arc flash temperatures can reach approximately how hot?
+                    </div>
+                    <div class="quiz-options" id="q2-options">
+                        <div class="quiz-option" data-q="2" data-val="A">500°F (similar to an oven)</div>
+                        <div class="quiz-option" data-q="2" data-val="B">2,000°F (similar to a furnace)</div>
+                        <div class="quiz-option" data-q="2" data-val="C">10,000°F (similar to lightning)</div>
+                        <div class="quiz-option" data-q="2" data-val="D">35,000°F (4 times hotter than the sun's surface)</div>
+                    </div>
+                    <div class="quiz-feedback" id="fb-2"></div>
+                    <div class="quiz-btn-group">
+                        <button class="btn btn-gold" id="submit-2" onclick="submitQuiz(2)" disabled>Submit Answer</button>
+                        <button class="btn btn-outline" id="next-q-2" onclick="nextSlide()" style="display: none;">Next Question &#8594;</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Slide 15: Quiz Question 3 -->
+        <div class="slide" data-slide="15">
+            <div class="content-card">
+                <div class="slide-header">
+                    <div class="slide-number">Quiz Question 3 of 3</div>
+                    <h2 class="slide-title">Knowledge Check</h2>
+                </div>
+                <div class="slide-content">
+                    <div class="quiz-question">
+                        If you see someone being electrocuted, what should you do FIRST?
+                    </div>
+                    <div class="quiz-options" id="q3-options">
+                        <div class="quiz-option" data-q="3" data-val="A">Pull them away from the electrical source using a wooden stick</div>
+                        <div class="quiz-option" data-q="3" data-val="B">Grab their clothing and pull them away from the source</div>
+                        <div class="quiz-option" data-q="3" data-val="C">Shut off power at the breaker/disconnect if safe to do so, then call 911</div>
+                        <div class="quiz-option" data-q="3" data-val="D">Immediately start CPR while they're still being shocked</div>
+                    </div>
+                    <div class="quiz-feedback" id="fb-3"></div>
+                    <div class="quiz-btn-group">
+                        <button class="btn btn-gold" id="submit-3" onclick="submitQuiz(3)" disabled>Submit Answer</button>
+                        <button class="btn btn-outline" id="next-q-3" onclick="nextSlide()" style="display: none;">View Results &#8594;</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Slide 16: Results -->
+        <div class="slide" data-slide="16">
+            <div class="results-card">
+                <div class="results-icon" id="rIcon">&#127919;</div>
+                <div class="results-score" id="rScore">0 / 3</div>
+                <h2 class="results-title" id="rTitle">Quiz Complete</h2>
+                <p class="results-message" id="rMsg">Calculating your results...</p>
+                <div class="results-katie" id="rKatie">"Let's see how you did!"</div>
+                <div class="results-buttons" id="rBtns">
+                    <button class="btn btn-gold">Loading...</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Navigation Bar -->
+<nav class="nav-bar">
+    <div class="nav-inner">
+        <button class="nav-btn" id="prevBtn" onclick="prevSlide()">
+            &#8592; Previous
+        </button>
+        <span class="slide-indicator" id="slideIndicator">Slide 1 of 15</span>
+        <button class="nav-btn nav-next" id="nextBtn" onclick="nextSlide()">
+            Next &#8594;
+        </button>
+    </div>
+</nav>
+<script>
+(function() {
+    'use strict';
+    // ═══ CONFIG ═══
+    var TOTAL_SLIDES = 16;
+    var TOTAL_CONTENT = 15;
+    var MODULE_KEY = 'electrical-safety';
+    // ═══ STATE ═══
+    var currentSlide = 1;
+    var quizAnswers = { 1: null, 2: null, 3: null };
+    var quizSubmitted = { 1: false, 2: false, 3: false };
+    var quizScore = 0;
+    // Quiz correct answers
+    var quizCorrectAnswers = {
+        1: 'B',  // Never open electrical panels - call qualified electrician
+        2: 'D',  // 35,000°F (4 times hotter than sun's surface)
+        3: 'C'   // Shut off power at breaker if safe, then call 911
+    };
+    // Feedback messages
+    var feedbackMessages = {
+        1: {
+            correct: '&#10003; Correct! Unqualified persons must never work on electrical equipment. Always call a qualified electrician for electrical work.',
+            incorrect: '&#10007; Incorrect. Unqualified persons must NEVER open electrical panels or work on energized equipment under any circumstances. Always call a qualified electrician.'
+        },
+        2: {
+            correct: '&#10003; Correct! Arc flash can reach 35,000°F—four times hotter than the surface of the sun. This extreme heat causes severe burns instantly.',
+            incorrect: '&#10007; Incorrect. Arc flash temperatures reach 35,000°F, which is 4 times hotter than the sun\'s surface. This extreme heat is why arc flash is so deadly.'
+        },
+        3: {
+            correct: '&#10003; Correct! Never touch someone being electrocuted. Shut off power if you can do so safely, then call 911. Only provide aid after power is OFF.',
+            incorrect: '&#10007; Incorrect. Never touch a person being electrocuted—you will also be shocked. Shut off power at the source if safe to do so, then call 911.'
+        }
+    };
+    // ═══ NAVIGATION ═══
+    function goToSlide(n) {
+        if (n < 1 || n > TOTAL_SLIDES) return;
+        currentSlide = n;
+        updateUI();
+        saveSlideProgress();
+    }
+    window.nextSlide = function() {
+        goToSlide(currentSlide + 1);
+    };
+    window.prevSlide = function() {
+        goToSlide(currentSlide - 1);
+    };
+    // ═══ UI UPDATE ═══
+    function updateUI() {
+        document.querySelectorAll('.slide').forEach(function(s) {
+            s.classList.remove('active');
+        });
+        var activeSlide = document.querySelector('[data-slide="' + currentSlide + '"]');
+        if (activeSlide) {
+            activeSlide.classList.add('active');
+        }
+        var progressPct = ((currentSlide - 1) / (TOTAL_CONTENT - 1)) * 100;
+        document.getElementById('progressFill').style.width = Math.min(100, progressPct) + '%';
+        document.getElementById('progressPct').textContent = Math.round(Math.min(100, progressPct)) + '%';
+        
+        if (currentSlide <= TOTAL_CONTENT) {
+            document.getElementById('progressLabel').textContent = 'Slide ' + currentSlide + ' of ' + TOTAL_CONTENT;
+            document.getElementById('slideIndicator').textContent = 'Slide ' + currentSlide + ' of ' + TOTAL_CONTENT;
+        } else {
+            document.getElementById('progressLabel').textContent = 'Results';
+            document.getElementById('slideIndicator').textContent = 'Results';
+        }
+        var prevBtn = document.getElementById('prevBtn');
+        var nextBtn = document.getElementById('nextBtn');
+        
+        prevBtn.disabled = currentSlide === 1;
+        nextBtn.disabled = currentSlide === TOTAL_SLIDES;
+        if (currentSlide === 16) {
+            buildResults();
+        }
+        document.querySelector('.content-wrapper').scrollTop = 0;
+    }
+    // ═══ KEYBOARD NAV ═══
+    document.addEventListener('keydown', function(e) {
+        if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+        if (e.key === 'ArrowRight' || e.key === 'Right') {
+            e.preventDefault();
+            nextSlide();
+        } else if (e.key === 'ArrowLeft' || e.key === 'Left') {
+            e.preventDefault();
+            prevSlide();
+        }
+    });
+    // ═══ QUIZ HANDLING ═══
+    document.querySelectorAll('.quiz-option').forEach(function(opt) {
+        opt.addEventListener('click', function() {
+            var qNum = parseInt(this.getAttribute('data-q'));
+            if (quizSubmitted[qNum]) return;
+            var container = document.getElementById('q' + qNum + '-options');
+            container.querySelectorAll('.quiz-option').forEach(function(o) {
+                o.classList.remove('selected');
+            });
+            this.classList.add('selected');
+            quizAnswers[qNum] = this.getAttribute('data-val');
+            document.getElementById('submit-' + qNum).disabled = false;
+        });
+    });
+    window.submitQuiz = function(qNum) {
+        if (quizSubmitted[qNum]) return;
+        quizSubmitted[qNum] = true;
+        var userAnswer = quizAnswers[qNum];
+        var correctAnswer = quizCorrectAnswers[qNum];
+        var isCorrect = (userAnswer === correctAnswer);
+        var container = document.getElementById('q' + qNum + '-options');
+        container.querySelectorAll('.quiz-option').forEach(function(opt) {
+            opt.classList.add('disabled');
+            var val = opt.getAttribute('data-val');
+            if (val === correctAnswer) {
+                opt.classList.add('correct');
+            } else if (opt.classList.contains('selected') && !isCorrect) {
+                opt.classList.add('incorrect');
+            }
+        });
+        var fb = document.getElementById('fb-' + qNum);
+        if (isCorrect) {
+            fb.textContent = feedbackMessages[qNum].correct;
+            fb.className = 'quiz-feedback show correct-fb';
+            quizScore++;
+        } else {
+            fb.textContent = feedbackMessages[qNum].incorrect;
+            fb.className = 'quiz-feedback show incorrect-fb';
+        }
+        document.getElementById('submit-' + qNum).style.display = 'none';
+        document.getElementById('next-q-' + qNum).style.display = '';
+    };
+    // ═══ BUILD RESULTS ═══
+    function buildResults() {
+        var icon = document.getElementById('rIcon');
+        var score = document.getElementById('rScore');
+        var title = document.getElementById('rTitle');
+        var msg = document.getElementById('rMsg');
+        var btns = document.getElementById('rBtns');
+        var katie = document.getElementById('rKatie');
+        score.textContent = quizScore + ' / 3';
+        if (quizScore === 3) {
+            icon.textContent = '&#127881;';
+            title.textContent = 'Perfect Score!';
+            msg.textContent = 'Outstanding! You understand electrical hazards and arc flash dangers. You know when to call qualified electricians and how to stay safe.';
+            btns.innerHTML = '<button class="btn btn-success" onclick="completeModule()">&#10003; Complete Module & Return to Dashboard</button>';
+            katie.textContent = '"Excellent work! Remember: when in doubt about electrical safety, stay out and call a qualified electrician!"';
+        } else if (quizScore >= 2) {
+            icon.textContent = '&#9989;';
+            title.textContent = 'You Passed!';
+            msg.textContent = 'Great job! You demonstrated solid understanding of electrical safety fundamentals.';
+            btns.innerHTML = '<button class="btn btn-success" onclick="completeModule()">&#10003; Complete Module & Return to Dashboard</button>';
+            katie.textContent = '"Well done! Electricity is unforgiving. Always respect electrical hazards and stay safe!"';
+        } else {
+            icon.textContent = '&#128218;';
+            title.textContent = 'Not Quite Yet';
+            msg.textContent = 'You need 2 out of 3 correct to pass this module. Review the lesson and try again!';
+            btns.innerHTML = '<button class="btn btn-gold" onclick="retakeQuiz()">↻ Retake Quiz</button>' +
+                '<button class="btn btn-outline" onclick="goToSlide(3)">↑ Review Lesson</button>';
+            katie.textContent = '"Don\'t worry! Electrical safety is critical. Review the slides carefully—your life may depend on it!"';
+        }
+        saveQuizProgress();
+    }
+    // ═══ RETAKE QUIZ ═══
+    window.retakeQuiz = function() {
+        quizAnswers = { 1: null, 2: null, 3: null };
+        quizSubmitted = { 1: false, 2: false, 3: false };
+        quizScore = 0;
+        for (var q = 1; q <= 3; q++) {
+            var container = document.getElementById('q' + q + '-options');
+            container.querySelectorAll('.quiz-option').forEach(function(opt) {
+                opt.classList.remove('selected', 'correct', 'incorrect', 'disabled');
+            });
+            document.getElementById('fb-' + q).className = 'quiz-feedback';
+            document.getElementById('fb-' + q).textContent = '';
+            document.getElementById('submit-' + q).style.display = '';
+            document.getElementById('submit-' + q).disabled = true;
+            document.getElementById('next-q-' + q).style.display = 'none';
+        }
+        goToSlide(13);
+    };
+    // ═══ LOCAL STORAGE ═══
+    function getProgress() {
+        try {
+            var d = localStorage.getItem('safetyverse-progress');
+            return d ? JSON.parse(d) : {};
+        } catch(e) { return {}; }
+    }
+    function saveSlideProgress() {
+        try {
+            var p = getProgress();
+            if (!p.modules) p.modules = {};
+            if (!p.modules[MODULE_KEY]) {
+                p.modules[MODULE_KEY] = { completed: false, quizScore: 0, attempts: 0, lastAttempt: null };
+            }
+            p.modules[MODULE_KEY].currentSlide = currentSlide;
+            p.modules[MODULE_KEY].totalSlides = TOTAL_SLIDES;
+            localStorage.setItem('safetyverse-progress', JSON.stringify(p));
+        } catch(e) {}
+    }
+    function saveQuizProgress() {
+        try {
+            var p = getProgress();
+            if (!p.modules) p.modules = {};
+            if (!p.modules[MODULE_KEY]) {
+                p.modules[MODULE_KEY] = { completed: false, quizScore: 0, attempts: 0 };
+            }
+            var mod = p.modules[MODULE_KEY];
+            mod.quizScore = quizScore;
+            mod.attempts = (mod.attempts || 0) + 1;
+            mod.lastAttempt = new Date().toISOString();
+            if (quizScore >= 2) mod.completed = true;
+            localStorage.setItem('safetyverse-progress', JSON.stringify(p));
+        } catch(e) {}
+    }
+    window.completeModule = function() {
+        try {
+            var p = getProgress();
+            if (!p.modules) p.modules = {};
+            if (!p.modules[MODULE_KEY]) {
+                p.modules[MODULE_KEY] = { quizScore: 0, attempts: 0 };
+            }
+            p.modules[MODULE_KEY].completed = true;
+            p.modules[MODULE_KEY].completedAt = new Date().toISOString();
+            p.modules[MODULE_KEY].quizScore = quizScore;
+            localStorage.setItem('safetyverse-progress', JSON.stringify(p));
+        } catch(e) {}
+        window.location.href = '../../user-dashboard/index.html';
+    };
+    // ═══ RESTORE PROGRESS ON LOAD ═══
+    function restoreProgress() {
+        try {
+            var p = getProgress();
+            if (p.modules && p.modules[MODULE_KEY]) {
+                var mod = p.modules[MODULE_KEY];
+                if (mod.completed) {
+                    var introCard = document.querySelector('.intro-card');
+                    if (introCard) {
+                        var badge = document.createElement('div');
+                        badge.style.cssText = 'position:absolute;top:20px;right:20px;background:var(--success);color:white;font-size:12px;font-weight:700;padding:5px 16px;border-radius:20px;z-index:5;';
+                        badge.textContent = '&#10003; Completed';
+                        introCard.appendChild(badge);
+                    }
+                }
+            }
+        } catch(e) {}
+    }
+    // ═══ INIT ═══
+    restoreProgress();
+    updateUI();
+})();
+</script>
+</body>
+</html>
