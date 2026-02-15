@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/png" href="logo.png?v=2">
-    <title>SafetyVerse - Workplace Safety Training LMS</title>
+    <title>TheSafetyVerse - Workplace Safety Training LMS</title>
     <style>
         /* ═══════════════════════════════════════════
            CSS VARIABLES & RESET
@@ -472,6 +472,10 @@
         }
 
         .katie-tip-text strong { color: var(--primary); font-style: normal; }
+        .katie-tip-text em, .cert-card em, .footer-col em, .footer-col h4 em, .footer-bottom em {
+            color: var(--primary);
+            font-style: normal;
+        }
 
         /* No-continue state */
         .continue-card.all-done .continue-badge { background: rgba(76,175,80,0.15); color: var(--success); }
@@ -896,8 +900,6 @@
             object-fit: cover;
             object-position: center 20%;
             border: 3px solid #FFD700;
-            background: #fff;
-            padding: 5px;
         }
 
         .game-play-btn {
@@ -1168,9 +1170,9 @@
     <header class="header" role="banner">
         <div class="header-inner">
             <div class="header-left">
-                <a href="../index.html" class="logo" aria-label="SafetyVerse Home">
-                    <div class="logo-icon" aria-hidden="true"><img src="logo.png?v=2" alt="SafetyVerse Logo" style="height: 50px; width: auto;"></div>
-                    <div class="logo-text">Safety<em>Verse</em></div>
+                <a href="../index.html" class="logo" aria-label="TheSafetyVerse Home">
+                    <div class="logo-icon" aria-hidden="true"><img src="logo.png?v=2" alt="TheSafetyVerse Logo" style="height: 50px; width: auto;"></div>
+                    <div class="logo-text"><em>The</em>Safety<em>Verse</em></div>
                 </a>
                 <nav aria-label="Main navigation">
                     <ul class="nav-links">
@@ -1252,7 +1254,7 @@
                 <div class="katie-tip">
                     <img src="katie.png" alt="Katie" class="katie-avatar-small">
                     <div class="katie-tip-text" id="katieTip">
-                        <strong>Katie says:</strong> Welcome to SafetyVerse! Start with the Foundation path to build your core safety knowledge.
+                        <strong>Katie says:</strong> Welcome to <em>The</em><strong>Safety</strong><em>Verse</em>! Start with the Foundation path to build your core safety knowledge.
                     </div>
                 </div>
             </div>
@@ -1741,7 +1743,7 @@
                 <!-- Master Certificate -->
                 <div class="cert-card master-cert locked-cert" id="cert-master">
                     <div class="cert-icon master-icon">&#127775;</div>
-                    <h4>Master SafetyVerse</h4>
+                    <h4>Master <em>The</em><strong>Safety</strong><em>Verse</em></h4>
                     <div class="cert-status" id="cert-status-master">Complete all 20 modules</div>
                 </div>
             </div>
@@ -1753,8 +1755,8 @@
         <div class="footer-inner">
             <div class="footer-grid">
                 <div class="footer-col">
-                    <h4>About SafetyVerse</h4>
-                    <p>SafetyVerse is a modern workplace safety training platform designed to make OSHA compliance engaging, interactive, and accessible. Our immersive LMS transforms required training into an enjoyable learning experience.</p>
+                    <h4>About <em>The</em><strong>Safety</strong><em>Verse</em></h4>
+                    <p><em>The</em><strong>Safety</strong><em>Verse</em> is a modern workplace safety training platform designed to make OSHA compliance engaging, interactive, and accessible. Our immersive LMS transforms required training into an enjoyable learning experience.</p>
                 </div>
                 <div class="footer-col">
                     <h4>Resources</h4>
@@ -1775,7 +1777,7 @@
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>&copy; 2026 SafetyVerse &mdash; Making workplace safety training engaging</p>
+                <p>&copy; 2026 <em>The</em><strong>Safety</strong><em>Verse</em> &mdash; Making workplace safety training engaging</p>
                 <p>Built with <a href="https://claude.ai" target="_blank" rel="noopener">Claude Code</a></p>
             </div>
         </div>
@@ -2191,7 +2193,7 @@
             if (!tipEl) return;
 
             var tips = [
-                "Welcome to SafetyVerse! Start with the Foundation path to build your core safety knowledge.",
+                "Welcome to <em>The</em><strong>Safety</strong><em>Verse</em>! Start with the Foundation path to build your core safety knowledge.",
                 "Great start! You've completed your first module. Keep the momentum going!",
                 "You're building a solid safety foundation! Each module makes you better prepared.",
                 "Almost halfway through Foundation! Your dedication to safety is impressive.",

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/png" href="logo.png?v=2">
-    <title>SafetyVerse &mdash; OSHA Compliance Partner</title>
+    <title>TheSafetyVerse &mdash; OSHA Compliance Partner</title>
     <style>
         /* ═══════════════════════════════════════════
            CSS VARIABLES & RESET
@@ -329,6 +329,11 @@
             margin-bottom: 36px;
             max-width: 520px;
         }
+        .hero-description em {
+            color: var(--primary-dark);
+            font-style: normal;
+            font-weight: 700;
+        }
         .hero-ctas {
             display: flex;
             gap: 16px;
@@ -513,6 +518,11 @@
             font-size: 16px;
             color: var(--text-medium);
             line-height: 1.8;
+        }
+        .welcome-text em {
+            color: var(--primary-dark);
+            font-style: normal;
+            font-weight: 700;
         }
 
         /* ═══════════════════════════════════════════
@@ -743,6 +753,10 @@
             font-size: 13px;
             color: rgba(255,255,255,0.4);
         }
+        .footer-bottom em {
+            color: var(--primary);
+            font-style: normal;
+        }
 
         /* ═══════════════════════════════════════════
            LOGIN MODAL
@@ -794,6 +808,10 @@
             font-weight: 900;
             color: var(--text-dark);
             margin-bottom: 8px;
+        }
+        .modal h2 em {
+            color: var(--primary-dark);
+            font-style: normal;
         }
         .modal p {
             font-size: 15px;
@@ -921,8 +939,8 @@
         <div class="header-inner">
             <div class="header-left">
                 <a href="#" class="logo">
-                    <div class="logo-icon"><img src="logo.png?v=2" alt="SafetyVerse Logo" style="height: 50px; width: auto;"></div>
-                    <span class="logo-text">Safety<em>Verse</em></span>
+                    <div class="logo-icon"><img src="logo.png?v=2" alt="TheSafetyVerse Logo" style="height: 50px; width: auto;"></div>
+                    <span class="logo-text"><em>The</em>Safety<em>Verse</em></span>
                 </a>
             </div>
             <div class="header-right">
@@ -958,11 +976,11 @@
             <div class="hero-left">
                 <div class="hero-badge">&#128736;&#65039; Standards-Aligned Training</div>
                 <h1 class="hero-title">
-                    Welcome to<br>Safety<em>Verse</em>
+                    Welcome to<br><em>The</em>Safety<em>Verse</em>
                 </h1>
-                <p class="hero-subtitle">Making Safety Training Engaging, One Clay Scene at a Time</p>
+                <p class="hero-subtitle">An Engaging Safety Hub</p>
                 <p class="hero-description">
-                    Interactive safety training modules aligned with OSHA standards, engaging games, and professional certifications &mdash; all in one platform designed to make workplace safety training effective and enjoyable.
+                    Interactive safety training modules for micro-learning aligned with OSHA standards, engaging games, <em>The</em><strong>Safety</strong><em>Verse</em> certifications, incident reporting and easy admin audits. An all-in-one platform designed to make workplace safety training effective and enjoyable.
                 </p>
                 <div class="hero-ctas">
                     <button onclick="openLoginModal()" class="cta-primary">&#9654; Start Learning</button>
@@ -1011,8 +1029,8 @@
             <div class="welcome-content">
                 <h3 class="katie-label">Katie Says...</h3>
                 <p class="welcome-text">
-                    Welcome to SafetyVerse! I'm Katie, your safety training guide.
-                    Whether you're here to brush up on OSHA requirements, test your skills with interactive games, or earn your SafetyVerse certifications &mdash; I'm here to help you every step of the way. Let's make your workplace safer together!
+                    Welcome to <em>The</em><strong>Safety</strong><em>Verse</em>! I'm Katie, your safety training guide.
+                    Whether you're here to brush up on OSHA requirements, test your skills with interactive games, or earn your <em>The</em><strong>Safety</strong><em>Verse</em> certifications &mdash; I'm here to help you every step of the way. Let's make your workplace safer together!
                 </p>
             </div>
         </div>
@@ -1092,8 +1110,8 @@
         <div class="footer-content">
             <div class="footer-section">
                 <div class="footer-logo">
-                    <div class="footer-logo-icon"><img src="logo.png?v=2" alt="SafetyVerse Logo" style="height: 40px; width: auto;"></div>
-                    <span class="footer-logo-text">Safety<em>Verse</em></span>
+                    <div class="footer-logo-icon"><img src="logo.png?v=2" alt="TheSafetyVerse Logo" style="height: 40px; width: auto;"></div>
+                    <span class="footer-logo-text"><em>The</em>Safety<em>Verse</em></span>
                 </div>
                 <p>Making workplace safety training engaging, interactive, and effective through immersive learning experiences.</p>
             </div>
@@ -1113,7 +1131,7 @@
             </div>
         </div>
         <div class="footer-bottom">
-            <p>&copy; 2026 SafetyVerse &mdash; All rights reserved</p>
+            <p>&copy; 2026 <em>The</em><strong>Safety</strong><em>Verse</em> &mdash; All rights reserved</p>
         </div>
     </footer>
 
@@ -1121,7 +1139,7 @@
     <div class="modal-overlay" id="loginModal">
         <div class="modal">
             <img src="katie.png" alt="Katie" class="katie-avatar-medium">
-            <h2>Welcome to SafetyVerse!</h2>
+            <h2>Welcome to <em>The</em><strong>Safety</strong><em>Verse</em>!</h2>
             <p>Click below to access your safety training dashboard. Track progress, complete modules, and earn certifications.</p>
             <button onclick="confirmLogin()" class="modal-primary">Enter Dashboard &#8594;</button>
             <button onclick="closeLoginModal()" class="modal-secondary">Cancel</button>
