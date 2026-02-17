@@ -930,6 +930,133 @@
         }
 
         /* ═══════════════════════════════════════════
+           INCIDENT & REPORTING SECTION
+           ═══════════════════════════════════════════ */
+        .incident-section {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            padding: 48px 24px;
+        }
+
+        .incident-inner {
+            max-width: 1280px;
+            margin: 0 auto;
+        }
+
+        .incident-section .section-title { color: var(--white); }
+        .incident-section .section-subtitle { color: rgba(255,255,255,0.4); }
+        .incident-section .section-label { color: rgba(255,255,255,0.3); }
+
+        .incident-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+
+        .incident-card {
+            background: rgba(255,255,255,0.06);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            transition: var(--transition);
+            border: 2px solid rgba(255,255,255,0.08);
+            backdrop-filter: blur(10px);
+        }
+
+        .incident-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 35px rgba(0,0,0,0.3);
+        }
+
+        .incident-card.available-incident {
+            border-color: rgba(245,158,11,0.4);
+        }
+
+        .incident-card.locked-incident {
+            opacity: 0.5;
+        }
+
+        .incident-card.locked-incident:hover {
+            transform: none;
+            box-shadow: none;
+        }
+
+        .incident-icon-area {
+            height: 140px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 52px;
+            position: relative;
+            background: rgba(255,255,255,0.03);
+        }
+
+        .incident-badge {
+            position: absolute;
+            top: 12px; left: 12px;
+            font-size: 10px; font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            padding: 4px 10px;
+            border-radius: 10px;
+        }
+
+        .incident-badge.available-badge { background: #f59e0b; color: #0f172a; }
+        .incident-badge.coming-badge { background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.4); }
+
+        .incident-card-body { padding: 20px; }
+
+        .incident-card-body h3 {
+            font-family: var(--font-heading);
+            font-size: 17px; font-weight: 800;
+            color: var(--white);
+            margin-bottom: 2px;
+        }
+
+        .incident-card-body .incident-type {
+            font-size: 12px;
+            color: rgba(255,255,255,0.4);
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .incident-card-body .incident-desc {
+            font-size: 13px;
+            color: rgba(255,255,255,0.6);
+            margin-bottom: 14px;
+            line-height: 1.5;
+        }
+
+        .incident-action-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 10px 22px;
+            border-radius: var(--radius-sm);
+            font-size: 13px; font-weight: 700;
+            text-decoration: none;
+            transition: var(--transition);
+            border: none;
+            cursor: pointer;
+        }
+
+        .incident-action-btn.incident-available {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: #0f172a;
+            box-shadow: 0 2px 8px rgba(245,158,11,0.3);
+        }
+
+        .incident-action-btn.incident-available:hover { transform: translateY(-2px); box-shadow: 0 4px 16px rgba(245,158,11,0.4); }
+
+        .incident-action-btn.incident-locked {
+            background: rgba(255,255,255,0.08);
+            color: rgba(255,255,255,0.35);
+            cursor: default;
+        }
+
+        @media (max-width: 900px) {
+            .incident-grid { grid-template-columns: 1fr; }
+        }
+
+        /* ═══════════════════════════════════════════
            CERTIFICATES SECTION
            ═══════════════════════════════════════════ */
         .certs-section {
@@ -1666,24 +1793,7 @@
                 </div>
             </div>
 
-            <!-- Tool: Incident Protocol -->
-            <div class="game-card available-game animate-in">
-                <div class="game-thumb" style="background:linear-gradient(135deg,#1e293b 0%,#0f172a 100%);">
-                    <span aria-hidden="true">&#9888;&#65039;</span>
-                    <span class="game-badge available-badge">Available Now</span>
-                </div>
-                <div class="game-card-body">
-                    <h3>Incident Protocol</h3>
-                    <div class="game-type">Triage Decision Tool</div>
-                    <p class="game-desc">Navigate workplace injury assessment with interactive decision trees, escalation procedures, and quick reference guides.</p>
-                    <div class="game-chars">
-                        <img src="katie.png" alt="Katie" class="game-char-avatar" title="Katie">
-                    </div>
-                    <a href="../incident-protocol/index.html" class="game-play-btn play-now">Access Tool &#9654;</a>
-                </div>
-            </div>
-
-            <!-- Game 3: Coming Soon -->
+            <!-- Game 2: Coming Soon -->
             <div class="game-card locked-game animate-in">
                 <div class="game-thumb" style="opacity:0.4;">
                     <span aria-hidden="true">&#127918;</span>
@@ -1708,6 +1818,61 @@
                     <div class="game-type">Timed Quiz Challenge</div>
                     <p class="game-desc">Race against the clock answering safety questions. Beat your best score!</p>
                     <span class="game-play-btn locked-play">&#128274; Coming Soon</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══ INCIDENT & REPORTING SECTION ═══ -->
+    <section class="incident-section" role="region" aria-label="Incident and reporting tools">
+        <div class="incident-inner">
+            <div class="section-header">
+                <div class="section-label">Workplace Safety Tools</div>
+                <h2 class="section-title">Incident &amp; Reporting</h2>
+                <p class="section-subtitle">Triage injuries, report hazards, and document safety incidents</p>
+            </div>
+
+            <div class="incident-grid">
+                <!-- Incident Protocol (Triage) -->
+                <div class="incident-card available-incident animate-in">
+                    <div class="incident-icon-area">
+                        <span aria-hidden="true">&#9888;&#65039;</span>
+                        <span class="incident-badge available-badge">Available Now</span>
+                    </div>
+                    <div class="incident-card-body">
+                        <h3>Incident Protocol</h3>
+                        <div class="incident-type">Triage Decision Tool</div>
+                        <p class="incident-desc">Navigate workplace injury assessment with interactive decision trees, escalation procedures, and quick reference guides.</p>
+                        <a href="../incident-protocol/index.html" class="incident-action-btn incident-available">Access Tool &#9654;</a>
+                    </div>
+                </div>
+
+                <!-- Hazard Observation Report (Coming Soon) -->
+                <div class="incident-card locked-incident animate-in">
+                    <div class="incident-icon-area" style="opacity:0.4;">
+                        <span aria-hidden="true">&#128065;</span>
+                        <span class="incident-badge coming-badge">Coming Soon</span>
+                    </div>
+                    <div class="incident-card-body">
+                        <h3>Hazard Observation</h3>
+                        <div class="incident-type">Reporting Tool</div>
+                        <p class="incident-desc">Quickly log and report workplace hazards, near-misses, and unsafe conditions before they become incidents.</p>
+                        <span class="incident-action-btn incident-locked">&#128274; Coming Soon</span>
+                    </div>
+                </div>
+
+                <!-- Safety Incident Report (Coming Soon) -->
+                <div class="incident-card locked-incident animate-in">
+                    <div class="incident-icon-area" style="opacity:0.4;">
+                        <span aria-hidden="true">&#128203;</span>
+                        <span class="incident-badge coming-badge">Coming Soon</span>
+                    </div>
+                    <div class="incident-card-body">
+                        <h3>Safety Incident Report</h3>
+                        <div class="incident-type">Documentation Tool</div>
+                        <p class="incident-desc">Complete and submit formal safety incident reports with guided workflows, witness statements, and corrective action tracking.</p>
+                        <span class="incident-action-btn incident-locked">&#128274; Coming Soon</span>
+                    </div>
                 </div>
             </div>
         </div>
