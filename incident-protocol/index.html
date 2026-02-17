@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Incident Protocol - TheSafetyVerse</title>
+<link rel="icon" type="image/png" href="logo.png?v=2">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Inter', sans-serif; background: #0f172a; color: #e2e8f0; min-height: 100vh; }
+
+  /* TheSafetyVerse Branding Header */
+  .sv-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 20px; background: rgba(0,0,0,0.6);
+    border-bottom: 2px solid rgba(245,158,11,0.3);
+  }
+  .sv-header-left { display: flex; align-items: center; gap: 14px; }
+  .sv-header .btn-back {
+    display: flex; align-items: center; gap: 6px;
+    padding: 6px 14px; border-radius: 20px;
+    background: rgba(245,158,11,0.15); border: 1px solid rgba(245,158,11,0.3);
+    color: #f59e0b; font-size: 0.8rem; font-weight: 600;
+    text-decoration: none; transition: all 0.2s ease;
+  }
+  .sv-header .btn-back:hover { background: rgba(245,158,11,0.3); }
+  .sv-header .btn-back svg { width: 14px; height: 14px; }
+  .sv-header .logo {
+    display: flex; align-items: center; gap: 8px;
+    text-decoration: none;
+  }
+  .sv-header .logo img { height: 36px; width: auto; }
+  .sv-header .logo-text {
+    font-size: 1.1rem; font-weight: 800; color: #fff;
+  }
+  .sv-header .logo-text em { color: #f59e0b; font-style: normal; }
+
+  .hero {
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+    border-bottom: 3px solid #2563eb;
+    padding: 2.5rem 1.5rem 2rem; text-align: center;
+  }
+  .hero h1 { font-size: 1.75rem; font-weight: 800; color: #fff; line-height: 1.2; margin-bottom: 0.5rem; }
+  .hero h1 em { font-style: normal; color: #f59e0b; }
+  .hero p { color: #94a3b8; font-size: 0.88rem; max-width: 580px; margin: 0 auto; line-height: 1.5; }
+
+  .tab-bar {
+    display: flex; justify-content: center; gap: 0.2rem;
+    background: #1e293b; padding: 0.5rem 0.5rem;
+    position: sticky; top: 0; z-index: 100; border-bottom: 1px solid #334155;
+    flex-wrap: wrap;
+  }
+  .tab {
+    padding: 0.55rem 0.9rem; border-radius: 8px; border: none;
+    background: transparent; color: #94a3b8;
+    font-family: inherit; font-size: 0.75rem; font-weight: 600;
+    cursor: pointer; transition: all 0.2s;
+  }
+  .tab:hover { color: #e2e8f0; background: #334155; }
+  .tab.active { color: #f59e0b; background: #334155; }
+
+  .content { max-width: 760px; margin: 0 auto; padding: 1.5rem 1rem 3rem; }
+  .panel { display: none; animation: fadeIn 0.3s ease; }
+  .panel.active { display: block; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* DT cards */
+  .dt-card {
+    background: #1e293b; border: 1px solid #334155; border-radius: 14px;
+    padding: 2rem; margin-bottom: 1rem; animation: fadeIn 0.35s ease;
+  }
+  .dt-step {
+    font-size: 0.63rem; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.1em; color: #f59e0b; margin-bottom: 0.75rem;
+  }
+  .dt-question { font-size: 1.08rem; font-weight: 700; color: #f1f5f9; line-height: 1.45; margin-bottom: 1.25rem; }
+  .dt-context {
+    font-size: 0.83rem; color: #94a3b8; line-height: 1.5;
+    margin: -0.5rem 0 1.25rem; padding: 0.6rem 0.85rem;
+    background: rgba(245,158,11,0.06); border-radius: 8px;
+    border-left: 3px solid rgba(245,158,11,0.3);
+  }
+  .dt-btn-row { display: flex; gap: 0.6rem; flex-wrap: wrap; }
+  .dt-btn {
+    flex: 1; min-width: 130px; padding: 0.8rem 0.9rem;
+    border: 2px solid #334155; border-radius: 10px; background: #0f172a;
+    font-family: inherit; font-size: 0.85rem; font-weight: 500;
+    color: #cbd5e1; cursor: pointer; transition: all 0.2s; text-align: center;
+  }
+  .dt-btn:hover { border-color: #f59e0b; color: #f59e0b; background: rgba(245,158,11,0.08); }
+  .dt-btn:active { transform: scale(0.97); }
+
+  /* Breadcrumbs */
+  .bc-trail { display: flex; flex-wrap: wrap; gap: 0.3rem; margin-bottom: 1rem; font-size: 0.7rem; }
+  .bc-chip { background: #334155; color: #94a3b8; padding: 0.18rem 0.55rem; border-radius: 5px; cursor: pointer; transition: all 0.15s; }
+  .bc-chip:hover { background: #475569; color: #e2e8f0; }
+  .bc-arrow { color: #475569; line-height: 1.6; }
+  .bc-current { background: #f59e0b; color: #0f172a; padding: 0.18rem 0.55rem; border-radius: 5px; font-weight: 600; }
+
+  /* Outcomes */
+  .outcome-card { border-left: 5px solid; border-radius: 14px; padding: 1.75rem 2rem; margin-bottom: 1rem; animation: fadeIn 0.35s ease; }
+  .outcome-card.red { border-color: #ef4444; background: rgba(239,68,68,0.08); }
+  .outcome-card.amber { border-color: #f59e0b; background: rgba(245,158,11,0.08); }
+  .outcome-card.green { border-color: #22c55e; background: rgba(34,197,94,0.08); }
+  .outcome-icon { font-size: 1.8rem; margin-bottom: 0.5rem; }
+  .outcome-card h2 { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.4rem; }
+  .outcome-card.red h2 { color: #f87171; }
+  .outcome-card.amber h2 { color: #fbbf24; }
+  .outcome-card.green h2 { color: #4ade80; }
+  .outcome-card p { font-size: 0.85rem; line-height: 1.6; color: #94a3b8; }
+  .outcome-card ul { margin: 0.6rem 0 0 1.2rem; font-size: 0.85rem; line-height: 1.65; color: #94a3b8; }
+  .outcome-card li { margin-bottom: 0.15rem; }
+
+  /* Escalation box inside outcomes */
+  .esc-box {
+    margin-top: 1rem; padding: 0.85rem 1rem; border-radius: 8px;
+    background: rgba(37,99,235,0.1); border: 1px solid rgba(37,99,235,0.25);
+  }
+  .esc-box-title { font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #60a5fa; margin-bottom: 0.4rem; }
+  .esc-box p, .esc-box ul { font-size: 0.82rem; color: #93c5fd; line-height: 1.55; }
+  .esc-box ul { margin: 0.3rem 0 0 1.1rem; }
+
+  .restart-btn {
+    margin-top: 1.25rem; padding: 0.55rem 1.1rem; border-radius: 8px;
+    border: 2px solid #334155; background: transparent; color: #cbd5e1;
+    font-family: inherit; font-size: 0.8rem; font-weight: 600;
+    cursor: pointer; transition: all 0.2s;
+  }
+  .restart-btn:hover { border-color: #f59e0b; color: #f59e0b; }
+
+  /* Tables */
+  .section-title { font-size: 1.1rem; font-weight: 700; color: #f1f5f9; margin-bottom: 0.75rem; }
+  .section-sub { font-size: 0.83rem; color: #94a3b8; margin: -0.35rem 0 1rem; line-height: 1.5; }
+  .cheat-table { width: 100%; border-collapse: separate; border-spacing: 0; border-radius: 12px; overflow: hidden; border: 1px solid #334155; margin-bottom: 1.5rem; }
+  .cheat-table thead th { background: #334155; color: #f59e0b; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; padding: 0.8rem 0.9rem; text-align: left; }
+  .cheat-table tbody td { background: #1e293b; padding: 0.75rem 0.9rem; font-size: 0.83rem; color: #cbd5e1; border-top: 1px solid #293548; }
+  .cheat-table tbody tr:hover td { background: #263044; }
+  .facility-tag { display: inline-block; padding: 0.18rem 0.55rem; border-radius: 6px; font-size: 0.7rem; font-weight: 600; white-space: nowrap; }
+  .tag-red { background: rgba(239,68,68,0.15); color: #f87171; }
+  .tag-amber { background: rgba(245,158,11,0.15); color: #fbbf24; }
+  .tag-green { background: rgba(34,197,94,0.15); color: #4ade80; }
+
+  /* Escalation flow panel */
+  .flow-card {
+    background: #1e293b; border: 1px solid #334155; border-radius: 14px;
+    padding: 1.5rem 1.75rem; margin-bottom: 1rem;
+  }
+  .flow-card h3 { font-size: 0.95rem; font-weight: 700; color: #f1f5f9; margin-bottom: 0.15rem; }
+  .flow-card .time-badge {
+    display: inline-block; background: #2563eb; color: #fff;
+    font-size: 0.62rem; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.08em; padding: 0.2rem 0.6rem; border-radius: 50px; margin-bottom: 0.65rem;
+  }
+  .flow-card ul { margin: 0.4rem 0 0 1.2rem; font-size: 0.85rem; line-height: 1.65; color: #94a3b8; }
+  .flow-card li { margin-bottom: 0.15rem; }
+  .flow-connector { text-align: center; color: #334155; font-size: 1.2rem; margin: -0.25rem 0; }
+
+  /* Pro tip */
+  .protip { background: rgba(245,158,11,0.06); border: 1px solid rgba(245,158,11,0.25); border-radius: 12px; padding: 1.4rem 1.6rem; margin-bottom: 1rem; }
+  .protip-label { font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #f59e0b; margin-bottom: 0.5rem; }
+  .protip h3 { font-size: 0.95rem; font-weight: 700; color: #fbbf24; margin-bottom: 0.4rem; }
+  .protip p { font-size: 0.85rem; color: #94a3b8; line-height: 1.6; }
+  .protip .rule { margin-top: 0.65rem; padding: 0.7rem 0.9rem; background: rgba(245,158,11,0.08); border-radius: 8px; font-size: 0.83rem; color: #cbd5e1; line-height: 1.55; }
+  .protip .rule strong { color: #fbbf24; }
+
+  .disclaimer { margin-top: 2rem; padding: 1rem 1.25rem; border: 1px solid #334155; border-radius: 10px; font-size: 0.73rem; color: #64748b; line-height: 1.55; text-align: center; }
+</style>
+</head>
+<body>
+
+<!-- TheSafetyVerse Branding Header -->
+<div class="sv-header">
+  <div class="sv-header-left">
+    <a href="../user-dashboard/index.html" class="btn-back" aria-label="Back to Dashboard">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      Dashboard
+    </a>
+  </div>
+  <a href="../index.html" class="logo">
+    <img src="logo.png?v=2" alt="TheSafetyVerse Logo">
+    <span class="logo-text"><em>The</em>Safety<em>Verse</em></span>
+  </a>
+</div>
+
+<div class="hero">
+  <h1>Workplace Injury <em>Triage Protocol</em></h1>
+  <p>Comprehensive decision tree with specialized slip, trip &amp; fall pathways, escalation procedures, and reporting timelines.</p>
+</div>
+
+<div class="tab-bar">
+  <button class="tab active" data-tab="tree">Decision Tree</button>
+  <button class="tab" data-tab="cheat">Quick Reference</button>
+  <button class="tab" data-tab="escalation">Escalation &amp; Reporting</button>
+  <button class="tab" data-tab="tips">Pro Tips</button>
+</div>
+
+<div class="content">
+
+  <!-- ═══ PANEL: DECISION TREE ═══ -->
+  <div class="panel active" id="panel-tree">
+    <div id="dt-content"></div>
+  </div>
+
+  <!-- ═══ PANEL: CHEAT SHEET ═══ -->
+  <div class="panel" id="panel-cheat">
+    <p class="section-title">Slip, Trip &amp; Fall &#8212; Quick Reference</p>
+    <table class="cheat-table">
+      <thead><tr><th>Type of Fall</th><th>Symptoms</th><th>Send To</th></tr></thead>
+      <tbody>
+        <tr><td><strong>The &#8220;Hard&#8221; Fall</strong></td><td>Hit head, &#8220;saw stars,&#8221; or brief black-out</td><td><span class="facility-tag tag-red">ER &#8212; Concussion Protocol</span></td></tr>
+        <tr><td><strong>The &#8220;Twist&#8221;</strong></td><td>Ankle or knee popped; immediate swelling</td><td><span class="facility-tag tag-amber">Occupational Clinic</span></td></tr>
+        <tr><td><strong>The &#8220;Catch&#8221;</strong></td><td>Caught themselves; shoulder or wrist hurts</td><td><span class="facility-tag tag-amber">Occupational Clinic</span></td></tr>
+        <tr><td><strong>The &#8220;Skid&#8221;</strong></td><td>Minor carpet burn or bruise</td><td><span class="facility-tag tag-green">On-Site First Aid</span></td></tr>
+        <tr><td><strong>The &#8220;Back Strain&#8221;</strong></td><td>Back feels tight or pulled</td><td><span class="facility-tag tag-amber">Clinic (if pain &gt;2 hrs)</span></td></tr>
+      </tbody>
+    </table>
+
+    <p class="section-title">General Workplace Injuries &#8212; Quick Reference</p>
+    <table class="cheat-table">
+      <thead><tr><th>Injury Type</th><th>Symptoms</th><th>Send To</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Severe Laceration</strong></td><td>Deep/gaping wound; uncontrolled bleeding</td><td><span class="facility-tag tag-red">ER / Call 911</span></td></tr>
+        <tr><td><strong>Chemical Splash</strong></td><td>Eyes or skin exposed to chemicals</td><td><span class="facility-tag tag-red">ER (after 15-min flush)</span></td></tr>
+        <tr><td><strong>Head Injury w/ Red Flags</strong></td><td>LOC, vomiting, confusion, unequal pupils</td><td><span class="facility-tag tag-red">Call 911</span></td></tr>
+        <tr><td><strong>Suspected Fracture</strong></td><td>Deformity, cannot bear weight</td><td><span class="facility-tag tag-red">ER</span></td></tr>
+        <tr><td><strong>Moderate Wound</strong></td><td>Bleeding controlled; may need stitches</td><td><span class="facility-tag tag-amber">Occupational Clinic</span></td></tr>
+        <tr><td><strong>Point Tenderness</strong></td><td>Localized sharp pain on a bone</td><td><span class="facility-tag tag-amber">Clinic (X-ray)</span></td></tr>
+        <tr><td><strong>Foreign Body (eye/ear)</strong></td><td>Debris that won&#8217;t flush out</td><td><span class="facility-tag tag-amber">Occupational Clinic</span></td></tr>
+        <tr><td><strong>Repetitive Strain</strong></td><td>Wrist, elbow, or shoulder pain</td><td><span class="facility-tag tag-amber">Clinic (same day)</span></td></tr>
+        <tr><td><strong>Minor Cut / Scrape</strong></td><td>Small wound, minimal bleeding</td><td><span class="facility-tag tag-green">On-Site First Aid</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ═══ PANEL: ESCALATION & REPORTING ═══ -->
+  <div class="panel" id="panel-escalation">
+    <p class="section-title">Incident Escalation &amp; Reporting Timeline</p>
+    <p class="section-sub">A safety incident includes: Injury, Near Miss, Vehicle Accident, or Personal Medical Event. Adapt timelines to your organization&#8217;s policies.</p>
+
+    <div class="flow-card">
+      <span class="time-badge">Immediate &#8212; At the Scene</span>
+      <h3>1. Immediate Response</h3>
+      <ul>
+        <li>Provide first aid or call EMS if life-threatening.</li>
+        <li>Secure the scene and remove hazards.</li>
+        <li>Notify your <strong>Site Supervisor</strong> or <strong>on-duty Security</strong>.</li>
+      </ul>
+    </div>
+    <div class="flow-connector">&#9660;</div>
+    <div class="flow-card">
+      <span class="time-badge">Within 10 Minutes</span>
+      <h3>2. Verbal Escalation</h3>
+      <ul>
+        <li>Site Supervisor notifies <strong>Safety Manager</strong> and <strong>Site Leadership</strong> (by phone).</li>
+        <li>Safety Manager notifies <strong>EHS</strong>, <strong>HR</strong>, and <strong>relevant management</strong> via your organization&#8217;s communication channel.</li>
+        <li>Share the 5 basics: <strong>WHO, WHAT, WHEN, WHERE, WHY</strong> (if known).</li>
+      </ul>
+    </div>
+    <div class="flow-connector">&#9660;</div>
+    <div class="flow-card">
+      <span class="time-badge">Within 1 Hour</span>
+      <h3>3. Information Collection</h3>
+      <ul>
+        <li>Take written witness statements and injured party statement <em>before they leave</em>.</li>
+        <li>Document site conditions (photos, environment, lighting).</li>
+        <li>Note the task being performed and injuries sustained.</li>
+        <li>Gather vehicle info if applicable.</li>
+        <li>Submit a hazard observation report if a hazard is identified.</li>
+      </ul>
+    </div>
+    <div class="flow-connector">&#9660;</div>
+    <div class="flow-card">
+      <span class="time-badge">Within 24 Hours</span>
+      <h3>4. Written Report</h3>
+      <ul>
+        <li>Complete your organization&#8217;s <strong>Incident Report Form</strong> with Root Cause Analysis.</li>
+        <li>Complete a <strong>Safety Incident Report</strong> per your organization&#8217;s format.</li>
+        <li>Distribute to: <strong>HR, Safety Manager, Site Leadership, and EHS</strong>.</li>
+      </ul>
+    </div>
+    <div class="flow-connector">&#9660;</div>
+    <div class="flow-card">
+      <span class="time-badge">Within 72 Hours</span>
+      <h3>5. Wrap-Up</h3>
+      <ul>
+        <li>Coordinate a wrap-up meeting with key stakeholders (EHS, Management, HR).</li>
+        <li>Assign corrective actions with owners and due dates.</li>
+      </ul>
+    </div>
+    <div class="flow-connector">&#9660;</div>
+    <div class="flow-card">
+      <span class="time-badge">If Medical Attention Required</span>
+      <h3>6. Workers&#8217; Compensation</h3>
+      <ul>
+        <li>Notify HR immediately for workers&#8217; comp processing.</li>
+        <li>Ensure the injured employee receives required claim forms.</li>
+        <li>Route to approved <strong>Occupational Clinic</strong>.</li>
+        <li>Document medical facility information and treatment provided.</li>
+        <li>Submit all workers&#8217; comp paperwork within 24 hours.</li>
+        <li>HR coordinates follow-up with employee and insurance provider.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ═══ PANEL: PRO TIPS ═══ -->
+  <div class="panel" id="panel-tips">
+    <div class="protip">
+      <div class="protip-label">Slip, Trip &amp; Fall</div>
+      <h3>The &#8220;Wait and See&#8221; Danger</h3>
+      <p>Adrenaline is a liar. After a fall, an employee might say &#8220;I&#8217;m fine, just embarrassed!&#8221; only to wake up the next morning unable to move their neck or back.</p>
+      <div class="rule"><strong>Supervisor Rule:</strong> If an employee has a significant fall, even if they claim they are fine, mandate <strong>&#8220;Light Duty Only&#8221;</strong> for the remainder of the shift and a <strong>mandatory follow-up call 4 hours later</strong> to check for delayed swelling or stiffness.</div>
+    </div>
+    <div class="protip">
+      <div class="protip-label">Chemical &amp; Exposure</div>
+      <h3>The 15-Minute Flush Rule</h3>
+      <p>For any chemical splash to eyes or skin, begin flushing with water immediately and continue for a full 15 minutes before transport. Have someone retrieve the Safety Data Sheet (SDS) while flushing is in progress.</p>
+    </div>
+    <div class="protip">
+      <div class="protip-label">Documentation</div>
+      <h3>The 5 Basics &#8212; Every Time</h3>
+      <p>Within 10 minutes, verbally communicate: <strong>WHO</strong> was involved, <strong>WHAT</strong> happened, <strong>WHEN</strong> it happened, <strong>WHERE</strong> it happened, and <strong>WHY</strong> (if known). This becomes the foundation for your written report.</p>
+    </div>
+    <div class="protip">
+      <div class="protip-label">Witnesses</div>
+      <h3>Get Statements Before They Leave</h3>
+      <p>Memory degrades fast. Collect written witness statements and the injured party&#8217;s own account within the first hour &#8212; before they leave the site. This is critical for workers&#8217; comp and root cause analysis.</p>
+    </div>
+    <div class="protip">
+      <div class="protip-label">Prevention</div>
+      <h3>Root Cause Follow-Up</h3>
+      <p>Every incident is a near-miss for something worse. Within 24 hours, conduct a root-cause review. Was there a spill? Loose mat? Poor lighting? A shortcut? Fix the hazard before the next shift. Submit a hazard observation report for any identified hazards.</p>
+    </div>
+  </div>
+
+  <div class="disclaimer">
+    <strong>Disclaimer:</strong> This tool is a general guide and does not replace professional medical judgment. When in doubt, always err on the side of higher-level care. Follow your organization&#8217;s emergency action plan and OSHA requirements. Document every incident.
+  </div>
+</div>
+
+<script>
+/* ─ Tab switching ─ */
+var tabs = document.querySelectorAll(".tab");
+for (var t = 0; t < tabs.length; t++) {
+  tabs[t].addEventListener("click", function() {
+    for (var i = 0; i < tabs.length; i++) tabs[i].classList.remove("active");
+    this.classList.add("active");
+    var panels = document.querySelectorAll(".panel");
+    for (var j = 0; j < panels.length; j++) panels[j].classList.remove("active");
+    document.getElementById("panel-" + this.getAttribute("data-tab")).classList.add("active");
+  });
+}
+
+/* Escalation HTML snippet reused in outcomes */
+var escSnippet = '<div class="esc-box"><div class="esc-box-title">Escalation (Within 10 Min)</div><ul>' +
+  '<li>Notify your Site Supervisor or on-duty Security.</li>' +
+  '<li>Supervisor &#8594; Safety Manager &#8594; Site Leadership (phone).</li>' +
+  '<li>Safety Manager &#8594; EHS, HR, and relevant management.</li>' +
+  '<li>Share: WHO, WHAT, WHEN, WHERE, WHY.</li>' +
+  '<li>Begin witness statements within 1 hour.</li></ul></div>';
+
+var escSnippetWC = '<div class="esc-box" style="margin-top:0.75rem"><div class="esc-box-title">Workers&#8217; Comp Reminder</div><ul>' +
+  '<li>Notify HR immediately for workers&#8217; comp processing.</li>' +
+  '<li>Provide employee with claim forms before leaving site.</li>' +
+  '<li>Route to approved Occupational Clinic.</li>' +
+  '<li>Submit all workers&#8217; comp paperwork within 24 hours.</li></ul></div>';
+
+/* ══ COMBINED DECISION TREE ══ */
+var tree = {
+  start: {
+    step: "1", label: "Initial Assessment",
+    question: "Is the injured person conscious and breathing normally?",
+    options: [
+      { label: "NO &#8212; Unresponsive, not breathing, or struggling to breathe", next: "out_call911" },
+      { label: "YES &#8212; Conscious and breathing", next: "q_lifethreat" }
+    ]
+  },
+  q_lifethreat: {
+    step: "2", label: "Life-Threatening Conditions",
+    question: "Are there any signs of a life-threatening condition?",
+    context: "Severe uncontrolled bleeding, chest pain, seizure, suspected spinal injury, severe burn, amputation, or electric shock.",
+    options: [
+      { label: "YES &#8212; Life-threatening signs present", next: "out_call911" },
+      { label: "NO &#8212; No life-threatening signs", next: "q_incident_type" }
+    ]
+  },
+  q_incident_type: {
+    step: "3", label: "Incident Type",
+    question: "What type of incident occurred?",
+    options: [
+      { label: "Slip, Trip, or Fall", next: "fall_head" },
+      { label: "Cut, Laceration, or Puncture", next: "gen_wound" },
+      { label: "Chemical or Biological Exposure", next: "gen_chemical" },
+      { label: "Other (strain, crush, burn, foreign body, etc.)", next: "gen_head" }
+    ]
+  },
+
+  /* ══ FALL PATHWAY ══ */
+  fall_head: {
+    step: "F1", label: "Fall &#8212; Assess the Landing",
+    question: "Was there a head impact?",
+    options: [
+      { label: "YES &#8212; Head was struck or hit the ground", next: "fall_redflags" },
+      { label: "NO &#8212; No head impact", next: "fall_weight" }
+    ]
+  },
+  fall_redflags: {
+    step: "F1a", label: "Fall &#8212; Head Impact Red Flags",
+    question: "Are any of these red flags present?",
+    context: "Loss of consciousness (even briefly), vomiting, confusion or disorientation, pupils of different sizes.",
+    options: [
+      { label: "YES &#8212; One or more red flags", next: "out_911_head" },
+      { label: "NO &#8212; Alert and oriented, no red flags", next: "out_er_concussion" }
+    ]
+  },
+  fall_weight: {
+    step: "F2", label: "Fall &#8212; Physical Assessment",
+    question: "Can the employee bear weight or move the affected limb?",
+    options: [
+      { label: "NO &#8212; Cannot walk, joint looks deformed, or extreme swelling", next: "fall_deformity" },
+      { label: "YES &#8212; Can move but with some difficulty or pain", next: "fall_point_tender" },
+      { label: "YES &#8212; Moving normally", next: "fall_point_tender" }
+    ]
+  },
+  fall_deformity: {
+    step: "F2a", label: "Fall &#8212; Severity Check",
+    question: "Does the limb look visibly deformed, or is the pain so severe the employee cannot move it at all?",
+    options: [
+      { label: "YES &#8212; Visible deformity or total loss of function", next: "out_er_fracture" },
+      { label: "NO &#8212; Major swelling but no obvious deformity", next: "out_clinic_urgent_fall" }
+    ]
+  },
+  fall_point_tender: {
+    step: "F3", label: "Fall &#8212; Point Tenderness Check",
+    question: "Is there point tenderness (sharp pain localized to one specific bone or ligament) or significant bruising?",
+    options: [
+      { label: "YES &#8212; Sharp, localized pain or significant bruising", next: "out_clinic_xray" },
+      { label: "NO &#8212; General soreness, minor scrapes, just shaken up", next: "out_firstaid_fall" }
+    ]
+  },
+
+  /* ══ GENERAL: WOUND PATHWAY ══ */
+  gen_wound: {
+    step: "W1", label: "Wound Assessment",
+    question: "How severe is the wound?",
+    options: [
+      { label: "Deep, gaping, or bleeding won&#8217;t stop after 10 min of pressure", next: "out_clinic_urgent_wound" },
+      { label: "Moderate &#8212; bleeding controlled but may need stitches", next: "gen_tetanus" },
+      { label: "Minor scrape or small cut", next: "gen_pain" }
+    ]
+  },
+  gen_tetanus: {
+    step: "W1a", label: "Tetanus Risk",
+    question: "Was the wound caused by a rusty or dirty object, animal bite, or deep puncture &#8212; and is tetanus vaccination unknown or out of date (>5 years)?",
+    options: [
+      { label: "YES or Unsure", next: "out_clinic_tetanus" },
+      { label: "NO &#8212; Clean wound, vaccinations current", next: "gen_pain" }
+    ]
+  },
+
+  /* ══ GENERAL: CHEMICAL PATHWAY ══ */
+  gen_chemical: {
+    step: "C1", label: "Chemical / Biological Exposure",
+    question: "What area was exposed?",
+    context: "Begin flushing with water IMMEDIATELY. Continue flushing for 15 minutes. Retrieve the Safety Data Sheet (SDS) while flushing.",
+    options: [
+      { label: "Eyes &#8212; chemical splash to eyes", next: "out_er_chemical" },
+      { label: "Skin &#8212; chemical burn or contact", next: "gen_chem_severity" },
+      { label: "Inhalation &#8212; fumes or vapors", next: "out_clinic_exposure" },
+      { label: "Biological hazard contact", next: "out_clinic_exposure" }
+    ]
+  },
+  gen_chem_severity: {
+    step: "C1a", label: "Skin Exposure Severity",
+    question: "After flushing, how does the skin look?",
+    options: [
+      { label: "Blistering, deep redness, or large area affected", next: "out_er_chemical" },
+      { label: "Mild irritation, small area", next: "out_clinic_exposure" }
+    ]
+  },
+
+  /* ══ GENERAL: OTHER PATHWAY ══ */
+  gen_head: {
+    step: "O1", label: "Other Injury &#8212; Head Check",
+    question: "Is there a head injury with confusion, dizziness, vomiting, vision changes, or any loss of consciousness?",
+    options: [
+      { label: "YES &#8212; Neurological symptoms present", next: "out_er_concussion" },
+      { label: "NO &#8212; No head involvement", next: "gen_fracture" }
+    ]
+  },
+  gen_fracture: {
+    step: "O2", label: "Other Injury &#8212; Fracture / Mobility",
+    question: "Is there a suspected fracture, dislocation, or is the person unable to move the affected area?",
+    options: [
+      { label: "YES &#8212; Possible fracture or dislocation", next: "out_er_fracture" },
+      { label: "NO", next: "gen_pain" }
+    ]
+  },
+  gen_pain: {
+    step: "O3", label: "Pain &amp; Function Assessment",
+    question: "Is the person experiencing significant pain, swelling, or reduced range of motion that limits their ability to work?",
+    options: [
+      { label: "YES &#8212; Significant pain or functional limitation", next: "out_clinic_routine" },
+      { label: "NO &#8212; Mild discomfort only", next: "gen_foreign" }
+    ]
+  },
+  gen_foreign: {
+    step: "O4", label: "Foreign Body Check",
+    question: "Is there a foreign body in the eye or ear that cannot be easily flushed or removed?",
+    options: [
+      { label: "YES", next: "out_clinic_routine" },
+      { label: "NO", next: "out_firstaid_gen" }
+    ]
+  },
+
+  /* ════════════════════
+     OUTCOMES
+     ════════════════════ */
+  out_call911: {
+    type: "outcome", level: "red", icon: "&#128680;",
+    title: "Call 911 &#8212; Emergency Services Immediately",
+    description: "This is a medical emergency.",
+    actions: [
+      "Call 911 immediately.",
+      "Administer first aid only if trained (CPR, AED, bleeding control).",
+      "Do NOT move a person with suspected spinal injury.",
+      "Designate someone to guide EMS to the scene.",
+      "Secure the scene and remove bystanders from hazards."
+    ],
+    showEsc: true, showWC: true
+  },
+  out_911_head: {
+    type: "outcome", level: "red", icon: "&#128680;",
+    title: "Call 911 &#8212; Head Injury with Red Flags",
+    description: "Head injuries with neurological red flags are non-negotiable emergencies.",
+    actions: [
+      "Call 911 immediately. Do not wait.",
+      "Do NOT move the employee &#8212; suspect cervical spine injury.",
+      "Keep the person still, calm, and continuously monitored.",
+      "Designate someone to guide EMS to the location.",
+      "Do not give food or drink."
+    ],
+    showEsc: true, showWC: true
+  },
+  out_er_concussion: {
+    type: "outcome", level: "red", icon: "&#127973;",
+    title: "Emergency Room &#8212; Concussion Protocol",
+    description: "Any head impact warrants ER evaluation, even without red flags. Concussion symptoms can be delayed.",
+    actions: [
+      "Do not allow the employee to drive themselves.",
+      "Transport via designated driver or ambulance if symptoms develop.",
+      "No food or drink until medically cleared.",
+      "Mandate Light Duty upon return, pending medical clearance.",
+      "Mandatory follow-up at 4 hours and again the next day."
+    ],
+    showEsc: true, showWC: true
+  },
+  out_er_fracture: {
+    type: "outcome", level: "red", icon: "&#127973;",
+    title: "Emergency Room &#8212; Suspected Fracture / Dislocation",
+    description: "Visible deformity or complete loss of function requires ER imaging and treatment.",
+    actions: [
+      "Immobilize the limb &#8212; splint in the position found.",
+      "Apply ice wrapped in cloth (never directly on skin).",
+      "Arrange ambulance if needed; do not let them drive.",
+      "Do not attempt to reset any joint.",
+      "Bring workers&#8217; comp paperwork and incident documentation."
+    ],
+    showEsc: true, showWC: true
+  },
+  out_er_chemical: {
+    type: "outcome", level: "red", icon: "&#127973;",
+    title: "Emergency Room &#8212; Chemical Exposure",
+    description: "Chemical exposure to eyes or severe skin burns require ER treatment after initial decontamination.",
+    actions: [
+      "Continue flushing with water for a full 15 minutes.",
+      "Retrieve the Safety Data Sheet (SDS) for the substance.",
+      "Transport to ER &#8212; bring the SDS with you.",
+      "Do not let the employee rub their eyes.",
+      "Document the exact chemical, concentration, and exposure duration."
+    ],
+    showEsc: true, showWC: true
+  },
+  out_clinic_urgent_fall: {
+    type: "outcome", level: "amber", icon: "&#129658;",
+    title: "Occupational Clinic &#8212; Urgent (Within 1&#8211;2 Hours)",
+    description: "Major swelling without obvious deformity &#8212; likely a severe sprain or possible hairline fracture. Needs professional evaluation.",
+    actions: [
+      "Apply R.I.C.E. (Rest, Ice, Compression, Elevation).",
+      "Arrange transport &#8212; employee should not drive if lower limb is affected.",
+      "Complete incident report and workers&#8217; comp forms.",
+      "Request return-to-work restrictions from the clinic.",
+      "If swelling worsens rapidly or pain escalates, upgrade to ER."
+    ],
+    showEsc: true, showWC: true
+  },
+  out_clinic_xray: {
+    type: "outcome", level: "amber", icon: "&#129658;",
+    title: "Occupational Clinic &#8212; Same-Day X-Ray",
+    description: "Point tenderness along a bone or localized bruising warrants an X-ray to rule out hairline fractures.",
+    actions: [
+      "Apply ice and limit use of the affected area.",
+      "Schedule same-day clinic appointment.",
+      "Document specific location of tenderness and mechanism of fall.",
+      "Assign Light Duty until X-ray results are reviewed.",
+      "Follow up within 24&#8211;48 hours for clinic findings."
+    ],
+    showEsc: true, showWC: true
+  },
+  out_clinic_urgent_wound: {
+    type: "outcome", level: "amber", icon: "&#129658;",
+    title: "Occupational Clinic &#8212; Urgent Wound Care",
+    description: "Deep or gaping wounds that may need stitches, staples, or surgical closure.",
+    actions: [
+      "Apply direct pressure with clean dressing.",
+      "Elevate the wounded area if possible.",
+      "Arrange transport within 1&#8211;2 hours.",
+      "If bleeding cannot be controlled, escalate to ER / call 911.",
+      "Bring incident documentation and workers&#8217; comp forms."
+    ],
+    showEsc: true, showWC: true
+  },
+  out_clinic_tetanus: {
+    type: "outcome", level: "amber", icon: "&#129658;",
+    title: "Occupational Clinic &#8212; Tetanus Risk",
+    description: "Dirty or puncture wounds with unknown/outdated tetanus vaccination require same-day clinic evaluation.",
+    actions: [
+      "Clean the wound with soap and water.",
+      "Apply antibiotic ointment and sterile bandage.",
+      "Schedule same-day clinic appointment for tetanus booster.",
+      "Document the object/material that caused the wound.",
+      "Complete incident report."
+    ],
+    showEsc: true, showWC: true
+  },
+  out_clinic_exposure: {
+    type: "outcome", level: "amber", icon: "&#129658;",
+    title: "Occupational Clinic &#8212; Exposure Evaluation",
+    description: "Chemical inhalation, mild skin exposure, or biological hazard contact requires same-day medical evaluation.",
+    actions: [
+      "Move the employee to fresh air (inhalation) or flush skin thoroughly.",
+      "Retrieve the Safety Data Sheet (SDS).",
+      "Schedule same-day clinic appointment &#8212; bring the SDS.",
+      "Monitor for delayed respiratory symptoms.",
+      "Submit a hazard observation report for the exposure."
+    ],
+    showEsc: true, showWC: true
+  },
+  out_clinic_routine: {
+    type: "outcome", level: "amber", icon: "&#129658;",
+    title: "Occupational Clinic &#8212; Same Day",
+    description: "Significant pain or functional limitation that prevents normal work duties. Warrants professional evaluation.",
+    actions: [
+      "Provide appropriate first aid in the meantime.",
+      "Schedule same-day clinic appointment.",
+      "Assign Light Duty or modified work until evaluated.",
+      "Complete incident report and workers&#8217; comp forms.",
+      "Communicate any clinic-issued restrictions to the supervisor."
+    ],
+    showEsc: true, showWC: true
+  },
+  out_firstaid_fall: {
+    type: "outcome", level: "green", icon: "&#129657;",
+    title: "On-Site First Aid &#8212; Fall: Monitor Through Shift",
+    description: "Minor fall with no red flags. But remember: adrenaline masks pain. Stay vigilant.",
+    actions: [
+      "Clean and bandage scrapes; apply ice to sore areas.",
+      "Complete an incident report (OSHA requirement, even for minor falls).",
+      "Assign Light Duty for the remainder of the shift.",
+      "<strong>Mandatory supervisor follow-up call at 4 hours post-incident.</strong>",
+      "If ANY new or worsening symptoms appear &#8594; send to Occupational Clinic.",
+      "Inform the employee they may seek medical attention at any time.",
+      "Submit a hazard observation report if a hazard caused the fall."
+    ],
+    showEsc: true, showWC: false
+  },
+  out_firstaid_gen: {
+    type: "outcome", level: "green", icon: "&#129657;",
+    title: "On-Site First Aid &#8212; Monitor &amp; Document",
+    description: "The injury appears minor. Administer first aid, document, and monitor for changes.",
+    actions: [
+      "Administer first aid: clean wound, bandage, ice pack, etc.",
+      "Complete an incident report (OSHA requirement, even for minor injuries).",
+      "Monitor for the rest of the shift for worsening symptoms.",
+      "If pain increases, swelling develops, or new symptoms appear &#8594; send to clinic.",
+      "Inform the employee they may seek medical attention at any time.",
+      "Review the root cause to prevent recurrence."
+    ],
+    showEsc: true, showWC: false
+  }
+};
+
+var dtHistory = [];
+
+function dtRender(nodeId) {
+  var node = tree[nodeId];
+  var container = document.getElementById("dt-content");
+  if (node.type === "outcome") { dtRenderOutcome(node, container); return; }
+
+  /* Breadcrumbs */
+  var bc = "";
+  if (dtHistory.length > 0) {
+    bc = '<div class="bc-trail">';
+    for (var i = 0; i < dtHistory.length; i++) {
+      var hNode = tree[dtHistory[i]];
+      bc += '<span class="bc-chip" data-jump="' + i + '">Step ' + hNode.step + '</span>';
+      bc += '<span class="bc-arrow">&#8594;</span>';
+    }
+    bc += '<span class="bc-current">Step ' + node.step + '</span></div>';
+  }
+
+  var ctx = node.context ? '<div class="dt-context">' + node.context + '</div>' : '';
+  var html = '<div class="dt-card">' + bc +
+    '<div class="dt-step">Step ' + node.step + ' &#8212; ' + node.label + '</div>' +
+    '<div class="dt-question">' + node.question + '</div>' + ctx +
+    '<div class="dt-btn-row">';
+  for (var j = 0; j < node.options.length; j++) {
+    html += '<button class="dt-btn" data-from="' + nodeId + '" data-to="' + node.options[j].next + '">' + node.options[j].label + '</button>';
+  }
+  html += '</div></div>';
+  container.innerHTML = html;
+
+  /* Button listeners */
+  var btns = container.querySelectorAll(".dt-btn");
+  for (var k = 0; k < btns.length; k++) {
+    btns[k].addEventListener("click", function() {
+      dtHistory.push(this.getAttribute("data-from"));
+      dtRender(this.getAttribute("data-to"));
+      window.scrollTo({ top: document.querySelector(".tab-bar").offsetTop, behavior: "smooth" });
+    });
+  }
+
+  /* Breadcrumb jump listeners */
+  var chips = container.querySelectorAll(".bc-chip");
+  for (var c = 0; c < chips.length; c++) {
+    chips[c].addEventListener("click", function() {
+      var jumpIdx = parseInt(this.getAttribute("data-jump"));
+      var jumpTo = dtHistory[jumpIdx];
+      dtHistory = dtHistory.slice(0, jumpIdx);
+      dtRender(jumpTo);
+      window.scrollTo({ top: document.querySelector(".tab-bar").offsetTop, behavior: "smooth" });
+    });
+  }
+}
+
+function dtRenderOutcome(node, container) {
+  var actionsHtml = "<ul>";
+  for (var i = 0; i < node.actions.length; i++) {
+    actionsHtml += "<li>" + node.actions[i] + "</li>";
+  }
+  actionsHtml += "</ul>";
+
+  var extras = "";
+  if (node.showEsc) extras += escSnippet;
+  if (node.showWC) extras += escSnippetWC;
+
+  container.innerHTML = '<div class="outcome-card ' + node.level + '">' +
+    '<div class="outcome-icon">' + node.icon + '</div>' +
+    '<h2>' + node.title + '</h2>' +
+    '<p>' + node.description + '</p>' +
+    actionsHtml + extras +
+    '<button class="restart-btn" id="dtRestart">&#8617; Start Over</button></div>';
+
+  document.getElementById("dtRestart").addEventListener("click", function() {
+    dtHistory = [];
+    dtRender("start");
+    window.scrollTo({ top: document.querySelector(".tab-bar").offsetTop, behavior: "smooth" });
+  });
+}
+
+dtRender("start");
+</script>
+</body>
+</html>
