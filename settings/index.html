@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Company Settings - TheSafetyVerse</title>
+<link rel="icon" type="image/png" href="logo.png?v=2">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',sans-serif;background:#0f172a;color:#e2e8f0;min-height:100vh}
+
+.sv-header{display:flex;align-items:center;justify-content:space-between;padding:10px 20px;background:rgba(0,0,0,0.6);border-bottom:2px solid rgba(245,158,11,0.3)}
+.sv-header-left{display:flex;align-items:center;gap:14px}
+.sv-header .btn-back{display:flex;align-items:center;gap:6px;padding:6px 14px;border-radius:20px;background:rgba(245,158,11,0.15);border:1px solid rgba(245,158,11,0.3);color:#f59e0b;font-size:.8rem;font-weight:600;text-decoration:none;transition:all .2s}
+.sv-header .btn-back:hover{background:rgba(245,158,11,0.3)}
+.sv-header .btn-back svg{width:14px;height:14px}
+.sv-header .logo{display:flex;align-items:center;gap:8px;text-decoration:none}
+.sv-header .logo img{height:36px;width:auto}
+.sv-header .logo-text{font-size:1.1rem;font-weight:800;color:#fff}
+.sv-header .logo-text em{color:#f59e0b;font-style:normal}
+
+.hero{background:linear-gradient(135deg,#1e293b 0%,#0f172a 100%);border-bottom:3px solid #2563eb;padding:2.5rem 1.5rem 2rem;text-align:center}
+.hero h1{font-size:1.75rem;font-weight:800;color:#fff;margin-bottom:.5rem}
+.hero h1 em{font-style:normal;color:#f59e0b}
+.hero p{color:#94a3b8;font-size:.88rem;max-width:580px;margin:0 auto;line-height:1.5}
+
+.content{max-width:720px;margin:0 auto;padding:1.5rem 1rem 3rem}
+.info-box{background:rgba(37,99,235,0.1);border:1px solid rgba(37,99,235,0.25);border-radius:10px;padding:.85rem 1rem;margin-bottom:1.5rem;font-size:.82rem;color:#93c5fd;line-height:1.5}
+.card{background:#1e293b;border:1px solid #334155;border-radius:14px;padding:2rem;margin-bottom:1rem}
+.card-title{font-size:1rem;font-weight:700;color:#f1f5f9;margin-bottom:1.25rem;padding-bottom:.75rem;border-bottom:1px solid #334155}
+
+.sv-field{margin-bottom:1.25rem}
+.sv-label{display:block;font-size:.72rem;font-weight:600;color:#94a3b8;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.4rem}
+.sv-required::after{content:' *';color:#ef4444}
+.sv-input,.sv-select{width:100%;padding:.75rem 1rem;background:#0f172a;border:2px solid #334155;border-radius:10px;color:#e2e8f0;font-family:'Inter',sans-serif;font-size:.85rem;transition:border-color .2s}
+.sv-input:focus,.sv-select:focus{outline:none;border-color:#f59e0b}
+.sv-select{appearance:none;cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:36px}
+.sv-select option{background:#1e293b;color:#e2e8f0}
+.sv-helper{font-size:.72rem;color:#64748b;margin-top:.3rem}
+.sv-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.sv-row-3{display:grid;grid-template-columns:2fr 1fr 1fr;gap:1rem}
+
+.save-btn{display:inline-flex;align-items:center;gap:8px;padding:.8rem 2.5rem;border-radius:10px;border:none;background:linear-gradient(135deg,#f59e0b,#d97706);color:#0f172a;font-family:inherit;font-size:.9rem;font-weight:700;cursor:pointer;transition:all .2s}
+.save-btn:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(245,158,11,0.3)}
+.save-btn:disabled{opacity:.5;cursor:default;transform:none}
+
+.status-msg{display:inline-block;margin-left:1rem;font-size:.82rem;font-weight:500}
+.status-msg.success{color:#4ade80}
+.status-msg.info{color:#60a5fa}
+.status-msg.error{color:#f87171}
+
+.toast{position:fixed;top:20px;right:20px;padding:.85rem 1.25rem;border-radius:10px;font-size:.85rem;font-weight:600;z-index:9999;transform:translateX(120%);transition:transform .3s ease;max-width:350px}
+.toast.show{transform:translateX(0)}
+.toast.success{background:#166534;color:#4ade80;border:1px solid #22c55e}
+.toast.error{background:#7f1d1d;color:#fca5a5;border:1px solid #ef4444}
+
+@media(max-width:640px){
+  .sv-row,.sv-row-3{grid-template-columns:1fr}
+  .content{padding:1rem .75rem 2rem}
+  .card{padding:1.25rem}
+}
+</style>
+</head>
+<body>
+
+<div class="sv-header">
+  <div class="sv-header-left">
+    <a href="../user-dashboard/index.html" class="btn-back" aria-label="Back to Dashboard">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      Dashboard
+    </a>
+  </div>
+  <a href="../index.html" class="logo">
+    <img src="logo.png?v=2" alt="TheSafetyVerse Logo">
+    <span class="logo-text"><em>The</em>Safety<em>Verse</em></span>
+  </a>
+</div>
+
+<div class="hero">
+  <h1>Company <em>Settings</em></h1>
+  <p>Configure your establishment information. This data auto-fills OSHA 300, 300A, and 301 form headers.</p>
+</div>
+
+<div class="content">
+  <div class="info-box">These settings are used to automatically populate the establishment information on your OSHA recordkeeping forms. Fill this out once and it will apply to all future reports.</div>
+
+  <div class="card">
+    <div class="card-title">Establishment Information</div>
+    <div class="sv-field">
+      <label class="sv-label sv-required">Establishment Name</label>
+      <input type="text" class="sv-input" id="establishment_name" placeholder="e.g., Acme Manufacturing - Plant 1">
+    </div>
+    <div class="sv-field">
+      <label class="sv-label">Street Address</label>
+      <input type="text" class="sv-input" id="street" placeholder="123 Industrial Blvd">
+    </div>
+    <div class="sv-row-3">
+      <div class="sv-field">
+        <label class="sv-label">City</label>
+        <input type="text" class="sv-input" id="city" placeholder="City">
+      </div>
+      <div class="sv-field">
+        <label class="sv-label">State</label>
+        <select class="sv-input sv-select" id="state">
+          <option value="">Select</option>
+          <option>AL</option><option>AK</option><option>AZ</option><option>AR</option><option>CA</option><option>CO</option><option>CT</option><option>DE</option><option>DC</option><option>FL</option><option>GA</option><option>HI</option><option>ID</option><option>IL</option><option>IN</option><option>IA</option><option>KS</option><option>KY</option><option>LA</option><option>ME</option><option>MD</option><option>MA</option><option>MI</option><option>MN</option><option>MS</option><option>MO</option><option>MT</option><option>NE</option><option>NV</option><option>NH</option><option>NJ</option><option>NM</option><option>NY</option><option>NC</option><option>ND</option><option>OH</option><option>OK</option><option>OR</option><option>PA</option><option>RI</option><option>SC</option><option>SD</option><option>TN</option><option>TX</option><option>UT</option><option>VT</option><option>VA</option><option>WA</option><option>WV</option><option>WI</option><option>WY</option>
+        </select>
+      </div>
+      <div class="sv-field">
+        <label class="sv-label">ZIP Code</label>
+        <input type="text" class="sv-input" id="zip" placeholder="00000" maxlength="10">
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Industry &amp; Contact</div>
+    <div class="sv-row">
+      <div class="sv-field">
+        <label class="sv-label">Industry Description</label>
+        <input type="text" class="sv-input" id="industry_description" placeholder="e.g., Manufacturing, Construction">
+      </div>
+      <div class="sv-field">
+        <label class="sv-label">NAICS Code</label>
+        <input type="text" class="sv-input" id="naics_code" placeholder="e.g., 332710">
+        <div class="sv-helper">Find your code at <a href="https://www.naics.com/search/" target="_blank" rel="noopener" style="color:#f59e0b">naics.com</a></div>
+      </div>
+    </div>
+    <div class="sv-field">
+      <label class="sv-label">Phone Number</label>
+      <input type="tel" class="sv-input" id="phone" placeholder="(555) 123-4567">
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Employment Data</div>
+    <div class="sv-row">
+      <div class="sv-field">
+        <label class="sv-label">Annual Average Number of Employees</label>
+        <input type="number" class="sv-input" id="avg_employees" placeholder="e.g., 50" min="0">
+      </div>
+      <div class="sv-field">
+        <label class="sv-label">Total Hours Worked Last Year</label>
+        <input type="number" class="sv-input" id="total_hours_worked" placeholder="e.g., 100000" min="0">
+        <div class="sv-helper">All employees combined for the calendar year</div>
+      </div>
+    </div>
+  </div>
+
+  <div style="display:flex;align-items:center;flex-wrap:wrap;gap:.5rem;margin-top:1rem">
+    <button class="save-btn" id="saveBtn" onclick="saveSettings()">Save Settings</button>
+    <span class="status-msg info" id="statusMsg">Loading...</span>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const SUPABASE_URL='https://cfuupedcjroqarmgqcyn.supabase.co';
+const SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNmdXVwZWRjanJvcWFybWdxY3luIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzEzNjQ1ODksImV4cCI6MjA4Njk0MDU4OX0.kHqVQPBCljGhk8lkd_LN4JxhT1ywOIKapXKmJZD1LEo';
+const sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+
+const fields=['establishment_name','street','city','state','zip','industry_description','naics_code','phone','avg_employees','total_hours_worked'];
+let existingId=null;
+
+async function loadSettings(){
+  const statusEl=document.getElementById('statusMsg');
+  try{
+    const{data,error}=await sb.from('company_settings').select('*').limit(1);
+    if(error)throw error;
+    if(data&&data.length>0){
+      const s=data[0];
+      existingId=s.id;
+      fields.forEach(f=>{
+        const el=document.getElementById(f);
+        if(el&&s[f]!=null)el.value=s[f];
+      });
+      statusEl.className='status-msg success';
+      statusEl.textContent='Settings loaded';
+    }else{
+      statusEl.className='status-msg info';
+      statusEl.textContent='No settings saved yet';
+    }
+  }catch(e){
+    statusEl.className='status-msg error';
+    statusEl.textContent='Error loading: '+e.message;
+  }
+}
+
+async function saveSettings(){
+  const btn=document.getElementById('saveBtn');
+  const statusEl=document.getElementById('statusMsg');
+  btn.disabled=true;btn.textContent='Saving...';
+
+  const row={updated_at:new Date().toISOString()};
+  fields.forEach(f=>{
+    const el=document.getElementById(f);
+    const val=el.value.trim();
+    if(f==='avg_employees'||f==='total_hours_worked'){
+      row[f]=val?parseInt(val):null;
+    }else{
+      row[f]=val||null;
+    }
+  });
+
+  try{
+    let result;
+    if(existingId){
+      result=await sb.from('company_settings').update(row).eq('id',existingId).select();
+    }else{
+      result=await sb.from('company_settings').insert([row]).select();
+    }
+    if(result.error)throw result.error;
+    if(result.data&&result.data[0])existingId=result.data[0].id;
+    showToast('Settings saved successfully!','success');
+    statusEl.className='status-msg success';
+    statusEl.textContent='Settings saved';
+  }catch(e){
+    showToast('Error: '+e.message,'error');
+    statusEl.className='status-msg error';
+    statusEl.textContent='Save failed';
+  }
+  btn.disabled=false;btn.textContent='Save Settings';
+}
+
+function showToast(msg,type){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.className='toast '+type+' show';
+  setTimeout(()=>t.classList.remove('show'),3000);
+}
+
+document.addEventListener('DOMContentLoaded',loadSettings);
+</script>
+</body>
+</html>

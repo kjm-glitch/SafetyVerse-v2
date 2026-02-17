@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hazard Observation - TheSafetyVerse</title>
+<link rel="icon" type="image/png" href="logo.png?v=2">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Inter', sans-serif; background: #0f172a; color: #e2e8f0; min-height: 100vh; }
+
+  /* TheSafetyVerse Branding Header */
+  .sv-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 20px; background: rgba(0,0,0,0.6);
+    border-bottom: 2px solid rgba(245,158,11,0.3);
+  }
+  .sv-header-left { display: flex; align-items: center; gap: 14px; }
+  .sv-header .btn-back {
+    display: flex; align-items: center; gap: 6px;
+    padding: 6px 14px; border-radius: 20px;
+    background: rgba(245,158,11,0.15); border: 1px solid rgba(245,158,11,0.3);
+    color: #f59e0b; font-size: 0.8rem; font-weight: 600;
+    text-decoration: none; transition: all 0.2s ease;
+  }
+  .sv-header .btn-back:hover { background: rgba(245,158,11,0.3); }
+  .sv-header .btn-back svg { width: 14px; height: 14px; }
+  .sv-header .logo {
+    display: flex; align-items: center; gap: 8px;
+    text-decoration: none;
+  }
+  .sv-header .logo img { height: 36px; width: auto; }
+  .sv-header .logo-text {
+    font-size: 1.1rem; font-weight: 800; color: #fff;
+  }
+  .sv-header .logo-text em { color: #f59e0b; font-style: normal; }
+
+  .hero {
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+    border-bottom: 3px solid #2563eb;
+    padding: 2.5rem 1.5rem 2rem; text-align: center;
+  }
+  .hero h1 { font-size: 1.75rem; font-weight: 800; color: #fff; line-height: 1.2; margin-bottom: 0.5rem; }
+  .hero h1 em { font-style: normal; color: #f59e0b; }
+  .hero p { color: #94a3b8; font-size: 0.88rem; max-width: 580px; margin: 0 auto; line-height: 1.5; }
+
+  .tab-bar {
+    display: flex; justify-content: center; gap: 0.2rem;
+    background: #1e293b; padding: 0.5rem 0.5rem;
+    position: sticky; top: 0; z-index: 100; border-bottom: 1px solid #334155;
+    flex-wrap: wrap;
+  }
+  .tab {
+    padding: 0.55rem 0.9rem; border-radius: 8px; border: none;
+    background: transparent; color: #94a3b8;
+    font-family: inherit; font-size: 0.75rem; font-weight: 600;
+    cursor: pointer; transition: all 0.2s;
+  }
+  .tab:hover { color: #e2e8f0; background: #334155; }
+  .tab.active { color: #f59e0b; background: #334155; }
+
+  .content { max-width: 760px; margin: 0 auto; padding: 1.5rem 1rem 3rem; }
+  .panel { display: none; animation: fadeIn 0.3s ease; }
+  .panel.active { display: block; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* Form card */
+  .dt-card {
+    background: #1e293b; border: 1px solid #334155; border-radius: 14px;
+    padding: 2rem; margin-bottom: 1rem; animation: fadeIn 0.35s ease;
+  }
+
+  /* Form fields */
+  .sv-field { margin-bottom: 1.25rem; }
+  .sv-label {
+    display: block; font-size: 0.72rem; font-weight: 600; color: #94a3b8;
+    text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.4rem;
+  }
+  .sv-input {
+    width: 100%; padding: 0.75rem 1rem;
+    background: #0f172a; border: 2px solid #334155; border-radius: 10px;
+    color: #e2e8f0; font-family: 'Inter', sans-serif; font-size: 0.85rem;
+    transition: border-color 0.2s;
+  }
+  .sv-input:focus { outline: none; border-color: #f59e0b; }
+  .sv-textarea { min-height: 100px; resize: vertical; }
+  .sv-select { appearance: none; cursor: pointer; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 1rem center; padding-right: 2.5rem; }
+  .sv-row { display: flex; gap: 1rem; }
+  .sv-row .sv-field { flex: 1; }
+
+  /* Severity radio cards */
+  .severity-options { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+  .severity-option {
+    flex: 1; min-width: 80px; padding: 0.75rem; text-align: center;
+    border: 2px solid #334155; border-radius: 10px; background: #0f172a;
+    cursor: pointer; font-size: 0.8rem; font-weight: 600; color: #94a3b8;
+    transition: all 0.2s;
+  }
+  .severity-option:hover { border-color: #475569; color: #e2e8f0; }
+  .severity-option input { display: none; }
+  .severity-option.selected.low { border-color: #22c55e; color: #22c55e; background: rgba(34,197,94,0.1); }
+  .severity-option.selected.medium { border-color: #f59e0b; color: #f59e0b; background: rgba(245,158,11,0.1); }
+  .severity-option.selected.high { border-color: #f97316; color: #f97316; background: rgba(249,115,22,0.1); }
+  .severity-option.selected.critical { border-color: #ef4444; color: #ef4444; background: rgba(239,68,68,0.1); }
+
+  /* Submit button */
+  .btn-submit {
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+    color: #0f172a; font-weight: 700; font-family: inherit;
+    padding: 0.8rem 2rem; border-radius: 10px; border: none;
+    cursor: pointer; font-size: 0.9rem; transition: all 0.2s;
+    width: 100%;
+  }
+  .btn-submit:hover { transform: translateY(-1px); box-shadow: 0 4px 15px rgba(245,158,11,0.3); }
+  .btn-submit:active { transform: scale(0.98); }
+  .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; transform: none; box-shadow: none; }
+
+  /* Filter bar */
+  .filter-bar {
+    display: flex; gap: 0.75rem; margin-bottom: 1.25rem; flex-wrap: wrap;
+  }
+  .filter-bar .sv-field { margin-bottom: 0; flex: 1; min-width: 150px; }
+  .filter-select {
+    width: 100%; padding: 0.6rem 2.5rem 0.6rem 0.85rem;
+    background: #0f172a; border: 2px solid #334155; border-radius: 10px;
+    color: #e2e8f0; font-family: 'Inter', sans-serif; font-size: 0.8rem;
+    appearance: none; cursor: pointer; transition: border-color 0.2s;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right 0.85rem center;
+  }
+  .filter-select:focus { outline: none; border-color: #f59e0b; }
+
+  /* Observation cards */
+  .obs-card {
+    background: #1e293b; border: 1px solid #334155; border-radius: 14px;
+    padding: 1.5rem; margin-bottom: 0.75rem; animation: fadeIn 0.35s ease;
+    transition: border-color 0.2s;
+  }
+  .obs-card:hover { border-color: #475569; }
+  .obs-card-header {
+    display: flex; justify-content: space-between; align-items: flex-start;
+    margin-bottom: 0.75rem; gap: 0.5rem;
+  }
+  .obs-date { font-size: 0.75rem; color: #64748b; font-weight: 500; }
+  .obs-location { font-size: 0.95rem; font-weight: 700; color: #f1f5f9; margin-bottom: 0.4rem; }
+  .obs-description {
+    font-size: 0.83rem; color: #94a3b8; line-height: 1.55;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+    overflow: hidden; margin-bottom: 0.75rem;
+  }
+  .obs-footer {
+    display: flex; justify-content: space-between; align-items: center;
+    flex-wrap: wrap; gap: 0.5rem;
+  }
+  .obs-badges { display: flex; gap: 0.4rem; flex-wrap: wrap; align-items: center; }
+
+  /* Badges */
+  .badge {
+    display: inline-block; padding: 0.2rem 0.6rem; border-radius: 6px;
+    font-size: 0.68rem; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.04em; white-space: nowrap;
+  }
+  .badge-severity-low { background: rgba(34,197,94,0.15); color: #4ade80; }
+  .badge-severity-medium { background: rgba(245,158,11,0.15); color: #fbbf24; }
+  .badge-severity-high { background: rgba(249,115,22,0.15); color: #fb923c; }
+  .badge-severity-critical { background: rgba(239,68,68,0.15); color: #f87171; }
+  .badge-type { background: rgba(37,99,235,0.15); color: #60a5fa; }
+
+  /* Status badges */
+  .badge-status {
+    display: inline-flex; align-items: center; gap: 0.3rem;
+    padding: 0.3rem 0.7rem; border-radius: 8px;
+    font-size: 0.7rem; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.04em; cursor: pointer; border: 2px solid;
+    background: transparent; font-family: inherit; transition: all 0.2s;
+  }
+  .badge-status:hover { transform: scale(1.03); }
+  .badge-status.status-open { border-color: #ef4444; color: #ef4444; background: rgba(239,68,68,0.08); }
+  .badge-status.status-in_progress { border-color: #f59e0b; color: #f59e0b; background: rgba(245,158,11,0.08); }
+  .badge-status.status-resolved { border-color: #22c55e; color: #22c55e; background: rgba(34,197,94,0.08); }
+  .badge-status svg { width: 12px; height: 12px; }
+
+  /* Loading spinner */
+  .spinner-wrap { display: flex; justify-content: center; padding: 3rem 0; }
+  .spinner {
+    width: 36px; height: 36px; border: 3px solid #334155;
+    border-top-color: #f59e0b; border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* Empty state */
+  .empty-state {
+    text-align: center; padding: 3rem 1.5rem; color: #64748b;
+    font-size: 0.88rem; line-height: 1.6;
+  }
+  .empty-state svg { width: 48px; height: 48px; color: #334155; margin-bottom: 1rem; }
+
+  /* Toast */
+  .toast-container {
+    position: fixed; top: 1rem; right: 1rem; z-index: 9999;
+    display: flex; flex-direction: column; gap: 0.5rem;
+  }
+  .toast {
+    padding: 0.85rem 1.25rem; border-radius: 10px;
+    font-size: 0.83rem; font-weight: 600; color: #fff;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+    animation: toastIn 0.3s ease, toastOut 0.3s ease 2.7s forwards;
+    max-width: 360px;
+  }
+  .toast-success { background: #16a34a; }
+  .toast-error { background: #dc2626; }
+  @keyframes toastIn { from { opacity: 0; transform: translateX(40px); } to { opacity: 1; transform: translateX(0); } }
+  @keyframes toastOut { from { opacity: 1; transform: translateX(0); } to { opacity: 0; transform: translateX(40px); } }
+
+  /* Form title */
+  .form-title {
+    font-size: 0.63rem; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.1em; color: #f59e0b; margin-bottom: 1.25rem;
+  }
+
+  /* Responsive */
+  @media (max-width: 600px) {
+    .sv-row { flex-direction: column; gap: 0; }
+    .severity-options { flex-wrap: wrap; }
+    .severity-option { min-width: calc(50% - 0.25rem); }
+    .dt-card { padding: 1.25rem; }
+    .obs-card { padding: 1.25rem; }
+    .filter-bar { flex-direction: column; }
+    .obs-card-header { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+
+<!-- TheSafetyVerse Branding Header -->
+<div class="sv-header">
+  <div class="sv-header-left">
+    <a href="../user-dashboard/index.html" class="btn-back" aria-label="Back to Dashboard">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      Dashboard
+    </a>
+  </div>
+  <a href="../index.html" class="logo">
+    <img src="logo.png?v=2" alt="TheSafetyVerse Logo">
+    <span class="logo-text"><em>The</em>Safety<em>Verse</em></span>
+  </a>
+</div>
+
+<div class="hero">
+  <h1>Hazard <em>Observation</em></h1>
+  <p>Report workplace hazards, near-misses, and unsafe conditions before they become incidents.</p>
+</div>
+
+<div class="tab-bar">
+  <button class="tab active" data-tab="new">New Observation</button>
+  <button class="tab" data-tab="past">Past Observations</button>
+</div>
+
+<div class="content">
+
+  <!-- ═══ PANEL: NEW OBSERVATION ═══ -->
+  <div class="panel active" id="panel-new">
+    <div class="dt-card">
+      <div class="form-title">Report a Hazard Observation</div>
+      <form id="hazardForm" autocomplete="off">
+
+        <div class="sv-row">
+          <div class="sv-field">
+            <label class="sv-label" for="obs-date">Date *</label>
+            <input type="date" id="obs-date" class="sv-input" required>
+          </div>
+          <div class="sv-field">
+            <label class="sv-label" for="obs-time">Time</label>
+            <input type="time" id="obs-time" class="sv-input">
+          </div>
+        </div>
+
+        <div class="sv-field">
+          <label class="sv-label" for="obs-location">Location *</label>
+          <input type="text" id="obs-location" class="sv-input" placeholder="e.g., Warehouse B, Loading Dock 3" required>
+        </div>
+
+        <div class="sv-field">
+          <label class="sv-label" for="obs-type">Hazard Type *</label>
+          <select id="obs-type" class="sv-input sv-select" required>
+            <option value="" disabled selected>Select a hazard type...</option>
+            <option value="Slip/Trip/Fall">Slip/Trip/Fall</option>
+            <option value="Electrical">Electrical</option>
+            <option value="Chemical">Chemical</option>
+            <option value="Ergonomic">Ergonomic</option>
+            <option value="Fire">Fire</option>
+            <option value="PPE Issue">PPE Issue</option>
+            <option value="Housekeeping">Housekeeping</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+
+        <div class="sv-field">
+          <label class="sv-label" for="obs-description">Description *</label>
+          <textarea id="obs-description" class="sv-input sv-textarea" placeholder="Describe the hazard or unsafe condition observed..." required></textarea>
+        </div>
+
+        <div class="sv-field">
+          <label class="sv-label">Severity *</label>
+          <div class="severity-options" id="severity-options">
+            <label class="severity-option low">
+              <input type="radio" name="severity" value="Low" required>
+              Low
+            </label>
+            <label class="severity-option medium">
+              <input type="radio" name="severity" value="Medium">
+              Medium
+            </label>
+            <label class="severity-option high">
+              <input type="radio" name="severity" value="High">
+              High
+            </label>
+            <label class="severity-option critical">
+              <input type="radio" name="severity" value="Critical">
+              Critical
+            </label>
+          </div>
+        </div>
+
+        <div class="sv-field">
+          <label class="sv-label" for="obs-action">Suggested Corrective Action</label>
+          <textarea id="obs-action" class="sv-input sv-textarea" placeholder="What should be done to address this hazard?"></textarea>
+        </div>
+
+        <button type="submit" class="btn-submit" id="btn-submit">Submit Observation</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ═══ PANEL: PAST OBSERVATIONS ═══ -->
+  <div class="panel" id="panel-past">
+    <div class="filter-bar">
+      <div class="sv-field">
+        <label class="sv-label" for="filter-status">Status</label>
+        <select id="filter-status" class="filter-select">
+          <option value="all">All Statuses</option>
+          <option value="Open">Open</option>
+          <option value="In Progress">In Progress</option>
+          <option value="Resolved">Resolved</option>
+        </select>
+      </div>
+      <div class="sv-field">
+        <label class="sv-label" for="filter-severity">Severity</label>
+        <select id="filter-severity" class="filter-select">
+          <option value="all">All Severities</option>
+          <option value="Low">Low</option>
+          <option value="Medium">Medium</option>
+          <option value="High">High</option>
+          <option value="Critical">Critical</option>
+        </select>
+      </div>
+    </div>
+    <div id="observations-list"></div>
+  </div>
+
+</div>
+
+<div class="toast-container" id="toast-container"></div>
+
+<script>
+/* ─ Supabase Init ─ */
+var SUPABASE_URL = "https://cfuupedcjroqarmgqcyn.supabase.co";
+var SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNmdXVwZWRjanJvcWFybWdxY3luIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzEzNjQ1ODksImV4cCI6MjA4Njk0MDU4OX0.kHqVQPBCljGhk8lkd_LN4JxhT1ywOIKapXKmJZD1LEo";
+var supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+/* ─ Toast ─ */
+function showToast(message, type) {
+  var container = document.getElementById("toast-container");
+  var toast = document.createElement("div");
+  toast.className = "toast toast-" + type;
+  toast.textContent = message;
+  container.appendChild(toast);
+  setTimeout(function() { if (toast.parentNode) toast.parentNode.removeChild(toast); }, 3100);
+}
+
+/* ─ Tab switching ─ */
+var tabs = document.querySelectorAll(".tab");
+for (var t = 0; t < tabs.length; t++) {
+  tabs[t].addEventListener("click", function() {
+    for (var i = 0; i < tabs.length; i++) tabs[i].classList.remove("active");
+    this.classList.add("active");
+    var panels = document.querySelectorAll(".panel");
+    for (var j = 0; j < panels.length; j++) panels[j].classList.remove("active");
+    document.getElementById("panel-" + this.getAttribute("data-tab")).classList.add("active");
+    if (this.getAttribute("data-tab") === "past") {
+      loadObservations();
+    }
+  });
+}
+
+/* ─ Set default date/time ─ */
+(function setDefaults() {
+  var now = new Date();
+  var yyyy = now.getFullYear();
+  var mm = String(now.getMonth() + 1).padStart(2, "0");
+  var dd = String(now.getDate()).padStart(2, "0");
+  document.getElementById("obs-date").value = yyyy + "-" + mm + "-" + dd;
+  var hh = String(now.getHours()).padStart(2, "0");
+  var min = String(now.getMinutes()).padStart(2, "0");
+  document.getElementById("obs-time").value = hh + ":" + min;
+})();
+
+/* ─ Severity card selection ─ */
+var severityOptions = document.querySelectorAll(".severity-option");
+for (var s = 0; s < severityOptions.length; s++) {
+  severityOptions[s].addEventListener("click", function() {
+    for (var i = 0; i < severityOptions.length; i++) severityOptions[i].classList.remove("selected");
+    this.classList.add("selected");
+    this.querySelector("input").checked = true;
+  });
+}
+
+/* ─ Form submission ─ */
+document.getElementById("hazardForm").addEventListener("submit", async function(e) {
+  e.preventDefault();
+  var btn = document.getElementById("btn-submit");
+  btn.disabled = true;
+  btn.textContent = "Submitting...";
+
+  var observation = {
+    observation_date: document.getElementById("obs-date").value,
+    observation_time: document.getElementById("obs-time").value || null,
+    location: document.getElementById("obs-location").value.trim(),
+    hazard_type: document.getElementById("obs-type").value,
+    description: document.getElementById("obs-description").value.trim(),
+    severity: document.querySelector('input[name="severity"]:checked').value,
+    corrective_action: document.getElementById("obs-action").value.trim() || null,
+    status: "Open"
+  };
+
+  try {
+    var result = await supabase.from("hazard_observations").insert([observation]);
+    if (result.error) throw result.error;
+
+    showToast("Hazard observation submitted successfully!", "success");
+    document.getElementById("hazardForm").reset();
+    for (var i = 0; i < severityOptions.length; i++) severityOptions[i].classList.remove("selected");
+
+    /* Re-set defaults */
+    var now = new Date();
+    var yyyy = now.getFullYear();
+    var mm = String(now.getMonth() + 1).padStart(2, "0");
+    var dd = String(now.getDate()).padStart(2, "0");
+    document.getElementById("obs-date").value = yyyy + "-" + mm + "-" + dd;
+    var hh = String(now.getHours()).padStart(2, "0");
+    var min = String(now.getMinutes()).padStart(2, "0");
+    document.getElementById("obs-time").value = hh + ":" + min;
+  } catch (err) {
+    console.error(err);
+    showToast("Failed to submit observation. Please try again.", "error");
+  }
+
+  btn.disabled = false;
+  btn.textContent = "Submit Observation";
+});
+
+/* ─ Load observations ─ */
+var allObservations = [];
+
+async function loadObservations() {
+  var listEl = document.getElementById("observations-list");
+  listEl.innerHTML = '<div class="spinner-wrap"><div class="spinner"></div></div>';
+
+  try {
+    var result = await supabase
+      .from("hazard_observations")
+      .select("*")
+      .order("observation_date", { ascending: false });
+
+    if (result.error) throw result.error;
+    allObservations = result.data || [];
+    renderObservations();
+  } catch (err) {
+    console.error(err);
+    listEl.innerHTML = '<div class="empty-state">Failed to load observations. Please try again.</div>';
+  }
+}
+
+function renderObservations() {
+  var listEl = document.getElementById("observations-list");
+  var statusFilter = document.getElementById("filter-status").value;
+  var severityFilter = document.getElementById("filter-severity").value;
+
+  var filtered = allObservations.filter(function(obs) {
+    if (statusFilter !== "all" && obs.status !== statusFilter) return false;
+    if (severityFilter !== "all" && obs.severity !== severityFilter) return false;
+    return true;
+  });
+
+  if (filtered.length === 0) {
+    if (allObservations.length === 0) {
+      listEl.innerHTML = '<div class="empty-state">' +
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>' +
+        '<p>No hazard observations yet. Use the form to report your first observation.</p></div>';
+    } else {
+      listEl.innerHTML = '<div class="empty-state"><p>No observations match the selected filters.</p></div>';
+    }
+    return;
+  }
+
+  var html = "";
+  for (var i = 0; i < filtered.length; i++) {
+    var obs = filtered[i];
+    html += buildObsCard(obs);
+  }
+  listEl.innerHTML = html;
+
+  /* Attach status toggle listeners */
+  var statusBtns = listEl.querySelectorAll(".badge-status");
+  for (var b = 0; b < statusBtns.length; b++) {
+    statusBtns[b].addEventListener("click", function() {
+      var id = this.getAttribute("data-id");
+      var currentStatus = this.getAttribute("data-status");
+      cycleStatus(id, currentStatus);
+    });
+  }
+}
+
+function buildObsCard(obs) {
+  var dateStr = formatDate(obs.observation_date);
+  var timeStr = obs.observation_time ? " at " + formatTime(obs.observation_time) : "";
+  var sevClass = "badge-severity-" + obs.severity.toLowerCase();
+  var statusClass = "status-" + obs.status.toLowerCase().replace(/ /g, "_");
+  var statusIcon = getStatusIcon(obs.status);
+
+  return '<div class="obs-card">' +
+    '<div class="obs-card-header">' +
+      '<span class="obs-date">' + dateStr + timeStr + '</span>' +
+      '<span class="badge ' + sevClass + '">' + escapeHtml(obs.severity) + '</span>' +
+    '</div>' +
+    '<div class="obs-location">' + escapeHtml(obs.location) + '</div>' +
+    '<div class="obs-description">' + escapeHtml(obs.description) + '</div>' +
+    '<div class="obs-footer">' +
+      '<div class="obs-badges">' +
+        '<span class="badge badge-type">' + escapeHtml(obs.hazard_type) + '</span>' +
+      '</div>' +
+      '<button class="badge-status ' + statusClass + '" data-id="' + obs.id + '" data-status="' + escapeHtml(obs.status) + '">' +
+        statusIcon +
+        escapeHtml(obs.status) +
+      '</button>' +
+    '</div>' +
+  '</div>';
+}
+
+function getStatusIcon(status) {
+  if (status === "Open") {
+    return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/></svg>';
+  } else if (status === "In Progress") {
+    return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>';
+  } else {
+    return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>';
+  }
+}
+
+/* ─ Cycle status ─ */
+async function cycleStatus(id, currentStatus) {
+  var nextStatus;
+  if (currentStatus === "Open") nextStatus = "In Progress";
+  else if (currentStatus === "In Progress") nextStatus = "Resolved";
+  else nextStatus = "Open";
+
+  var updateData = {
+    status: nextStatus,
+    updated_at: new Date().toISOString()
+  };
+
+  if (nextStatus === "Resolved") {
+    var now = new Date();
+    var yyyy = now.getFullYear();
+    var mm = String(now.getMonth() + 1).padStart(2, "0");
+    var dd = String(now.getDate()).padStart(2, "0");
+    updateData.resolved_date = yyyy + "-" + mm + "-" + dd;
+  } else {
+    updateData.resolved_date = null;
+  }
+
+  try {
+    var result = await supabase
+      .from("hazard_observations")
+      .update(updateData)
+      .eq("id", id);
+
+    if (result.error) throw result.error;
+
+    /* Update local data */
+    for (var i = 0; i < allObservations.length; i++) {
+      if (String(allObservations[i].id) === String(id)) {
+        allObservations[i].status = nextStatus;
+        allObservations[i].updated_at = updateData.updated_at;
+        allObservations[i].resolved_date = updateData.resolved_date;
+        break;
+      }
+    }
+    renderObservations();
+    showToast("Status updated to " + nextStatus, "success");
+  } catch (err) {
+    console.error(err);
+    showToast("Failed to update status. Please try again.", "error");
+  }
+}
+
+/* ─ Filter change listeners ─ */
+document.getElementById("filter-status").addEventListener("change", renderObservations);
+document.getElementById("filter-severity").addEventListener("change", renderObservations);
+
+/* ─ Helpers ─ */
+function formatDate(dateStr) {
+  if (!dateStr) return "";
+  var parts = dateStr.split("-");
+  if (parts.length !== 3) return dateStr;
+  var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  var monthIdx = parseInt(parts[1], 10) - 1;
+  return months[monthIdx] + " " + parseInt(parts[2], 10) + ", " + parts[0];
+}
+
+function formatTime(timeStr) {
+  if (!timeStr) return "";
+  var parts = timeStr.split(":");
+  var h = parseInt(parts[0], 10);
+  var m = parts[1];
+  var ampm = h >= 12 ? "PM" : "AM";
+  if (h === 0) h = 12;
+  else if (h > 12) h -= 12;
+  return h + ":" + m + " " + ampm;
+}
+
+function escapeHtml(str) {
+  if (!str) return "";
+  var div = document.createElement("div");
+  div.appendChild(document.createTextNode(str));
+  return div.innerHTML;
+}
+</script>
+</body>
+</html>
