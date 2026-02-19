@@ -376,6 +376,7 @@
             flex-shrink: 0;
         }
     </style>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 
@@ -1266,6 +1267,42 @@
             } catch(e) { return {}; }
         }
 
+        // ─── SUPABASE SYNC ───
+        var MODULE_NAME = 'Safety Reporting';
+        var SB_URL = 'https://cfuupedcjroqarmgqcyn.supabase.co';
+        var SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNmdXVwZWRjanJvcWFybWdxY3luIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzEzNjQ1ODksImV4cCI6MjA4Njk0MDU4OX0.kHqVQPBCljGhk8lkd_LN4JxhT1ywOIKapXKmJZD1LEo';
+        var _sbClient = null;
+        function getSB() {
+            if (!_sbClient && window.supabase) _sbClient = window.supabase.createClient(SB_URL, SB_KEY);
+            return _sbClient;
+        }
+        function syncProgressToSupabase(completed, score, attempts) {
+            try {
+                var sb = getSB();
+                if (!sb) return;
+                var empName = localStorage.getItem('safetyverse-username') || 'Demo User';
+                var dept = localStorage.getItem('safetyverse-department') || 'Unassigned';
+                var moduleSlug = 'safety-reporting';
+                var row = {
+                    employee_name: empName,
+                    department: dept,
+                    module_slug: moduleSlug,
+                    module_name: MODULE_NAME,
+                    completed: !!completed,
+                    quiz_score: score || 0,
+                    attempts: attempts || 0,
+                    last_activity: new Date().toISOString(),
+                    updated_at: new Date().toISOString()
+                };
+                if (completed) row.completed_at = new Date().toISOString();
+                sb.from('module_progress')
+                    .upsert(row, { onConflict: 'employee_name,module_slug' })
+                    .then(function(res) {
+                        if (res.error) console.warn('Supabase sync error:', res.error.message);
+                    });
+            } catch(e) { console.warn('Supabase sync failed:', e); }
+        }
+
         function saveSlideProgress() {
             try {
                 var p = getProgress();
@@ -1291,6 +1328,7 @@
                 mod.lastAttempt = new Date().toISOString();
                 if (quizScore >= 2) mod.completed = true;
                 localStorage.setItem('safetyverse-progress', JSON.stringify(p));
+                syncProgressToSupabase(quizScore >= 2, quizScore, mod.attempts);
             } catch(e) {}
         }
 
@@ -1305,6 +1343,7 @@
                 p.modules[MODULE_KEY].completedAt = new Date().toISOString();
                 p.modules[MODULE_KEY].quizScore = quizScore;
                 localStorage.setItem('safetyverse-progress', JSON.stringify(p));
+                syncProgressToSupabase(true, quizScore, (p.modules[MODULE_KEY] && p.modules[MODULE_KEY].attempts) || 1);
             } catch(e) {}
             window.location.href = '../../user-dashboard/index.html';
         };
