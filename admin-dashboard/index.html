@@ -899,10 +899,10 @@
     <div class="header-right">
         <a href="../user-dashboard/index.html" class="header-link">User Dashboard</a>
         <div class="header-user">
-            <div class="header-user-avatar">KJ</div>
-            <span>Katie Johnson</span>
+            <div class="header-user-avatar" id="adminAvatar">KJ</div>
+            <span id="adminUserName">Katie Johnson</span>
         </div>
-        <a href="../index.html" class="logout-btn">Logout</a>
+        <a href="../index.html" class="logout-btn" onclick="localStorage.removeItem('safetyverse-logged-in');localStorage.removeItem('safetyverse-role');localStorage.removeItem('safetyverse-username');localStorage.removeItem('safetyverse-department');">Logout</a>
     </div>
 </header>
 
@@ -1272,6 +1272,29 @@
 </div>
 
 <script>
+// =========================================================
+// ACCESS GUARD — redirect non-admins
+// =========================================================
+(function() {
+    var role = localStorage.getItem('safetyverse-role');
+    if (role !== 'Admin') {
+        alert('Access denied — Admin role required. Please log in as an Admin user.');
+        window.location.href = '../user-dashboard/index.html';
+        return;
+    }
+    // Personalize admin header with logged-in name
+    var name = localStorage.getItem('safetyverse-username');
+    if (name) {
+        var nameEl = document.getElementById('adminUserName');
+        var avatarEl = document.getElementById('adminAvatar');
+        if (nameEl) nameEl.textContent = name;
+        if (avatarEl) {
+            var parts = name.split(' ');
+            avatarEl.textContent = (parts[0] ? parts[0][0] : '') + (parts[1] ? parts[1][0] : '');
+        }
+    }
+})();
+
 // =========================================================
 // SUPABASE INIT
 // =========================================================

@@ -1300,11 +1300,12 @@
                         <li><a href="index.html" class="active">Home</a></li>
                         <li><a href="../lessons/index.html">My Progress</a></li>
                         <li><a href="../games/safety-clue/index.html">Games</a></li>
+                        <li id="adminNavItem" style="display:none;"><a href="../admin-dashboard/index.html">Admin</a></li>
                     </ul>
                 </nav>
             </div>
             <div class="header-right">
-                <span class="header-greeting">Welcome back!</span>
+                <span class="header-greeting" id="headerGreeting">Welcome back!</span>
                 <img src="katie.png" alt="Katie" class="katie-avatar-small">
             </div>
             <button class="hamburger" aria-label="Toggle menu" onclick="toggleMobileMenu()">
@@ -1315,6 +1316,7 @@
             <a href="index.html">Home</a>
             <a href="../lessons/index.html">My Progress</a>
             <a href="../games/safety-clue/index.html">Games</a>
+            <a href="../admin-dashboard/index.html" id="adminMobileNavItem" style="display:none;">Admin</a>
         </div>
     </header>
 
@@ -1963,6 +1965,25 @@
     <script>
     (function() {
         'use strict';
+
+        /* ═══════════════════════════════════════════
+           ADMIN NAV VISIBILITY — role-based toggle
+           ═══════════════════════════════════════════ */
+        // Show admin nav if user has Admin role
+        if (localStorage.getItem('safetyverse-role') === 'Admin') {
+            var adminNav = document.getElementById('adminNavItem');
+            var adminMobile = document.getElementById('adminMobileNavItem');
+            if (adminNav) adminNav.style.display = '';
+            if (adminMobile) adminMobile.style.display = '';
+        }
+
+        // Personalize greeting with logged-in name
+        var greetEl = document.getElementById('headerGreeting');
+        var userName = localStorage.getItem('safetyverse-username');
+        if (greetEl && userName && userName !== 'Demo User') {
+            var firstName = userName.split(' ')[0];
+            greetEl.textContent = 'Welcome, ' + firstName + '!';
+        }
 
         /* ═══════════════════════════════════════════
            MODULE & PATH DEFINITIONS

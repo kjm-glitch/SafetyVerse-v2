@@ -1137,7 +1137,23 @@
         <div class="modal">
             <img src="katie.png" alt="Katie" class="katie-avatar-medium">
             <h2>Welcome to <em>The</em><strong>Safety</strong><em>Verse</em>!</h2>
-            <p>Click below to access your safety training dashboard. Track progress, complete modules, and earn certifications.</p>
+            <p>Select your name to access your safety training dashboard.</p>
+            <div style="margin:16px 0;">
+                <label for="loginEmployee" style="display:block;font-size:13px;font-weight:600;color:#444;margin-bottom:6px;">Login as:</label>
+                <select id="loginEmployee" style="width:100%;padding:10px 12px;border:2px solid #E8D5C0;border-radius:8px;font-size:15px;font-family:inherit;background:#FAF0E6;color:#1A1A1A;cursor:pointer;">
+                    <option value="" disabled selected>Choose your name...</option>
+                    <option value="Katie Johnson|Admin|Office">Katie Johnson (Admin)</option>
+                    <option value="Lisa Patel|Admin|Office">Lisa Patel (Admin)</option>
+                    <option value="Marcus Rivera|User|Operations">Marcus Rivera</option>
+                    <option value="Sarah Chen|User|Warehouse">Sarah Chen</option>
+                    <option value="James Okonkwo|User|Maintenance">James Okonkwo</option>
+                    <option value="Maria Garcia|User|Warehouse">Maria Garcia</option>
+                    <option value="Tyler Brooks|User|Field">Tyler Brooks</option>
+                    <option value="Aisha Mohammed|User|Operations">Aisha Mohammed</option>
+                    <option value="Brian Nguyen|User|Field">Brian Nguyen</option>
+                    <option value="David Kowalski|User|Maintenance">David Kowalski</option>
+                </select>
+            </div>
             <button onclick="confirmLogin()" class="modal-primary">Enter Dashboard &#8594;</button>
             <button onclick="closeLoginModal()" class="modal-secondary">Cancel</button>
         </div>
@@ -1189,9 +1205,24 @@
 
         // ─── CONFIRM LOGIN ───
         window.confirmLogin = function() {
-            // Set logged-in flag
+            var sel = document.getElementById('loginEmployee');
+            if (!sel.value) {
+                sel.style.borderColor = '#E53935';
+                sel.focus();
+                return;
+            }
+
+            // Parse "Name|Role|Department"
+            var parts = sel.value.split('|');
+            var empName = parts[0];
+            var empRole = parts[1];
+            var empDept = parts[2];
+
+            // Set logged-in flag + employee info
             localStorage.setItem('safetyverse-logged-in', 'true');
-            localStorage.setItem('safetyverse-username', 'Demo User');
+            localStorage.setItem('safetyverse-username', empName);
+            localStorage.setItem('safetyverse-role', empRole);
+            localStorage.setItem('safetyverse-department', empDept);
 
             // Loading state
             var btn = document.querySelector('.modal-primary');
