@@ -204,6 +204,17 @@ body{font-family:'Inter',sans-serif;background:#0f172a;color:#e2e8f0;min-height:
 .cc-dir{background:rgba(59,130,246,0.12);color:#60a5fa;border:1px solid rgba(59,130,246,0.25)}
 .cc-dir:hover{background:rgba(59,130,246,0.25)}
 
+/* Medical Packet */
+.med-packet-section{background:rgba(37,99,235,0.08);border:2px solid rgba(37,99,235,0.25);border-radius:14px;padding:1.5rem;margin-top:1.5rem;text-align:left}
+.med-packet-section h3{font-size:1rem;font-weight:700;color:#60a5fa;margin-bottom:.75rem;display:flex;align-items:center;gap:.5rem}
+.med-packet-section h3 .mp-icon{font-size:1.2rem}
+.mp-summary{font-size:.82rem;color:#94a3b8;margin-bottom:1rem;line-height:1.6}
+.mp-summary strong{color:#cbd5e1}
+.mp-downloads{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:1.25rem}
+.mp-dl-btn{padding:.6rem 1.2rem;border-radius:8px;border:2px solid rgba(37,99,235,0.3);background:rgba(37,99,235,0.1);color:#60a5fa;font-family:inherit;font-size:.8rem;font-weight:600;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:.4rem}
+.mp-dl-btn:hover{background:rgba(37,99,235,0.2);border-color:#60a5fa}
+.mp-clinics-heading{font-size:.82rem;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.6rem}
+
 /* WC Checklist */
 .wc-checklist{margin-bottom:1.5rem}
 .wc-item{display:flex;align-items:center;gap:.6rem;padding:.6rem .8rem;background:#0f172a;border:1px solid #334155;border-radius:8px;margin-bottom:.35rem;font-size:.82rem;color:#cbd5e1;cursor:pointer;transition:all .2s}
@@ -289,6 +300,7 @@ body{font-family:'Inter',sans-serif;background:#0f172a;color:#e2e8f0;min-height:
 
 <div class="tab-bar">
   <button class="tab active" onclick="showPanel('wizard')" id="tabNewReport">New Report</button>
+  <button class="tab" onclick="showPanel('medpacket')" id="tabMedPacket">Medical Packet</button>
   <button class="tab" onclick="showPanel('list')" id="tabPastReports">Past Reports</button>
   <button class="tab" onclick="showPanel('file')" id="tabIncidentFile">Incident File</button>
   <button class="tab" onclick="showPanel('reports')" id="tabOshaDownloads">OSHA Downloads</button>
@@ -562,8 +574,16 @@ body{font-family:'Inter',sans-serif;background:#0f172a;color:#e2e8f0;min-height:
     <button class="sa-secondary" onclick="showPanel('list')">View Past Reports</button>
     <button class="sa-secondary" onclick="downloadOSHA301FromLast()">Download OSHA 301 PDF</button>
   </div>
+  <div id="successMedPacket" style="display:none"></div>
 </div>
 
+</div>
+</div>
+
+<!-- MEDICAL PACKET PANEL -->
+<div class="panel" id="panel-medpacket">
+<div class="content">
+  <div id="medpacketContent"></div>
 </div>
 </div>
 
@@ -1151,6 +1171,10 @@ async function submitReport(){
     document.querySelectorAll('.wizard-step').forEach(s=>s.classList.remove('active'));
     document.getElementById('successScreen').style.display='block';
     showToast('Incident report submitted!','success');
+    // Show medical packet on success screen if medical attention is needed
+    if(needsMedicalPacket(lastSubmitted)){
+      renderMedPacketHTML(lastSubmitted,'successMedPacket');
+    }
   }catch(e){
     showToast('Error: '+e.message,'error');
   }
@@ -1171,6 +1195,8 @@ function resetForm(){
   document.getElementById('illnessTypeField').style.display='none';
   document.getElementById('daysFields').style.display='none';
   document.getElementById('successScreen').style.display='none';
+  document.getElementById('successMedPacket').style.display='none';
+  document.getElementById('successMedPacket').innerHTML='';
   const now=new Date();
   document.getElementById('f_date').value=now.toISOString().split('T')[0];
   document.getElementById('f_time').value=now.toTimeString().slice(0,5);
@@ -1186,17 +1212,18 @@ function showPanel(name){
     return;
   }
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
-  const panelId='panel-'+(name==='file'?'file':name==='wizard'?'wizard':name==='list'?'list':'reports');
-  document.getElementById(panelId).classList.add('active');
+  const panelMap={wizard:'panel-wizard',medpacket:'panel-medpacket',list:'panel-list',file:'panel-file',reports:'panel-reports'};
+  document.getElementById(panelMap[name]||'panel-wizard').classList.add('active');
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
   if(event&&event.target&&event.target.classList.contains('tab'))event.target.classList.add('active');
   else{
-    const map={wizard:0,list:1,file:2,reports:3};
+    const map={wizard:0,medpacket:1,list:2,file:3,reports:4};
     document.querySelectorAll('.tab')[map[name]||0].classList.add('active');
   }
   if(name==='list')loadIncidents();
   if(name==='reports')loadReportsPanel();
   if(name==='file')loadIncidentFileList();
+  if(name==='medpacket')renderMedPacketHTML(lastSubmitted,'medpacketContent');
 }
 
 async function loadIncidents(){
@@ -2290,6 +2317,120 @@ async function downloadIfOsha301(){
   catch(e){showToast('Error: '+e.message,'error');}
 }
 
+// ── Medical Packet (accessible to all users) ──
+function needsMedicalPacket(inc){
+  if(!inc||inc.no_injury)return false;
+  return['ems','self_transport'].includes(inc.treatment_type);
+}
+
+function buildMedPacketReferralContent(inc){
+  const yr=inc.incident_date?new Date(inc.incident_date).getFullYear():new Date().getFullYear();
+  const displayId=yr+'-'+String(inc.case_number).padStart(4,'0');
+  const primaryClinic=approvedClinics.find(c=>c.is_primary)||approvedClinics[0]||null;
+  const clinicName=primaryClinic?primaryClinic.name:'___________________';
+  const clinicAddr=primaryClinic?[primaryClinic.address,primaryClinic.city,primaryClinic.state,primaryClinic.zip].filter(Boolean).join(', '):'___________________';
+  const clinicPhone=primaryClinic?(primaryClinic.phone||'N/A'):'___________________';
+  return[
+    'MEDICAL REFERRAL AUTHORIZATION','Incident #'+displayId,'',
+    'Employee: '+(inc.injured_name||'N/A'),
+    'Job Title: '+(inc.injured_title||'N/A'),
+    'Date of Injury: '+(inc.incident_date||'N/A'),
+    'Time of Injury: '+(inc.incident_time||'N/A'),
+    'Injury: '+((inc.injury_types||[]).join(', '))+' - '+(inc.body_part||''),
+    'Severity: '+(inc.severity||'N/A'),
+    '','REFERRED CLINIC:',
+    'Name: '+clinicName,
+    'Address: '+clinicAddr,
+    'Phone: '+clinicPhone,
+    '','Authorization: This employee is authorized for occupational medical',
+    'evaluation and treatment related to the above workplace incident.',
+    '','Reported By: '+(inc.reporting_party_name||''),
+    'Title: '+(inc.reporting_party_title||''),
+    'Site: '+(inc.site_location||''),
+    'Date: '+new Date().toLocaleDateString()
+  ];
+}
+
+function buildClinicListContent(){
+  const lines=['APPROVED OCCUPATIONAL CLINICS','Generated: '+new Date().toLocaleDateString(),''];
+  if(approvedClinics.length===0){lines.push('No approved clinics configured.');return lines;}
+  approvedClinics.forEach((c,i)=>{
+    const addr=[c.address,c.city,c.state,c.zip].filter(Boolean).join(', ');
+    if(c.is_primary)lines.push('*** PRIMARY CLINIC ***');
+    lines.push((i+1)+'. '+c.name);
+    lines.push('   Address: '+addr);
+    if(c.phone)lines.push('   Phone: '+c.phone);
+    if(c.hours)lines.push('   Hours: '+c.hours);
+    lines.push('');
+  });
+  return lines;
+}
+
+async function renderMedPacketHTML(inc,targetId){
+  const container=document.getElementById(targetId);
+  if(!inc||!needsMedicalPacket(inc)){
+    if(targetId==='medpacketContent'){
+      container.innerHTML='<div style="text-align:center;color:#64748b;padding:3rem">'+
+        '<div style="font-size:2rem;margin-bottom:.5rem">&#128203;</div>'+
+        '<div style="font-size:.95rem;font-weight:600;color:#cbd5e1;margin-bottom:.5rem">No Medical Packet Available</div>'+
+        '<div style="font-size:.82rem">Submit an incident report that requires medical attention<br>(EMS Transport or Self-Transport) to generate a Medical Packet here.</div></div>';
+    }
+    return;
+  }
+  // Ensure clinics are loaded
+  if(approvedClinics.length===0)await loadApprovedClinics();
+  const yr=inc.incident_date?new Date(inc.incident_date).getFullYear():new Date().getFullYear();
+  const displayId=yr+'-'+String(inc.case_number).padStart(4,'0');
+  const treatment=inc.treatment_type?inc.treatment_type.replace(/_/g,' ').replace(/\b\w/g,l=>l.toUpperCase()):'N/A';
+  // Build clinic cards
+  let clinicHTML='';
+  if(approvedClinics.length===0){
+    clinicHTML='<div style="color:#64748b;font-size:.82rem">No approved clinics configured. Add clinics in <a href="../settings/index.html" style="color:#f59e0b">Settings</a>.</div>';
+  }else{
+    clinicHTML=approvedClinics.map(c=>{
+      const addr=[c.address,c.city,c.state,c.zip].filter(Boolean).join(', ');
+      const mapsUrl='https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(addr);
+      return'<div class="clinic-card'+(c.is_primary?' primary':'')+'">'+
+        '<div>'+(c.is_primary?'<div class="cc-primary">Primary Clinic</div>':'')+
+        '<div class="cc-name">'+c.name+'</div>'+
+        '<div class="cc-detail">'+addr+'</div>'+
+        (c.hours?'<div class="cc-detail">Hours: '+c.hours+'</div>':'')+
+        (c.phone?'<div class="cc-detail">Phone: '+c.phone+'</div>':'')+
+        '</div><div class="cc-actions">'+
+        (c.phone?'<a href="tel:'+c.phone+'" class="cc-call">Call</a>':'')+
+        '<a href="'+mapsUrl+'" target="_blank" class="cc-dir">Directions</a>'+
+        '</div></div>';
+    }).join('');
+  }
+  container.innerHTML='<div class="med-packet-section">'+
+    '<h3><span class="mp-icon">&#9883;</span> Medical Packet &mdash; Case #'+displayId+'</h3>'+
+    '<div class="mp-summary">'+
+      '<strong>Employee:</strong> '+(inc.injured_name||'N/A')+' &bull; '+
+      '<strong>Treatment:</strong> '+treatment+' &bull; '+
+      '<strong>Severity:</strong> '+(inc.severity||'N/A')+
+    '</div>'+
+    '<div class="mp-downloads">'+
+      '<button class="mp-dl-btn" onclick="downloadMedPacketReferral()">&#128196; Medical Referral PDF</button>'+
+      '<button class="mp-dl-btn" onclick="downloadClinicListPdf()">&#128196; Clinic List PDF</button>'+
+    '</div>'+
+    '<div class="mp-clinics-heading">Approved Occupational Clinics</div>'+
+    clinicHTML+
+  '</div>';
+  container.style.display='block';
+}
+
+async function downloadMedPacketReferral(){
+  if(!lastSubmitted){showToast('No recent submission','error');return;}
+  if(approvedClinics.length===0)await loadApprovedClinics();
+  generateTextPdf('Medical Referral Form',buildMedPacketReferralContent(lastSubmitted),lastSubmitted.case_number);
+}
+
+function downloadClinicListPdf(){
+  const caseNum=lastSubmitted?lastSubmitted.case_number:'0';
+  generateTextPdf('Approved Clinics List',buildClinicListContent(),caseNum);
+}
+
+// ── Admin-only Incident File document downloads ──
 async function downloadIfMedReferral(){
   if(!currentIncident||!currentMedical){showToast('Save medical info first','error');return;}
   generateTextPdf('Medical Referral Form',buildMedReferralContent());
@@ -2390,7 +2531,7 @@ function buildRtwContent(){
   ];
 }
 
-async function generateTextPdf(title,lines){
+async function generateTextPdf(title,lines,caseNumOverride){
   const{PDFDocument,StandardFonts,rgb}=PDFLib;
   const doc=await PDFDocument.create();
   const font=await doc.embedFont(StandardFonts.Helvetica);
@@ -2429,7 +2570,7 @@ async function generateTextPdf(title,lines){
 
   const bytes=await doc.save();
   const slug=title.toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9-]/g,'');
-  const caseNum=currentIncident?currentIncident.case_number:'0';
+  const caseNum=caseNumOverride||(currentIncident?currentIncident.case_number:'0');
   downloadBlob(bytes,slug+'-case-'+caseNum+'.pdf');
   showToast(title+' downloaded!','success');
 }
