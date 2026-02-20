@@ -391,6 +391,7 @@ var tree = {
       { label: "Slip, Trip, or Fall", next: "fall_head" },
       { label: "Cut, Laceration, or Puncture", next: "gen_wound" },
       { label: "Chemical or Biological Exposure", next: "gen_chemical" },
+      { label: "Heat or Cold Stress", next: "thermal_type" },
       { label: "Other (strain, crush, burn, foreign body, etc.)", next: "gen_head" }
     ]
   },
@@ -477,6 +478,240 @@ var tree = {
       { label: "Blistering, deep redness, or large area affected", next: "out_er_chemical" },
       { label: "Mild irritation, small area", next: "out_clinic_exposure" }
     ]
+  },
+
+  /* ══ THERMAL STRESS PATHWAY ══ */
+  thermal_type: {
+    step: "T1", label: "Thermal Stress &#8212; Heat or Cold?",
+    question: "Is this a heat-related or cold-related incident?",
+    options: [
+      { label: "Heat-related illness (hot environment, exertion in heat)", next: "heat_severity" },
+      { label: "Cold-related illness (cold environment, wet/cold exposure)", next: "cold_severity" }
+    ]
+  },
+
+  /* ── HEAT PATHWAY (H-series) ── */
+  heat_severity: {
+    step: "H1", label: "Heat Illness &#8212; Severity Check",
+    question: "Is the person showing signs of heat stroke?",
+    context: "Heat stroke signs: body temp >104&#176;F, confusion, slurred speech, loss of consciousness, hot/dry skin, or seizure.",
+    options: [
+      { label: "YES &#8212; Heat stroke signs present", next: "out_heat_stroke" },
+      { label: "NO &#8212; No heat stroke signs", next: "heat_exhaustion" }
+    ]
+  },
+  heat_exhaustion: {
+    step: "H2", label: "Heat Illness &#8212; Exhaustion Check",
+    question: "Is the person showing signs of heat exhaustion?",
+    context: "Heat exhaustion signs: heavy sweating, cold/clammy skin, nausea, vomiting, dizziness, headache, weakness, fast/weak pulse.",
+    options: [
+      { label: "YES &#8212; Heat exhaustion symptoms present", next: "out_heat_exhaustion" },
+      { label: "NO &#8212; No exhaustion symptoms", next: "heat_syncope" }
+    ]
+  },
+  heat_syncope: {
+    step: "H3", label: "Heat Illness &#8212; Syncope Check",
+    question: "Did the person faint or nearly faint after standing or exertion in the heat?",
+    options: [
+      { label: "YES &#8212; Fainting or near-fainting episode", next: "out_heat_syncope" },
+      { label: "NO &#8212; No fainting", next: "heat_cramps" }
+    ]
+  },
+  heat_cramps: {
+    step: "H4", label: "Heat Illness &#8212; Cramps Check",
+    question: "Is the person experiencing painful muscle spasms (legs, arms, or abdomen) during or after exertion in the heat?",
+    options: [
+      { label: "YES &#8212; Muscle cramps present", next: "out_heat_cramps" },
+      { label: "NO &#8212; No cramps", next: "out_heat_rash" }
+    ]
+  },
+
+  /* ── COLD PATHWAY (K-series) ── */
+  cold_severity: {
+    step: "K1", label: "Cold Illness &#8212; Severity Check",
+    question: "Is the person showing signs of severe hypothermia?",
+    context: "Severe hypothermia signs: body temp <90&#176;F, confusion, slurred speech, drowsiness, loss of consciousness, slow/weak pulse, shallow breathing.",
+    options: [
+      { label: "YES &#8212; Severe hypothermia signs present", next: "out_cold_hypothermia_severe" },
+      { label: "NO &#8212; No severe hypothermia signs", next: "cold_mild_hypo" }
+    ]
+  },
+  cold_mild_hypo: {
+    step: "K2", label: "Cold Illness &#8212; Mild/Moderate Hypothermia",
+    question: "Is the person showing signs of mild or moderate hypothermia?",
+    context: "Mild/moderate hypothermia signs: shivering, fumbling hands, slurred speech, stumbling, cool skin, confusion begins.",
+    options: [
+      { label: "YES &#8212; Hypothermia symptoms present", next: "out_cold_hypothermia_mild" },
+      { label: "NO &#8212; No hypothermia symptoms", next: "cold_frostbite" }
+    ]
+  },
+  cold_frostbite: {
+    step: "K3", label: "Cold Illness &#8212; Frostbite Check",
+    question: "Is there suspected frostbite (fingers, toes, nose, or ears)?",
+    context: "Severe frostbite: white/grayish-yellow skin, hard/waxy feel, numbness, deep tissue affected. Superficial (frostnip): red skin turning white/pale, tingling, skin still soft underneath.",
+    options: [
+      { label: "YES &#8212; Severe frostbite (hard/waxy, numb, deep tissue)", next: "out_cold_frostbite_severe" },
+      { label: "YES &#8212; Superficial frostnip (skin still soft, tingling)", next: "out_cold_frostnip" },
+      { label: "NO &#8212; No frostbite", next: "cold_trench" }
+    ]
+  },
+  cold_trench: {
+    step: "K4", label: "Cold Illness &#8212; Trench Foot Check",
+    question: "Has the person had prolonged wet/cold exposure to their feet?",
+    context: "Trench foot (immersion foot) signs: red, swollen, numb feet; tingling pain; blisters in severe cases.",
+    options: [
+      { label: "YES &#8212; Trench foot symptoms present", next: "out_cold_trench" },
+      { label: "NO &#8212; No trench foot", next: "out_cold_chilblains" }
+    ]
+  },
+
+  /* ══ THERMAL STRESS OUTCOMES ══ */
+
+  /* ── Heat Outcomes ── */
+  out_heat_stroke: {
+    type: "outcome", level: "red", icon: "&#128680;",
+    title: "Call 911 &#8212; Heat Stroke",
+    description: "Heat stroke is a life-threatening emergency. Every minute of delay worsens brain damage risk.",
+    actions: [
+      "Call 911 immediately.",
+      "Begin active cooling NOW: move to shade/AC, apply ice packs to neck, armpits, and groin, douse with cold water.",
+      "Do NOT give fluids if the person is confused or unconscious.",
+      "Monitor breathing and be prepared to administer CPR.",
+      "Do not leave the person unattended &#8212; continuously monitor until EMS arrives."
+    ],
+    showEsc: true, showWC: true
+  },
+  out_heat_exhaustion: {
+    type: "outcome", level: "red", icon: "&#127973;",
+    title: "ER or Clinic &#8212; Heat Exhaustion (Urgent)",
+    description: "Heat exhaustion can progress to heat stroke quickly. Transport within 15 minutes.",
+    actions: [
+      "Move to a cool, shaded area or air-conditioned space immediately.",
+      "Cool actively: loosen clothing, apply wet cloths, fan the person.",
+      "Give small sips of cool water if the person is alert and not vomiting.",
+      "Transport via designated driver &#8212; impaired cognition and dizziness make driving unsafe.",
+      "If symptoms worsen (confusion, loss of consciousness, temp rising) &#8594; call 911."
+    ],
+    showEsc: true, showWC: true
+  },
+  out_heat_syncope: {
+    type: "outcome", level: "amber", icon: "&#129658;",
+    title: "Occupational Clinic &#8212; Heat Syncope",
+    description: "Fainting or near-fainting after standing or exertion in heat. Risk of repeat episode.",
+    actions: [
+      "Move to a cool area and have the person lie down with legs elevated.",
+      "Provide cool water and monitor for at least 15 minutes.",
+      "Transport via designated driver &#8212; risk of repeat fainting episode.",
+      "If fully recovered after 15 min of rest, fluids, and cooling, may wait up to 20 min for personal driver.",
+      "If a repeat fainting episode occurs &#8594; transport immediately."
+    ],
+    showEsc: true, showWC: true
+  },
+  out_heat_cramps: {
+    type: "outcome", level: "green", icon: "&#129657;",
+    title: "On-Site First Aid &#8212; Heat Cramps",
+    description: "Painful muscle spasms during or after exertion in heat. Usually resolves with rest and fluids.",
+    actions: [
+      "Move to a cool area and have the person rest.",
+      "Provide an electrolyte drink or water with a light snack.",
+      "Gently stretch and massage the cramping muscles.",
+      "Monitor on-site. If cramps persist longer than 1 hour &#8594; send to Occupational Clinic.",
+      "Complete an incident report. Review hydration and heat exposure controls."
+    ],
+    showEsc: true, showWC: false
+  },
+  out_heat_rash: {
+    type: "outcome", level: "green", icon: "&#129657;",
+    title: "On-Site First Aid &#8212; Heat Rash",
+    description: "Red clusters of small blisters, usually on the neck, chest, groin, or elbow creases.",
+    actions: [
+      "Move to a cooler, less humid environment.",
+      "Keep the affected area dry and avoid ointments or creams that trap heat.",
+      "Wear loose, breathable clothing.",
+      "Monitor for signs of infection (increasing redness, warmth, pus).",
+      "Complete an incident report. Review workplace heat controls."
+    ],
+    showEsc: true, showWC: false
+  },
+
+  /* ── Cold Outcomes ── */
+  out_cold_hypothermia_severe: {
+    type: "outcome", level: "red", icon: "&#128680;",
+    title: "Call 911 &#8212; Severe Hypothermia",
+    description: "Life-threatening. Risk of cardiac arrest with rough handling. EMS required.",
+    actions: [
+      "Call 911 immediately.",
+      "Handle the person GENTLY &#8212; do NOT rub or massage.",
+      "Warm passively with blankets. Do NOT apply direct heat.",
+      "Move to a warm environment if possible without rough handling.",
+      "Monitor breathing &#8212; be prepared for CPR. Do not leave unattended."
+    ],
+    showEsc: true, showWC: true
+  },
+  out_cold_hypothermia_mild: {
+    type: "outcome", level: "red", icon: "&#127973;",
+    title: "Emergency Room &#8212; Mild/Moderate Hypothermia",
+    description: "Can deteriorate rapidly. Begin warming immediately and transport within 15 minutes.",
+    actions: [
+      "Move to a warm environment immediately.",
+      "Remove any wet clothing and replace with dry layers and blankets.",
+      "Give warm (not hot) beverages if the person is alert &#8212; no alcohol or caffeine.",
+      "Transport via designated driver in a warm vehicle &#8212; impaired cognition and coordination.",
+      "If symptoms worsen (confusion deepens, shivering stops, pulse weakens) &#8594; call 911."
+    ],
+    showEsc: true, showWC: true
+  },
+  out_cold_frostbite_severe: {
+    type: "outcome", level: "red", icon: "&#127973;",
+    title: "Emergency Room &#8212; Severe Frostbite",
+    description: "Deep tissue damage worsens with time. Do NOT rewarm if there is risk of refreezing.",
+    actions: [
+      "Do NOT rub, massage, or walk on frostbitten areas.",
+      "Protect the affected area &#8212; loosely wrap with sterile dressing.",
+      "Do NOT attempt to rewarm if there is any chance of refreezing (refreezing causes worse damage).",
+      "Transport via designated driver &#8212; numbness in extremities makes driving unsafe.",
+      "Transport to ER immediately. Bring incident documentation."
+    ],
+    showEsc: true, showWC: true
+  },
+  out_cold_frostnip: {
+    type: "outcome", level: "amber", icon: "&#129658;",
+    title: "Occupational Clinic &#8212; Superficial Frostbite (Frostnip)",
+    description: "Skin still soft underneath. Begin gentle rewarming.",
+    actions: [
+      "Move to a warm environment.",
+      "Begin gentle rewarming: warm (not hot) water soaks or body heat (e.g., hands in armpits).",
+      "Do NOT rub the affected area.",
+      "If skin color returns and numbness resolves, may wait up to 30 min for personal driver.",
+      "If numbness persists or worsens &#8594; transport to clinic immediately."
+    ],
+    showEsc: true, showWC: true
+  },
+  out_cold_trench: {
+    type: "outcome", level: "amber", icon: "&#129658;",
+    title: "Occupational Clinic &#8212; Trench Foot (Immersion Foot)",
+    description: "Prolonged wet/cold exposure to feet. Remove wet footwear, dry, and elevate.",
+    actions: [
+      "Remove wet socks and shoes immediately.",
+      "Dry feet gently and elevate.",
+      "Do NOT walk on affected feet if pain is severe.",
+      "Transport via designated driver &#8212; affected feet make pedal use unsafe.",
+      "Stable if feet are dried and elevated. May wait up to 30 min for personal driver."
+    ],
+    showEsc: true, showWC: true
+  },
+  out_cold_chilblains: {
+    type: "outcome", level: "green", icon: "&#129657;",
+    title: "On-Site First Aid &#8212; Chilblains",
+    description: "Red/purple patches on skin with itching and swelling, usually on fingers, toes, or ears.",
+    actions: [
+      "Move to a warm environment and warm the affected area gradually.",
+      "Do NOT scratch or rub the affected area.",
+      "Apply soothing lotion if available (avoid direct heat).",
+      "Monitor on-site. If blistering develops or symptoms persist &#8594; send to Occupational Clinic.",
+      "Complete an incident report. Review cold exposure controls."
+    ],
+    showEsc: true, showWC: false
   },
 
   /* ══ GENERAL: OTHER PATHWAY ══ */
