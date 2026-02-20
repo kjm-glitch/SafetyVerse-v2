@@ -319,7 +319,7 @@ body{font-family:'Inter',sans-serif;background:#0f172a;color:#e2e8f0;min-height:
   <div class="step-heading">Who is reporting this incident?</div>
   <div class="sv-field"><label class="sv-label sv-required">Reporting Party Name</label><input type="text" class="sv-input" id="f_rp_name"></div>
   <div class="sv-field"><label class="sv-label sv-required">Title / Position</label><input type="text" class="sv-input" id="f_rp_title"></div>
-  <div class="sv-field"><label class="sv-label sv-required">Site / Location Name</label><input type="text" class="sv-input" id="f_site" placeholder="e.g., Main Campus, Warehouse B"></div>
+  <div class="sv-field"><label class="sv-label sv-required">Site / Location Name</label><select class="sv-input sv-select" id="f_site"><option value="">-- Select site location --</option></select></div>
 </div>
 <div class="wizard-nav"><div></div><button class="wbtn wbtn-next" onclick="nextStep()">Continue</button></div>
 </div>
@@ -928,6 +928,7 @@ document.addEventListener('DOMContentLoaded',()=>{
 
   buildProgressBar();
   showStep(1);
+  loadSiteLocations();
   const now=new Date();
   document.getElementById('f_date').value=now.toISOString().split('T')[0];
   document.getElementById('f_time').value=now.toTimeString().slice(0,5);
@@ -965,6 +966,16 @@ document.addEventListener('DOMContentLoaded',()=>{
     }
   }
 });
+
+async function loadSiteLocations(){
+  try{
+    const{data,error}=await sb.from('site_locations').select('*').order('name',{ascending:true});
+    if(error)throw error;
+    const sel=document.getElementById('f_site');
+    sel.innerHTML='<option value="">-- Select site location --</option>';
+    (data||[]).forEach(s=>{sel.innerHTML+=`<option value="${s.name}">${s.name}</option>`;});
+  }catch(e){console.error('Failed to load site locations:',e);}
+}
 
 function buildProgressBar(){
   const bar=document.getElementById('progressBar');
@@ -1813,19 +1824,22 @@ function populateMedical(){
   document.getElementById('med_injury_desc').value=(inc.injury_types||[]).join(', ');
   document.getElementById('med_body_part').value=inc.body_part||'';
 
+  // Filter clinics by incident site
+  const siteClinics=approvedClinics.filter(c=>c.site_location===inc.site_location);
+
   // Clinic dropdown
   const clinicSel=document.getElementById('med_clinic_select');
   clinicSel.innerHTML='<option value="">-- Select approved clinic --</option>';
-  approvedClinics.forEach(c=>{
+  siteClinics.forEach(c=>{
     clinicSel.innerHTML+=`<option value="${c.id}">${c.name}${c.is_primary?' (Primary)':''}</option>`;
   });
 
   // Clinic list
   const clinicList=document.getElementById('clinicsList');
-  if(approvedClinics.length===0){
-    clinicList.innerHTML='<div style="color:#64748b;font-size:.82rem">No approved clinics configured. Add clinics in <a href="../settings/index.html" style="color:#f59e0b">Settings</a>.</div>';
+  if(siteClinics.length===0){
+    clinicList.innerHTML='<div style="color:#64748b;font-size:.82rem">No approved clinics for '+(inc.site_location||'this site')+'. Add clinics in <a href="../settings/index.html" style="color:#f59e0b">Settings</a>.</div>';
   }else{
-    clinicList.innerHTML=approvedClinics.map(c=>{
+    clinicList.innerHTML=siteClinics.map(c=>{
       const addr=[c.address,c.city,c.state,c.zip].filter(Boolean).join(', ');
       const mapsUrl='https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(addr);
       return `<div class="clinic-card${c.is_primary?' primary':''}">
@@ -2326,7 +2340,8 @@ function needsMedicalPacket(inc){
 function buildMedPacketReferralContent(inc){
   const yr=inc.incident_date?new Date(inc.incident_date).getFullYear():new Date().getFullYear();
   const displayId=yr+'-'+String(inc.case_number).padStart(4,'0');
-  const primaryClinic=approvedClinics.find(c=>c.is_primary)||approvedClinics[0]||null;
+  const siteFiltered=approvedClinics.filter(c=>c.site_location===inc.site_location);
+  const primaryClinic=siteFiltered.find(c=>c.is_primary)||siteFiltered[0]||null;
   const clinicName=primaryClinic?primaryClinic.name:'___________________';
   const clinicAddr=primaryClinic?[primaryClinic.address,primaryClinic.city,primaryClinic.state,primaryClinic.zip].filter(Boolean).join(', '):'___________________';
   const clinicPhone=primaryClinic?(primaryClinic.phone||'N/A'):'___________________';
@@ -2351,10 +2366,11 @@ function buildMedPacketReferralContent(inc){
   ];
 }
 
-function buildClinicListContent(){
-  const lines=['APPROVED OCCUPATIONAL CLINICS','Generated: '+new Date().toLocaleDateString(),''];
-  if(approvedClinics.length===0){lines.push('No approved clinics configured.');return lines;}
-  approvedClinics.forEach((c,i)=>{
+function buildClinicListContent(siteLocation){
+  const filtered=siteLocation?approvedClinics.filter(c=>c.site_location===siteLocation):approvedClinics;
+  const lines=['APPROVED OCCUPATIONAL CLINICS'+(siteLocation?' — '+siteLocation:''),'Generated: '+new Date().toLocaleDateString(),''];
+  if(filtered.length===0){lines.push('No approved clinics configured'+(siteLocation?' for '+siteLocation:'')+'.'); return lines;}
+  filtered.forEach((c,i)=>{
     const addr=[c.address,c.city,c.state,c.zip].filter(Boolean).join(', ');
     if(c.is_primary)lines.push('*** PRIMARY CLINIC ***');
     lines.push((i+1)+'. '+c.name);
@@ -2382,12 +2398,13 @@ async function renderMedPacketHTML(inc,targetId){
   const yr=inc.incident_date?new Date(inc.incident_date).getFullYear():new Date().getFullYear();
   const displayId=yr+'-'+String(inc.case_number).padStart(4,'0');
   const treatment=inc.treatment_type?inc.treatment_type.replace(/_/g,' ').replace(/\b\w/g,l=>l.toUpperCase()):'N/A';
-  // Build clinic cards
+  // Filter clinics by incident site
+  const siteFilteredClinics=approvedClinics.filter(c=>c.site_location===inc.site_location);
   let clinicHTML='';
-  if(approvedClinics.length===0){
-    clinicHTML='<div style="color:#64748b;font-size:.82rem">No approved clinics configured. Add clinics in <a href="../settings/index.html" style="color:#f59e0b">Settings</a>.</div>';
+  if(siteFilteredClinics.length===0){
+    clinicHTML='<div style="color:#64748b;font-size:.82rem">No approved clinics configured for '+(inc.site_location||'this site')+'. <a href="../settings/index.html" style="color:#f59e0b">Manage clinics in Settings</a>.</div>';
   }else{
-    clinicHTML=approvedClinics.map(c=>{
+    clinicHTML=siteFilteredClinics.map(c=>{
       const addr=[c.address,c.city,c.state,c.zip].filter(Boolean).join(', ');
       const mapsUrl='https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(addr);
       return'<div class="clinic-card'+(c.is_primary?' primary':'')+'">'+
@@ -2427,7 +2444,8 @@ async function downloadMedPacketReferral(){
 
 function downloadClinicListPdf(){
   const caseNum=lastSubmitted?lastSubmitted.case_number:'0';
-  generateTextPdf('Approved Clinics List',buildClinicListContent(),caseNum);
+  const site=lastSubmitted?lastSubmitted.site_location:null;
+  generateTextPdf('Approved Clinics List',buildClinicListContent(site),caseNum);
 }
 
 // ── Admin-only Incident File document downloads ──

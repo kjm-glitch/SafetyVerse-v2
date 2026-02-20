@@ -68,6 +68,10 @@ body{font-family:'Inter',sans-serif;background:#0f172a;color:#e2e8f0;min-height:
 .cc-del{background:rgba(239,68,68,0.15);color:#f87171}
 .cc-del:hover{background:rgba(239,68,68,0.3)}
 
+.site-chip{display:inline-flex;align-items:center;gap:.5rem;background:#0f172a;border:1px solid #334155;border-radius:8px;padding:.5rem 1rem;margin:0 .4rem .4rem 0;font-size:.82rem;color:#e2e8f0}
+.site-chip button{background:rgba(239,68,68,0.15);color:#f87171;border:none;border-radius:4px;padding:.2rem .5rem;font-size:.68rem;font-weight:600;cursor:pointer;font-family:inherit}
+.site-chip button:hover{background:rgba(239,68,68,0.3)}
+
 @media(max-width:640px){
   .sv-row,.sv-row-3{grid-template-columns:1fr}
   .content{padding:1rem .75rem 2rem}
@@ -167,6 +171,22 @@ body{font-family:'Inter',sans-serif;background:#0f172a;color:#e2e8f0;min-height:
   </div>
 
   <div style="margin-top:2.5rem;padding-top:2rem;border-top:2px solid #334155">
+    <h2 style="font-size:1.25rem;font-weight:800;color:#fff;margin-bottom:.5rem">Site Locations</h2>
+    <p style="font-size:.82rem;color:#94a3b8;margin-bottom:1.5rem">Manage company site locations. These appear in the incident report form and are used to filter approved clinics by site.</p>
+    <div id="sitesContainer"></div>
+    <div class="card">
+      <div class="card-title">Add Site Location</div>
+      <div style="display:flex;gap:.5rem;align-items:flex-end">
+        <div class="sv-field" style="flex:1;margin-bottom:0">
+          <label class="sv-label sv-required">Site Name</label>
+          <input type="text" class="sv-input" id="site_name" placeholder="e.g., Denver - CO">
+        </div>
+        <button class="save-btn" onclick="addSite()" style="padding:.75rem 1.5rem;font-size:.82rem;white-space:nowrap">Add Site</button>
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-top:2.5rem;padding-top:2rem;border-top:2px solid #334155">
     <h2 style="font-size:1.25rem;font-weight:800;color:#fff;margin-bottom:.5rem">Approved Occupational Clinics</h2>
     <p style="font-size:.82rem;color:#94a3b8;margin-bottom:1.5rem">Manage the list of approved clinics that supervisors can refer employees to after a workplace injury.</p>
 
@@ -175,6 +195,7 @@ body{font-family:'Inter',sans-serif;background:#0f172a;color:#e2e8f0;min-height:
     <div class="card" id="clinicFormCard">
       <div class="card-title" id="clinicFormTitle">Add New Clinic</div>
       <div class="sv-field"><label class="sv-label sv-required">Clinic Name</label><input type="text" class="sv-input" id="cl_name" placeholder="e.g., QuickCare Occupational Health"></div>
+      <div class="sv-field"><label class="sv-label">Site Location</label><select class="sv-input sv-select" id="cl_site"><option value="">-- No site assigned --</option></select></div>
       <div class="sv-field"><label class="sv-label">Street Address</label><input type="text" class="sv-input" id="cl_address" placeholder="123 Medical Pkwy"></div>
       <div class="sv-row-3">
         <div class="sv-field"><label class="sv-label">City</label><input type="text" class="sv-input" id="cl_city"></div>
@@ -206,6 +227,64 @@ const sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 
 const fields=['establishment_name','street','city','state','zip','industry_description','naics_code','phone','avg_employees','total_hours_worked'];
 let existingId=null;
+
+// ===== SITE LOCATIONS MANAGEMENT =====
+let sites=[];
+
+async function loadSites(){
+  try{
+    const{data,error}=await sb.from('site_locations').select('*').order('name',{ascending:true});
+    if(error)throw error;
+    sites=data||[];
+    renderSites();
+  }catch(e){
+    document.getElementById('sitesContainer').innerHTML='<div style="color:#f87171;font-size:.82rem;margin-bottom:1rem">Error loading sites: '+e.message+'</div>';
+  }
+}
+
+function renderSites(){
+  const container=document.getElementById('sitesContainer');
+  if(sites.length===0){
+    container.innerHTML='<div style="color:#64748b;font-size:.82rem;margin-bottom:1rem;text-align:center;padding:1rem">No site locations added yet.</div>';
+  }else{
+    container.innerHTML='<div style="display:flex;flex-wrap:wrap;margin-bottom:1rem">'+
+      sites.map(s=>`<div class="site-chip"><span>${s.name}</span><button onclick="deleteSite('${s.id}')">Remove</button></div>`).join('')+
+    '</div>';
+  }
+  populateClinicSiteDropdown();
+}
+
+async function addSite(){
+  const input=document.getElementById('site_name');
+  const name=input.value.trim();
+  if(!name){showToast('Site name is required','error');return;}
+  try{
+    const{error}=await sb.from('site_locations').insert([{name}]);
+    if(error)throw error;
+    input.value='';
+    showToast('Site added!','success');
+    await loadSites();
+  }catch(e){showToast('Error: '+e.message,'error');}
+}
+
+async function deleteSite(id){
+  if(!confirm('Delete this site location? Clinics assigned to it will keep their assignment but it won\'t appear in dropdowns.'))return;
+  try{
+    const{error}=await sb.from('site_locations').delete().eq('id',id);
+    if(error)throw error;
+    showToast('Site deleted','success');
+    await loadSites();
+  }catch(e){showToast('Error: '+e.message,'error');}
+}
+
+function populateClinicSiteDropdown(){
+  const sel=document.getElementById('cl_site');
+  if(!sel)return;
+  const current=sel.value;
+  sel.innerHTML='<option value="">-- No site assigned --</option>';
+  sites.forEach(s=>{sel.innerHTML+=`<option value="${s.name}">${s.name}</option>`;});
+  if(current)sel.value=current;
+}
 
 async function loadSettings(){
   const statusEl=document.getElementById('statusMsg');
@@ -300,6 +379,7 @@ function renderClinics(){
       <div>
         ${c.is_primary?'<div class="cc-primary">Primary Clinic</div>':''}
         <div class="cc-name">${c.name}</div>
+        ${c.site_location?'<div class="cc-detail" style="color:#f59e0b">Site: '+c.site_location+'</div>':''}
         ${addr?'<div class="cc-detail">'+addr+'</div>':''}
         ${c.phone?'<div class="cc-detail">Phone: '+c.phone+'</div>':''}
         ${c.hours?'<div class="cc-detail">Hours: '+c.hours+'</div>':''}
@@ -314,7 +394,7 @@ function renderClinics(){
 }
 
 function clearClinicForm(){
-  ['cl_name','cl_address','cl_city','cl_state','cl_zip','cl_phone','cl_hours','cl_notes'].forEach(id=>{
+  ['cl_name','cl_site','cl_address','cl_city','cl_state','cl_zip','cl_phone','cl_hours','cl_notes'].forEach(id=>{
     document.getElementById(id).value='';
   });
   document.getElementById('cl_primary').checked=false;
@@ -329,6 +409,7 @@ function editClinic(id){
   if(!c)return;
   editingClinicId=id;
   document.getElementById('cl_name').value=c.name||'';
+  document.getElementById('cl_site').value=c.site_location||'';
   document.getElementById('cl_address').value=c.address||'';
   document.getElementById('cl_city').value=c.city||'';
   document.getElementById('cl_state').value=c.state||'';
@@ -356,6 +437,7 @@ async function saveClinic(){
 
   const row={
     name,
+    site_location:document.getElementById('cl_site').value||null,
     address:document.getElementById('cl_address').value.trim()||null,
     city:document.getElementById('cl_city').value.trim()||null,
     state:document.getElementById('cl_state').value.trim()||null,
@@ -400,7 +482,7 @@ async function deleteClinic(id){
   }catch(e){showToast('Error: '+e.message,'error');}
 }
 
-document.addEventListener('DOMContentLoaded',()=>{loadSettings();loadClinics();});
+document.addEventListener('DOMContentLoaded',()=>{loadSettings();loadSites().then(()=>loadClinics());});
 </script>
 </body>
 </html>
