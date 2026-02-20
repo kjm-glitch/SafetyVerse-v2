@@ -81,9 +81,9 @@
     background: rgba(245,158,11,0.06); border-radius: 8px;
     border-left: 3px solid rgba(245,158,11,0.3);
   }
-  .dt-btn-row { display: flex; gap: 0.6rem; flex-wrap: wrap; }
+  .dt-btn-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(0, 1fr)); gap: 0.6rem; }
   .dt-btn {
-    flex: 1; min-width: 130px; padding: 0.8rem 0.9rem;
+    padding: 0.8rem 0.9rem;
     border: 2px solid #334155; border-radius: 10px; background: #0f172a;
     font-family: inherit; font-size: 0.85rem; font-weight: 500;
     color: #cbd5e1; cursor: pointer; transition: all 0.2s; text-align: center;
