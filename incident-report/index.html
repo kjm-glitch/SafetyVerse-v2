@@ -288,10 +288,10 @@ body{font-family:'Inter',sans-serif;background:#0f172a;color:#e2e8f0;min-height:
 </div>
 
 <div class="tab-bar">
-  <button class="tab active" onclick="showPanel('wizard')">New Report</button>
-  <button class="tab" onclick="showPanel('list')">Past Reports</button>
+  <button class="tab active" onclick="showPanel('wizard')" id="tabNewReport">New Report</button>
+  <button class="tab" onclick="showPanel('list')" id="tabPastReports">Past Reports</button>
   <button class="tab" onclick="showPanel('file')" id="tabIncidentFile">Incident File</button>
-  <button class="tab" onclick="showPanel('reports')">OSHA Downloads</button>
+  <button class="tab" onclick="showPanel('reports')" id="tabOshaDownloads">OSHA Downloads</button>
 </div>
 
 <div class="panel active" id="panel-wizard">
@@ -885,9 +885,27 @@ let formData={};
 let lastSubmitted=null;
 let vehicleApplicable=false;
 let witnessCount=0;
+let isAdmin=false;
 
 // Init
 document.addEventListener('DOMContentLoaded',()=>{
+  // ── Admin Role Check ──
+  const userRole=localStorage.getItem('safetyverse-role');
+  isAdmin=(userRole==='Admin');
+  if(!isAdmin){
+    // Hide admin-only tabs
+    document.getElementById('tabPastReports').style.display='none';
+    document.getElementById('tabIncidentFile').style.display='none';
+    document.getElementById('tabOshaDownloads').style.display='none';
+    // Hide admin-only buttons on success screen
+    const successFileBtn=document.getElementById('successFileBtn');
+    if(successFileBtn)successFileBtn.style.display='none';
+    // Hide "View Past Reports" and "Download OSHA 301" buttons for non-admin
+    document.querySelectorAll('#successScreen .sa-secondary').forEach(btn=>{
+      if(btn.textContent.includes('Past Reports')||btn.textContent.includes('OSHA 301'))btn.style.display='none';
+    });
+  }
+
   buildProgressBar();
   showStep(1);
   const now=new Date();
@@ -1162,6 +1180,11 @@ function resetForm(){
 
 // Panels & List
 function showPanel(name){
+  // Block non-admins from accessing restricted panels
+  if(!isAdmin&&(name==='list'||name==='file'||name==='reports')){
+    alert('Access denied — Admin role required to view this section.');
+    return;
+  }
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
   const panelId='panel-'+(name==='file'?'file':name==='wizard'?'wizard':name==='list'?'list':'reports');
   document.getElementById(panelId).classList.add('active');
