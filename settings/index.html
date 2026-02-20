@@ -56,6 +56,18 @@ body{font-family:'Inter',sans-serif;background:#0f172a;color:#e2e8f0;min-height:
 .toast.success{background:#166534;color:#4ade80;border:1px solid #22c55e}
 .toast.error{background:#7f1d1d;color:#fca5a5;border:1px solid #ef4444}
 
+.clinic-card{background:#0f172a;border:1px solid #334155;border-radius:10px;padding:1rem 1.25rem;margin-bottom:.6rem;display:flex;justify-content:space-between;align-items:flex-start;gap:1rem;flex-wrap:wrap}
+.clinic-card.primary{border-color:rgba(245,158,11,0.4);background:rgba(245,158,11,0.04)}
+.clinic-card .cc-name{font-size:.88rem;font-weight:700;color:#f1f5f9}
+.clinic-card .cc-primary{font-size:.6rem;font-weight:700;color:#f59e0b;text-transform:uppercase;letter-spacing:.05em}
+.clinic-card .cc-detail{font-size:.78rem;color:#94a3b8;line-height:1.5}
+.clinic-card .cc-actions{display:flex;gap:.35rem;flex-shrink:0}
+.clinic-card .cc-actions button{padding:.35rem .7rem;border-radius:6px;font-size:.7rem;font-weight:600;border:none;cursor:pointer;font-family:inherit;transition:all .2s}
+.cc-edit{background:rgba(59,130,246,0.15);color:#60a5fa}
+.cc-edit:hover{background:rgba(59,130,246,0.3)}
+.cc-del{background:rgba(239,68,68,0.15);color:#f87171}
+.cc-del:hover{background:rgba(239,68,68,0.3)}
+
 @media(max-width:640px){
   .sv-row,.sv-row-3{grid-template-columns:1fr}
   .content{padding:1rem .75rem 2rem}
@@ -153,6 +165,36 @@ body{font-family:'Inter',sans-serif;background:#0f172a;color:#e2e8f0;min-height:
     <button class="save-btn" id="saveBtn" onclick="saveSettings()">Save Settings</button>
     <span class="status-msg info" id="statusMsg">Loading...</span>
   </div>
+
+  <div style="margin-top:2.5rem;padding-top:2rem;border-top:2px solid #334155">
+    <h2 style="font-size:1.25rem;font-weight:800;color:#fff;margin-bottom:.5rem">Approved Occupational Clinics</h2>
+    <p style="font-size:.82rem;color:#94a3b8;margin-bottom:1.5rem">Manage the list of approved clinics that supervisors can refer employees to after a workplace injury.</p>
+
+    <div id="clinicsContainer"></div>
+
+    <div class="card" id="clinicFormCard">
+      <div class="card-title" id="clinicFormTitle">Add New Clinic</div>
+      <div class="sv-field"><label class="sv-label sv-required">Clinic Name</label><input type="text" class="sv-input" id="cl_name" placeholder="e.g., QuickCare Occupational Health"></div>
+      <div class="sv-field"><label class="sv-label">Street Address</label><input type="text" class="sv-input" id="cl_address" placeholder="123 Medical Pkwy"></div>
+      <div class="sv-row-3">
+        <div class="sv-field"><label class="sv-label">City</label><input type="text" class="sv-input" id="cl_city"></div>
+        <div class="sv-field"><label class="sv-label">State</label><input type="text" class="sv-input" id="cl_state" maxlength="2" placeholder="TX"></div>
+        <div class="sv-field"><label class="sv-label">ZIP</label><input type="text" class="sv-input" id="cl_zip" maxlength="10"></div>
+      </div>
+      <div class="sv-row">
+        <div class="sv-field"><label class="sv-label">Phone</label><input type="tel" class="sv-input" id="cl_phone" placeholder="(555) 123-4567"></div>
+        <div class="sv-field"><label class="sv-label">Hours</label><input type="text" class="sv-input" id="cl_hours" placeholder="Mon-Fri 8am-5pm"></div>
+      </div>
+      <div class="sv-field"><label class="sv-label">Notes</label><textarea class="sv-input" id="cl_notes" style="min-height:60px;resize:vertical" placeholder="Specialties, insurance accepted, etc."></textarea></div>
+      <label style="display:flex;align-items:center;gap:.6rem;padding:.6rem 0;cursor:pointer;font-size:.82rem;color:#93c5fd">
+        <input type="checkbox" id="cl_primary" style="accent-color:#f59e0b;width:16px;height:16px"> Designate as Primary Clinic
+      </label>
+      <div style="display:flex;gap:.5rem;margin-top:.75rem">
+        <button class="save-btn" onclick="saveClinic()" id="clinicSaveBtn" style="padding:.6rem 1.5rem;font-size:.82rem">Add Clinic</button>
+        <button class="save-btn" onclick="cancelClinicEdit()" id="clinicCancelBtn" style="padding:.6rem 1.5rem;font-size:.82rem;background:#334155;color:#94a3b8;display:none">Cancel</button>
+      </div>
+    </div>
+  </div>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -231,7 +273,134 @@ function showToast(msg,type){
   setTimeout(()=>t.classList.remove('show'),3000);
 }
 
-document.addEventListener('DOMContentLoaded',loadSettings);
+// ===== APPROVED CLINICS MANAGEMENT =====
+let clinics=[];
+let editingClinicId=null;
+
+async function loadClinics(){
+  try{
+    const{data,error}=await sb.from('approved_clinics').select('*').order('is_primary',{ascending:false}).order('name',{ascending:true});
+    if(error)throw error;
+    clinics=data||[];
+    renderClinics();
+  }catch(e){
+    document.getElementById('clinicsContainer').innerHTML='<div style="color:#f87171;font-size:.82rem;margin-bottom:1rem">Error loading clinics: '+e.message+'</div>';
+  }
+}
+
+function renderClinics(){
+  const container=document.getElementById('clinicsContainer');
+  if(clinics.length===0){
+    container.innerHTML='<div style="color:#64748b;font-size:.82rem;margin-bottom:1rem;text-align:center;padding:1.5rem">No approved clinics added yet.</div>';
+    return;
+  }
+  container.innerHTML=clinics.map(c=>{
+    const addr=[c.address,c.city,c.state,c.zip].filter(Boolean).join(', ');
+    return `<div class="clinic-card${c.is_primary?' primary':''}">
+      <div>
+        ${c.is_primary?'<div class="cc-primary">Primary Clinic</div>':''}
+        <div class="cc-name">${c.name}</div>
+        ${addr?'<div class="cc-detail">'+addr+'</div>':''}
+        ${c.phone?'<div class="cc-detail">Phone: '+c.phone+'</div>':''}
+        ${c.hours?'<div class="cc-detail">Hours: '+c.hours+'</div>':''}
+        ${c.notes?'<div class="cc-detail" style="color:#64748b;font-style:italic">'+c.notes+'</div>':''}
+      </div>
+      <div class="cc-actions">
+        <button class="cc-edit" onclick="editClinic('${c.id}')">Edit</button>
+        <button class="cc-del" onclick="deleteClinic('${c.id}')">Delete</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function clearClinicForm(){
+  ['cl_name','cl_address','cl_city','cl_state','cl_zip','cl_phone','cl_hours','cl_notes'].forEach(id=>{
+    document.getElementById(id).value='';
+  });
+  document.getElementById('cl_primary').checked=false;
+  editingClinicId=null;
+  document.getElementById('clinicFormTitle').textContent='Add New Clinic';
+  document.getElementById('clinicSaveBtn').textContent='Add Clinic';
+  document.getElementById('clinicCancelBtn').style.display='none';
+}
+
+function editClinic(id){
+  const c=clinics.find(cl=>cl.id===id);
+  if(!c)return;
+  editingClinicId=id;
+  document.getElementById('cl_name').value=c.name||'';
+  document.getElementById('cl_address').value=c.address||'';
+  document.getElementById('cl_city').value=c.city||'';
+  document.getElementById('cl_state').value=c.state||'';
+  document.getElementById('cl_zip').value=c.zip||'';
+  document.getElementById('cl_phone').value=c.phone||'';
+  document.getElementById('cl_hours').value=c.hours||'';
+  document.getElementById('cl_notes').value=c.notes||'';
+  document.getElementById('cl_primary').checked=c.is_primary||false;
+  document.getElementById('clinicFormTitle').textContent='Edit Clinic';
+  document.getElementById('clinicSaveBtn').textContent='Update Clinic';
+  document.getElementById('clinicCancelBtn').style.display='inline-flex';
+  document.getElementById('clinicFormCard').scrollIntoView({behavior:'smooth'});
+}
+
+function cancelClinicEdit(){
+  clearClinicForm();
+}
+
+async function saveClinic(){
+  const name=document.getElementById('cl_name').value.trim();
+  if(!name){showToast('Clinic name is required','error');return;}
+
+  const btn=document.getElementById('clinicSaveBtn');
+  btn.disabled=true;btn.textContent='Saving...';
+
+  const row={
+    name,
+    address:document.getElementById('cl_address').value.trim()||null,
+    city:document.getElementById('cl_city').value.trim()||null,
+    state:document.getElementById('cl_state').value.trim()||null,
+    zip:document.getElementById('cl_zip').value.trim()||null,
+    phone:document.getElementById('cl_phone').value.trim()||null,
+    hours:document.getElementById('cl_hours').value.trim()||null,
+    notes:document.getElementById('cl_notes').value.trim()||null,
+    is_primary:document.getElementById('cl_primary').checked
+  };
+
+  try{
+    // If setting as primary, unset others
+    if(row.is_primary){
+      await sb.from('approved_clinics').update({is_primary:false}).eq('is_primary',true);
+    }
+
+    if(editingClinicId){
+      const{error}=await sb.from('approved_clinics').update(row).eq('id',editingClinicId);
+      if(error)throw error;
+      showToast('Clinic updated!','success');
+    }else{
+      const{error}=await sb.from('approved_clinics').insert([row]);
+      if(error)throw error;
+      showToast('Clinic added!','success');
+    }
+    clearClinicForm();
+    await loadClinics();
+  }catch(e){
+    showToast('Error: '+e.message,'error');
+  }
+  btn.disabled=false;
+  btn.textContent=editingClinicId?'Update Clinic':'Add Clinic';
+}
+
+async function deleteClinic(id){
+  if(!confirm('Delete this clinic?'))return;
+  try{
+    const{error}=await sb.from('approved_clinics').delete().eq('id',id);
+    if(error)throw error;
+    showToast('Clinic deleted','success');
+    await loadClinics();
+  }catch(e){showToast('Error: '+e.message,'error');}
+}
+
+document.addEventListener('DOMContentLoaded',()=>{loadSettings();loadClinics();});
 </script>
 </body>
 </html>

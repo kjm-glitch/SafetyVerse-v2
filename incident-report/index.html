@@ -148,6 +148,106 @@ body{font-family:'Inter',sans-serif;background:#0f172a;color:#e2e8f0;min-height:
 .toast.error{background:#7f1d1d;color:#fca5a5;border:1px solid #ef4444}
 .info-box{background:rgba(37,99,235,0.1);border:1px solid rgba(37,99,235,0.25);border-radius:10px;padding:.85rem 1rem;margin-bottom:1.25rem;font-size:.82rem;color:#93c5fd;line-height:1.5}
 
+/* Incident File sub-tabs */
+.if-header{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.75rem;margin-bottom:1.5rem}
+.if-header h2{font-size:1.1rem;font-weight:800;color:#f1f5f9}
+.if-header .if-id{font-size:.85rem;font-weight:700;color:#f59e0b;background:rgba(245,158,11,0.1);padding:.3rem .8rem;border-radius:8px;border:1px solid rgba(245,158,11,0.25)}
+.if-selector{margin-bottom:1.25rem}
+.if-selector select{max-width:400px}
+
+.sub-tabs{display:flex;gap:.2rem;background:#0f172a;padding:.4rem;border-radius:10px;margin-bottom:1.5rem;flex-wrap:wrap;border:1px solid #334155}
+.sub-tab{padding:.5rem .75rem;border-radius:7px;border:none;background:transparent;color:#64748b;font-family:inherit;font-size:.7rem;font-weight:600;cursor:pointer;transition:all .2s;white-space:nowrap}
+.sub-tab:hover{color:#e2e8f0;background:#1e293b}
+.sub-tab.active{color:#f59e0b;background:#1e293b}
+.sub-panel{display:none}.sub-panel.active{display:block}
+
+/* Summary cards */
+.summary-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.75rem;margin-bottom:1.5rem}
+.summary-card{background:#0f172a;border:1px solid #334155;border-radius:10px;padding:1rem}
+.summary-card .sc-label{font-size:.65rem;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.3rem}
+.summary-card .sc-value{font-size:.88rem;font-weight:600;color:#e2e8f0}
+.summary-card .sc-value.amber{color:#fbbf24}
+.summary-card .sc-value.red{color:#f87171}
+.summary-card .sc-value.green{color:#4ade80}
+
+/* Status tracker */
+.status-tracker{display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;margin-bottom:1.5rem}
+.st-item{display:flex;align-items:center;gap:.5rem;padding:.6rem .8rem;background:#0f172a;border:1px solid #334155;border-radius:8px;font-size:.75rem;color:#94a3b8}
+.st-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.st-dot.empty{background:#334155}
+.st-dot.done{background:#22c55e}
+.st-dot.partial{background:#f59e0b}
+
+/* Quick link cards */
+.ql-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.75rem}
+.ql-card{background:#0f172a;border:1px solid #334155;border-radius:10px;padding:1rem;text-align:center;cursor:pointer;transition:all .2s}
+.ql-card:hover{border-color:rgba(245,158,11,0.4);transform:translateY(-1px)}
+.ql-card .ql-icon{font-size:1.5rem;margin-bottom:.4rem}
+.ql-card .ql-text{font-size:.78rem;font-weight:600;color:#94a3b8}
+
+/* Medical toggle */
+.med-toggle{display:flex;gap:.5rem;margin-bottom:1.5rem}
+.med-toggle-btn{flex:1;padding:.85rem;text-align:center;border:2px solid #334155;border-radius:10px;background:#0f172a;cursor:pointer;font-family:inherit;font-size:.82rem;font-weight:700;color:#94a3b8;transition:all .2s}
+.med-toggle-btn.active-accept{border-color:#22c55e;color:#22c55e;background:rgba(34,197,94,0.08)}
+.med-toggle-btn.active-refuse{border-color:#ef4444;color:#f87171;background:rgba(239,68,68,0.08)}
+
+/* Clinic cards */
+.clinic-card{background:#0f172a;border:1px solid #334155;border-radius:10px;padding:1rem;margin-bottom:.6rem;display:flex;justify-content:space-between;align-items:flex-start;gap:1rem;flex-wrap:wrap}
+.clinic-card.primary{border-color:rgba(245,158,11,0.4);background:rgba(245,158,11,0.04)}
+.clinic-card .cc-name{font-size:.88rem;font-weight:700;color:#f1f5f9}
+.clinic-card .cc-primary{font-size:.6rem;font-weight:700;color:#f59e0b;text-transform:uppercase;letter-spacing:.05em}
+.clinic-card .cc-detail{font-size:.78rem;color:#94a3b8;line-height:1.5}
+.clinic-card .cc-actions{display:flex;gap:.4rem;flex-shrink:0}
+.clinic-card .cc-actions a{padding:.4rem .8rem;border-radius:6px;font-size:.72rem;font-weight:600;text-decoration:none;transition:all .2s}
+.cc-call{background:rgba(34,197,94,0.12);color:#4ade80;border:1px solid rgba(34,197,94,0.25)}
+.cc-call:hover{background:rgba(34,197,94,0.25)}
+.cc-dir{background:rgba(59,130,246,0.12);color:#60a5fa;border:1px solid rgba(59,130,246,0.25)}
+.cc-dir:hover{background:rgba(59,130,246,0.25)}
+
+/* WC Checklist */
+.wc-checklist{margin-bottom:1.5rem}
+.wc-item{display:flex;align-items:center;gap:.6rem;padding:.6rem .8rem;background:#0f172a;border:1px solid #334155;border-radius:8px;margin-bottom:.35rem;font-size:.82rem;color:#cbd5e1;cursor:pointer;transition:all .2s}
+.wc-item:hover{border-color:#475569}
+.wc-item.checked{border-color:rgba(34,197,94,0.3);background:rgba(34,197,94,0.05);color:#4ade80}
+.wc-item input{accent-color:#22c55e;width:16px;height:16px;flex-shrink:0}
+
+/* Statement cards */
+.stmt-card{background:#0f172a;border:1px solid #334155;border-radius:10px;padding:1.25rem;margin-bottom:.75rem;position:relative}
+.stmt-card .stmt-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:.75rem}
+.stmt-card .stmt-type{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;padding:.2rem .6rem;border-radius:5px}
+.stmt-type.employee{color:#60a5fa;background:rgba(59,130,246,0.12)}
+.stmt-type.witness{color:#a78bfa;background:rgba(167,139,250,0.12)}
+.stmt-remove{background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.3);color:#f87171;font-size:.7rem;padding:4px 10px;border-radius:6px;cursor:pointer;font-family:inherit}
+.stmt-remove:hover{background:rgba(239,68,68,0.3)}
+
+/* Corrective action rows */
+.ca-row{display:grid;grid-template-columns:2fr 1fr 1fr auto;gap:.5rem;align-items:start;padding:.75rem;background:#0f172a;border:1px solid #334155;border-radius:8px;margin-bottom:.4rem}
+.ca-row .sv-input{padding:.5rem .6rem;font-size:.78rem}
+.ca-status{padding:.35rem .6rem;border-radius:6px;font-size:.7rem;font-weight:600;text-align:center;border:none;font-family:inherit;cursor:pointer}
+.ca-status.open{background:rgba(245,158,11,0.15);color:#fbbf24}
+.ca-status.in_progress{background:rgba(59,130,246,0.15);color:#60a5fa}
+.ca-status.completed{background:rgba(34,197,94,0.15);color:#4ade80}
+
+/* RTW toggle */
+.rtw-toggle{display:flex;gap:.4rem;margin-bottom:1.5rem}
+.rtw-btn{flex:1;padding:.75rem .5rem;text-align:center;border:2px solid #334155;border-radius:10px;background:#0f172a;cursor:pointer;font-family:inherit;font-size:.78rem;font-weight:700;color:#94a3b8;transition:all .2s}
+.rtw-btn.active-full{border-color:#22c55e;color:#22c55e;background:rgba(34,197,94,0.08)}
+.rtw-btn.active-modified{border-color:#f59e0b;color:#f59e0b;background:rgba(245,158,11,0.08)}
+.rtw-btn.active-not{border-color:#ef4444;color:#f87171;background:rgba(239,68,68,0.08)}
+
+/* Document download cards */
+.doc-card{display:flex;align-items:center;justify-content:space-between;background:#0f172a;border:1px solid #334155;border-radius:10px;padding:1rem;margin-bottom:.5rem;flex-wrap:wrap;gap:.75rem}
+.doc-card .dc-info{flex:1;min-width:200px}
+.doc-card .dc-name{font-size:.88rem;font-weight:700;color:#f1f5f9}
+.doc-card .dc-desc{font-size:.72rem;color:#64748b;margin-top:.15rem}
+.doc-card button{padding:.5rem 1.2rem;border-radius:8px;border:none;background:linear-gradient(135deg,#f59e0b,#d97706);color:#0f172a;font-family:inherit;font-size:.78rem;font-weight:700;cursor:pointer;transition:all .2s}
+.doc-card button:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(245,158,11,0.3)}
+.doc-card button:disabled{opacity:.5;cursor:default;transform:none}
+
+/* Close-out section */
+.closeout-section{background:rgba(37,99,235,0.06);border:1px solid rgba(37,99,235,0.2);border-radius:10px;padding:1.25rem;margin-top:1.25rem}
+.closeout-section .co-title{font-size:.75rem;font-weight:700;color:#60a5fa;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.75rem}
+
 @media(max-width:768px){
   .sv-row,.sv-row-3{grid-template-columns:1fr}
   .cb-grid,.rc-grid{grid-template-columns:repeat(2,1fr)}
@@ -156,6 +256,9 @@ body{font-family:'Inter',sans-serif;background:#0f172a;color:#e2e8f0;min-height:
   .wizard-progress{padding:.6rem .5rem}
   .wsi{min-width:38px}
   .wsl{font-size:.42rem}
+  .summary-grid,.status-tracker,.ql-grid{grid-template-columns:1fr}
+  .ca-row{grid-template-columns:1fr}
+  .sub-tabs{gap:.15rem;padding:.3rem}
 }
 @media(max-width:480px){
   .cb-grid,.rc-grid{grid-template-columns:1fr}
@@ -187,6 +290,7 @@ body{font-family:'Inter',sans-serif;background:#0f172a;color:#e2e8f0;min-height:
 <div class="tab-bar">
   <button class="tab active" onclick="showPanel('wizard')">New Report</button>
   <button class="tab" onclick="showPanel('list')">Past Reports</button>
+  <button class="tab" onclick="showPanel('file')" id="tabIncidentFile">Incident File</button>
   <button class="tab" onclick="showPanel('reports')">OSHA Downloads</button>
 </div>
 
@@ -453,7 +557,8 @@ body{font-family:'Inter',sans-serif;background:#0f172a;color:#e2e8f0;min-height:
   <h2>Incident Report Submitted</h2>
   <p>Case #<span id="successCaseNum"></span> has been recorded successfully.</p>
   <div class="success-actions">
-    <button class="sa-primary" onclick="resetForm()">Submit Another Report</button>
+    <button class="sa-primary" onclick="openIncidentFileFromLast()" id="successFileBtn">Continue to Incident File</button>
+    <button class="sa-secondary" onclick="resetForm()">Submit Another Report</button>
     <button class="sa-secondary" onclick="showPanel('list')">View Past Reports</button>
     <button class="sa-secondary" onclick="downloadOSHA301FromLast()">Download OSHA 301 PDF</button>
   </div>
@@ -468,6 +573,270 @@ body{font-family:'Inter',sans-serif;background:#0f172a;color:#e2e8f0;min-height:
   <div id="incidentsList"></div>
 </div>
 </div>
+
+<!-- INCIDENT FILE PANEL -->
+<div class="panel" id="panel-file">
+<div class="content">
+
+  <div class="if-selector">
+    <label class="sv-label">Select Incident</label>
+    <select class="sv-input sv-select" id="ifCaseSelect" onchange="loadIncidentFile()">
+      <option value="">-- Choose an incident --</option>
+    </select>
+  </div>
+
+  <div id="ifContent" style="display:none">
+    <div class="if-header">
+      <h2>Incident File</h2>
+      <span class="if-id" id="ifDisplayId"></span>
+    </div>
+
+    <div class="sub-tabs" id="subTabs">
+      <button class="sub-tab active" onclick="showSubTab('summary')">Summary</button>
+      <button class="sub-tab" onclick="showSubTab('medical')">Medical</button>
+      <button class="sub-tab" onclick="showSubTab('statements')">Statements</button>
+      <button class="sub-tab" onclick="showSubTab('investigation')">Investigation</button>
+      <button class="sub-tab" onclick="showSubTab('rtw')">Return to Work</button>
+      <button class="sub-tab" onclick="showSubTab('documents')">Documents</button>
+    </div>
+
+    <!-- ========== SUMMARY SUB-TAB ========== -->
+    <div class="sub-panel active" id="sp-summary">
+      <div class="summary-grid" id="summaryCards"></div>
+      <div class="card">
+        <div class="card-title">Sub-Tab Status</div>
+        <div class="status-tracker" id="statusTracker"></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Quick Links</div>
+        <div class="ql-grid">
+          <div class="ql-card" onclick="showSubTab('medical')"><div class="ql-icon">&#127973;</div><div class="ql-text">Find Approved Clinic</div></div>
+          <div class="ql-card" onclick="showSubTab('medical')"><div class="ql-icon">&#128203;</div><div class="ql-text">Start WC Process</div></div>
+          <div class="ql-card" onclick="showSubTab('documents')"><div class="ql-icon">&#128196;</div><div class="ql-text">Download OSHA 301</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== MEDICAL SUB-TAB ========== -->
+    <div class="sub-panel" id="sp-medical">
+      <div class="card">
+        <div class="card-title">Medical Decision</div>
+        <div class="info-box">Select whether the employee accepted a medical referral or refused treatment. Shared incident fields are auto-filled.</div>
+        <div class="med-toggle">
+          <button class="med-toggle-btn" onclick="setMedDecision('accepted')">Employee Accepted Referral</button>
+          <button class="med-toggle-btn" onclick="setMedDecision('refused')">Employee Refused Treatment</button>
+        </div>
+
+        <!-- Auto-filled incident info -->
+        <div style="background:rgba(37,99,235,0.06);border:1px solid rgba(37,99,235,0.15);border-radius:10px;padding:1rem;margin-bottom:1.25rem">
+          <div style="font-size:.7rem;font-weight:600;color:#60a5fa;text-transform:uppercase;margin-bottom:.5rem">Auto-Filled from Incident</div>
+          <div class="sv-row">
+            <div class="sv-field" style="margin-bottom:.5rem"><label class="sv-label">Employee Name</label><input type="text" class="sv-input" id="med_emp_name" readonly style="opacity:.7"></div>
+            <div class="sv-field" style="margin-bottom:.5rem"><label class="sv-label">Date of Injury</label><input type="text" class="sv-input" id="med_injury_date" readonly style="opacity:.7"></div>
+          </div>
+          <div class="sv-row">
+            <div class="sv-field" style="margin-bottom:0"><label class="sv-label">Injury Description</label><input type="text" class="sv-input" id="med_injury_desc" readonly style="opacity:.7"></div>
+            <div class="sv-field" style="margin-bottom:0"><label class="sv-label">Body Part</label><input type="text" class="sv-input" id="med_body_part" readonly style="opacity:.7"></div>
+          </div>
+        </div>
+
+        <!-- Referral fields -->
+        <div id="medReferralFields" style="display:none">
+          <div class="step-heading" style="font-size:.9rem;margin-bottom:1rem">Medical Referral Details</div>
+          <div class="sv-field">
+            <label class="sv-label">Approved Clinic</label>
+            <select class="sv-input sv-select" id="med_clinic_select" onchange="fillClinicFromSelect()">
+              <option value="">-- Select approved clinic --</option>
+            </select>
+          </div>
+          <div class="sv-row">
+            <div class="sv-field"><label class="sv-label">Clinic Name</label><input type="text" class="sv-input" id="med_clinic_name"></div>
+            <div class="sv-field"><label class="sv-label">Clinic Phone</label><input type="text" class="sv-input" id="med_clinic_phone"></div>
+          </div>
+          <div class="sv-field"><label class="sv-label">Clinic Address</label><input type="text" class="sv-input" id="med_clinic_address"></div>
+          <div class="sv-field"><label class="sv-label">Authorization Notes</label><textarea class="sv-input sv-textarea" id="med_auth_notes" placeholder="Authorization details, referral instructions..."></textarea></div>
+        </div>
+
+        <!-- Refusal fields -->
+        <div id="medRefusalFields" style="display:none">
+          <div class="step-heading" style="font-size:.9rem;margin-bottom:1rem">Refusal of Treatment</div>
+          <div class="sv-field"><label class="sv-label">Reason for Refusal</label><textarea class="sv-input sv-textarea" id="med_refusal_reason" placeholder="Why did the employee refuse treatment?"></textarea></div>
+          <div class="sv-row">
+            <div class="sv-field"><label class="sv-label">Employee Signature (type name)</label><input type="text" class="sv-input" id="med_refusal_sig" placeholder="Full legal name"></div>
+            <div class="sv-field"><label class="sv-label">Witness Name</label><input type="text" class="sv-input" id="med_refusal_witness"></div>
+          </div>
+          <div class="sv-field"><label class="sv-label">Refusal Date</label><input type="date" class="sv-input" id="med_refusal_date"></div>
+        </div>
+
+        <div style="margin-top:1.25rem">
+          <button class="wbtn wbtn-next" onclick="saveMedical()" id="saveMedBtn" style="padding:.6rem 1.5rem;font-size:.82rem">Save Medical Info</button>
+        </div>
+      </div>
+
+      <!-- Approved Clinics -->
+      <div class="card">
+        <div class="card-title">Approved Occupational Clinics</div>
+        <div id="clinicsList"><div style="color:#64748b;font-size:.82rem">Loading clinics...</div></div>
+      </div>
+
+      <!-- WC Quick-Start -->
+      <div class="card">
+        <div class="card-title">Workers' Comp Quick-Start</div>
+        <div class="info-box">Follow this checklist after any incident requiring medical treatment. Check items off as you complete them.</div>
+        <div class="wc-checklist" id="wcChecklist">
+          <label class="wc-item" onclick="toggleWcItem(this)"><input type="checkbox" data-wc="0"> Notify HR immediately</label>
+          <label class="wc-item" onclick="toggleWcItem(this)"><input type="checkbox" data-wc="1"> Provide employee with WC claim forms</label>
+          <label class="wc-item" onclick="toggleWcItem(this)"><input type="checkbox" data-wc="2"> Route to approved Occupational Clinic</label>
+          <label class="wc-item" onclick="toggleWcItem(this)"><input type="checkbox" data-wc="3"> Document medical facility and treatment provided</label>
+          <label class="wc-item" onclick="toggleWcItem(this)"><input type="checkbox" data-wc="4"> Submit all WC paperwork within 24 hours</label>
+          <label class="wc-item" onclick="toggleWcItem(this)"><input type="checkbox" data-wc="5"> HR coordinates follow-up with employee and insurance</label>
+        </div>
+        <div class="step-heading" style="font-size:.9rem;margin-bottom:1rem">WC Intake Fields</div>
+        <div class="sv-row">
+          <div class="sv-field"><label class="sv-label">WC Claim Number</label><input type="text" class="sv-input" id="wc_claim_number" placeholder="Assigned by insurer"></div>
+          <div class="sv-field"><label class="sv-label">Insurance Carrier</label><input type="text" class="sv-input" id="wc_insurance_carrier"></div>
+        </div>
+        <div class="sv-row">
+          <div class="sv-field"><label class="sv-label">Policy Number</label><input type="text" class="sv-input" id="wc_policy_number"></div>
+          <div class="sv-field"><label class="sv-label">Date Employer Notified Insurer</label><input type="date" class="sv-input" id="wc_date_notified"></div>
+        </div>
+        <div class="sv-row">
+          <div class="sv-field"><label class="sv-label">Date Employee Left Work</label><input type="date" class="sv-input" id="wc_date_left"></div>
+          <div class="sv-field"><label class="sv-label">Date of Disability Onset</label><input type="date" class="sv-input" id="wc_date_disability"></div>
+        </div>
+        <div class="sv-field"><label class="sv-label">Notes</label><textarea class="sv-input sv-textarea" id="wc_notes" placeholder="Additional WC tracking notes..."></textarea></div>
+        <button class="wbtn wbtn-next" onclick="saveWcInfo()" style="padding:.6rem 1.5rem;font-size:.82rem;margin-top:.5rem">Save WC Info</button>
+      </div>
+    </div>
+
+    <!-- ========== STATEMENTS SUB-TAB ========== -->
+    <div class="sub-panel" id="sp-statements">
+      <div class="card">
+        <div class="card-title">Employee's Own Account</div>
+        <div class="info-box">Have the injured employee describe the incident in their own words.</div>
+        <div class="sv-field"><label class="sv-label">Employee Name</label><input type="text" class="sv-input" id="stmt_emp_name"></div>
+        <div class="sv-field"><label class="sv-label">Employee Title</label><input type="text" class="sv-input" id="stmt_emp_title"></div>
+        <div class="sv-field"><label class="sv-label">Date</label><input type="date" class="sv-input" id="stmt_emp_date"></div>
+        <div class="sv-field"><label class="sv-label">Statement</label><textarea class="sv-input sv-textarea lg" id="stmt_emp_text" placeholder="In the employee's own words, describe what happened..."></textarea></div>
+        <button class="wbtn wbtn-next" onclick="saveEmployeeStatement()" style="padding:.6rem 1.5rem;font-size:.82rem">Save Employee Statement</button>
+      </div>
+      <div class="card">
+        <div class="card-title">Witness Statements</div>
+        <div class="sv-helper" style="margin-bottom:1rem">Add up to 4 witness statements for this incident.</div>
+        <div id="witnessStmtContainer"></div>
+        <button class="add-btn" id="addWitnessStmtBtn" onclick="addWitnessStatement()">+ Add Witness Statement</button>
+      </div>
+    </div>
+
+    <!-- ========== INVESTIGATION SUB-TAB ========== -->
+    <div class="sub-panel" id="sp-investigation">
+      <div class="card">
+        <div class="card-title">Supervisor Investigation</div>
+        <div class="info-box">Complete the 5W analysis. Root cause data from the original report is available in the Contributing Factors section below.</div>
+        <div class="sv-field"><label class="sv-label">Who was involved?</label><textarea class="sv-input sv-textarea" id="inv_who" placeholder="All persons involved, their roles, and their actions..."></textarea></div>
+        <div class="sv-field"><label class="sv-label">What happened?</label><textarea class="sv-input sv-textarea" id="inv_what" placeholder="Detailed sequence of events leading to the incident..."></textarea></div>
+        <div class="sv-row">
+          <div class="sv-field"><label class="sv-label">When? (timeline details)</label><textarea class="sv-input sv-textarea" id="inv_when" placeholder="Timeline, shift, time of day..."></textarea></div>
+          <div class="sv-field"><label class="sv-label">Where? (specific location details)</label><textarea class="sv-input sv-textarea" id="inv_where" placeholder="Exact location, conditions at scene..."></textarea></div>
+        </div>
+        <div class="sv-field"><label class="sv-label">Why? (root cause)</label><textarea class="sv-input sv-textarea lg" id="inv_why" placeholder="Underlying systemic causes and contributing factors..."></textarea></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Contributing Factors</div>
+        <div class="info-box">Check all factors that contributed to the incident. Factors from the original report are pre-checked.</div>
+        <div class="rc-section">
+          <div class="rc-title">Unsafe Act</div>
+          <div class="rc-grid" id="inv_cf_acts">
+            <label class="cb-item"><input type="checkbox" value="Unsafe Act">Unsafe Act</label>
+            <label class="cb-item"><input type="checkbox" value="Unsafe Condition">Unsafe Condition</label>
+            <label class="cb-item"><input type="checkbox" value="Equipment Failure">Equipment Failure</label>
+            <label class="cb-item"><input type="checkbox" value="Inadequate Training">Inadequate Training</label>
+            <label class="cb-item"><input type="checkbox" value="Inadequate Procedure/SOP">Inadequate Procedure/SOP</label>
+            <label class="cb-item"><input type="checkbox" value="PPE Issue">PPE Issue</label>
+            <label class="cb-item"><input type="checkbox" value="Environmental/Weather">Environmental/Weather</label>
+            <label class="cb-item"><input type="checkbox" value="Communication Breakdown">Communication Breakdown</label>
+            <label class="cb-item"><input type="checkbox" value="Management System Deficiency">Management System Deficiency</label>
+            <label class="cb-item"><input type="checkbox" value="Other">Other</label>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Corrective Action Tracker</div>
+        <div id="caContainer"></div>
+        <button class="add-btn" onclick="addCorrectiveAction()" style="margin-top:.5rem">+ Add Corrective Action</button>
+      </div>
+
+      <div class="card">
+        <div class="closeout-section">
+          <div class="co-title">Close-Out Approval</div>
+          <div class="sv-row">
+            <div class="sv-field"><label class="sv-label">Safety Manager</label><input type="text" class="sv-input" id="inv_closeout_safety" placeholder="Name"></div>
+            <div class="sv-field"><label class="sv-label">Supervisor</label><input type="text" class="sv-input" id="inv_closeout_super" placeholder="Name"></div>
+          </div>
+          <div class="sv-field"><label class="sv-label">Close-Out Date</label><input type="date" class="sv-input" id="inv_closeout_date" style="max-width:250px"></div>
+        </div>
+        <div class="sv-field" style="margin-top:1rem">
+          <label class="sv-label">Investigation Status</label>
+          <div class="sv-radio-group" id="inv_status_group">
+            <label class="sv-radio-card" onclick="selectRadio(this)"><input type="radio" name="inv_status" value="open">Open</label>
+            <label class="sv-radio-card" onclick="selectRadio(this)"><input type="radio" name="inv_status" value="in_progress">In Progress</label>
+            <label class="sv-radio-card" onclick="selectRadio(this)"><input type="radio" name="inv_status" value="closed">Closed</label>
+          </div>
+        </div>
+        <button class="wbtn wbtn-next" onclick="saveInvestigation()" style="padding:.6rem 1.5rem;font-size:.82rem;margin-top:1rem">Save Investigation</button>
+      </div>
+    </div>
+
+    <!-- ========== RETURN TO WORK SUB-TAB ========== -->
+    <div class="sub-panel" id="sp-rtw">
+      <div class="card">
+        <div class="card-title">Fit for Duty Certification</div>
+        <div class="sv-field">
+          <label class="sv-label">Clearance Status</label>
+          <div class="rtw-toggle">
+            <button class="rtw-btn" onclick="setRtwStatus('full')">Full Duty</button>
+            <button class="rtw-btn" onclick="setRtwStatus('modified')">Modified / Light Duty</button>
+            <button class="rtw-btn" onclick="setRtwStatus('not_cleared')">Not Yet Cleared</button>
+          </div>
+        </div>
+        <div class="sv-row">
+          <div class="sv-field"><label class="sv-label">Physician Name</label><input type="text" class="sv-input" id="rtw_physician"></div>
+          <div class="sv-field"><label class="sv-label">Evaluation Date</label><input type="date" class="sv-input" id="rtw_eval_date"></div>
+        </div>
+
+        <div id="rtwModifiedFields" style="display:none">
+          <div class="sv-field"><label class="sv-label">Restrictions</label><textarea class="sv-input sv-textarea" id="rtw_restrictions" placeholder="e.g., No lifting over 10 lbs, no prolonged standing..."></textarea></div>
+          <div class="sv-field"><label class="sv-label">Modified Duty Description</label><textarea class="sv-input sv-textarea" id="rtw_modified_duties" placeholder="Describe the modified/light duty assignment..."></textarea></div>
+          <div class="sv-row">
+            <div class="sv-field"><label class="sv-label">Restriction Duration</label><input type="text" class="sv-input" id="rtw_duration" placeholder="e.g., 2 weeks, 30 days"></div>
+            <div class="sv-field"><label class="sv-label">Next Follow-Up Date</label><input type="date" class="sv-input" id="rtw_followup"></div>
+          </div>
+        </div>
+
+        <div class="sv-field"><label class="sv-label">Supervisor Name</label><input type="text" class="sv-input" id="rtw_supervisor"></div>
+        <label class="no-injury-toggle" style="margin-top:.5rem"><input type="checkbox" id="rtw_acknowledged"> Employee acknowledged return-to-work plan</label>
+        <button class="wbtn wbtn-next" onclick="saveRtw()" style="padding:.6rem 1.5rem;font-size:.82rem;margin-top:1rem">Save Return to Work</button>
+      </div>
+    </div>
+
+    <!-- ========== DOCUMENTS SUB-TAB ========== -->
+    <div class="sub-panel" id="sp-documents">
+      <div class="card">
+        <div class="card-title">Document Downloads</div>
+        <div class="info-box">Generate and download pre-filled PDF documents for this incident. All forms are auto-populated from the data saved in this Incident File.</div>
+        <div class="doc-card"><div class="dc-info"><div class="dc-name">OSHA 301 &mdash; Incident Report</div><div class="dc-desc">Official OSHA individual incident form</div></div><button onclick="downloadIfOsha301()">Download PDF</button></div>
+        <div class="doc-card"><div class="dc-info"><div class="dc-name">Medical Referral Form</div><div class="dc-desc">Authorization for occupational clinic visit</div></div><button onclick="downloadIfMedReferral()">Download PDF</button></div>
+        <div class="doc-card"><div class="dc-info"><div class="dc-name">Refusal of Treatment</div><div class="dc-desc">Employee treatment refusal acknowledgment</div></div><button onclick="downloadIfRefusal()">Download PDF</button></div>
+        <div class="doc-card"><div class="dc-info"><div class="dc-name">Investigation Report</div><div class="dc-desc">Root cause analysis and corrective actions</div></div><button onclick="downloadIfInvestigation()">Download PDF</button></div>
+        <div class="doc-card"><div class="dc-info"><div class="dc-name">Return to Work Clearance</div><div class="dc-desc">Fit for duty certification document</div></div><button onclick="downloadIfRtw()">Download PDF</button></div>
+      </div>
+    </div>
+
+  </div><!-- /ifContent -->
+</div><!-- /content -->
+</div><!-- /panel-file -->
 
 <!-- OSHA DOWNLOADS PANEL -->
 <div class="panel" id="panel-reports">
@@ -525,6 +894,38 @@ document.addEventListener('DOMContentLoaded',()=>{
   document.getElementById('f_date').value=now.toISOString().split('T')[0];
   document.getElementById('f_time').value=now.toTimeString().slice(0,5);
   document.getElementById('f_report_time').value=now.toLocaleString();
+
+  // Auto-fill from triage params
+  const params=new URLSearchParams(window.location.search);
+  if(params.has('triage_severity')||params.has('triage_treatment')){
+    // Map severity: red=Life-Threatening, amber=Moderate, green=Minor
+    const sevMap={red:'Life-Threatening',amber:'Moderate',green:'Minor'};
+    const triageSev=params.get('triage_severity');
+    if(triageSev&&sevMap[triageSev]){
+      document.getElementById('f_severity').value=sevMap[triageSev];
+    }
+    // Treatment type
+    const triageTreat=params.get('triage_treatment');
+    if(triageTreat){
+      const radio=document.querySelector(`input[name="treatment"][value="${triageTreat}"]`);
+      if(radio){radio.checked=true;radio.closest('.sv-radio-card').classList.add('selected');}
+    }
+    // Injury type checkbox
+    const triageInj=params.get('triage_injury');
+    if(triageInj){
+      const cb=document.querySelector(`#f_injury_types input[value="${triageInj}"]`);
+      if(cb)cb.checked=true;
+    }
+    // Show triage info banner
+    const triageOutcome=params.get('triage_outcome');
+    if(triageOutcome){
+      const banner=document.createElement('div');
+      banner.className='info-box';
+      banner.style.margin='0 1rem 0';
+      banner.innerHTML='<strong>Triage Data Applied:</strong> '+triageOutcome+' — Some fields have been pre-filled from the incident triage protocol.';
+      document.getElementById('wizardContent').insertBefore(banner,document.getElementById('wizardContent').firstChild);
+    }
+  }
 });
 
 function buildProgressBar(){
@@ -762,12 +1163,17 @@ function resetForm(){
 // Panels & List
 function showPanel(name){
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
-  document.getElementById('panel-'+name).classList.add('active');
+  const panelId='panel-'+(name==='file'?'file':name==='wizard'?'wizard':name==='list'?'list':'reports');
+  document.getElementById(panelId).classList.add('active');
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-  if(event&&event.target)event.target.classList.add('active');
-  else document.querySelectorAll('.tab')[name==='wizard'?0:name==='list'?1:2].classList.add('active');
+  if(event&&event.target&&event.target.classList.contains('tab'))event.target.classList.add('active');
+  else{
+    const map={wizard:0,list:1,file:2,reports:3};
+    document.querySelectorAll('.tab')[map[name]||0].classList.add('active');
+  }
   if(name==='list')loadIncidents();
   if(name==='reports')loadReportsPanel();
+  if(name==='file')loadIncidentFileList();
 }
 
 async function loadIncidents(){
@@ -783,11 +1189,12 @@ async function loadIncidents(){
     container.innerHTML=data.map(inc=>{
       const badge=inc.osha_outcome==='na_pending'?'<span class="il-badge pending">Pending</span>':'<span class="il-badge recorded">Recorded</span>';
       const date=inc.incident_date?new Date(inc.incident_date).toLocaleDateString():'N/A';
-      return `<div class="il-card">
+      return `<div class="il-card" onclick="openIncidentFile('${inc.id}')" style="cursor:pointer" title="Open Incident File">
         <div class="il-top"><span class="il-case">Case #${inc.case_number}</span>${badge}</div>
         <div class="il-top"><span class="il-date">${date} ${inc.incident_time||''}</span><span class="il-date">${inc.site_location||''}</span></div>
         <div class="il-details">${inc.no_injury?'No injury reported':(inc.injured_name||'Unknown')+' &mdash; '+(inc.severity||'N/A')+' &mdash; '+(inc.injury_types||[]).join(', ')}</div>
         <div style="margin-top:.5rem;font-size:.78rem;color:#64748b">${(inc.incident_description||'').substring(0,120)}${(inc.incident_description||'').length>120?'...':''}</div>
+        <div style="margin-top:.4rem;font-size:.7rem;color:#f59e0b;font-weight:600">Click to open Incident File &rarr;</div>
       </div>`;
     }).join('');
   }catch(e){
@@ -1215,6 +1622,809 @@ function downloadBlob(bytes,filename){
   document.body.appendChild(a);a.click();
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
+}
+
+// ===================================================================
+// INCIDENT FILE SYSTEM
+// ===================================================================
+
+let currentIncident=null;
+let currentMedical=null;
+let currentInvestigation=null;
+let currentRtw=null;
+let currentStatements=[];
+let approvedClinics=[];
+let ifWitnessCount=0;
+let caCount=0;
+let rtwStatus='';
+let medDecision='';
+
+// --- Sub-Tab Navigation ---
+function showSubTab(name){
+  document.querySelectorAll('.sub-panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('sp-'+name).classList.add('active');
+  document.querySelectorAll('.sub-tab').forEach(t=>t.classList.remove('active'));
+  if(event&&event.target&&event.target.classList.contains('sub-tab'))event.target.classList.add('active');
+  else{
+    const map={summary:0,medical:1,statements:2,investigation:3,rtw:4,documents:5};
+    document.querySelectorAll('.sub-tab')[map[name]].classList.add('active');
+  }
+}
+
+// --- Load Incident File ---
+async function loadIncidentFileList(){
+  try{
+    const{data,error}=await sb.from('incidents').select('id,case_number,incident_date,injured_name,site_location').order('created_at',{ascending:false});
+    if(error)throw error;
+    const sel=document.getElementById('ifCaseSelect');
+    sel.innerHTML='<option value="">-- Choose an incident --</option>';
+    (data||[]).forEach(inc=>{
+      const d=inc.incident_date?new Date(inc.incident_date).toLocaleDateString():'';
+      const yr=inc.incident_date?new Date(inc.incident_date).getFullYear():new Date().getFullYear();
+      const displayId=yr+'-'+String(inc.case_number).padStart(4,'0');
+      sel.innerHTML+=`<option value="${inc.id}">${displayId} — ${inc.injured_name||'No injury'} (${d}, ${inc.site_location||''})</option>`;
+    });
+  }catch(e){console.error('Failed to load incident list:',e);}
+}
+
+async function loadIncidentFile(){
+  const id=document.getElementById('ifCaseSelect').value;
+  if(!id){document.getElementById('ifContent').style.display='none';return;}
+  document.getElementById('ifContent').style.display='block';
+
+  try{
+    // Load incident
+    const{data:inc,error:ie}=await sb.from('incidents').select('*').eq('id',id).single();
+    if(ie)throw ie;
+    currentIncident=inc;
+    const yr=inc.incident_date?new Date(inc.incident_date).getFullYear():new Date().getFullYear();
+    const displayId=yr+'-'+String(inc.case_number).padStart(4,'0');
+    document.getElementById('ifDisplayId').textContent='Incident #'+displayId;
+
+    // Load related data in parallel
+    const[medRes,stmtRes,invRes,rtwRes]=await Promise.all([
+      sb.from('incident_medical').select('*').eq('incident_id',inc.id).maybeSingle(),
+      sb.from('incident_statements').select('*').eq('incident_id',inc.id).order('created_at',{ascending:true}),
+      sb.from('incident_investigation').select('*').eq('incident_id',inc.id).maybeSingle(),
+      sb.from('incident_rtw').select('*').eq('incident_id',inc.id).maybeSingle()
+    ]);
+
+    currentMedical=medRes.data||null;
+    currentStatements=stmtRes.data||[];
+    currentInvestigation=invRes.data||null;
+    currentRtw=rtwRes.data||null;
+
+    // Load clinics
+    await loadApprovedClinics();
+
+    // Populate all sub-tabs
+    populateSummary();
+    populateMedical();
+    populateStatements();
+    populateInvestigation();
+    populateRtw();
+
+    // Show summary tab
+    showSubTab('summary');
+
+  }catch(e){
+    showToast('Error loading incident file: '+e.message,'error');
+    console.error(e);
+  }
+}
+
+// --- Summary Sub-Tab ---
+function populateSummary(){
+  const inc=currentIncident;
+  if(!inc)return;
+  const date=inc.incident_date?new Date(inc.incident_date).toLocaleDateString():'N/A';
+  const sevClass=inc.severity==='Life-Threatening'||inc.severity==='Severe'?'red':inc.severity==='Moderate'?'amber':'green';
+  const treatment=inc.treatment_type?inc.treatment_type.replace(/_/g,' ').replace(/\b\w/g,l=>l.toUpperCase()):'N/A';
+
+  document.getElementById('summaryCards').innerHTML=`
+    <div class="summary-card"><div class="sc-label">Date</div><div class="sc-value">${date}</div></div>
+    <div class="summary-card"><div class="sc-label">Location</div><div class="sc-value">${inc.site_location||'N/A'}</div></div>
+    <div class="summary-card"><div class="sc-label">Severity</div><div class="sc-value ${sevClass}">${inc.severity||'N/A'}</div></div>
+    <div class="summary-card"><div class="sc-label">Injured</div><div class="sc-value">${inc.no_injury?'No injury':inc.injured_name||'N/A'}</div></div>
+    <div class="summary-card"><div class="sc-label">Treatment</div><div class="sc-value">${inc.no_injury?'N/A':treatment}</div></div>
+    <div class="summary-card"><div class="sc-label">Reported By</div><div class="sc-value">${inc.reporting_party_name||'N/A'}</div></div>
+  `;
+
+  // Status tracker
+  const tabs=[
+    {name:'Medical',done:!!currentMedical},
+    {name:'Statements',done:currentStatements.length>0},
+    {name:'Investigation',done:!!currentInvestigation},
+    {name:'Return to Work',done:!!currentRtw},
+    {name:'OSHA Classification',done:inc.osha_outcome&&inc.osha_outcome!=='na_pending'},
+  ];
+  document.getElementById('statusTracker').innerHTML=tabs.map(t=>{
+    const cls=t.done?'done':'empty';
+    return `<div class="st-item"><div class="st-dot ${cls}"></div>${t.name}</div>`;
+  }).join('');
+}
+
+// --- Medical Sub-Tab ---
+async function loadApprovedClinics(){
+  try{
+    const{data,error}=await sb.from('approved_clinics').select('*').order('is_primary',{ascending:false});
+    if(error)throw error;
+    approvedClinics=data||[];
+  }catch(e){approvedClinics=[];}
+}
+
+function populateMedical(){
+  const inc=currentIncident;
+  if(!inc)return;
+
+  // Auto-fill
+  document.getElementById('med_emp_name').value=inc.injured_name||'';
+  document.getElementById('med_injury_date').value=inc.incident_date||'';
+  document.getElementById('med_injury_desc').value=(inc.injury_types||[]).join(', ');
+  document.getElementById('med_body_part').value=inc.body_part||'';
+
+  // Clinic dropdown
+  const clinicSel=document.getElementById('med_clinic_select');
+  clinicSel.innerHTML='<option value="">-- Select approved clinic --</option>';
+  approvedClinics.forEach(c=>{
+    clinicSel.innerHTML+=`<option value="${c.id}">${c.name}${c.is_primary?' (Primary)':''}</option>`;
+  });
+
+  // Clinic list
+  const clinicList=document.getElementById('clinicsList');
+  if(approvedClinics.length===0){
+    clinicList.innerHTML='<div style="color:#64748b;font-size:.82rem">No approved clinics configured. Add clinics in <a href="../settings/index.html" style="color:#f59e0b">Settings</a>.</div>';
+  }else{
+    clinicList.innerHTML=approvedClinics.map(c=>{
+      const addr=[c.address,c.city,c.state,c.zip].filter(Boolean).join(', ');
+      const mapsUrl='https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(addr);
+      return `<div class="clinic-card${c.is_primary?' primary':''}">
+        <div>
+          ${c.is_primary?'<div class="cc-primary">Primary Clinic</div>':''}
+          <div class="cc-name">${c.name}</div>
+          <div class="cc-detail">${addr}</div>
+          ${c.hours?'<div class="cc-detail">Hours: '+c.hours+'</div>':''}
+          ${c.phone?'<div class="cc-detail">Phone: '+c.phone+'</div>':''}
+        </div>
+        <div class="cc-actions">
+          ${c.phone?'<a href="tel:'+c.phone+'" class="cc-call">Call</a>':''}
+          <a href="${mapsUrl}" target="_blank" class="cc-dir">Directions</a>
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  // Load existing medical data
+  if(currentMedical){
+    const m=currentMedical;
+    if(m.medical_decision)setMedDecision(m.medical_decision);
+    if(m.clinic_name)document.getElementById('med_clinic_name').value=m.clinic_name;
+    if(m.clinic_phone)document.getElementById('med_clinic_phone').value=m.clinic_phone;
+    if(m.clinic_address)document.getElementById('med_clinic_address').value=m.clinic_address;
+    if(m.authorization_notes)document.getElementById('med_auth_notes').value=m.authorization_notes;
+    if(m.refusal_reason)document.getElementById('med_refusal_reason').value=m.refusal_reason;
+    if(m.refusal_employee_signature)document.getElementById('med_refusal_sig').value=m.refusal_employee_signature;
+    if(m.refusal_witness_name)document.getElementById('med_refusal_witness').value=m.refusal_witness_name;
+    if(m.refusal_date)document.getElementById('med_refusal_date').value=m.refusal_date;
+    if(m.wc_claim_number)document.getElementById('wc_claim_number').value=m.wc_claim_number;
+    if(m.wc_insurance_carrier)document.getElementById('wc_insurance_carrier').value=m.wc_insurance_carrier;
+    if(m.wc_policy_number)document.getElementById('wc_policy_number').value=m.wc_policy_number;
+    if(m.wc_date_insurer_notified)document.getElementById('wc_date_notified').value=m.wc_date_insurer_notified;
+    if(m.wc_date_left_work)document.getElementById('wc_date_left').value=m.wc_date_left_work;
+    if(m.wc_date_disability_onset)document.getElementById('wc_date_disability').value=m.wc_date_disability_onset;
+    if(m.wc_notes)document.getElementById('wc_notes').value=m.wc_notes;
+    // WC checklist
+    if(m.wc_checklist&&Array.isArray(m.wc_checklist)){
+      document.querySelectorAll('#wcChecklist input[type="checkbox"]').forEach(cb=>{
+        const idx=parseInt(cb.dataset.wc);
+        cb.checked=m.wc_checklist.includes(idx);
+        if(cb.checked)cb.closest('.wc-item').classList.add('checked');
+      });
+    }
+  }else{
+    // Reset
+    medDecision='';
+    document.querySelectorAll('.med-toggle-btn').forEach(b=>b.className='med-toggle-btn');
+    document.getElementById('medReferralFields').style.display='none';
+    document.getElementById('medRefusalFields').style.display='none';
+    ['med_clinic_name','med_clinic_phone','med_clinic_address','med_auth_notes','med_refusal_reason','med_refusal_sig','med_refusal_witness','med_refusal_date','wc_claim_number','wc_insurance_carrier','wc_policy_number','wc_date_notified','wc_date_left','wc_date_disability','wc_notes'].forEach(id=>{
+      const el=document.getElementById(id);if(el)el.value='';
+    });
+    document.querySelectorAll('#wcChecklist input[type="checkbox"]').forEach(cb=>{cb.checked=false;cb.closest('.wc-item').classList.remove('checked');});
+  }
+}
+
+function setMedDecision(decision){
+  medDecision=decision;
+  document.querySelectorAll('.med-toggle-btn').forEach(b=>b.className='med-toggle-btn');
+  if(decision==='accepted'){
+    document.querySelectorAll('.med-toggle-btn')[0].classList.add('active-accept');
+    document.getElementById('medReferralFields').style.display='block';
+    document.getElementById('medRefusalFields').style.display='none';
+  }else{
+    document.querySelectorAll('.med-toggle-btn')[1].classList.add('active-refuse');
+    document.getElementById('medReferralFields').style.display='none';
+    document.getElementById('medRefusalFields').style.display='block';
+  }
+}
+
+function fillClinicFromSelect(){
+  const id=document.getElementById('med_clinic_select').value;
+  const clinic=approvedClinics.find(c=>c.id===id);
+  if(clinic){
+    document.getElementById('med_clinic_name').value=clinic.name||'';
+    document.getElementById('med_clinic_phone').value=clinic.phone||'';
+    const addr=[clinic.address,clinic.city,clinic.state,clinic.zip].filter(Boolean).join(', ');
+    document.getElementById('med_clinic_address').value=addr;
+  }
+}
+
+function toggleWcItem(el){
+  const cb=el.querySelector('input[type="checkbox"]');
+  // Toggle happens naturally. Just update visual
+  setTimeout(()=>{
+    if(cb.checked)el.classList.add('checked');
+    else el.classList.remove('checked');
+  },10);
+}
+
+async function saveMedical(){
+  if(!currentIncident){showToast('No incident selected','error');return;}
+  const btn=document.getElementById('saveMedBtn');
+  btn.disabled=true;btn.textContent='Saving...';
+
+  const row={
+    incident_id:currentIncident.id,
+    medical_decision:medDecision||null,
+    clinic_name:document.getElementById('med_clinic_name').value||null,
+    clinic_address:document.getElementById('med_clinic_address').value||null,
+    clinic_phone:document.getElementById('med_clinic_phone').value||null,
+    authorization_notes:document.getElementById('med_auth_notes').value||null,
+    refusal_reason:document.getElementById('med_refusal_reason').value||null,
+    refusal_employee_signature:document.getElementById('med_refusal_sig').value||null,
+    refusal_witness_name:document.getElementById('med_refusal_witness').value||null,
+    refusal_date:document.getElementById('med_refusal_date').value||null,
+    updated_at:new Date().toISOString()
+  };
+
+  try{
+    if(currentMedical){
+      const{error}=await sb.from('incident_medical').update(row).eq('id',currentMedical.id);
+      if(error)throw error;
+    }else{
+      const{data,error}=await sb.from('incident_medical').insert([row]).select();
+      if(error)throw error;
+      currentMedical=data[0];
+    }
+    showToast('Medical info saved!','success');
+    populateSummary();
+  }catch(e){showToast('Error: '+e.message,'error');}
+  btn.disabled=false;btn.textContent='Save Medical Info';
+}
+
+async function saveWcInfo(){
+  if(!currentIncident){showToast('No incident selected','error');return;}
+
+  // Gather WC checklist state
+  const checklist=[];
+  document.querySelectorAll('#wcChecklist input[type="checkbox"]').forEach(cb=>{
+    if(cb.checked)checklist.push(parseInt(cb.dataset.wc));
+  });
+
+  const wcFields={
+    incident_id:currentIncident.id,
+    wc_claim_number:document.getElementById('wc_claim_number').value||null,
+    wc_insurance_carrier:document.getElementById('wc_insurance_carrier').value||null,
+    wc_policy_number:document.getElementById('wc_policy_number').value||null,
+    wc_date_insurer_notified:document.getElementById('wc_date_notified').value||null,
+    wc_date_left_work:document.getElementById('wc_date_left').value||null,
+    wc_date_disability_onset:document.getElementById('wc_date_disability').value||null,
+    wc_notes:document.getElementById('wc_notes').value||null,
+    wc_checklist:checklist,
+    updated_at:new Date().toISOString()
+  };
+
+  try{
+    if(currentMedical){
+      const{error}=await sb.from('incident_medical').update(wcFields).eq('id',currentMedical.id);
+      if(error)throw error;
+    }else{
+      wcFields.medical_decision=medDecision||null;
+      const{data,error}=await sb.from('incident_medical').insert([wcFields]).select();
+      if(error)throw error;
+      currentMedical=data[0];
+    }
+    showToast('WC info saved!','success');
+    populateSummary();
+  }catch(e){showToast('Error: '+e.message,'error');}
+}
+
+// --- Statements Sub-Tab ---
+function populateStatements(){
+  const inc=currentIncident;
+  if(!inc)return;
+
+  // Reset
+  ifWitnessCount=0;
+  document.getElementById('witnessStmtContainer').innerHTML='';
+  document.getElementById('addWitnessStmtBtn').style.display='inline-flex';
+
+  // Employee statement defaults
+  document.getElementById('stmt_emp_name').value=inc.injured_name||'';
+  document.getElementById('stmt_emp_title').value=inc.injured_title||'';
+  document.getElementById('stmt_emp_date').value=inc.incident_date||'';
+  document.getElementById('stmt_emp_text').value='';
+
+  // Load existing statements
+  const empStmt=currentStatements.find(s=>s.statement_type==='employee');
+  if(empStmt){
+    document.getElementById('stmt_emp_name').value=empStmt.person_name||'';
+    document.getElementById('stmt_emp_title').value=empStmt.person_title||'';
+    document.getElementById('stmt_emp_date').value=empStmt.statement_date||'';
+    document.getElementById('stmt_emp_text').value=empStmt.statement_text||'';
+  }
+
+  const witnessStmts=currentStatements.filter(s=>s.statement_type==='witness');
+  witnessStmts.forEach(w=>addWitnessStatement(w));
+}
+
+function addWitnessStatement(data){
+  if(ifWitnessCount>=4)return;
+  ifWitnessCount++;
+  const n=ifWitnessCount;
+  const div=document.createElement('div');
+  div.className='stmt-card';
+  div.id='wstmt-'+n;
+  div.innerHTML=`
+    <div class="stmt-header">
+      <span class="stmt-type witness">Witness ${n}</span>
+      <button class="stmt-remove" onclick="removeWitnessStmt(${n})">Remove</button>
+    </div>
+    <div class="sv-row">
+      <div class="sv-field"><label class="sv-label">Name</label><input type="text" class="sv-input ws-name" value="${data?.person_name||''}"></div>
+      <div class="sv-field"><label class="sv-label">Title</label><input type="text" class="sv-input ws-title" value="${data?.person_title||''}"></div>
+    </div>
+    <div class="sv-row">
+      <div class="sv-field"><label class="sv-label">Contact</label><input type="text" class="sv-input ws-contact" value="${data?.person_contact||''}"></div>
+      <div class="sv-field"><label class="sv-label">Date</label><input type="date" class="sv-input ws-date" value="${data?.statement_date||''}"></div>
+    </div>
+    <div class="sv-field"><label class="sv-label">Statement</label><textarea class="sv-input sv-textarea ws-text" placeholder="Witness account in their own words...">${data?.statement_text||''}</textarea></div>
+  `;
+  if(data&&data.id)div.dataset.stmtId=data.id;
+  document.getElementById('witnessStmtContainer').appendChild(div);
+  if(ifWitnessCount>=4)document.getElementById('addWitnessStmtBtn').style.display='none';
+}
+
+function removeWitnessStmt(n){
+  const el=document.getElementById('wstmt-'+n);
+  if(el)el.remove();
+  ifWitnessCount--;
+  document.getElementById('addWitnessStmtBtn').style.display='inline-flex';
+}
+
+async function saveEmployeeStatement(){
+  if(!currentIncident){showToast('No incident selected','error');return;}
+  const row={
+    incident_id:currentIncident.id,
+    statement_type:'employee',
+    person_name:document.getElementById('stmt_emp_name').value||null,
+    person_title:document.getElementById('stmt_emp_title').value||null,
+    statement_text:document.getElementById('stmt_emp_text').value||null,
+    statement_date:document.getElementById('stmt_emp_date').value||null
+  };
+
+  try{
+    const existing=currentStatements.find(s=>s.statement_type==='employee');
+    if(existing){
+      const{error}=await sb.from('incident_statements').update(row).eq('id',existing.id);
+      if(error)throw error;
+    }else{
+      const{data,error}=await sb.from('incident_statements').insert([row]).select();
+      if(error)throw error;
+      currentStatements.push(data[0]);
+    }
+    showToast('Employee statement saved!','success');
+    populateSummary();
+  }catch(e){showToast('Error: '+e.message,'error');}
+}
+
+// Save all witness statements (called when saving investigation or manually)
+async function saveAllWitnessStatements(){
+  if(!currentIncident)return;
+
+  // Delete existing witness statements
+  await sb.from('incident_statements').delete().eq('incident_id',currentIncident.id).eq('statement_type','witness');
+
+  const blocks=document.querySelectorAll('#witnessStmtContainer .stmt-card');
+  const rows=[];
+  blocks.forEach(block=>{
+    const name=block.querySelector('.ws-name')?.value||'';
+    if(!name)return;
+    rows.push({
+      incident_id:currentIncident.id,
+      statement_type:'witness',
+      person_name:name,
+      person_title:block.querySelector('.ws-title')?.value||null,
+      person_contact:block.querySelector('.ws-contact')?.value||null,
+      statement_text:block.querySelector('.ws-text')?.value||null,
+      statement_date:block.querySelector('.ws-date')?.value||null
+    });
+  });
+
+  if(rows.length>0){
+    const{data,error}=await sb.from('incident_statements').insert(rows).select();
+    if(error)throw error;
+    // Update local cache
+    currentStatements=currentStatements.filter(s=>s.statement_type!=='witness');
+    currentStatements.push(...(data||[]));
+  }
+  showToast('Witness statements saved!','success');
+  populateSummary();
+}
+
+// --- Investigation Sub-Tab ---
+function populateInvestigation(){
+  const inc=currentIncident;
+  if(!inc)return;
+
+  // Reset CA container
+  caCount=0;
+  document.getElementById('caContainer').innerHTML='';
+
+  // Pre-fill investigation from incident data
+  document.getElementById('inv_who').value='';
+  document.getElementById('inv_what').value=inc.incident_description||'';
+  document.getElementById('inv_when').value='';
+  document.getElementById('inv_where').value=[inc.site_location,inc.specific_location].filter(Boolean).join(' — ');
+  document.getElementById('inv_why').value='';
+
+  // Reset contributing factors
+  document.querySelectorAll('#inv_cf_acts input').forEach(cb=>cb.checked=false);
+
+  // Reset close-out
+  document.getElementById('inv_closeout_safety').value='';
+  document.getElementById('inv_closeout_super').value='';
+  document.getElementById('inv_closeout_date').value='';
+  document.querySelectorAll('#inv_status_group .sv-radio-card').forEach(c=>c.classList.remove('selected'));
+
+  if(currentInvestigation){
+    const inv=currentInvestigation;
+    if(inv.who_involved)document.getElementById('inv_who').value=inv.who_involved;
+    if(inv.what_happened)document.getElementById('inv_what').value=inv.what_happened;
+    if(inv.when_details)document.getElementById('inv_when').value=inv.when_details;
+    if(inv.where_details)document.getElementById('inv_where').value=inv.where_details;
+    if(inv.why_root_cause)document.getElementById('inv_why').value=inv.why_root_cause;
+
+    // Contributing factors
+    if(inv.contributing_factors&&Array.isArray(inv.contributing_factors)){
+      document.querySelectorAll('#inv_cf_acts input').forEach(cb=>{
+        if(inv.contributing_factors.includes(cb.value))cb.checked=true;
+      });
+    }
+
+    // Corrective actions
+    if(inv.corrective_actions&&Array.isArray(inv.corrective_actions)){
+      inv.corrective_actions.forEach(ca=>addCorrectiveAction(ca));
+    }
+
+    // Close-out
+    if(inv.closeout_safety_mgr)document.getElementById('inv_closeout_safety').value=inv.closeout_safety_mgr;
+    if(inv.closeout_supervisor)document.getElementById('inv_closeout_super').value=inv.closeout_supervisor;
+    if(inv.closeout_date)document.getElementById('inv_closeout_date').value=inv.closeout_date;
+
+    // Status
+    if(inv.status){
+      const radio=document.querySelector(`input[name="inv_status"][value="${inv.status}"]`);
+      if(radio){radio.checked=true;radio.closest('.sv-radio-card').classList.add('selected');}
+    }
+  }
+}
+
+function addCorrectiveAction(data){
+  caCount++;
+  const n=caCount;
+  const div=document.createElement('div');
+  div.className='ca-row';
+  div.id='ca-'+n;
+  const sts=data?.status||'open';
+  div.innerHTML=`
+    <div class="sv-field" style="margin:0"><input type="text" class="sv-input ca-action" placeholder="Corrective action description" value="${data?.action||''}"></div>
+    <div class="sv-field" style="margin:0"><input type="text" class="sv-input ca-owner" placeholder="Owner" value="${data?.owner||''}"></div>
+    <div class="sv-field" style="margin:0"><input type="date" class="sv-input ca-due" value="${data?.due_date||''}"></div>
+    <select class="sv-input ca-status-sel" style="width:auto;min-width:100px;padding:.5rem;font-size:.72rem" onchange="updateCaStatusColor(this)">
+      <option value="open" ${sts==='open'?'selected':''}>Open</option>
+      <option value="in_progress" ${sts==='in_progress'?'selected':''}>In Progress</option>
+      <option value="completed" ${sts==='completed'?'selected':''}>Completed</option>
+    </select>
+  `;
+  document.getElementById('caContainer').appendChild(div);
+}
+
+function updateCaStatusColor(sel){
+  // Visual feedback handled by select value
+}
+
+async function saveInvestigation(){
+  if(!currentIncident){showToast('No incident selected','error');return;}
+
+  // Gather contributing factors
+  const factors=[...document.querySelectorAll('#inv_cf_acts input:checked')].map(cb=>cb.value);
+
+  // Gather corrective actions
+  const actions=[];
+  document.querySelectorAll('.ca-row').forEach(row=>{
+    const action=row.querySelector('.ca-action')?.value||'';
+    if(!action)return;
+    actions.push({
+      action,
+      owner:row.querySelector('.ca-owner')?.value||'',
+      due_date:row.querySelector('.ca-due')?.value||'',
+      status:row.querySelector('.ca-status-sel')?.value||'open'
+    });
+  });
+
+  const invStatus=document.querySelector('input[name="inv_status"]:checked')?.value||'open';
+
+  const row={
+    incident_id:currentIncident.id,
+    who_involved:document.getElementById('inv_who').value||null,
+    what_happened:document.getElementById('inv_what').value||null,
+    when_details:document.getElementById('inv_when').value||null,
+    where_details:document.getElementById('inv_where').value||null,
+    why_root_cause:document.getElementById('inv_why').value||null,
+    contributing_factors:factors,
+    corrective_actions:actions,
+    closeout_safety_mgr:document.getElementById('inv_closeout_safety').value||null,
+    closeout_supervisor:document.getElementById('inv_closeout_super').value||null,
+    closeout_date:document.getElementById('inv_closeout_date').value||null,
+    status:invStatus,
+    updated_at:new Date().toISOString()
+  };
+
+  try{
+    if(currentInvestigation){
+      const{error}=await sb.from('incident_investigation').update(row).eq('id',currentInvestigation.id);
+      if(error)throw error;
+    }else{
+      const{data,error}=await sb.from('incident_investigation').insert([row]).select();
+      if(error)throw error;
+      currentInvestigation=data[0];
+    }
+    showToast('Investigation saved!','success');
+    populateSummary();
+  }catch(e){showToast('Error: '+e.message,'error');}
+}
+
+// --- Return to Work Sub-Tab ---
+function populateRtw(){
+  // Reset
+  rtwStatus='';
+  document.querySelectorAll('.rtw-btn').forEach(b=>b.className='rtw-btn');
+  document.getElementById('rtwModifiedFields').style.display='none';
+  ['rtw_physician','rtw_eval_date','rtw_restrictions','rtw_modified_duties','rtw_duration','rtw_followup','rtw_supervisor'].forEach(id=>{
+    const el=document.getElementById(id);if(el)el.value='';
+  });
+  document.getElementById('rtw_acknowledged').checked=false;
+
+  if(currentRtw){
+    const r=currentRtw;
+    if(r.clearance_status)setRtwStatus(r.clearance_status);
+    if(r.physician_name)document.getElementById('rtw_physician').value=r.physician_name;
+    if(r.eval_date)document.getElementById('rtw_eval_date').value=r.eval_date;
+    if(r.restrictions)document.getElementById('rtw_restrictions').value=r.restrictions;
+    if(r.modified_duties)document.getElementById('rtw_modified_duties').value=r.modified_duties;
+    if(r.restriction_duration)document.getElementById('rtw_duration').value=r.restriction_duration;
+    if(r.next_followup_date)document.getElementById('rtw_followup').value=r.next_followup_date;
+    if(r.supervisor_name)document.getElementById('rtw_supervisor').value=r.supervisor_name;
+    if(r.employee_acknowledged)document.getElementById('rtw_acknowledged').checked=true;
+  }
+}
+
+function setRtwStatus(status){
+  rtwStatus=status;
+  document.querySelectorAll('.rtw-btn').forEach(b=>b.className='rtw-btn');
+  const btns=document.querySelectorAll('.rtw-btn');
+  if(status==='full')btns[0].classList.add('active-full');
+  else if(status==='modified')btns[1].classList.add('active-modified');
+  else if(status==='not_cleared')btns[2].classList.add('active-not');
+  document.getElementById('rtwModifiedFields').style.display=(status==='modified')?'block':'none';
+}
+
+async function saveRtw(){
+  if(!currentIncident){showToast('No incident selected','error');return;}
+  const row={
+    incident_id:currentIncident.id,
+    clearance_status:rtwStatus||null,
+    physician_name:document.getElementById('rtw_physician').value||null,
+    eval_date:document.getElementById('rtw_eval_date').value||null,
+    restrictions:document.getElementById('rtw_restrictions').value||null,
+    modified_duties:document.getElementById('rtw_modified_duties').value||null,
+    restriction_duration:document.getElementById('rtw_duration').value||null,
+    next_followup_date:document.getElementById('rtw_followup').value||null,
+    supervisor_name:document.getElementById('rtw_supervisor').value||null,
+    employee_acknowledged:document.getElementById('rtw_acknowledged').checked,
+    updated_at:new Date().toISOString()
+  };
+
+  try{
+    if(currentRtw){
+      const{error}=await sb.from('incident_rtw').update(row).eq('id',currentRtw.id);
+      if(error)throw error;
+    }else{
+      const{data,error}=await sb.from('incident_rtw').insert([row]).select();
+      if(error)throw error;
+      currentRtw=data[0];
+    }
+    showToast('Return to work info saved!','success');
+    populateSummary();
+  }catch(e){showToast('Error: '+e.message,'error');}
+}
+
+// --- Documents Sub-Tab: PDF Generation ---
+async function downloadIfOsha301(){
+  if(!currentIncident){showToast('No incident selected','error');return;}
+  try{await generateOSHA301PDF(currentIncident);showToast('OSHA 301 downloaded!','success');}
+  catch(e){showToast('Error: '+e.message,'error');}
+}
+
+async function downloadIfMedReferral(){
+  if(!currentIncident||!currentMedical){showToast('Save medical info first','error');return;}
+  generateTextPdf('Medical Referral Form',buildMedReferralContent());
+}
+
+async function downloadIfRefusal(){
+  if(!currentIncident||!currentMedical){showToast('Save medical info first','error');return;}
+  generateTextPdf('Refusal of Treatment',buildRefusalContent());
+}
+
+async function downloadIfInvestigation(){
+  if(!currentIncident||!currentInvestigation){showToast('Save investigation first','error');return;}
+  generateTextPdf('Investigation Report',buildInvestigationContent());
+}
+
+async function downloadIfRtw(){
+  if(!currentIncident||!currentRtw){showToast('Save return to work info first','error');return;}
+  generateTextPdf('Return to Work Clearance',buildRtwContent());
+}
+
+function buildMedReferralContent(){
+  const inc=currentIncident;const m=currentMedical;
+  const yr=inc.incident_date?new Date(inc.incident_date).getFullYear():new Date().getFullYear();
+  const displayId=yr+'-'+String(inc.case_number).padStart(4,'0');
+  return [
+    'MEDICAL REFERRAL AUTHORIZATION','Incident #'+displayId,'',
+    'Employee: '+(inc.injured_name||'N/A'),
+    'Date of Injury: '+(inc.incident_date||'N/A'),
+    'Injury: '+((inc.injury_types||[]).join(', '))+' - '+(inc.body_part||''),
+    '','Referred Clinic: '+(m.clinic_name||'N/A'),
+    'Address: '+(m.clinic_address||'N/A'),
+    'Phone: '+(m.clinic_phone||'N/A'),
+    '','Authorization Notes: '+(m.authorization_notes||'N/A'),
+    '','Reported By: '+(inc.reporting_party_name||''),'Title: '+(inc.reporting_party_title||''),
+    'Date: '+new Date().toLocaleDateString()
+  ];
+}
+
+function buildRefusalContent(){
+  const inc=currentIncident;const m=currentMedical;
+  const yr=inc.incident_date?new Date(inc.incident_date).getFullYear():new Date().getFullYear();
+  const displayId=yr+'-'+String(inc.case_number).padStart(4,'0');
+  return [
+    'REFUSAL OF MEDICAL TREATMENT','Incident #'+displayId,'',
+    'Employee: '+(inc.injured_name||'N/A'),
+    'Date of Injury: '+(inc.incident_date||'N/A'),
+    'Injury: '+((inc.injury_types||[]).join(', '))+' - '+(inc.body_part||''),
+    '','Reason for Refusal: '+(m.refusal_reason||'N/A'),
+    '','Employee Signature: '+(m.refusal_employee_signature||'N/A'),
+    'Witness: '+(m.refusal_witness_name||'N/A'),
+    'Refusal Date: '+(m.refusal_date||'N/A')
+  ];
+}
+
+function buildInvestigationContent(){
+  const inc=currentIncident;const inv=currentInvestigation;
+  const yr=inc.incident_date?new Date(inc.incident_date).getFullYear():new Date().getFullYear();
+  const displayId=yr+'-'+String(inc.case_number).padStart(4,'0');
+  const cas=(inv.corrective_actions||[]).map((ca,i)=>
+    `  ${i+1}. ${ca.action} | Owner: ${ca.owner} | Due: ${ca.due_date} | Status: ${ca.status}`
+  ).join('\n');
+  return [
+    'INCIDENT INVESTIGATION REPORT','Incident #'+displayId,'Status: '+(inv.status||'open').toUpperCase(),'',
+    'WHO: '+(inv.who_involved||'N/A'),'',
+    'WHAT: '+(inv.what_happened||'N/A'),'',
+    'WHEN: '+(inv.when_details||'N/A'),'',
+    'WHERE: '+(inv.where_details||'N/A'),'',
+    'WHY (Root Cause): '+(inv.why_root_cause||'N/A'),'',
+    'Contributing Factors: '+((inv.contributing_factors||[]).join(', ')||'None'),'',
+    'CORRECTIVE ACTIONS:',cas||'  None','',
+    'CLOSE-OUT:',
+    'Safety Manager: '+(inv.closeout_safety_mgr||'N/A'),
+    'Supervisor: '+(inv.closeout_supervisor||'N/A'),
+    'Close-Out Date: '+(inv.closeout_date||'N/A')
+  ];
+}
+
+function buildRtwContent(){
+  const inc=currentIncident;const r=currentRtw;
+  const yr=inc.incident_date?new Date(inc.incident_date).getFullYear():new Date().getFullYear();
+  const displayId=yr+'-'+String(inc.case_number).padStart(4,'0');
+  const statusLabel={full:'Full Duty',modified:'Modified / Light Duty',not_cleared:'Not Yet Cleared'};
+  return [
+    'RETURN TO WORK CLEARANCE','Incident #'+displayId,'',
+    'Employee: '+(inc.injured_name||'N/A'),
+    'Clearance Status: '+(statusLabel[r.clearance_status]||'N/A'),'',
+    'Physician: '+(r.physician_name||'N/A'),
+    'Evaluation Date: '+(r.eval_date||'N/A'),'',
+    ...(r.clearance_status==='modified'?[
+      'Restrictions: '+(r.restrictions||'N/A'),
+      'Modified Duties: '+(r.modified_duties||'N/A'),
+      'Duration: '+(r.restriction_duration||'N/A'),
+      'Next Follow-Up: '+(r.next_followup_date||'N/A'),''
+    ]:[]),
+    'Supervisor: '+(r.supervisor_name||'N/A'),
+    'Employee Acknowledged: '+(r.employee_acknowledged?'Yes':'No'),
+    '','Date: '+new Date().toLocaleDateString()
+  ];
+}
+
+async function generateTextPdf(title,lines){
+  const{PDFDocument,StandardFonts,rgb}=PDFLib;
+  const doc=await PDFDocument.create();
+  const font=await doc.embedFont(StandardFonts.Helvetica);
+  const boldFont=await doc.embedFont(StandardFonts.HelveticaBold);
+  let page=doc.addPage([612,792]);
+  let y=742;
+  const margin=50;
+  const maxW=612-margin*2;
+
+  // Title
+  page.drawText(title,{x:margin,y,font:boldFont,size:16,color:rgb(0,0,0)});
+  y-=8;
+  page.drawLine({start:{x:margin,y},end:{x:612-margin,y},thickness:1,color:rgb(.8,.6,0)});
+  y-=20;
+
+  for(const line of lines){
+    if(y<60){page=doc.addPage([612,792]);y=742;}
+    const isHeader=line===line.toUpperCase()&&line.length>2&&!line.startsWith(' ');
+    const f=isHeader?boldFont:font;
+    const size=isHeader?11:10;
+    // Word wrap
+    const words=line.split(' ');
+    let cur='';
+    for(const w of words){
+      const test=cur?cur+' '+w:w;
+      if(f.widthOfTextAtSize(test,size)>maxW){
+        page.drawText(cur,{x:margin,y,font:f,size,color:rgb(0,0,0)});
+        y-=15;
+        if(y<60){page=doc.addPage([612,792]);y=742;}
+        cur=w;
+      }else{cur=test;}
+    }
+    if(cur){page.drawText(cur,{x:margin,y,font:f,size,color:rgb(0,0,0)});y-=15;}
+    if(!line)y-=5;
+  }
+
+  const bytes=await doc.save();
+  const slug=title.toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9-]/g,'');
+  const caseNum=currentIncident?currentIncident.case_number:'0';
+  downloadBlob(bytes,slug+'-case-'+caseNum+'.pdf');
+  showToast(title+' downloaded!','success');
+}
+
+// Open Incident File for a specific incident (called from success screen or past reports)
+function openIncidentFile(incidentId){
+  showPanel('file');
+  setTimeout(()=>{
+    const sel=document.getElementById('ifCaseSelect');
+    sel.value=String(incidentId);
+    loadIncidentFile();
+  },300);
+}
+
+// Open Incident File from the success screen after submission
+function openIncidentFileFromLast(){
+  if(!lastSubmitted||!lastSubmitted.id){showToast('No recent submission','error');return;}
+  openIncidentFile(lastSubmitted.id);
 }
 </script>
 </body>
