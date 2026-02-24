@@ -22,18 +22,18 @@ app.use((req, res, next) => {
 
 // ── Job Sites ───────────────────────────────────────────
 
-app.get('/api/sites', (req, res) => {
+app.get('/api/sites', async (req, res) => {
   try {
-    const sites = db.getAllSites();
+    const sites = await db.getAllSites();
     res.json(sites);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
 
-app.get('/api/sites/:id', (req, res) => {
+app.get('/api/sites/:id', async (req, res) => {
   try {
-    const site = db.getSiteById(req.params.id);
+    const site = await db.getSiteById(req.params.id);
     if (!site) return res.status(404).json({ error: 'Site not found' });
     res.json(site);
   } catch (err) {
@@ -41,13 +41,13 @@ app.get('/api/sites/:id', (req, res) => {
   }
 });
 
-app.post('/api/sites', (req, res) => {
+app.post('/api/sites', async (req, res) => {
   try {
     const { name, city, state, latitude, longitude, manager_name, manager_email } = req.body;
     if (!name || latitude == null || longitude == null) {
       return res.status(400).json({ error: 'Name, latitude, and longitude are required' });
     }
-    const site = db.createSite({
+    const site = await db.createSite({
       name, city: city || null, state: state || null,
       latitude: parseFloat(latitude), longitude: parseFloat(longitude),
       manager_name: manager_name || null, manager_email: manager_email || null
@@ -58,12 +58,12 @@ app.post('/api/sites', (req, res) => {
   }
 });
 
-app.put('/api/sites/:id', (req, res) => {
+app.put('/api/sites/:id', async (req, res) => {
   try {
-    const existing = db.getSiteById(req.params.id);
+    const existing = await db.getSiteById(req.params.id);
     if (!existing) return res.status(404).json({ error: 'Site not found' });
     const { name, city, state, latitude, longitude, manager_name, manager_email } = req.body;
-    const updated = db.updateSite(req.params.id, {
+    const updated = await db.updateSite(req.params.id, {
       name: name || existing.name,
       city: city !== undefined ? city : existing.city,
       state: state !== undefined ? state : existing.state,
@@ -78,11 +78,11 @@ app.put('/api/sites/:id', (req, res) => {
   }
 });
 
-app.delete('/api/sites/:id', (req, res) => {
+app.delete('/api/sites/:id', async (req, res) => {
   try {
-    const existing = db.getSiteById(req.params.id);
+    const existing = await db.getSiteById(req.params.id);
     if (!existing) return res.status(404).json({ error: 'Site not found' });
-    db.deactivateSite(req.params.id);
+    await db.deactivateSite(req.params.id);
     res.json({ success: true });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -93,7 +93,7 @@ app.delete('/api/sites/:id', (req, res) => {
 
 app.get('/api/weather/all', async (req, res) => {
   try {
-    const sites = db.getAllSites();
+    const sites = await db.getAllSites();
     const results = await Promise.allSettled(
       sites.map(async site => {
         const conditions = await weather.fetchAllConditions(site.latitude, site.longitude);
@@ -112,7 +112,7 @@ app.get('/api/weather/all', async (req, res) => {
 
 app.get('/api/weather/:siteId', async (req, res) => {
   try {
-    const site = db.getSiteById(req.params.siteId);
+    const site = await db.getSiteById(req.params.siteId);
     if (!site) return res.status(404).json({ error: 'Site not found' });
     const conditions = await weather.fetchAllConditions(site.latitude, site.longitude);
     res.json({ site, conditions });
@@ -123,10 +123,10 @@ app.get('/api/weather/:siteId', async (req, res) => {
 
 // ── Alerts ──────────────────────────────────────────────
 
-app.get('/api/alerts', (req, res) => {
+app.get('/api/alerts', async (req, res) => {
   try {
     const { siteId, limit = 50, offset = 0 } = req.query;
-    const alerts = db.getAlertHistory({
+    const alerts = await db.getAlertHistory({
       siteId: siteId ? parseInt(siteId) : null,
       limit: parseInt(limit),
       offset: parseInt(offset)
@@ -137,9 +137,9 @@ app.get('/api/alerts', (req, res) => {
   }
 });
 
-app.get('/api/alerts/active', (req, res) => {
+app.get('/api/alerts/active', async (req, res) => {
   try {
-    const alerts = db.getActiveAlerts();
+    const alerts = await db.getActiveAlerts();
     res.json(alerts);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -163,7 +163,12 @@ app.get('/api/config/thresholds', (req, res) => {
 
 // ── Start ───────────────────────────────────────────────
 
-app.listen(config.PORT, '0.0.0.0', () => {
-  console.log(`Weather Alerts server running on port ${config.PORT}`);
-  startScheduler();
+db.initDb().then(() => {
+  app.listen(config.PORT, '0.0.0.0', () => {
+    console.log(`Weather Alerts server running on port ${config.PORT}`);
+    startScheduler();
+  });
+}).catch(err => {
+  console.error('Failed to initialize database:', err);
+  process.exit(1);
 });

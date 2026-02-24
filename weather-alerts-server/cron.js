@@ -9,7 +9,7 @@ async function runWeatherCheck() {
   const startTime = Date.now();
   console.log(`\n[CRON] Weather check started at ${new Date().toISOString()}`);
 
-  const sites = db.getAllSites();
+  const sites = await db.getAllSites();
   if (sites.length === 0) {
     console.log('[CRON] No active job sites. Skipping.');
     return { sitesChecked: 0, alertsSent: 0 };
@@ -61,7 +61,7 @@ async function checkSite(site) {
 
   for (const alert of allAlerts) {
     // Check cooldown
-    if (db.isCooldownActive(site.id, alert.type)) {
+    if (await db.isCooldownActive(site.id, alert.type)) {
       console.log(`  [${site.name}] ${alert.label} — COOLDOWN ACTIVE, skipping`);
       continue;
     }
@@ -86,7 +86,7 @@ async function checkSite(site) {
     }
 
     // Record alert
-    db.insertAlert({
+    await db.insertAlert({
       site_id: site.id,
       alert_type: alert.type,
       severity: alert.severity || 'watch',
@@ -100,7 +100,7 @@ async function checkSite(site) {
     });
 
     // Set cooldown
-    db.setCooldown(site.id, alert.type);
+    await db.setCooldown(site.id, alert.type);
     alertCount++;
   }
 

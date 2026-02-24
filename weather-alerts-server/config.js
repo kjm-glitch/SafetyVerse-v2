@@ -4,7 +4,8 @@ module.exports = {
   // Railway sets PORT automatically; falls back to 3456 for local dev
   PORT: process.env.PORT || 3456,
 
-  DB_PATH: path.join(__dirname, 'data', 'weather-alerts.db'),
+  // Railway injects DATABASE_URL when Postgres plugin is attached
+  DATABASE_URL: process.env.DATABASE_URL || 'postgresql://localhost:5432/weather_alerts',
 
   // Serve from local public/ folder (works on Railway and locally)
   STATIC_DIR: path.join(__dirname, 'public'),

@@ -483,7 +483,7 @@ async function loadDashboard() {
 
 function renderAlertItem(a) {
   const sev = a.severity || 'watch';
-  const time = new Date(a.created_at + 'Z').toLocaleString();
+  const time = new Date(a.created_at).toLocaleString();
   const label = ALERT_LABELS[a.alert_type] || a.alert_type;
   const unit = alertUnit(a.alert_type);
   const thresholdInfo = a.threshold_value && unit ? `${a.actual_value}${unit} exceeds ${a.threshold_value}${unit}` : '';
@@ -611,7 +611,7 @@ async function loadHistory(append = false) {
     let html = append ? area.innerHTML : '';
     for (const a of alerts) {
       const sev = a.severity || 'watch';
-      const time = new Date(a.created_at + 'Z').toLocaleString();
+      const time = new Date(a.created_at).toLocaleString();
       const label = ALERT_LABELS[a.alert_type] || a.alert_type;
       const unit = alertUnit(a.alert_type);
       const valuesLine = a.threshold_value && unit ? `Threshold: ${a.threshold_value}${unit} | Actual: ${a.actual_value}${unit}` : '';
