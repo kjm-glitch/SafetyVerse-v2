@@ -13,11 +13,36 @@ module.exports = {
 
   COOLDOWN_HOURS: 4,
 
+  // ── Current condition thresholds (trigger ORANGE watch) ──
   THRESHOLDS: {
     heat_index: 95,    // °F apparent temperature
     cold_temp: 20,     // °F temperature
     wind_speed: 45,    // mph
     aqi: 150           // US AQI
+  },
+
+  // ── Forecast thresholds (trigger YELLOW advisory, 24hr lookahead) ──
+  FORECAST_THRESHOLDS: {
+    heat_index: 95,    // °F projected apparent temperature
+    cold_temp: 20,     // °F projected temperature
+    wind_speed: 45,    // mph projected wind
+    aqi: 150           // projected AQI
+  },
+
+  // ── Severe weather codes from Open-Meteo ──
+  // Winter: freezing rain, snow, heavy snow, snow showers
+  WINTER_WEATHER_CODES: [66, 67, 71, 73, 75, 77, 85, 86],
+  // Storms: thunderstorm, thunderstorm with hail
+  SEVERE_STORM_CODES: [95, 96, 99],
+
+  // ── Severity tiers ──
+  //   advisory (yellow)  = forecast shows threshold will be crossed in next 24h
+  //   watch    (orange)   = threshold crossed NOW or severe weather forecasted
+  //   warning  (red)      = dangerous conditions active NOW or NWS severe alert
+  SEVERITY: {
+    advisory: { label: 'ADVISORY', color: '#eab308' },    // yellow
+    watch:    { label: 'WATCH',    color: '#f97316' },     // orange
+    warning:  { label: 'WARNING',  color: '#ef4444' }      // red
   },
 
   // Email config — set via environment variables on Railway, or edit here for local dev

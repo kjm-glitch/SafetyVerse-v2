@@ -36,8 +36,10 @@ db.exec(`
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     site_id INTEGER NOT NULL,
     alert_type TEXT NOT NULL,
+    severity TEXT DEFAULT 'watch',
     threshold_value REAL NOT NULL,
     actual_value REAL NOT NULL,
+    description TEXT,
     conditions_json TEXT,
     forecast_json TEXT,
     email_sent INTEGER DEFAULT 0,
@@ -55,6 +57,14 @@ db.exec(`
     FOREIGN KEY (site_id) REFERENCES job_sites(id) ON DELETE CASCADE
   );
 `);
+
+// ── Migration: add severity + description columns if missing ──
+try {
+  db.exec(`ALTER TABLE alert_history ADD COLUMN severity TEXT DEFAULT 'watch'`);
+} catch (e) { /* column already exists */ }
+try {
+  db.exec(`ALTER TABLE alert_history ADD COLUMN description TEXT`);
+} catch (e) { /* column already exists */ }
 
 // ── Job Sites ───────────────────────────────────────────
 
@@ -77,8 +87,8 @@ const stmts = {
 
   // Alert history
   insertAlert: db.prepare(`
-    INSERT INTO alert_history (site_id, alert_type, threshold_value, actual_value, conditions_json, forecast_json, email_sent, email_recipient)
-    VALUES (@site_id, @alert_type, @threshold_value, @actual_value, @conditions_json, @forecast_json, @email_sent, @email_recipient)
+    INSERT INTO alert_history (site_id, alert_type, severity, threshold_value, actual_value, description, conditions_json, forecast_json, email_sent, email_recipient)
+    VALUES (@site_id, @alert_type, @severity, @threshold_value, @actual_value, @description, @conditions_json, @forecast_json, @email_sent, @email_recipient)
   `),
   getAlertHistory: db.prepare(`
     SELECT ah.*, js.name as site_name, js.city, js.state
@@ -100,7 +110,14 @@ const stmts = {
     FROM alert_history ah
     JOIN job_sites js ON ah.site_id = js.id
     WHERE ah.created_at >= datetime('now', '-4 hours')
-    ORDER BY ah.created_at DESC
+    ORDER BY
+      CASE ah.severity
+        WHEN 'warning' THEN 1
+        WHEN 'watch' THEN 2
+        WHEN 'advisory' THEN 3
+        ELSE 4
+      END,
+      ah.created_at DESC
   `),
 
   // Cooldowns

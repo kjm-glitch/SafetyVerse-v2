@@ -22,16 +22,17 @@ function isEmailConfigured() {
 function renderAlertEmail(alert, site, conditions, forecast) {
   const protocol = getSafetyProtocol(alert.type);
   const ppe = getPpeReminders(alert.type);
-  const isHeat = alert.type === 'heat_index';
+  const isHeat = alert.type === 'heat_index' || alert.type === 'forecast_heat';
   const hydration = isHeat ? getHydrationSchedule() : [];
 
-  const alertColors = {
-    heat_index: { bg: '#fef2f2', border: '#dc2626', banner: '#dc2626' },
-    cold_temp: { bg: '#eff6ff', border: '#2563eb', banner: '#2563eb' },
-    wind_speed: { bg: '#fefce8', border: '#ca8a04', banner: '#ca8a04' },
-    aqi: { bg: '#faf5ff', border: '#7c3aed', banner: '#7c3aed' }
+  // Severity-based colors for email
+  const severityColors = {
+    warning:  { bg: '#fef2f2', border: '#dc2626', banner: '#dc2626' },  // red
+    watch:    { bg: '#fff7ed', border: '#ea580c', banner: '#ea580c' },  // orange
+    advisory: { bg: '#fefce8', border: '#ca8a04', banner: '#ca8a04' }   // yellow
   };
-  const colors = alertColors[alert.type] || alertColors.heat_index;
+  const colors = severityColors[alert.severity] || severityColors.watch;
+  const severityLabel = (alert.severity || 'watch').toUpperCase();
 
   const now = new Date();
   const timestamp = now.toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' });
@@ -52,6 +53,28 @@ function renderAlertEmail(alert, site, conditions, forecast) {
   const c = conditions.current;
   const aqiDisplay = c.aqi != null ? `${c.aqi} (${c.aqi_label})` : 'N/A';
 
+  // Build description line for forecast/NWS alerts
+  const descriptionBlock = alert.description ? `
+    <p style="margin:8px 0 0;font-size:14px;color:#334155;font-style:italic;">${alert.description}</p>
+  ` : '';
+
+  // NWS instruction block
+  const nwsBlock = alert.nwsDetail?.instruction ? `
+  <div style="padding:18px;margin:16px 20px 0;background:#fef2f2;border-left:5px solid #dc2626;border-radius:0 8px 8px 0;">
+    <h3 style="margin:0 0 10px;font-size:16px;color:#dc2626;">NWS Instructions</h3>
+    <p style="font-size:14px;color:#334155;line-height:1.6;margin:0;">${alert.nwsDetail.instruction}</p>
+    ${alert.nwsDetail.senderName ? `<p style="font-size:12px;color:#94a3b8;margin:8px 0 0;">Source: ${alert.nwsDetail.senderName}</p>` : ''}
+    ${alert.nwsDetail.expires ? `<p style="font-size:12px;color:#94a3b8;margin:4px 0 0;">Expires: ${new Date(alert.nwsDetail.expires).toLocaleString('en-US')}</p>` : ''}
+  </div>
+  ` : '';
+
+  // Threshold line — skip for weather-code-based alerts
+  const thresholdLine = alert.threshold && alert.unit ? `
+    <p style="margin:0;font-size:14px;color:#475569;">
+      Threshold: ${alert.threshold}${alert.unit} &nbsp;|&nbsp; Actual: <strong>${alert.actual}${alert.unit}</strong>
+    </p>
+  ` : '';
+
   return `
 <!DOCTYPE html>
 <html>
@@ -61,7 +84,7 @@ function renderAlertEmail(alert, site, conditions, forecast) {
 
   <!-- Header -->
   <div style="background:${colors.banner};color:#ffffff;padding:24px;text-align:center;">
-    <h1 style="margin:0;font-size:22px;">Weather Safety Alert</h1>
+    <h1 style="margin:0;font-size:22px;">Weather Safety ${severityLabel}</h1>
     <p style="margin:6px 0 0;font-size:13px;opacity:0.9;">TheSafetyVerse Automated Weather Monitoring</p>
   </div>
 
@@ -69,10 +92,11 @@ function renderAlertEmail(alert, site, conditions, forecast) {
   <div style="background:${colors.bg};border-left:5px solid ${colors.border};padding:18px;margin:20px;">
     <h2 style="margin:0 0 8px;font-size:18px;color:${colors.border};">${alert.label}</h2>
     <p style="margin:0 0 4px;font-size:15px;"><strong>${site.name}</strong> — ${site.city || ''}${site.state ? ', ' + site.state : ''}</p>
-    <p style="margin:0;font-size:14px;color:#475569;">
-      Threshold: ${alert.threshold}${alert.unit} &nbsp;|&nbsp; Actual: <strong>${alert.actual}${alert.unit}</strong>
-    </p>
+    ${thresholdLine}
+    ${descriptionBlock}
   </div>
+
+  ${nwsBlock}
 
   <!-- Current Conditions -->
   <div style="padding:18px;margin:0 20px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;">
