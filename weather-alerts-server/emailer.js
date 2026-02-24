@@ -1,0 +1,179 @@
+const nodemailer = require('nodemailer');
+const config = require('./config');
+const { getSafetyProtocol, getPpeReminders, getHydrationSchedule } = require('./alerts');
+
+let transporter = null;
+
+function createTransporter() {
+  if (transporter) return transporter;
+  transporter = nodemailer.createTransport({
+    host: config.EMAIL.host,
+    port: config.EMAIL.port,
+    secure: config.EMAIL.secure,
+    auth: config.EMAIL.auth
+  });
+  return transporter;
+}
+
+function isEmailConfigured() {
+  return config.EMAIL.host !== 'smtp.example.com' && config.EMAIL.auth.user !== 'your-email@example.com';
+}
+
+function renderAlertEmail(alert, site, conditions, forecast) {
+  const protocol = getSafetyProtocol(alert.type);
+  const ppe = getPpeReminders(alert.type);
+  const isHeat = alert.type === 'heat_index';
+  const hydration = isHeat ? getHydrationSchedule() : [];
+
+  const alertColors = {
+    heat_index: { bg: '#fef2f2', border: '#dc2626', banner: '#dc2626' },
+    cold_temp: { bg: '#eff6ff', border: '#2563eb', banner: '#2563eb' },
+    wind_speed: { bg: '#fefce8', border: '#ca8a04', banner: '#ca8a04' },
+    aqi: { bg: '#faf5ff', border: '#7c3aed', banner: '#7c3aed' }
+  };
+  const colors = alertColors[alert.type] || alertColors.heat_index;
+
+  const now = new Date();
+  const timestamp = now.toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' });
+
+  // Forecast rows (every 3 hours)
+  const forecastRows = (forecast || []).map(h => {
+    const time = new Date(h.time).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+    const aqiCell = h.aqi != null ? `${h.aqi} (${h.aqi_label})` : 'N/A';
+    return `<tr>
+      <td style="padding:6px 10px;border-bottom:1px solid #e2e8f0;">${time}</td>
+      <td style="padding:6px 10px;border-bottom:1px solid #e2e8f0;">${h.temperature}°F</td>
+      <td style="padding:6px 10px;border-bottom:1px solid #e2e8f0;">${h.apparent_temperature}°F</td>
+      <td style="padding:6px 10px;border-bottom:1px solid #e2e8f0;">${h.wind_speed} mph</td>
+      <td style="padding:6px 10px;border-bottom:1px solid #e2e8f0;">${aqiCell}</td>
+    </tr>`;
+  }).join('');
+
+  const c = conditions.current;
+  const aqiDisplay = c.aqi != null ? `${c.aqi} (${c.aqi_label})` : 'N/A';
+
+  return `
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"></head>
+<body style="margin:0;padding:0;background:#f1f5f9;font-family:Arial,Helvetica,sans-serif;">
+<div style="max-width:640px;margin:0 auto;background:#ffffff;">
+
+  <!-- Header -->
+  <div style="background:${colors.banner};color:#ffffff;padding:24px;text-align:center;">
+    <h1 style="margin:0;font-size:22px;">Weather Safety Alert</h1>
+    <p style="margin:6px 0 0;font-size:13px;opacity:0.9;">TheSafetyVerse Automated Weather Monitoring</p>
+  </div>
+
+  <!-- Alert Banner -->
+  <div style="background:${colors.bg};border-left:5px solid ${colors.border};padding:18px;margin:20px;">
+    <h2 style="margin:0 0 8px;font-size:18px;color:${colors.border};">${alert.label}</h2>
+    <p style="margin:0 0 4px;font-size:15px;"><strong>${site.name}</strong> — ${site.city || ''}${site.state ? ', ' + site.state : ''}</p>
+    <p style="margin:0;font-size:14px;color:#475569;">
+      Threshold: ${alert.threshold}${alert.unit} &nbsp;|&nbsp; Actual: <strong>${alert.actual}${alert.unit}</strong>
+    </p>
+  </div>
+
+  <!-- Current Conditions -->
+  <div style="padding:18px;margin:0 20px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;">
+    <h3 style="margin:0 0 12px;font-size:16px;color:#1e293b;">Current Conditions</h3>
+    <table style="width:100%;font-size:14px;color:#334155;">
+      <tr><td style="padding:4px 0;width:45%;">Temperature:</td><td><strong>${c.temperature}°F</strong></td></tr>
+      <tr><td style="padding:4px 0;">Feels Like (Heat Index):</td><td><strong>${c.apparent_temperature}°F</strong></td></tr>
+      <tr><td style="padding:4px 0;">Wind Speed:</td><td><strong>${c.wind_speed} mph</strong></td></tr>
+      <tr><td style="padding:4px 0;">Air Quality (AQI):</td><td><strong>${aqiDisplay}</strong></td></tr>
+      <tr><td style="padding:4px 0;">Conditions:</td><td>${c.weather_description}</td></tr>
+    </table>
+  </div>
+
+  <!-- 24-Hour Forecast -->
+  <div style="padding:18px;margin:16px 20px 0;background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;">
+    <h3 style="margin:0 0 12px;font-size:16px;color:#1e293b;">24-Hour Forecast</h3>
+    <table style="width:100%;font-size:12px;color:#334155;border-collapse:collapse;">
+      <thead>
+        <tr style="background:#e2e8f0;">
+          <th style="padding:6px 10px;text-align:left;">Time</th>
+          <th style="padding:6px 10px;text-align:left;">Temp</th>
+          <th style="padding:6px 10px;text-align:left;">Feels Like</th>
+          <th style="padding:6px 10px;text-align:left;">Wind</th>
+          <th style="padding:6px 10px;text-align:left;">AQI</th>
+        </tr>
+      </thead>
+      <tbody>${forecastRows}</tbody>
+    </table>
+  </div>
+
+  <!-- Safety Protocol -->
+  <div style="padding:18px;margin:16px 20px 0;background:#fefce8;border-left:5px solid #f59e0b;border-radius:0 8px 8px 0;">
+    <h3 style="margin:0 0 10px;font-size:16px;color:#92400e;">Safety Protocol to Activate</h3>
+    <ul style="margin:0;padding-left:20px;font-size:14px;color:#334155;line-height:1.7;">
+      ${protocol.map(p => `<li>${p}</li>`).join('')}
+    </ul>
+  </div>
+
+  <!-- PPE Reminders -->
+  <div style="padding:18px;margin:16px 20px 0;background:#eff6ff;border-left:5px solid #3b82f6;border-radius:0 8px 8px 0;">
+    <h3 style="margin:0 0 10px;font-size:16px;color:#1e40af;">PPE Reminders</h3>
+    <ul style="margin:0;padding-left:20px;font-size:14px;color:#334155;line-height:1.7;">
+      ${ppe.map(p => `<li>${p}</li>`).join('')}
+    </ul>
+  </div>
+
+  ${isHeat ? `
+  <!-- Hydration Schedule -->
+  <div style="padding:18px;margin:16px 20px 0;background:#ecfdf5;border-left:5px solid #22c55e;border-radius:0 8px 8px 0;">
+    <h3 style="margin:0 0 10px;font-size:16px;color:#166534;">Hydration Schedule</h3>
+    <table style="width:100%;font-size:13px;color:#334155;border-collapse:collapse;">
+      ${hydration.map(h => `<tr>
+        <td style="padding:5px 0;width:40%;font-weight:600;">${h.range}</td>
+        <td style="padding:5px 0;">${h.instruction}</td>
+      </tr>`).join('')}
+    </table>
+  </div>
+  ` : ''}
+
+  <!-- Incident Reporting -->
+  <div style="padding:18px;margin:16px 20px 0;background:#faf5ff;border-left:5px solid #8b5cf6;border-radius:0 8px 8px 0;">
+    <h3 style="margin:0 0 10px;font-size:16px;color:#6b21a8;">Incident Reporting Reminder</h3>
+    <p style="font-size:14px;color:#334155;margin:0 0 8px;line-height:1.6;">
+      If any worker experiences symptoms related to weather conditions, report immediately using the SafetyVerse tools:
+    </p>
+    <p style="font-size:14px;margin:4px 0;"><strong>Incident Protocol:</strong> ${config.SITE_BASE_URL}/../incident-protocol/</p>
+    <p style="font-size:14px;margin:4px 0;"><strong>Incident Report:</strong> ${config.SITE_BASE_URL}/../incident-report/</p>
+  </div>
+
+  <!-- Footer -->
+  <div style="padding:20px;text-align:center;color:#94a3b8;font-size:12px;margin-top:20px;border-top:1px solid #e2e8f0;">
+    <p style="margin:0 0 4px;">Automated alert from TheSafetyVerse Weather Monitoring System</p>
+    <p style="margin:0;">Generated: ${timestamp} &nbsp;|&nbsp; Next check in 30 minutes</p>
+  </div>
+
+</div>
+</body>
+</html>`;
+}
+
+async function sendAlertEmail(to, subject, html) {
+  if (!isEmailConfigured()) {
+    console.log(`[EMAIL SKIPPED] Not configured. Would send to: ${to}`);
+    console.log(`  Subject: ${subject}`);
+    return { sent: false, reason: 'Email not configured' };
+  }
+
+  try {
+    const transport = createTransporter();
+    const info = await transport.sendMail({
+      from: config.EMAIL.from,
+      to,
+      subject,
+      html
+    });
+    console.log(`[EMAIL SENT] To: ${to} | Message ID: ${info.messageId}`);
+    return { sent: true, messageId: info.messageId };
+  } catch (err) {
+    console.error(`[EMAIL ERROR] To: ${to} | Error: ${err.message}`);
+    return { sent: false, reason: err.message };
+  }
+}
+
+module.exports = { renderAlertEmail, sendAlertEmail, isEmailConfigured };
