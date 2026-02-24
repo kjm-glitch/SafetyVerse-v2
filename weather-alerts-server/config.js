@@ -6,7 +6,8 @@ module.exports = {
 
   DB_PATH: path.join(__dirname, 'data', 'weather-alerts.db'),
 
-  STATIC_DIR: path.join(__dirname, '..', 'weather-alerts'),
+  // Serve from local public/ folder (works on Railway and locally)
+  STATIC_DIR: path.join(__dirname, 'public'),
 
   CRON_SCHEDULE: '*/30 * * * *', // every 30 minutes
 

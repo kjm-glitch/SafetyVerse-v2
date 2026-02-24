@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Weather Alerts - TheSafetyVerse</title>
+<link rel="icon" type="image/png" href="logo.png?v=2">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',sans-serif;background:#0f172a;color:#e2e8f0;min-height:100vh}
+
+/* ── Header ─────────────────────────── */
+.sv-header{display:flex;align-items:center;justify-content:space-between;padding:10px 20px;background:rgba(0,0,0,0.6);border-bottom:2px solid rgba(245,158,11,0.3)}
+.sv-header-left{display:flex;align-items:center;gap:14px}
+.sv-header .btn-back{display:flex;align-items:center;gap:6px;padding:6px 14px;border-radius:20px;background:rgba(245,158,11,0.15);border:1px solid rgba(245,158,11,0.3);color:#f59e0b;font-size:.8rem;font-weight:600;text-decoration:none;transition:all .2s}
+.sv-header .btn-back:hover{background:rgba(245,158,11,0.3)}
+.sv-header .btn-back svg{width:14px;height:14px}
+.sv-header .logo{display:flex;align-items:center;gap:8px;text-decoration:none}
+.sv-header .logo img{height:36px;width:auto}
+.sv-header .logo-text{font-size:1.1rem;font-weight:800;color:#fff}
+.sv-header .logo-text em{color:#f59e0b;font-style:normal}
+
+/* ── Hero ────────────────────────────── */
+.hero{background:linear-gradient(135deg,#1e293b 0%,#0f172a 100%);border-bottom:3px solid #2563eb;padding:2.5rem 1.5rem 2rem;text-align:center}
+.hero h1{font-size:1.75rem;font-weight:800;color:#fff;margin-bottom:.5rem}
+.hero h1 em{font-style:normal;color:#f59e0b}
+.hero p{color:#94a3b8;font-size:.88rem;max-width:580px;margin:0 auto;line-height:1.5}
+
+/* ── Tabs ────────────────────────────── */
+.tab-bar{display:flex;gap:0;background:rgba(0,0,0,0.3);border-bottom:1px solid #334155;padding:0 1rem;overflow-x:auto}
+.tab-btn{padding:.85rem 1.5rem;font-family:inherit;font-size:.82rem;font-weight:600;color:#94a3b8;background:none;border:none;border-bottom:3px solid transparent;cursor:pointer;transition:all .2s;white-space:nowrap}
+.tab-btn:hover{color:#e2e8f0}
+.tab-btn.active{color:#f59e0b;border-bottom-color:#f59e0b}
+.tab-panel{display:none}
+.tab-panel.active{display:block}
+
+/* ── Content ─────────────────────────── */
+.content{max-width:960px;margin:0 auto;padding:1.5rem 1rem 3rem}
+.card{background:#1e293b;border:1px solid #334155;border-radius:14px;padding:1.5rem;margin-bottom:1rem}
+.card-title{font-size:1rem;font-weight:700;color:#f1f5f9;margin-bottom:1rem;padding-bottom:.6rem;border-bottom:1px solid #334155}
+
+/* ── Forms ────────────────────────────── */
+.sv-field{margin-bottom:1.25rem}
+.sv-label{display:block;font-size:.72rem;font-weight:600;color:#94a3b8;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.4rem}
+.sv-required::after{content:' *';color:#ef4444}
+.sv-input,.sv-select{width:100%;padding:.75rem 1rem;background:#0f172a;border:2px solid #334155;border-radius:10px;color:#e2e8f0;font-family:'Inter',sans-serif;font-size:.85rem;transition:border-color .2s}
+.sv-input:focus,.sv-select:focus{outline:none;border-color:#f59e0b}
+.sv-select{appearance:none;cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:36px}
+.sv-select option{background:#1e293b;color:#e2e8f0}
+.sv-helper{font-size:.72rem;color:#64748b;margin-top:.3rem}
+.sv-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.sv-row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem}
+
+/* ── Buttons ─────────────────────────── */
+.btn-primary{display:inline-flex;align-items:center;gap:8px;padding:.7rem 1.8rem;border-radius:10px;border:none;background:linear-gradient(135deg,#f59e0b,#d97706);color:#0f172a;font-family:inherit;font-size:.85rem;font-weight:700;cursor:pointer;transition:all .2s}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(245,158,11,0.3)}
+.btn-secondary{display:inline-flex;align-items:center;gap:6px;padding:.55rem 1.2rem;border-radius:8px;border:1px solid #334155;background:rgba(255,255,255,0.05);color:#e2e8f0;font-family:inherit;font-size:.78rem;font-weight:600;cursor:pointer;transition:all .2s}
+.btn-secondary:hover{border-color:#f59e0b;color:#f59e0b}
+.btn-danger{background:rgba(239,68,68,0.15);color:#f87171;border:none;border-radius:6px;padding:.4rem .8rem;font-size:.72rem;font-weight:600;cursor:pointer;font-family:inherit;transition:all .2s}
+.btn-danger:hover{background:rgba(239,68,68,0.3)}
+.btn-edit{background:rgba(59,130,246,0.15);color:#60a5fa;border:none;border-radius:6px;padding:.4rem .8rem;font-size:.72rem;font-weight:600;cursor:pointer;font-family:inherit;transition:all .2s}
+.btn-edit:hover{background:rgba(59,130,246,0.3)}
+
+/* ── Weather Cards Grid ──────────────── */
+.weather-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1rem;margin-bottom:1.5rem}
+.weather-card{background:#1e293b;border:1px solid #334155;border-radius:14px;padding:1.25rem;transition:border-color .2s}
+.weather-card.alert-active{border-color:#ef4444;box-shadow:0 0 20px rgba(239,68,68,0.1)}
+.weather-card.all-clear{border-color:#22c55e33}
+.wc-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1rem}
+.wc-site-name{font-size:.95rem;font-weight:700;color:#f1f5f9}
+.wc-location{font-size:.75rem;color:#94a3b8;margin-top:2px}
+.wc-status{font-size:.65rem;font-weight:700;padding:.3rem .6rem;border-radius:20px;text-transform:uppercase;letter-spacing:.04em}
+.wc-status.ok{background:rgba(34,197,94,0.15);color:#4ade80}
+.wc-status.warning{background:rgba(239,68,68,0.15);color:#f87171}
+.wc-conditions{display:grid;grid-template-columns:1fr 1fr;gap:.6rem}
+.wc-metric{background:#0f172a;border-radius:8px;padding:.65rem .8rem}
+.wc-metric-label{font-size:.65rem;color:#64748b;text-transform:uppercase;letter-spacing:.04em}
+.wc-metric-value{font-size:1.1rem;font-weight:700;color:#e2e8f0;margin-top:2px}
+.wc-metric-value.danger{color:#ef4444}
+.wc-description{font-size:.78rem;color:#94a3b8;margin-top:.8rem;text-align:center;font-style:italic}
+
+/* ── Active Alerts Panel ─────────────── */
+.alerts-section-title{font-size:.85rem;font-weight:700;color:#f87171;text-transform:uppercase;letter-spacing:.06em;margin-bottom:.75rem;display:flex;align-items:center;gap:.5rem}
+.alerts-section-title .pulse{width:8px;height:8px;border-radius:50%;background:#ef4444;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.alert-item{background:#1e293b;border:1px solid #334155;border-left:4px solid #ef4444;border-radius:0 10px 10px 0;padding:1rem 1.25rem;margin-bottom:.5rem}
+.alert-item .ai-type{font-size:.82rem;font-weight:700;color:#fca5a5}
+.alert-item .ai-site{font-size:.78rem;color:#94a3b8;margin-top:2px}
+.alert-item .ai-detail{font-size:.78rem;color:#64748b;margin-top:4px}
+.alert-item.type-heat_index{border-left-color:#ef4444}
+.alert-item.type-cold_temp{border-left-color:#60a5fa}
+.alert-item.type-wind_speed{border-left-color:#fbbf24}
+.alert-item.type-aqi{border-left-color:#a78bfa}
+
+/* ── Site List ────────────────────────── */
+.site-item{background:#0f172a;border:1px solid #334155;border-radius:10px;padding:1rem 1.25rem;margin-bottom:.6rem;display:flex;justify-content:space-between;align-items:flex-start;gap:1rem;flex-wrap:wrap}
+.si-info .si-name{font-size:.88rem;font-weight:700;color:#f1f5f9}
+.si-info .si-detail{font-size:.78rem;color:#94a3b8;line-height:1.5;margin-top:3px}
+.si-actions{display:flex;gap:.35rem;flex-shrink:0}
+
+/* ── Alert History Table ─────────────── */
+.history-item{background:#0f172a;border:1px solid #334155;border-radius:10px;padding:1rem 1.25rem;margin-bottom:.5rem;display:grid;grid-template-columns:1fr auto;gap:.5rem;align-items:start}
+.hi-main .hi-type{font-size:.82rem;font-weight:700;color:#f1f5f9}
+.hi-main .hi-site{font-size:.75rem;color:#94a3b8;margin-top:2px}
+.hi-main .hi-values{font-size:.75rem;color:#64748b;margin-top:3px}
+.hi-meta{text-align:right}
+.hi-meta .hi-time{font-size:.72rem;color:#94a3b8}
+.hi-meta .hi-email{font-size:.68rem;margin-top:3px;padding:.2rem .5rem;border-radius:4px;display:inline-block}
+.hi-email.sent{background:rgba(34,197,94,0.15);color:#4ade80}
+.hi-email.not-sent{background:rgba(239,68,68,0.1);color:#f87171}
+
+/* ── Toolbar ─────────────────────────── */
+.toolbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem;gap:1rem;flex-wrap:wrap}
+.toolbar-left{display:flex;gap:.5rem;align-items:center;flex-wrap:wrap}
+.toolbar-right{display:flex;gap:.5rem;align-items:center}
+.last-check{font-size:.72rem;color:#64748b}
+
+/* ── Filters ─────────────────────────── */
+.filter-bar{display:flex;gap:.75rem;margin-bottom:1rem;flex-wrap:wrap;align-items:center}
+.filter-bar .sv-select,.filter-bar .sv-input{width:auto;min-width:160px;padding:.55rem .85rem;font-size:.78rem}
+
+/* ── Empty State ─────────────────────── */
+.empty-state{text-align:center;padding:3rem 1rem;color:#64748b}
+.empty-state .es-icon{font-size:2.5rem;margin-bottom:.75rem}
+.empty-state .es-text{font-size:.88rem}
+.empty-state .es-sub{font-size:.78rem;margin-top:.4rem}
+
+/* ── Toast ────────────────────────────── */
+.toast{position:fixed;top:20px;right:20px;padding:.85rem 1.25rem;border-radius:10px;font-size:.85rem;font-weight:600;z-index:9999;transform:translateX(120%);transition:transform .3s ease;max-width:350px}
+.toast.show{transform:translateX(0)}
+.toast.success{background:#166534;color:#4ade80;border:1px solid #22c55e}
+.toast.error{background:#7f1d1d;color:#fca5a5;border:1px solid #ef4444}
+
+/* ── Form Overlay ────────────────────── */
+.form-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:100;justify-content:center;align-items:center;padding:1rem}
+.form-overlay.show{display:flex}
+.form-modal{background:#1e293b;border:1px solid #334155;border-radius:14px;padding:2rem;width:100%;max-width:540px;max-height:90vh;overflow-y:auto}
+.form-modal h3{font-size:1rem;font-weight:700;color:#f1f5f9;margin-bottom:1.25rem}
+.form-actions{display:flex;gap:.75rem;justify-content:flex-end;margin-top:1.5rem}
+
+/* ── Loading ─────────────────────────── */
+.spinner{display:inline-block;width:16px;height:16px;border:2px solid rgba(245,158,11,0.3);border-top-color:#f59e0b;border-radius:50%;animation:spin .6s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-overlay{display:flex;align-items:center;justify-content:center;padding:3rem;gap:.5rem;color:#94a3b8;font-size:.85rem}
+
+/* ── Responsive ──────────────────────── */
+@media(max-width:640px){
+  .sv-row,.sv-row-3{grid-template-columns:1fr}
+  .content{padding:1rem .75rem 2rem}
+  .card{padding:1.25rem}
+  .toolbar{flex-direction:column;align-items:stretch}
+  .toolbar-right{justify-content:flex-end}
+  .weather-grid{grid-template-columns:1fr}
+  .filter-bar{flex-direction:column}
+  .filter-bar .sv-select,.filter-bar .sv-input{width:100%}
+  .history-item{grid-template-columns:1fr}
+  .hi-meta{text-align:left}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══ HEADER ═══ -->
+<div class="sv-header">
+  <div class="sv-header-left">
+    <a href="../user-dashboard/index.html" class="btn-back" aria-label="Back to Dashboard">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      Dashboard
+    </a>
+  </div>
+  <a href="../index.html" class="logo">
+    <img src="logo.png?v=2" alt="TheSafetyVerse Logo">
+    <span class="logo-text"><em>The</em>Safety<em>Verse</em></span>
+  </a>
+</div>
+
+<!-- ═══ HERO ═══ -->
+<div class="hero">
+  <h1>Weather <em>Alerts</em></h1>
+  <p>Automated weather monitoring for your job sites. Get real-time conditions and email alerts when safety thresholds are crossed.</p>
+</div>
+
+<!-- ═══ TABS ═══ -->
+<div class="tab-bar">
+  <button class="tab-btn active" data-tab="dashboard">Dashboard</button>
+  <button class="tab-btn" data-tab="sites">Job Sites</button>
+  <button class="tab-btn" data-tab="history">Alert History</button>
+</div>
+
+<!-- ═══ TAB: DASHBOARD ═══ -->
+<div class="tab-panel active" id="tab-dashboard">
+  <div class="content">
+    <div class="toolbar">
+      <div class="toolbar-left">
+        <button class="btn-primary" id="btn-refresh" onclick="loadDashboard()">&#8635; Refresh</button>
+        <button class="btn-secondary" id="btn-check-now" onclick="triggerManualCheck()">&#9889; Check Now</button>
+      </div>
+      <div class="toolbar-right">
+        <span class="last-check" id="last-check-time"></span>
+      </div>
+    </div>
+
+    <div id="weather-cards-area">
+      <div class="loading-overlay"><span class="spinner"></span> Loading weather data...</div>
+    </div>
+
+    <div id="active-alerts-area"></div>
+  </div>
+</div>
+
+<!-- ═══ TAB: JOB SITES ═══ -->
+<div class="tab-panel" id="tab-sites">
+  <div class="content">
+    <div class="toolbar">
+      <div class="toolbar-left">
+        <button class="btn-primary" onclick="openSiteForm()">+ Add Job Site</button>
+      </div>
+    </div>
+    <div id="sites-list-area">
+      <div class="loading-overlay"><span class="spinner"></span> Loading sites...</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ TAB: ALERT HISTORY ═══ -->
+<div class="tab-panel" id="tab-history">
+  <div class="content">
+    <div class="filter-bar">
+      <select class="sv-select" id="filter-site" onchange="loadHistory()">
+        <option value="">All Sites</option>
+      </select>
+      <select class="sv-select" id="filter-type" onchange="loadHistory()">
+        <option value="">All Types</option>
+        <option value="heat_index">Heat Index</option>
+        <option value="cold_temp">Cold Temperature</option>
+        <option value="wind_speed">Wind Speed</option>
+        <option value="aqi">Air Quality</option>
+      </select>
+    </div>
+    <div id="history-list-area">
+      <div class="loading-overlay"><span class="spinner"></span> Loading alert history...</div>
+    </div>
+    <div style="text-align:center;margin-top:1rem">
+      <button class="btn-secondary" id="btn-load-more" onclick="loadMoreHistory()" style="display:none">Load More</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ SITE FORM MODAL ═══ -->
+<div class="form-overlay" id="site-form-overlay">
+  <div class="form-modal">
+    <h3 id="site-form-title">Add Job Site</h3>
+    <input type="hidden" id="sf-id">
+    <div class="sv-field">
+      <label class="sv-label sv-required">Site Name</label>
+      <input type="text" class="sv-input" id="sf-name" placeholder="e.g., Denver Office">
+    </div>
+    <div class="sv-row">
+      <div class="sv-field">
+        <label class="sv-label">City</label>
+        <input type="text" class="sv-input" id="sf-city" placeholder="Denver">
+      </div>
+      <div class="sv-field">
+        <label class="sv-label">State</label>
+        <input type="text" class="sv-input" id="sf-state" placeholder="CO">
+      </div>
+    </div>
+    <div class="sv-row">
+      <div class="sv-field">
+        <label class="sv-label sv-required">Latitude</label>
+        <input type="number" step="any" class="sv-input" id="sf-lat" placeholder="39.7392">
+      </div>
+      <div class="sv-field">
+        <label class="sv-label sv-required">Longitude</label>
+        <input type="number" step="any" class="sv-input" id="sf-lng" placeholder="-104.9903">
+      </div>
+    </div>
+    <div class="sv-helper" style="margin-top:-0.75rem;margin-bottom:1rem;">Find coordinates on <a href="https://www.google.com/maps" target="_blank" style="color:#60a5fa">Google Maps</a> — right-click any location and click the coordinates to copy.</div>
+    <div class="sv-row">
+      <div class="sv-field">
+        <label class="sv-label">Manager Name</label>
+        <input type="text" class="sv-input" id="sf-manager" placeholder="John Smith">
+      </div>
+      <div class="sv-field">
+        <label class="sv-label">Manager Email</label>
+        <input type="email" class="sv-input" id="sf-email" placeholder="john@example.com">
+      </div>
+    </div>
+    <div class="form-actions">
+      <button class="btn-secondary" onclick="closeSiteForm()">Cancel</button>
+      <button class="btn-primary" id="sf-submit" onclick="saveSite()">Save Site</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ TOAST ═══ -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ── Config ──────────────────────────────────────────────
+const API = window.location.origin + '/api';
+
+// ── Tabs ────────────────────────────────────────────────
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+
+    if (btn.dataset.tab === 'dashboard') loadDashboard();
+    if (btn.dataset.tab === 'sites') loadSites();
+    if (btn.dataset.tab === 'history') { loadHistoryFilters(); loadHistory(); }
+  });
+});
+
+// ── Toast ────────────────────────────────────────────────
+function showToast(msg, type = 'success') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast ' + type + ' show';
+  setTimeout(() => t.classList.remove('show'), 3500);
+}
+
+// ── API helpers ──────────────────────────────────────────
+async function api(path, opts = {}) {
+  const res = await fetch(API + path, {
+    headers: { 'Content-Type': 'application/json' },
+    ...opts,
+    body: opts.body ? JSON.stringify(opts.body) : undefined
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ error: 'Request failed' }));
+    throw new Error(err.error || 'Request failed');
+  }
+  return res.json();
+}
+
+// ── Alert type helpers ───────────────────────────────────
+const ALERT_LABELS = {
+  heat_index: 'Heat Index',
+  cold_temp: 'Cold Temperature',
+  wind_speed: 'Wind Speed',
+  aqi: 'Air Quality'
+};
+const ALERT_COLORS = {
+  heat_index: '#ef4444',
+  cold_temp: '#60a5fa',
+  wind_speed: '#fbbf24',
+  aqi: '#a78bfa'
+};
+function alertUnit(type) {
+  if (type === 'aqi') return ' AQI';
+  if (type === 'wind_speed') return ' mph';
+  return '°F';
+}
+
+// ═══════════════════════════════════════════════════════════
+// DASHBOARD TAB
+// ═══════════════════════════════════════════════════════════
+async function loadDashboard() {
+  const area = document.getElementById('weather-cards-area');
+  const alertsArea = document.getElementById('active-alerts-area');
+  area.innerHTML = '<div class="loading-overlay"><span class="spinner"></span> Loading weather data...</div>';
+
+  try {
+    const [weatherData, activeAlerts] = await Promise.all([
+      api('/weather/all'),
+      api('/alerts/active')
+    ]);
+
+    document.getElementById('last-check-time').textContent =
+      'Updated: ' + new Date().toLocaleTimeString();
+
+    if (weatherData.length === 0) {
+      area.innerHTML = `<div class="empty-state">
+        <div class="es-icon">&#127782;&#65039;</div>
+        <div class="es-text">No job sites configured</div>
+        <div class="es-sub">Add a job site in the "Job Sites" tab to start monitoring weather conditions.</div>
+      </div>`;
+      alertsArea.innerHTML = '';
+      return;
+    }
+
+    // Build weather cards
+    let cardsHtml = '<div class="weather-grid">';
+    for (const item of weatherData) {
+      const s = item.site;
+      const c = item.conditions?.current;
+      const hasError = !c;
+      const siteAlerts = activeAlerts.filter(a => a.site_id === s.id);
+      const hasAlerts = siteAlerts.length > 0;
+
+      if (hasError) {
+        cardsHtml += `<div class="weather-card">
+          <div class="wc-header">
+            <div><div class="wc-site-name">${esc(s.name)}</div>
+            <div class="wc-location">${esc(s.city || '')}${s.state ? ', ' + esc(s.state) : ''}</div></div>
+            <span class="wc-status warning">Error</span>
+          </div>
+          <div style="color:#f87171;font-size:.82rem;">Unable to fetch weather data</div>
+        </div>`;
+        continue;
+      }
+
+      const statusClass = hasAlerts ? 'alert-active' : 'all-clear';
+      const statusBadge = hasAlerts
+        ? `<span class="wc-status warning">${siteAlerts.length} Alert${siteAlerts.length > 1 ? 's' : ''}</span>`
+        : '<span class="wc-status ok">All Clear</span>';
+
+      const tempDanger = c.apparent_temperature > 95 || c.temperature < 20;
+      const windDanger = c.wind_speed > 45;
+      const aqiDanger = c.aqi != null && c.aqi > 150;
+
+      cardsHtml += `<div class="weather-card ${statusClass}">
+        <div class="wc-header">
+          <div><div class="wc-site-name">${esc(s.name)}</div>
+          <div class="wc-location">${esc(s.city || '')}${s.state ? ', ' + esc(s.state) : ''}</div></div>
+          ${statusBadge}
+        </div>
+        <div class="wc-conditions">
+          <div class="wc-metric">
+            <div class="wc-metric-label">Temperature</div>
+            <div class="wc-metric-value${c.temperature < 20 ? ' danger' : ''}">${c.temperature}°F</div>
+          </div>
+          <div class="wc-metric">
+            <div class="wc-metric-label">Feels Like</div>
+            <div class="wc-metric-value${c.apparent_temperature > 95 ? ' danger' : ''}">${c.apparent_temperature}°F</div>
+          </div>
+          <div class="wc-metric">
+            <div class="wc-metric-label">Wind Speed</div>
+            <div class="wc-metric-value${windDanger ? ' danger' : ''}">${c.wind_speed} mph</div>
+          </div>
+          <div class="wc-metric">
+            <div class="wc-metric-label">Air Quality</div>
+            <div class="wc-metric-value${aqiDanger ? ' danger' : ''}">${c.aqi != null ? c.aqi + ' ' + c.aqi_label : 'N/A'}</div>
+          </div>
+        </div>
+        <div class="wc-description">${esc(c.weather_description)}</div>
+      </div>`;
+    }
+    cardsHtml += '</div>';
+    area.innerHTML = cardsHtml;
+
+    // Active alerts
+    if (activeAlerts.length > 0) {
+      let alertsHtml = `<div class="alerts-section-title"><span class="pulse"></span> Active Alerts (${activeAlerts.length})</div>`;
+      for (const a of activeAlerts) {
+        const time = new Date(a.created_at + 'Z').toLocaleString();
+        alertsHtml += `<div class="alert-item type-${a.alert_type}">
+          <div class="ai-type">${ALERT_LABELS[a.alert_type] || a.alert_type} Warning</div>
+          <div class="ai-site">${esc(a.site_name)} — ${esc(a.city || '')}${a.state ? ', ' + esc(a.state) : ''}</div>
+          <div class="ai-detail">${a.actual_value}${alertUnit(a.alert_type)} exceeds threshold of ${a.threshold_value}${alertUnit(a.alert_type)} &nbsp;|&nbsp; ${time}${a.email_sent ? ' &nbsp;|&nbsp; Email sent to ' + esc(a.email_recipient || a.manager_email || 'manager') : ''}</div>
+        </div>`;
+      }
+      alertsArea.innerHTML = alertsHtml;
+    } else {
+      alertsArea.innerHTML = '';
+    }
+  } catch (err) {
+    area.innerHTML = `<div class="empty-state">
+      <div class="es-icon">&#9888;&#65039;</div>
+      <div class="es-text">Could not connect to server</div>
+      <div class="es-sub">Make sure the weather alerts server is running on port 3456.<br><code style="color:#f59e0b;font-size:.75rem;">cd weather-alerts-server && node server.js</code></div>
+    </div>`;
+    alertsArea.innerHTML = '';
+  }
+}
+
+async function triggerManualCheck() {
+  const btn = document.getElementById('btn-check-now');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> Checking...';
+  try {
+    const result = await api('/alerts/check-now', { method: 'POST' });
+    showToast(`Checked ${result.sitesChecked} sites — ${result.alertsSent} alert(s) sent`);
+    await loadDashboard();
+  } catch (err) {
+    showToast('Check failed: ' + err.message, 'error');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '&#9889; Check Now';
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
+// JOB SITES TAB
+// ═══════════════════════════════════════════════════════════
+async function loadSites() {
+  const area = document.getElementById('sites-list-area');
+  area.innerHTML = '<div class="loading-overlay"><span class="spinner"></span> Loading sites...</div>';
+  try {
+    const sites = await api('/sites');
+    if (sites.length === 0) {
+      area.innerHTML = `<div class="empty-state">
+        <div class="es-icon">&#128205;</div>
+        <div class="es-text">No job sites yet</div>
+        <div class="es-sub">Add your first job site to start monitoring weather conditions.</div>
+      </div>`;
+      return;
+    }
+    let html = '';
+    for (const s of sites) {
+      html += `<div class="site-item">
+        <div class="si-info">
+          <div class="si-name">${esc(s.name)}</div>
+          <div class="si-detail">
+            ${esc(s.city || '')}${s.state ? ', ' + esc(s.state) : ''} &nbsp;|&nbsp;
+            Lat: ${s.latitude}, Lng: ${s.longitude}
+            ${s.manager_name ? '<br>Manager: ' + esc(s.manager_name) : ''}
+            ${s.manager_email ? ' (' + esc(s.manager_email) + ')' : ''}
+          </div>
+        </div>
+        <div class="si-actions">
+          <button class="btn-edit" onclick="editSite(${s.id})">Edit</button>
+          <button class="btn-danger" onclick="deleteSite(${s.id}, '${esc(s.name)}')">Remove</button>
+        </div>
+      </div>`;
+    }
+    area.innerHTML = html;
+  } catch (err) {
+    area.innerHTML = `<div class="empty-state"><div class="es-icon">&#9888;&#65039;</div><div class="es-text">${esc(err.message)}</div></div>`;
+  }
+}
+
+function openSiteForm(site = null) {
+  document.getElementById('site-form-title').textContent = site ? 'Edit Job Site' : 'Add Job Site';
+  document.getElementById('sf-id').value = site ? site.id : '';
+  document.getElementById('sf-name').value = site ? site.name : '';
+  document.getElementById('sf-city').value = site ? site.city || '' : '';
+  document.getElementById('sf-state').value = site ? site.state || '' : '';
+  document.getElementById('sf-lat').value = site ? site.latitude : '';
+  document.getElementById('sf-lng').value = site ? site.longitude : '';
+  document.getElementById('sf-manager').value = site ? site.manager_name || '' : '';
+  document.getElementById('sf-email').value = site ? site.manager_email || '' : '';
+  document.getElementById('site-form-overlay').classList.add('show');
+}
+
+function closeSiteForm() {
+  document.getElementById('site-form-overlay').classList.remove('show');
+}
+
+async function editSite(id) {
+  try {
+    const site = await api('/sites/' + id);
+    openSiteForm(site);
+  } catch (err) {
+    showToast('Error loading site: ' + err.message, 'error');
+  }
+}
+
+async function saveSite() {
+  const id = document.getElementById('sf-id').value;
+  const body = {
+    name: document.getElementById('sf-name').value.trim(),
+    city: document.getElementById('sf-city').value.trim(),
+    state: document.getElementById('sf-state').value.trim(),
+    latitude: document.getElementById('sf-lat').value,
+    longitude: document.getElementById('sf-lng').value,
+    manager_name: document.getElementById('sf-manager').value.trim(),
+    manager_email: document.getElementById('sf-email').value.trim()
+  };
+
+  if (!body.name || !body.latitude || !body.longitude) {
+    showToast('Name, latitude, and longitude are required', 'error');
+    return;
+  }
+
+  try {
+    if (id) {
+      await api('/sites/' + id, { method: 'PUT', body });
+      showToast('Site updated');
+    } else {
+      await api('/sites', { method: 'POST', body });
+      showToast('Site added');
+    }
+    closeSiteForm();
+    loadSites();
+  } catch (err) {
+    showToast('Error: ' + err.message, 'error');
+  }
+}
+
+async function deleteSite(id, name) {
+  if (!confirm('Remove "' + name + '" from monitoring? This will deactivate the site.')) return;
+  try {
+    await api('/sites/' + id, { method: 'DELETE' });
+    showToast('Site removed');
+    loadSites();
+  } catch (err) {
+    showToast('Error: ' + err.message, 'error');
+  }
+}
+
+// Close modal on overlay click
+document.getElementById('site-form-overlay').addEventListener('click', e => {
+  if (e.target === e.currentTarget) closeSiteForm();
+});
+
+// ═══════════════════════════════════════════════════════════
+// ALERT HISTORY TAB
+// ═══════════════════════════════════════════════════════════
+let historyOffset = 0;
+const HISTORY_LIMIT = 30;
+
+async function loadHistoryFilters() {
+  try {
+    const sites = await api('/sites');
+    const sel = document.getElementById('filter-site');
+    const current = sel.value;
+    sel.innerHTML = '<option value="">All Sites</option>';
+    sites.forEach(s => {
+      sel.innerHTML += `<option value="${s.id}">${esc(s.name)}</option>`;
+    });
+    sel.value = current;
+  } catch (e) { /* ignore */ }
+}
+
+async function loadHistory(append = false) {
+  if (!append) historyOffset = 0;
+  const area = document.getElementById('history-list-area');
+  const siteId = document.getElementById('filter-site').value;
+  const typeFilter = document.getElementById('filter-type').value;
+
+  if (!append) {
+    area.innerHTML = '<div class="loading-overlay"><span class="spinner"></span> Loading alert history...</div>';
+  }
+
+  try {
+    let url = `/alerts?limit=${HISTORY_LIMIT}&offset=${historyOffset}`;
+    if (siteId) url += `&siteId=${siteId}`;
+    const alerts = await api(url);
+
+    // Client-side type filter (server returns all types for a site)
+    const filtered = typeFilter ? alerts.filter(a => a.alert_type === typeFilter) : alerts;
+
+    if (!append && filtered.length === 0) {
+      area.innerHTML = `<div class="empty-state">
+        <div class="es-icon">&#128196;</div>
+        <div class="es-text">No alerts found</div>
+        <div class="es-sub">When weather thresholds are crossed, alerts will appear here.</div>
+      </div>`;
+      document.getElementById('btn-load-more').style.display = 'none';
+      return;
+    }
+
+    let html = append ? area.innerHTML : '';
+    for (const a of filtered) {
+      const time = new Date(a.created_at + 'Z').toLocaleString();
+      const emailStatus = a.email_sent
+        ? `<span class="hi-email sent">Email Sent</span>`
+        : `<span class="hi-email not-sent">No Email</span>`;
+
+      html += `<div class="history-item">
+        <div class="hi-main">
+          <div class="hi-type" style="color:${ALERT_COLORS[a.alert_type] || '#e2e8f0'}">${ALERT_LABELS[a.alert_type] || a.alert_type} Warning</div>
+          <div class="hi-site">${esc(a.site_name)} — ${esc(a.city || '')}${a.state ? ', ' + esc(a.state) : ''}</div>
+          <div class="hi-values">Threshold: ${a.threshold_value}${alertUnit(a.alert_type)} &nbsp;|&nbsp; Actual: ${a.actual_value}${alertUnit(a.alert_type)}</div>
+        </div>
+        <div class="hi-meta">
+          <div class="hi-time">${time}</div>
+          ${emailStatus}
+        </div>
+      </div>`;
+    }
+    area.innerHTML = html;
+
+    // Show/hide load more
+    document.getElementById('btn-load-more').style.display =
+      alerts.length === HISTORY_LIMIT ? '' : 'none';
+  } catch (err) {
+    if (!append) {
+      area.innerHTML = `<div class="empty-state"><div class="es-icon">&#9888;&#65039;</div><div class="es-text">${esc(err.message)}</div></div>`;
+    }
+  }
+}
+
+function loadMoreHistory() {
+  historyOffset += HISTORY_LIMIT;
+  loadHistory(true);
+}
+
+// ── Utility ──────────────────────────────────────────────
+function esc(str) {
+  const d = document.createElement('div');
+  d.textContent = str || '';
+  return d.innerHTML;
+}
+
+// ── Initial load ─────────────────────────────────────────
+loadDashboard();
+</script>
+</body>
+</html>
