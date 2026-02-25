@@ -5,6 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/png" href="logo.png?v=2">
     <title>Lessons - TheSafetyVerse Training Hub</title>
+    <!-- Auth Guard -->
+    <style>body { visibility: hidden; opacity: 0; transition: opacity 0.3s; }</style>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../auth/supabase-config.js"></script>
+    <script src="../auth/auth-guard.js"></script>
     <style>
         :root {
             --primary: #FFD700;

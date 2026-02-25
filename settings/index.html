@@ -1,11 +1,14 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-required-role="admin">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Company Settings - TheSafetyVerse</title>
 <link rel="icon" type="image/png" href="logo.png?v=2">
+<style>body { visibility: hidden; opacity: 0; transition: opacity 0.3s; }</style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../auth/supabase-config.js"></script>
+<script src="../auth/auth-guard.js"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 *{margin:0;padding:0;box-sizing:border-box}
@@ -221,9 +224,7 @@ body{font-family:'Inter',sans-serif;background:#0f172a;color:#e2e8f0;min-height:
 <div class="toast" id="toast"></div>
 
 <script>
-const SUPABASE_URL='https://cfuupedcjroqarmgqcyn.supabase.co';
-const SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNmdXVwZWRjanJvcWFybWdxY3luIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzEzNjQ1ODksImV4cCI6MjA4Njk0MDU4OX0.kHqVQPBCljGhk8lkd_LN4JxhT1ywOIKapXKmJZD1LEo';
-const sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+const sb = getSafetyVerseSupabase();
 
 const fields=['establishment_name','street','city','state','zip','industry_description','naics_code','phone','avg_employees','total_hours_worked'];
 let existingId=null;

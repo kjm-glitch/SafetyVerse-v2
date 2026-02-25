@@ -5,6 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/png" href="logo.png?v=2">
     <title>TheSafetyVerse - Workplace Safety Training LMS</title>
+    <!-- Auth Guard -->
+    <style>body { visibility: hidden; opacity: 0; transition: opacity 0.3s; }</style>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../auth/supabase-config.js"></script>
+    <script src="../auth/auth-guard.js"></script>
     <style>
         /* ═══════════════════════════════════════════
            CSS VARIABLES & RESET
@@ -1849,8 +1854,8 @@
                     </div>
                 </div>
 
-                <!-- Hazard Observation Report -->
-                <div class="incident-card available-incident animate-in">
+                <!-- Hazard Observation Report (manager+ only) -->
+                <div class="incident-card available-incident animate-in" id="hazardObsCard">
                     <div class="incident-icon-area">
                         <span aria-hidden="true">&#128065;</span>
                         <span class="incident-badge available-badge">Available Now</span>
@@ -1863,8 +1868,8 @@
                     </div>
                 </div>
 
-                <!-- Safety Incident Report -->
-                <div class="incident-card available-incident animate-in">
+                <!-- Safety Incident Report (manager+ only) -->
+                <div class="incident-card available-incident animate-in" id="incidentReportCard">
                     <div class="incident-icon-area">
                         <span aria-hidden="true">&#128203;</span>
                         <span class="incident-badge available-badge">Available Now</span>
@@ -1981,23 +1986,35 @@
         'use strict';
 
         /* ═══════════════════════════════════════════
-           ADMIN NAV VISIBILITY — role-based toggle
+           AUTH-BASED UI — role-based toggle
            ═══════════════════════════════════════════ */
-        // Show admin nav if user has Admin role
-        if (localStorage.getItem('safetyverse-role') === 'Admin') {
-            var adminNav = document.getElementById('adminNavItem');
-            var adminMobile = document.getElementById('adminMobileNavItem');
-            if (adminNav) adminNav.style.display = '';
-            if (adminMobile) adminMobile.style.display = '';
-        }
+        // Wait for auth guard to finish, then apply role-based visibility
+        document.addEventListener('svAuthReady', function(e) {
+            var user = e.detail; // { id, full_name, email, role, department }
 
-        // Personalize greeting with logged-in name
-        var greetEl = document.getElementById('headerGreeting');
-        var userName = localStorage.getItem('safetyverse-username');
-        if (greetEl && userName && userName !== 'Demo User') {
-            var firstName = userName.split(' ')[0];
-            greetEl.textContent = 'Welcome, ' + firstName + '!';
-        }
+            // Show admin nav if user has admin role
+            if (user.role === 'admin') {
+                var adminNav = document.getElementById('adminNavItem');
+                var adminMobile = document.getElementById('adminMobileNavItem');
+                if (adminNav) adminNav.style.display = '';
+                if (adminMobile) adminMobile.style.display = '';
+            }
+
+            // Personalize greeting
+            var greetEl = document.getElementById('headerGreeting');
+            if (greetEl && user.full_name) {
+                var firstName = user.full_name.split(' ')[0];
+                greetEl.textContent = 'Welcome, ' + firstName + '!';
+            }
+
+            // Hide manager-only tools for 'user' role
+            if (user.role === 'user') {
+                var hazardCard = document.getElementById('hazardObsCard');
+                var incidentCard = document.getElementById('incidentReportCard');
+                if (hazardCard) hazardCard.style.display = 'none';
+                if (incidentCard) incidentCard.style.display = 'none';
+            }
+        });
 
         /* ═══════════════════════════════════════════
            MODULE & PATH DEFINITIONS

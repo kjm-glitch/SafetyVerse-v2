@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/png" href="logo.png?v=2">
     <title>Module 9: Personal Protective Equipment - TheSafetyVerse</title>
+    <style>body { visibility: hidden; opacity: 0; transition: opacity 0.3s; }</style>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../../auth/supabase-config.js"></script>
+    <script src="../../auth/auth-guard.js"></script>
     <style>
         /* ═══════════════════════════════════════════
            CSS VARIABLES & RESET
@@ -798,7 +802,6 @@
             .katie-message { flex-direction: column; text-align: center; }
         }
     </style>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
     <!-- Header -->
@@ -1614,19 +1617,13 @@
 
         // ─── SUPABASE SYNC ───
         var MODULE_NAME = 'Personal Protective Equipment';
-        var SB_URL = 'https://cfuupedcjroqarmgqcyn.supabase.co';
-        var SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNmdXVwZWRjanJvcWFybWdxY3luIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzEzNjQ1ODksImV4cCI6MjA4Njk0MDU4OX0.kHqVQPBCljGhk8lkd_LN4JxhT1ywOIKapXKmJZD1LEo';
-        var _sbClient = null;
-        function getSB() {
-            if (!_sbClient && window.supabase) _sbClient = window.supabase.createClient(SB_URL, SB_KEY);
-            return _sbClient;
-        }
+        function getSB() { return getSafetyVerseSupabase(); }
         function syncProgressToSupabase(completed, score, attempts) {
             try {
                 var sb = getSB();
                 if (!sb) return;
-                var empName = localStorage.getItem('safetyverse-username') || 'Demo User';
-                var dept = localStorage.getItem('safetyverse-department') || 'Unassigned';
+                var empName = (window.__svUser && window.__svUser.fullName) || 'Unknown';
+                var dept = (window.__svUser && window.__svUser.department) || 'Unassigned';
                 var moduleSlug = 'ppe';
                 var row = {
                     employee_name: empName,

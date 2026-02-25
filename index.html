@@ -761,96 +761,6 @@
         /* ═══════════════════════════════════════════
            LOGIN MODAL
            ═══════════════════════════════════════════ */
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.5);
-            z-index: 10000;
-            justify-content: center;
-            align-items: center;
-            backdrop-filter: blur(4px);
-        }
-        .modal-overlay.open {
-            display: flex;
-        }
-        .modal {
-            background: var(--white);
-            border-radius: var(--radius-lg);
-            padding: 48px;
-            max-width: 440px;
-            width: 90%;
-            text-align: center;
-            box-shadow: var(--shadow-hard);
-            position: relative;
-            animation: modalIn 0.3s ease;
-        }
-        @keyframes modalIn {
-            from { opacity: 0; transform: scale(0.95) translateY(10px); }
-            to { opacity: 1; transform: scale(1) translateY(0); }
-        }
-        .modal-katie {
-            width: 120px;
-            height: auto;
-            border-radius: 12px;
-            border: 4px solid var(--primary);
-            background: var(--white);
-            padding: 8px;
-            margin-bottom: 20px;
-            display: block;
-            margin-left: auto;
-            margin-right: auto;
-            box-shadow: 3px 3px 0px rgba(0,0,0,0.1);
-        }
-        .modal h2 {
-            font-family: var(--font-heading);
-            font-size: 24px;
-            font-weight: 900;
-            color: var(--text-dark);
-            margin-bottom: 8px;
-        }
-        .modal h2 em {
-            color: var(--primary-dark);
-            font-style: normal;
-        }
-        .modal p {
-            font-size: 15px;
-            color: var(--text-light);
-            margin-bottom: 28px;
-            line-height: 1.6;
-        }
-        .modal-primary {
-            background: var(--primary);
-            color: var(--accent-black);
-            border: none;
-            padding: 14px 36px;
-            font-size: 16px;
-            font-weight: 800;
-            border-radius: var(--radius-sm);
-            cursor: pointer;
-            transition: var(--transition);
-            box-shadow: 3px 3px 0px rgba(0,0,0,0.15);
-            width: 100%;
-            margin-bottom: 12px;
-        }
-        .modal-primary:hover {
-            background: var(--primary-dark);
-            transform: translateY(-1px);
-        }
-        .modal-secondary {
-            background: none;
-            border: none;
-            color: var(--text-light);
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            padding: 8px 16px;
-            transition: var(--transition);
-        }
-        .modal-secondary:hover {
-            color: var(--text-dark);
-        }
-
         /* ═══════════════════════════════════════════
            RESPONSIVE
            ═══════════════════════════════════════════ */
@@ -944,7 +854,7 @@
                     <a href="#features">Features</a>
                     <a href="#contact">Contact</a>
                 </nav>
-                <button onclick="openLoginModal()" class="login-button">Login</button>
+                <button onclick="window.location.href='login.html'" class="login-button">Login</button>
                 <button class="hamburger" onclick="toggleMobileNav()" aria-label="Menu">
                     <span></span><span></span><span></span>
                 </button>
@@ -958,7 +868,7 @@
         <a href="#about" onclick="toggleMobileNav()">About</a>
         <a href="#features" onclick="toggleMobileNav()">Features</a>
         <a href="#contact" onclick="toggleMobileNav()">Contact</a>
-        <button onclick="openLoginModal(); toggleMobileNav();" class="login-button">Login</button>
+        <button onclick="window.location.href='login.html'; toggleMobileNav();" class="login-button">Login</button>
     </div>
 
     <!-- Safety stripe -->
@@ -977,7 +887,7 @@
                     Interactive safety training modules for micro-learning aligned with OSHA standards, engaging games, <em>The</em><strong>Safety</strong><em>Verse</em> certifications, incident reporting and easy admin audits. An all-in-one platform designed to make workplace safety training effective and enjoyable.
                 </p>
                 <div class="hero-ctas">
-                    <button onclick="openLoginModal()" class="cta-primary">&#9654; Start Learning</button>
+                    <button onclick="window.location.href='login.html'" class="cta-primary">&#9654; Start Learning</button>
                     <button onclick="window.location.href='games/safety-clue/index.html'" class="cta-secondary">&#127918; Play Safety Clue</button>
                 </div>
             </div>
@@ -1059,7 +969,7 @@
                 <p>Earn professional safety certificates upon completing each learning path</p>
             </div>
         </div>
-        <button onclick="openLoginModal()" class="preview-cta">Access Your Dashboard &#8594;</button>
+        <button onclick="window.location.href='login.html'" class="preview-cta">Access Your Dashboard &#8594;</button>
     </section>
 
     <!-- ═══ LEARNING PATHS ═══ -->
@@ -1132,34 +1042,9 @@
         </div>
     </footer>
 
-    <!-- ═══ LOGIN MODAL ═══ -->
-    <div class="modal-overlay" id="loginModal">
-        <div class="modal">
-            <img src="katie.png" alt="Katie" class="katie-avatar-medium">
-            <h2>Welcome to <em>The</em><strong>Safety</strong><em>Verse</em>!</h2>
-            <p>Select your name to access your safety training dashboard.</p>
-            <div style="margin:16px 0;">
-                <label for="loginEmployee" style="display:block;font-size:13px;font-weight:600;color:#444;margin-bottom:6px;">Login as:</label>
-                <select id="loginEmployee" style="width:100%;padding:10px 12px;border:2px solid #E8D5C0;border-radius:8px;font-size:15px;font-family:inherit;background:#FAF0E6;color:#1A1A1A;cursor:pointer;">
-                    <option value="" disabled selected>Choose your name...</option>
-                    <option value="Katie Johnson|Admin|Office">Katie Johnson (Admin)</option>
-                    <option value="Lisa Patel|Admin|Office">Lisa Patel (Admin)</option>
-                    <option value="Marcus Rivera|User|Operations">Marcus Rivera</option>
-                    <option value="Sarah Chen|User|Warehouse">Sarah Chen</option>
-                    <option value="James Okonkwo|User|Maintenance">James Okonkwo</option>
-                    <option value="Maria Garcia|User|Warehouse">Maria Garcia</option>
-                    <option value="Tyler Brooks|User|Field">Tyler Brooks</option>
-                    <option value="Aisha Mohammed|User|Operations">Aisha Mohammed</option>
-                    <option value="Brian Nguyen|User|Field">Brian Nguyen</option>
-                    <option value="David Kowalski|User|Maintenance">David Kowalski</option>
-                </select>
-            </div>
-            <button onclick="confirmLogin()" class="modal-primary">Enter Dashboard &#8594;</button>
-            <button onclick="closeLoginModal()" class="modal-secondary">Cancel</button>
-        </div>
-    </div>
-
     <!-- ═══ JAVASCRIPT ═══ -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="auth/supabase-config.js"></script>
     <script>
     (function() {
         'use strict';
@@ -1180,70 +1065,28 @@
             nav.classList.toggle('open');
         };
 
-        // ─── LOGIN MODAL ───
-        window.openLoginModal = function() {
-            document.getElementById('loginModal').classList.add('open');
-        };
-
-        window.closeLoginModal = function() {
-            document.getElementById('loginModal').classList.remove('open');
-        };
-
-        // Close modal on overlay click
-        document.getElementById('loginModal').addEventListener('click', function(e) {
-            if (e.target === this) {
-                closeLoginModal();
-            }
-        });
-
-        // Close modal on Escape key
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') {
-                closeLoginModal();
-            }
-        });
-
-        // ─── CONFIRM LOGIN ───
-        window.confirmLogin = function() {
-            var sel = document.getElementById('loginEmployee');
-            if (!sel.value) {
-                sel.style.borderColor = '#E53935';
-                sel.focus();
-                return;
-            }
-
-            // Parse "Name|Role|Department"
-            var parts = sel.value.split('|');
-            var empName = parts[0];
-            var empRole = parts[1];
-            var empDept = parts[2];
-
-            // Set logged-in flag + employee info
-            localStorage.setItem('safetyverse-logged-in', 'true');
-            localStorage.setItem('safetyverse-username', empName);
-            localStorage.setItem('safetyverse-role', empRole);
-            localStorage.setItem('safetyverse-department', empDept);
-
-            // Loading state
-            var btn = document.querySelector('.modal-primary');
-            btn.textContent = 'Logging in...';
-            btn.disabled = true;
-
-            // Redirect to dashboard
-            setTimeout(function() {
-                window.location.href = 'user-dashboard/index.html';
-            }, 600);
-        };
-
-        // ─── CHECK IF ALREADY LOGGED IN ───
-        if (localStorage.getItem('safetyverse-logged-in') === 'true') {
-            // User is already logged in - show a "Go to Dashboard" option
-            var loginBtns = document.querySelectorAll('.login-button');
-            loginBtns.forEach(function(btn) {
-                btn.textContent = 'Dashboard';
-                btn.onclick = function() {
-                    window.location.href = 'user-dashboard/index.html';
-                };
+        // ─── CHECK IF ALREADY LOGGED IN (Supabase session) ───
+        var sb = getSafetyVerseSupabase();
+        if (sb) {
+            sb.auth.getSession().then(function(result) {
+                if (result.data.session) {
+                    // User is logged in - show "Dashboard" buttons
+                    var loginBtns = document.querySelectorAll('.login-button');
+                    loginBtns.forEach(function(btn) {
+                        btn.textContent = 'Dashboard';
+                        btn.onclick = function() {
+                            window.location.href = 'user-dashboard/index.html';
+                        };
+                    });
+                    // Also update CTA buttons
+                    var ctaPrimary = document.querySelector('.cta-primary');
+                    if (ctaPrimary) {
+                        ctaPrimary.textContent = '\u25B6 Go to Dashboard';
+                        ctaPrimary.onclick = function() {
+                            window.location.href = 'user-dashboard/index.html';
+                        };
+                    }
+                }
             });
         }
 

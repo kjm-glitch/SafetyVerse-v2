@@ -1,11 +1,15 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-required-role="admin">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard — TheSafetyVerse</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <!-- Auth Guard -->
+    <style>body { visibility: hidden; opacity: 0; transition: opacity 0.3s; }</style>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../auth/supabase-config.js"></script>
+    <script src="../auth/auth-guard.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
     <style>
         /* ===== CSS VARIABLES ===== */
         :root {
@@ -899,10 +903,10 @@
     <div class="header-right">
         <a href="../user-dashboard/index.html" class="header-link">User Dashboard</a>
         <div class="header-user">
-            <div class="header-user-avatar" id="adminAvatar">KJ</div>
-            <span id="adminUserName">Katie Johnson</span>
+            <div class="header-user-avatar" id="adminAvatar">KM</div>
+            <span id="adminUserName">Katie Mead</span>
         </div>
-        <a href="../index.html" class="logout-btn" onclick="localStorage.removeItem('safetyverse-logged-in');localStorage.removeItem('safetyverse-role');localStorage.removeItem('safetyverse-username');localStorage.removeItem('safetyverse-department');">Logout</a>
+        <a href="#" class="logout-btn" onclick="event.preventDefault();getSafetyVerseSupabase().auth.signOut().then(function(){localStorage.clear();window.location.href='../login.html';});">Logout</a>
     </div>
 </header>
 
@@ -1192,7 +1196,7 @@
         </div>
         <div class="form-group">
             <label>Assigned To</label>
-            <input type="text" id="caAssigned" placeholder="e.g. Marcus Rivera">
+            <input type="text" id="caAssigned" placeholder="e.g. John Smith">
         </div>
         <div class="form-group">
             <label>Due Date</label>
@@ -1254,7 +1258,7 @@
         <h2>Add Certification</h2>
         <div class="form-group">
             <label>Employee Name</label>
-            <input type="text" id="certEmpName" placeholder="e.g. Marcus Rivera">
+            <input type="text" id="certEmpName" placeholder="e.g. John Smith">
         </div>
         <div class="form-group">
             <label>Certification Type</label>
@@ -1273,34 +1277,24 @@
 
 <script>
 // =========================================================
-// ACCESS GUARD — redirect non-admins
+// ACCESS GUARD — handled by auth-guard.js (data-required-role="admin")
+// Personalize admin header when auth is ready
 // =========================================================
-(function() {
-    var role = localStorage.getItem('safetyverse-role');
-    if (role !== 'Admin') {
-        alert('Access denied — Admin role required. Please log in as an Admin user.');
-        window.location.href = '../user-dashboard/index.html';
-        return;
+document.addEventListener('svAuthReady', function(e) {
+    var user = e.detail;
+    var nameEl = document.getElementById('adminUserName');
+    var avatarEl = document.getElementById('adminAvatar');
+    if (nameEl) nameEl.textContent = user.full_name;
+    if (avatarEl) {
+        var parts = user.full_name.split(' ');
+        avatarEl.textContent = (parts[0] ? parts[0][0] : '') + (parts[1] ? parts[1][0] : '');
     }
-    // Personalize admin header with logged-in name
-    var name = localStorage.getItem('safetyverse-username');
-    if (name) {
-        var nameEl = document.getElementById('adminUserName');
-        var avatarEl = document.getElementById('adminAvatar');
-        if (nameEl) nameEl.textContent = name;
-        if (avatarEl) {
-            var parts = name.split(' ');
-            avatarEl.textContent = (parts[0] ? parts[0][0] : '') + (parts[1] ? parts[1][0] : '');
-        }
-    }
-})();
+});
 
 // =========================================================
-// SUPABASE INIT
+// SUPABASE INIT — uses shared auth/supabase-config.js
 // =========================================================
-const SUPABASE_URL = 'https://cfuupedcjroqarmgqcyn.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNmdXVwZWRjanJvcWFybWdxY3luIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzEzNjQ1ODksImV4cCI6MjA4Njk0MDU4OX0.kHqVQPBCljGhk8lkd_LN4JxhT1ywOIKapXKmJZD1LEo';
-const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const sb = getSafetyVerseSupabase();
 
 // =========================================================
 // STATE — live data cached locally after fetch
