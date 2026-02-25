@@ -322,8 +322,8 @@ body{font-family:'Inter',sans-serif;background:#0f172a;color:#e2e8f0;min-height:
         <input type="text" class="sv-input" id="sf-manager" placeholder="John Smith">
       </div>
       <div class="sv-field">
-        <label class="sv-label">Manager Email</label>
-        <input type="email" class="sv-input" id="sf-email" placeholder="john@example.com">
+        <label class="sv-label">Alert Emails <span style="font-weight:400;color:#94a3b8;font-size:12px;">(comma-separated for multiple)</span></label>
+        <input type="text" class="sv-input" id="sf-email" placeholder="john@example.com, jane@example.com">
       </div>
     </div>
     <div class="form-actions">
@@ -524,7 +524,9 @@ async function loadSites() {
     }
     let html = '';
     for (const s of sites) {
-      html += `<div class="site-item"><div class="si-info"><div class="si-name">${esc(s.name)}</div><div class="si-detail">${esc(s.city||'')}${s.state?', '+esc(s.state):''} &nbsp;|&nbsp; Lat: ${s.latitude}, Lng: ${s.longitude}${s.manager_name?'<br>Manager: '+esc(s.manager_name):''}${s.manager_email?' ('+esc(s.manager_email)+')':''}</div></div><div class="si-actions"><button class="btn-edit" onclick="editSite(${s.id})">Edit</button><button class="btn-danger" onclick="deleteSite(${s.id},'${esc(s.name)}')">Remove</button></div></div>`;
+      const emails = s.manager_email ? s.manager_email.split(',').map(e => e.trim()).filter(Boolean) : [];
+      const emailDisplay = emails.length > 0 ? '<br>Alerts to: ' + emails.map(e => esc(e)).join(', ') : '';
+      html += `<div class="site-item"><div class="si-info"><div class="si-name">${esc(s.name)}</div><div class="si-detail">${esc(s.city||'')}${s.state?', '+esc(s.state):''} &nbsp;|&nbsp; Lat: ${s.latitude}, Lng: ${s.longitude}${s.manager_name?'<br>Manager: '+esc(s.manager_name):''}${emailDisplay}</div></div><div class="si-actions"><button class="btn-edit" onclick="editSite(${s.id})">Edit</button><button class="btn-danger" onclick="deleteSite(${s.id},'${esc(s.name)}')">Remove</button></div></div>`;
     }
     area.innerHTML = html;
   } catch (err) {
