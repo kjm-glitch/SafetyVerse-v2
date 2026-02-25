@@ -1659,14 +1659,14 @@ async function inviteUser() {
 // ─── Load site locations into invite dropdown ───
 async function loadSiteOptions() {
     try {
-        const { data, error } = await sb.from('site_locations').select('site_name').order('site_name');
+        const { data, error } = await sb.from('site_locations').select('name').order('name');
         if (error || !data) return;
         const sel = document.getElementById('inviteSite');
         sel.innerHTML = '';
         data.forEach(function(s) {
             var opt = document.createElement('option');
-            opt.value = s.site_name;
-            opt.textContent = s.site_name;
+            opt.value = s.name;
+            opt.textContent = s.name;
             sel.appendChild(opt);
         });
     } catch (e) { console.warn('Failed to load sites:', e); }

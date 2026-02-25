@@ -26,7 +26,7 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 -- 3. Clear old site_locations and insert the 11 current sites
 DELETE FROM public.site_locations;
 
-INSERT INTO public.site_locations (site_name) VALUES
+INSERT INTO public.site_locations (name) VALUES
   ('HQ'),
   ('SN8'),
   ('GRN'),
