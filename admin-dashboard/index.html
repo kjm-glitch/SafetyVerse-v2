@@ -1573,7 +1573,7 @@ async function inviteUser() {
 
     try {
         // Step 1: Create the auth account with a random temp password
-        const tempPassword = 'Temp-' + crypto.randomUUID();
+        const tempPassword = 'Temp-' + (crypto.randomUUID ? crypto.randomUUID() : Array.from(crypto.getRandomValues(new Uint8Array(16))).map(b => b.toString(16).padStart(2,'0')).join(''));
         const { data: signUpData, error: signUpError } = await sb.auth.signUp({
             email: email,
             password: tempPassword,

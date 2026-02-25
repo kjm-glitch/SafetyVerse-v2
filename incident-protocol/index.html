@@ -148,6 +148,8 @@
   .cheat-table thead th { background: #334155; color: #f59e0b; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; padding: 0.8rem 0.9rem; text-align: left; }
   .cheat-table tbody td { background: #1e293b; padding: 0.75rem 0.9rem; font-size: 0.83rem; color: #cbd5e1; border-top: 1px solid #293548; }
   .cheat-table tbody tr:hover td { background: #263044; }
+  .table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; margin-bottom: 1.5rem; border-radius: 12px; }
+  .table-scroll .cheat-table { margin-bottom: 0; min-width: 720px; }
   .facility-tag { display: inline-block; padding: 0.18rem 0.55rem; border-radius: 6px; font-size: 0.7rem; font-weight: 600; white-space: nowrap; }
   .tag-red { background: rgba(239,68,68,0.15); color: #f87171; }
   .tag-amber { background: rgba(245,158,11,0.15); color: #fbbf24; }
@@ -217,32 +219,65 @@
   <!-- ═══ PANEL: CHEAT SHEET ═══ -->
   <div class="panel" id="panel-cheat">
     <p class="section-title">Slip, Trip &amp; Fall &#8212; Quick Reference</p>
+    <div class="table-scroll">
     <table class="cheat-table">
-      <thead><tr><th>Type of Fall</th><th>Symptoms</th><th>Send To</th></tr></thead>
+      <thead><tr><th>Type of Fall</th><th>Symptoms</th><th>Send To</th><th>Transport</th><th>Can Wait for Personal Driver?</th></tr></thead>
       <tbody>
-        <tr><td><strong>The &#8220;Hard&#8221; Fall</strong></td><td>Hit head, &#8220;saw stars,&#8221; or brief black-out</td><td><span class="facility-tag tag-red">ER &#8212; Concussion Protocol</span></td></tr>
-        <tr><td><strong>The &#8220;Twist&#8221;</strong></td><td>Ankle or knee popped; immediate swelling</td><td><span class="facility-tag tag-amber">Occupational Clinic</span></td></tr>
-        <tr><td><strong>The &#8220;Catch&#8221;</strong></td><td>Caught themselves; shoulder or wrist hurts</td><td><span class="facility-tag tag-amber">Occupational Clinic</span></td></tr>
-        <tr><td><strong>The &#8220;Skid&#8221;</strong></td><td>Minor carpet burn or bruise</td><td><span class="facility-tag tag-green">On-Site First Aid</span></td></tr>
-        <tr><td><strong>The &#8220;Back Strain&#8221;</strong></td><td>Back feels tight or pulled</td><td><span class="facility-tag tag-amber">Clinic (if pain &gt;2 hrs)</span></td></tr>
+        <tr><td><strong>The &#8220;Hard&#8221; Fall</strong></td><td>Hit head, &#8220;saw stars,&#8221; or brief black-out</td><td><span class="facility-tag tag-red">ER &#8212; Concussion Protocol</span></td><td>Call 911 if red flags; otherwise designated driver in company vehicle</td><td><span class="facility-tag tag-red">NO</span> &#8212; Concussion symptoms can escalate rapidly. Transport immediately.</td></tr>
+        <tr><td><strong>The &#8220;Twist&#8221;</strong></td><td>Ankle or knee popped; immediate swelling</td><td><span class="facility-tag tag-amber">Occupational Clinic</span></td><td>Designated driver in company vehicle &#8212; lower limb impairs pedal use</td><td><span class="facility-tag tag-amber">YES</span> &#8212; If ice is applied and employee is stable, may wait up to 30 min for a personal driver.</td></tr>
+        <tr><td><strong>The &#8220;Catch&#8221;</strong></td><td>Caught themselves; shoulder or wrist hurts</td><td><span class="facility-tag tag-amber">Occupational Clinic</span></td><td>Company vehicle with escort; self-transport if injury does not impair driving</td><td><span class="facility-tag tag-amber">YES</span> &#8212; Stable upper-body injury. May wait for personal driver if preferred.</td></tr>
+        <tr><td><strong>The &#8220;Skid&#8221;</strong></td><td>Minor carpet burn or bruise</td><td><span class="facility-tag tag-green">On-Site First Aid</span></td><td>N/A &#8212; treated on-site</td><td>N/A</td></tr>
+        <tr><td><strong>The &#8220;Back Strain&#8221;</strong></td><td>Back feels tight or pulled</td><td><span class="facility-tag tag-amber">Clinic (if pain &gt;2 hrs)</span></td><td>Designated driver in company vehicle &#8212; back pain impairs braking and turning</td><td><span class="facility-tag tag-amber">YES</span> &#8212; If pain is stable and not worsening, may wait up to 30 min for personal driver.</td></tr>
       </tbody>
     </table>
+    </div>
 
     <p class="section-title">General Workplace Injuries &#8212; Quick Reference</p>
+    <div class="table-scroll">
     <table class="cheat-table">
-      <thead><tr><th>Injury Type</th><th>Symptoms</th><th>Send To</th></tr></thead>
+      <thead><tr><th>Injury Type</th><th>Symptoms</th><th>Send To</th><th>Transport</th><th>Can Wait for Personal Driver?</th></tr></thead>
       <tbody>
-        <tr><td><strong>Severe Laceration</strong></td><td>Deep/gaping wound; uncontrolled bleeding</td><td><span class="facility-tag tag-red">ER / Call 911</span></td></tr>
-        <tr><td><strong>Chemical Splash</strong></td><td>Eyes or skin exposed to chemicals</td><td><span class="facility-tag tag-red">ER (after 15-min flush)</span></td></tr>
-        <tr><td><strong>Head Injury w/ Red Flags</strong></td><td>LOC, vomiting, confusion, unequal pupils</td><td><span class="facility-tag tag-red">Call 911</span></td></tr>
-        <tr><td><strong>Suspected Fracture</strong></td><td>Deformity, cannot bear weight</td><td><span class="facility-tag tag-red">ER</span></td></tr>
-        <tr><td><strong>Moderate Wound</strong></td><td>Bleeding controlled; may need stitches</td><td><span class="facility-tag tag-amber">Occupational Clinic</span></td></tr>
-        <tr><td><strong>Point Tenderness</strong></td><td>Localized sharp pain on a bone</td><td><span class="facility-tag tag-amber">Clinic (X-ray)</span></td></tr>
-        <tr><td><strong>Foreign Body (eye/ear)</strong></td><td>Debris that won&#8217;t flush out</td><td><span class="facility-tag tag-amber">Occupational Clinic</span></td></tr>
-        <tr><td><strong>Repetitive Strain</strong></td><td>Wrist, elbow, or shoulder pain</td><td><span class="facility-tag tag-amber">Clinic (same day)</span></td></tr>
-        <tr><td><strong>Minor Cut / Scrape</strong></td><td>Small wound, minimal bleeding</td><td><span class="facility-tag tag-green">On-Site First Aid</span></td></tr>
+        <tr><td><strong>Severe Laceration</strong></td><td>Deep/gaping wound; uncontrolled bleeding</td><td><span class="facility-tag tag-red">ER / Call 911</span></td><td>Call 911 &#8212; EMS required</td><td><span class="facility-tag tag-red">NO</span> &#8212; Active bleeding emergency. Do not delay.</td></tr>
+        <tr><td><strong>Chemical Splash</strong></td><td>Eyes or skin exposed to chemicals</td><td><span class="facility-tag tag-red">ER (after 15-min flush)</span></td><td>Call 911 for severe; designated driver after flush</td><td><span class="facility-tag tag-red">NO</span> &#8212; Time-sensitive decontamination. Transport immediately after flush.</td></tr>
+        <tr><td><strong>Head Injury w/ Red Flags</strong></td><td>LOC, vomiting, confusion, unequal pupils</td><td><span class="facility-tag tag-red">Call 911</span></td><td>Call 911 &#8212; EMS only</td><td><span class="facility-tag tag-red">NO</span> &#8212; Neurological emergency. Every minute counts.</td></tr>
+        <tr><td><strong>Suspected Fracture</strong></td><td>Deformity, cannot bear weight</td><td><span class="facility-tag tag-red">ER</span></td><td>Call 911 for severe; designated driver in company vehicle</td><td><span class="facility-tag tag-red">NO</span> &#8212; Requires immediate immobilization and imaging. Do not delay.</td></tr>
+        <tr><td><strong>Moderate Wound</strong></td><td>Bleeding controlled; may need stitches</td><td><span class="facility-tag tag-amber">Occupational Clinic</span></td><td>Designated driver in company vehicle &#8212; possible light-headedness</td><td><span class="facility-tag tag-amber">MAYBE</span> &#8212; Only if bleeding is fully controlled with dressing. Max 20 min wait. If bleeding restarts, transport immediately.</td></tr>
+        <tr><td><strong>Point Tenderness</strong></td><td>Localized sharp pain on a bone</td><td><span class="facility-tag tag-amber">Clinic (X-ray)</span></td><td>Designated driver if lower limb; escort if upper body</td><td><span class="facility-tag tag-amber">YES</span> &#8212; Stable condition. Ice applied. May wait up to 30 min for personal driver.</td></tr>
+        <tr><td><strong>Foreign Body (eye/ear)</strong></td><td>Debris that won&#8217;t flush out</td><td><span class="facility-tag tag-amber">Occupational Clinic</span></td><td>Designated driver in company vehicle &#8212; impaired vision</td><td><span class="facility-tag tag-amber">MAYBE</span> &#8212; If eye is not in acute pain and can be kept closed. Max 20 min wait.</td></tr>
+        <tr><td><strong>Repetitive Strain</strong></td><td>Wrist, elbow, or shoulder pain</td><td><span class="facility-tag tag-amber">Clinic (same day)</span></td><td>Self-transport permitted; escort if dominant hand affected</td><td><span class="facility-tag tag-amber">YES</span> &#8212; Not urgent. Employee may finish shift and go, or wait for personal driver.</td></tr>
+        <tr><td><strong>Minor Cut / Scrape</strong></td><td>Small wound, minimal bleeding</td><td><span class="facility-tag tag-green">On-Site First Aid</span></td><td>N/A &#8212; treated on-site</td><td>N/A</td></tr>
       </tbody>
     </table>
+    </div>
+
+    <p class="section-title">Heat-Related Illness &#8212; Quick Reference</p>
+    <div class="table-scroll">
+    <table class="cheat-table">
+      <thead><tr><th>Condition</th><th>Symptoms</th><th>Send To</th><th>Transport</th><th>Can Wait for Personal Driver?</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Heat Stroke</strong></td><td>Temp &gt;104&#176;F, confusion, slurred speech, loss of consciousness, hot/dry skin, seizure</td><td><span class="facility-tag tag-red">Call 911</span></td><td>Call 911 &#8212; EMS only. Begin active cooling immediately while waiting.</td><td><span class="facility-tag tag-red">NO</span> &#8212; Life-threatening emergency. Every minute of delay worsens brain damage risk.</td></tr>
+        <tr><td><strong>Heat Exhaustion</strong></td><td>Heavy sweating, cold/clammy skin, nausea, vomiting, dizziness, headache, weakness, fast/weak pulse</td><td><span class="facility-tag tag-red">ER or Clinic (urgent)</span></td><td>Designated driver in company vehicle &#8212; impaired cognition and dizziness make driving unsafe</td><td><span class="facility-tag tag-red">NO</span> &#8212; Can progress to heat stroke quickly. Transport within 15 min. Cool actively while waiting.</td></tr>
+        <tr><td><strong>Heat Syncope</strong></td><td>Fainting or near-fainting after standing or exertion in heat; brief episode</td><td><span class="facility-tag tag-amber">Occupational Clinic</span></td><td>Designated driver in company vehicle &#8212; risk of repeat fainting episode</td><td><span class="facility-tag tag-amber">MAYBE</span> &#8212; If fully recovered after 15 min of rest, fluids, and cooling. Max 20 min wait. If repeat episode, transport immediately.</td></tr>
+        <tr><td><strong>Heat Cramps</strong></td><td>Painful muscle spasms in legs, arms, or abdomen during/after exertion in heat</td><td><span class="facility-tag tag-green">On-Site First Aid</span></td><td>N/A &#8212; treated on-site; send to clinic if cramps persist &gt;1 hour</td><td>N/A &#8212; Monitor on-site. If escalation needed, personal driver is acceptable.</td></tr>
+        <tr><td><strong>Heat Rash</strong></td><td>Red clusters of small blisters on skin, usually neck, chest, groin, or elbow creases</td><td><span class="facility-tag tag-green">On-Site First Aid</span></td><td>N/A &#8212; treated on-site</td><td>N/A</td></tr>
+      </tbody>
+    </table>
+    </div>
+
+    <p class="section-title">Cold-Related Illness &#8212; Quick Reference</p>
+    <div class="table-scroll">
+    <table class="cheat-table">
+      <thead><tr><th>Condition</th><th>Symptoms</th><th>Send To</th><th>Transport</th><th>Can Wait for Personal Driver?</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Severe Hypothermia</strong></td><td>Temp &lt;90&#176;F, confusion, slurred speech, drowsiness, loss of consciousness, slow/weak pulse, shallow breathing</td><td><span class="facility-tag tag-red">Call 911</span></td><td>Call 911 &#8212; EMS only. Handle gently; do NOT rub or massage. Warm passively with blankets.</td><td><span class="facility-tag tag-red">NO</span> &#8212; Life-threatening. Risk of cardiac arrest with rough handling. EMS required.</td></tr>
+        <tr><td><strong>Mild/Moderate Hypothermia</strong></td><td>Shivering, fumbling hands, slurred speech, stumbling, cool skin, confusion begins</td><td><span class="facility-tag tag-red">ER</span></td><td>Designated driver in company vehicle &#8212; impaired cognition and coordination. Warm vehicle, blankets.</td><td><span class="facility-tag tag-red">NO</span> &#8212; Can deteriorate rapidly. Begin warming immediately and transport within 15 min.</td></tr>
+        <tr><td><strong>Severe Frostbite</strong></td><td>White/grayish-yellow skin, hard/waxy feel, numbness; affects deep tissue of fingers, toes, nose, ears</td><td><span class="facility-tag tag-red">ER</span></td><td>Designated driver in company vehicle &#8212; do NOT let employee drive (numbness in extremities). Do NOT rub or walk on frostbitten feet.</td><td><span class="facility-tag tag-red">NO</span> &#8212; Tissue damage worsens with time. Transport to ER immediately. Do NOT rewarm if risk of refreezing.</td></tr>
+        <tr><td><strong>Superficial Frostbite (Frostnip)</strong></td><td>Red skin that turns white/pale, tingling or numbness, skin still soft underneath</td><td><span class="facility-tag tag-amber">Occupational Clinic</span></td><td>Company vehicle with escort; self-transport if hands/feet not affected and employee feels able</td><td><span class="facility-tag tag-amber">YES</span> &#8212; If rewarming is started and skin color returns. May wait up to 30 min. If numbness persists or worsens, transport immediately.</td></tr>
+        <tr><td><strong>Trench Foot (Immersion Foot)</strong></td><td>Red, swollen, numb feet; tingling pain; blisters in severe cases; from prolonged wet/cold exposure</td><td><span class="facility-tag tag-amber">Occupational Clinic</span></td><td>Designated driver in company vehicle &#8212; affected feet make pedal use unsafe. Remove wet socks/shoes, dry and elevate.</td><td><span class="facility-tag tag-amber">YES</span> &#8212; Stable if feet are dried and elevated. May wait up to 30 min for personal driver.</td></tr>
+        <tr><td><strong>Chilblains</strong></td><td>Red/purple patches on skin, itching, swelling, possible blistering on fingers, toes, ears</td><td><span class="facility-tag tag-green">On-Site First Aid</span></td><td>N/A &#8212; treated on-site; send to clinic if blistering or symptoms persist</td><td>N/A &#8212; Monitor on-site. If escalation needed, personal driver is acceptable.</td></tr>
+      </tbody>
+    </table>
+    </div>
   </div>
 
   <!-- ═══ PANEL: ESCALATION & REPORTING ═══ -->
