@@ -157,6 +157,19 @@
             align-items: center;
             gap: 14px;
         }
+        .logout-link {
+            color: rgba(255,255,255,0.6);
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 500;
+            padding: 6px 12px;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+        }
+        .logout-link:hover {
+            color: #fff;
+            background: rgba(255,255,255,0.1);
+        }
 
         .header-avatar {
             width: 36px; height: auto;
@@ -1528,7 +1541,7 @@
             </div>
             <div class="header-right">
                 <span class="header-greeting" id="headerGreeting">Welcome back!</span>
-                <img src="katie.png" alt="Katie" class="katie-avatar-small">
+                <a href="#" class="logout-link" onclick="event.preventDefault();getSafetyVerseSupabase().auth.signOut().then(function(){localStorage.clear();window.location.href='../login.html';});">Logout</a>
             </div>
             <button class="hamburger" aria-label="Toggle menu" onclick="toggleMobileMenu()">
                 <span></span><span></span><span></span>
@@ -1539,6 +1552,7 @@
             <a href="../lessons/index.html">My Progress</a>
             <a href="../games/safety-clue/index.html">Games</a>
             <a href="../admin-dashboard/index.html" id="adminMobileNavItem" style="display:none;">Admin</a>
+            <a href="#" onclick="event.preventDefault();getSafetyVerseSupabase().auth.signOut().then(function(){localStorage.clear();window.location.href='../login.html';});">Logout</a>
         </div>
     </header>
 
