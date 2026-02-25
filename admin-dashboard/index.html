@@ -1002,10 +1002,11 @@
                         <select class="filter-select" id="userRoleFilter" onchange="filterUsers()">
                             <option value="">All Roles</option>
                             <option value="Admin">Admin</option>
+                            <option value="Manager">Manager</option>
                             <option value="User">User</option>
                         </select>
                     </div>
-                    <button class="btn btn-primary" onclick="openModal('addEmployeeModal')">+ Add Employee</button>
+                    <button class="btn btn-primary" onclick="openModal('inviteUserModal')">+ Invite User</button>
                 </div>
                 <div style="overflow-x:auto;">
                     <table class="data-table" id="userTable">
@@ -1014,6 +1015,7 @@
                                 <th>Name</th>
                                 <th>Email</th>
                                 <th>Role</th>
+                                <th>Site</th>
                                 <th>Status</th>
                                 <th class="hide-mobile">Date Added</th>
                                 <th>Actions</th>
@@ -1141,28 +1143,35 @@
 
 <!-- ===== MODALS ===== -->
 
-<!-- Add Employee Modal -->
-<div class="modal-overlay" id="addEmployeeModal">
+<!-- Invite User Modal -->
+<div class="modal-overlay" id="inviteUserModal">
     <div class="modal">
-        <h2>Add Employee</h2>
+        <h2>Invite User</h2>
+        <p style="font-size:13px;color:var(--text-light);margin-bottom:18px;">They'll receive an email to set their password and access TheSafetyVerse.</p>
         <div class="form-group">
-            <label>Full Name</label>
-            <input type="text" id="empName" placeholder="e.g. John Smith">
+            <label>Email Address</label>
+            <input type="email" id="inviteEmail" placeholder="e.g. john@company.com">
         </div>
         <div class="form-group">
-            <label>Email</label>
-            <input type="email" id="empEmail" placeholder="e.g. john@company.com">
+            <label>Full Name</label>
+            <input type="text" id="inviteName" placeholder="e.g. John Smith">
         </div>
         <div class="form-group">
             <label>Role</label>
-            <select id="empRole">
-                <option value="User">User</option>
-                <option value="Admin">Admin</option>
+            <select id="inviteRole">
+                <option value="user">User</option>
+                <option value="manager">Manager</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Site</label>
+            <select id="inviteSite">
+                <option value="HQ">Loading sites...</option>
             </select>
         </div>
         <div class="form-group">
             <label>Department</label>
-            <select id="empDept">
+            <select id="inviteDept">
                 <option value="Unassigned">Unassigned</option>
                 <option value="Operations">Operations</option>
                 <option value="Maintenance">Maintenance</option>
@@ -1171,9 +1180,10 @@
                 <option value="Field">Field</option>
             </select>
         </div>
+        <div id="inviteResult" style="display:none;padding:10px 14px;border-radius:8px;font-size:13px;margin-bottom:12px;"></div>
         <div class="modal-actions">
-            <button class="btn btn-secondary" onclick="closeModal('addEmployeeModal')">Cancel</button>
-            <button class="btn btn-primary" id="addEmpBtn" onclick="addEmployee()">Add Employee</button>
+            <button class="btn btn-secondary" onclick="closeModal('inviteUserModal')">Cancel</button>
+            <button class="btn btn-primary" id="inviteBtn" onclick="inviteUser()">Send Invite</button>
         </div>
     </div>
 </div>
@@ -1550,27 +1560,120 @@ async function toggleStatus(id) {
     showToast(emp.name + ' ' + (newStatus === 'Active' ? 'activated' : 'deactivated'), 'success');
 }
 
-async function addEmployee() {
-    const name = document.getElementById('empName').value.trim();
-    const email = document.getElementById('empEmail').value.trim();
-    const role = document.getElementById('empRole').value;
-    const dept = document.getElementById('empDept').value;
-    if (!name || !email) { showToast('Name and email are required', 'error'); return; }
+// ─── Invite User (creates Supabase Auth account + sends password reset email) ───
+async function inviteUser() {
+    const email = document.getElementById('inviteEmail').value.trim();
+    const name = document.getElementById('inviteName').value.trim();
+    const role = document.getElementById('inviteRole').value;
+    const site = document.getElementById('inviteSite').value;
+    const dept = document.getElementById('inviteDept').value;
+    const resultEl = document.getElementById('inviteResult');
+    resultEl.style.display = 'none';
 
-    const btn = document.getElementById('addEmpBtn');
-    btn.disabled = true; btn.textContent = 'Adding...';
+    if (!email || !name) {
+        resultEl.textContent = 'Email and name are required.';
+        resultEl.style.display = 'block';
+        resultEl.style.background = '#fef2f2';
+        resultEl.style.color = '#dc2626';
+        resultEl.style.border = '1px solid #fecaca';
+        return;
+    }
 
-    const { data, error } = await sb.from('employees').insert([{ name, email, role, department: dept, status: 'Active' }]).select();
-    btn.disabled = false; btn.textContent = 'Add Employee';
-    if (error) { showToast('Error: ' + error.message, 'error'); return; }
+    const btn = document.getElementById('inviteBtn');
+    btn.disabled = true;
+    btn.textContent = 'Sending invite...';
 
-    employeesData.unshift(data[0]);
-    closeModal('addEmployeeModal');
-    document.getElementById('empName').value = '';
-    document.getElementById('empEmail').value = '';
-    filterUsers();
-    showToast(name + ' added!', 'success');
+    try {
+        // Step 1: Create the auth account with a random temp password
+        const tempPassword = 'Temp-' + crypto.randomUUID();
+        const { data: signUpData, error: signUpError } = await sb.auth.signUp({
+            email: email,
+            password: tempPassword,
+            options: {
+                data: {
+                    full_name: name,
+                    role: role,
+                    department: dept,
+                    site: site
+                }
+            }
+        });
+
+        if (signUpError) throw signUpError;
+
+        // Step 2: Also add to employees table for backward compat with admin dashboard
+        await sb.from('employees').insert([{
+            name: name,
+            email: email,
+            role: role.charAt(0).toUpperCase() + role.slice(1),
+            department: dept,
+            status: 'Active'
+        }]);
+
+        // Step 3: Send password reset email so user can set their own password
+        const siteUrl = window.location.origin + window.location.pathname.replace('/admin-dashboard/index.html', '/set-password.html');
+        const { error: resetError } = await sb.auth.resetPasswordForEmail(email, {
+            redirectTo: siteUrl
+        });
+
+        if (resetError) {
+            console.warn('Password reset email failed:', resetError.message);
+            // Account was still created — show partial success
+            resultEl.textContent = 'Account created for ' + name + ', but the email could not be sent. They can use "Forgot password" on the login page.';
+            resultEl.style.display = 'block';
+            resultEl.style.background = '#fefce8';
+            resultEl.style.color = '#a16207';
+            resultEl.style.border = '1px solid #fde68a';
+        } else {
+            resultEl.textContent = 'Invite sent to ' + email + '! They will receive an email to set their password.';
+            resultEl.style.display = 'block';
+            resultEl.style.background = '#f0fdf4';
+            resultEl.style.color = '#166534';
+            resultEl.style.border = '1px solid #bbf7d0';
+        }
+
+        // Refresh the employee list
+        await loadEmployees();
+        filterUsers();
+
+        // Clear the form
+        document.getElementById('inviteEmail').value = '';
+        document.getElementById('inviteName').value = '';
+        document.getElementById('inviteRole').value = 'user';
+        document.getElementById('inviteDept').value = 'Unassigned';
+
+        showToast(name + ' invited!', 'success');
+
+    } catch (err) {
+        resultEl.textContent = 'Error: ' + (err.message || 'Could not create account');
+        resultEl.style.display = 'block';
+        resultEl.style.background = '#fef2f2';
+        resultEl.style.color = '#dc2626';
+        resultEl.style.border = '1px solid #fecaca';
+    }
+
+    btn.disabled = false;
+    btn.textContent = 'Send Invite';
 }
+
+// ─── Load site locations into invite dropdown ───
+async function loadSiteOptions() {
+    try {
+        const { data, error } = await sb.from('site_locations').select('site_name').order('site_name');
+        if (error || !data) return;
+        const sel = document.getElementById('inviteSite');
+        sel.innerHTML = '';
+        data.forEach(function(s) {
+            var opt = document.createElement('option');
+            opt.value = s.site_name;
+            opt.textContent = s.site_name;
+            sel.appendChild(opt);
+        });
+    } catch (e) { console.warn('Failed to load sites:', e); }
+}
+
+// Load site options when page loads
+loadSiteOptions();
 
 
 // =========================================================
