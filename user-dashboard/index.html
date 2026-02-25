@@ -1288,6 +1288,224 @@
             display: block;
             flex-shrink: 0;
         }
+
+        /* ═══════════════════════════════════════════
+           ROLE-BASED LAYOUT
+           ═══════════════════════════════════════════ */
+        .section-manager-up { display: none; }
+        .section-admin-only { display: none; }
+        body.role-manager .section-user-only { display: none !important; }
+        body.role-manager .section-manager-up { display: block; }
+        body.role-admin .section-user-only { display: none !important; }
+        body.role-admin .section-manager-up { display: block; }
+        body.role-admin .section-admin-only { display: block; }
+
+        /* ─── QUICK ACTION BAR ─── */
+        .quick-actions {
+            background: linear-gradient(135deg, #1A1A1A 0%, #2D2D2D 100%);
+            border-bottom: 3px solid var(--primary);
+            padding: 20px 24px;
+            margin-top: 72px; /* below sticky header */
+        }
+        .quick-actions-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            gap: 14px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .qa-btn {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 24px;
+            background: rgba(255,255,255,0.06);
+            border: 1.5px solid rgba(255,215,0,0.25);
+            border-radius: 12px;
+            color: #fff;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.25s ease;
+            cursor: pointer;
+            flex: 1;
+            min-width: 180px;
+            max-width: 260px;
+            justify-content: center;
+        }
+        .qa-btn:hover {
+            background: rgba(255,215,0,0.12);
+            border-color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(255,215,0,0.2);
+        }
+        .qa-icon { font-size: 20px; }
+        .qa-label { white-space: nowrap; }
+
+        /* ─── ADMIN OVERVIEW ─── */
+        .admin-overview {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            padding: 40px 24px;
+        }
+        .admin-overview-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .admin-overview-inner h2 {
+            color: #fff;
+            font-size: 22px;
+            font-weight: 800;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .admin-overview-inner h2 em {
+            color: var(--primary);
+            font-style: normal;
+        }
+        .admin-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+        .admin-stat-card {
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 14px;
+            padding: 24px 16px;
+            text-align: center;
+            transition: all 0.25s ease;
+        }
+        .admin-stat-card:hover {
+            background: rgba(255,215,0,0.08);
+            border-color: rgba(255,215,0,0.3);
+        }
+        .admin-stat-value {
+            display: block;
+            font-size: 32px;
+            font-weight: 800;
+            color: var(--primary);
+            line-height: 1.2;
+        }
+        .admin-stat-label {
+            display: block;
+            font-size: 13px;
+            color: rgba(255,255,255,0.6);
+            margin-top: 6px;
+            font-weight: 500;
+        }
+        .admin-overview-link {
+            display: block;
+            text-align: center;
+            color: var(--primary);
+            font-size: 14px;
+            font-weight: 600;
+            text-decoration: none;
+            padding: 12px;
+            transition: all 0.2s;
+        }
+        .admin-overview-link:hover {
+            color: #fff;
+            text-decoration: underline;
+        }
+
+        /* ─── COMPACT TRAINING LINK ─── */
+        .training-link-section {
+            background: var(--bg-clay-light);
+            padding: 24px;
+            border-top: 1px solid rgba(0,0,0,0.06);
+        }
+        .training-link-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #fff;
+            padding: 20px 28px;
+            border-radius: 16px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+            gap: 20px;
+        }
+        .training-link-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        .training-link-icon {
+            font-size: 32px;
+            line-height: 1;
+        }
+        .training-link-left h3 {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 2px;
+        }
+        .training-link-left p {
+            font-size: 13px;
+            color: var(--text-light);
+        }
+        .training-link-progress {
+            width: 200px;
+            height: 6px;
+            background: var(--bg-clay-dark);
+            border-radius: 3px;
+            overflow: hidden;
+            margin-top: 6px;
+        }
+        .training-link-progress-fill {
+            height: 100%;
+            background: var(--primary);
+            border-radius: 3px;
+            transition: width 0.5s ease;
+        }
+        .training-link-btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background: var(--primary);
+            color: var(--text-dark);
+            font-size: 14px;
+            font-weight: 700;
+            text-decoration: none;
+            border-radius: 10px;
+            white-space: nowrap;
+            transition: all 0.25s ease;
+        }
+        .training-link-btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(255,215,0,0.3);
+        }
+
+        /* ─── Manager/admin: incident section needs margin-top for below quick-actions ─── */
+        body.role-manager .incident-section,
+        body.role-admin .incident-section {
+            margin-top: 0;
+        }
+
+        /* ─── RESPONSIVE: Quick Action Bar ─── */
+        @media (max-width: 768px) {
+            .quick-actions-inner {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .qa-btn {
+                max-width: 100%;
+                min-width: 0;
+            }
+            .admin-stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .training-link-inner {
+                flex-direction: column;
+                text-align: center;
+            }
+            .training-link-left {
+                flex-direction: column;
+            }
+        }
     </style>
 </head>
 <body>
@@ -1325,8 +1543,30 @@
         </div>
     </header>
 
-    <!-- ═══ HERO SECTION ═══ -->
-    <section class="hero" role="region" aria-label="Training progress overview">
+    <!-- ═══ QUICK ACTION BAR (manager + admin only) ═══ -->
+    <div class="quick-actions section-manager-up" id="quickActions">
+        <div class="quick-actions-inner">
+            <a href="../incident-report/index.html" class="qa-btn">
+                <span class="qa-icon">&#128203;</span>
+                <span class="qa-label">File Incident Report</span>
+            </a>
+            <a href="../hazard-observation/index.html" class="qa-btn">
+                <span class="qa-icon">&#128065;</span>
+                <span class="qa-label">Log Hazard</span>
+            </a>
+            <a href="https://safetyverse-v2-production.up.railway.app" target="_blank" class="qa-btn">
+                <span class="qa-icon">&#9928;</span>
+                <span class="qa-label">Check Weather</span>
+            </a>
+            <a href="../incident-protocol/index.html" class="qa-btn">
+                <span class="qa-icon">&#9888;&#65039;</span>
+                <span class="qa-label">Incident Protocol</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- ═══ HERO SECTION (user only) ═══ -->
+    <section class="hero section-user-only" role="region" aria-label="Training progress overview">
         <div class="hero-inner">
             <!-- Left: Progress Dashboard -->
             <div class="hero-dashboard">
@@ -1389,8 +1629,8 @@
         </div>
     </section>
 
-    <!-- ═══ LEARNING PATHS ═══ -->
-    <section class="section" role="region" aria-label="Learning paths">
+    <!-- ═══ LEARNING PATHS (user only) ═══ -->
+    <section class="section section-user-only" role="region" aria-label="Learning paths">
         <div class="section-header">
             <div class="section-label">Training Modules</div>
             <h2 class="section-title">Your Learning Paths</h2>
@@ -1771,8 +2011,8 @@
         </div>
     </section>
 
-    <!-- ═══ GAMES SECTION ═══ -->
-    <section class="section" role="region" aria-label="Games and activities">
+    <!-- ═══ GAMES SECTION (user only) ═══ -->
+    <section class="section section-user-only" role="region" aria-label="Games and activities">
         <div class="section-header">
             <div class="section-label">Interactive Learning</div>
             <h2 class="section-title">Take a Break &mdash; Practice with Games</h2>
@@ -1899,8 +2139,51 @@
         </div>
     </section>
 
-    <!-- ═══ CERTIFICATES SECTION ═══ -->
-    <section class="certs-section" role="region" aria-label="Certificates and achievements">
+    <!-- ═══ ADMIN OVERVIEW (admin only) ═══ -->
+    <section class="admin-overview section-admin-only" id="adminOverview" role="region" aria-label="Admin overview">
+        <div class="admin-overview-inner">
+            <h2><em>Company</em> Overview</h2>
+            <div class="admin-stats-grid">
+                <div class="admin-stat-card">
+                    <span class="admin-stat-value" id="adminStatEmployees">&mdash;</span>
+                    <span class="admin-stat-label">Employees</span>
+                </div>
+                <div class="admin-stat-card">
+                    <span class="admin-stat-value" id="adminStatIncidents">&mdash;</span>
+                    <span class="admin-stat-label">Open Incidents</span>
+                </div>
+                <div class="admin-stat-card">
+                    <span class="admin-stat-value" id="adminStatActions">&mdash;</span>
+                    <span class="admin-stat-label">Pending Actions</span>
+                </div>
+                <div class="admin-stat-card">
+                    <span class="admin-stat-value" id="adminStatCerts">&mdash;</span>
+                    <span class="admin-stat-label">Expiring Certs</span>
+                </div>
+            </div>
+            <a href="../admin-dashboard/index.html" class="admin-overview-link">Open Full Admin Dashboard &#8594;</a>
+        </div>
+    </section>
+
+    <!-- ═══ COMPACT TRAINING LINK (manager + admin) ═══ -->
+    <section class="training-link-section section-manager-up" id="trainingLinkSection" role="region" aria-label="Training modules link">
+        <div class="training-link-inner">
+            <div class="training-link-left">
+                <span class="training-link-icon">&#128218;</span>
+                <div>
+                    <h3>Safety Training Modules</h3>
+                    <p id="trainingLinkProgress">20 OSHA-aligned training modules</p>
+                    <div class="training-link-progress">
+                        <div class="training-link-progress-fill" id="trainingLinkFill" style="width: 0%;"></div>
+                    </div>
+                </div>
+            </div>
+            <a href="../lessons/index.html" class="training-link-btn">Go to Training &#8594;</a>
+        </div>
+    </section>
+
+    <!-- ═══ CERTIFICATES SECTION (user only) ═══ -->
+    <section class="certs-section section-user-only" role="region" aria-label="Certificates and achievements">
         <div class="certs-inner">
             <div class="section-header">
                 <div class="section-label">Achievements</div>
@@ -1986,35 +2269,99 @@
         'use strict';
 
         /* ═══════════════════════════════════════════
-           AUTH-BASED UI — role-based toggle
+           AUTH-BASED UI — role-based dashboard layout
            ═══════════════════════════════════════════ */
-        // Wait for auth guard to finish, then apply role-based visibility
         document.addEventListener('svAuthReady', function(e) {
             var user = e.detail; // { id, full_name, email, role, department }
+            var role = user.role;
+
+            // Set body class for CSS-based layout switching
+            document.body.classList.add('role-' + role);
 
             // Show admin nav if user has admin role
-            if (user.role === 'admin') {
+            if (role === 'admin') {
                 var adminNav = document.getElementById('adminNavItem');
                 var adminMobile = document.getElementById('adminMobileNavItem');
                 if (adminNav) adminNav.style.display = '';
                 if (adminMobile) adminMobile.style.display = '';
+                // Load admin overview stats
+                loadAdminOverviewStats();
             }
 
             // Personalize greeting
             var greetEl = document.getElementById('headerGreeting');
             if (greetEl && user.full_name) {
                 var firstName = user.full_name.split(' ')[0];
-                greetEl.textContent = 'Welcome, ' + firstName + '!';
+                if (role === 'admin') {
+                    greetEl.textContent = 'Welcome, ' + firstName + ' (Admin)';
+                } else if (role === 'manager') {
+                    greetEl.textContent = 'Welcome, ' + firstName;
+                } else {
+                    greetEl.textContent = 'Welcome, ' + firstName + '!';
+                }
             }
 
             // Hide manager-only tools for 'user' role
-            if (user.role === 'user') {
+            if (role === 'user') {
                 var hazardCard = document.getElementById('hazardObsCard');
                 var incidentCard = document.getElementById('incidentReportCard');
                 if (hazardCard) hazardCard.style.display = 'none';
                 if (incidentCard) incidentCard.style.display = 'none';
             }
+
+            // Update compact training link progress for manager/admin
+            if (role === 'manager' || role === 'admin') {
+                updateTrainingLinkProgress();
+            }
         });
+
+        // ─── Admin Overview Stats (fetches from Supabase) ───
+        async function loadAdminOverviewStats() {
+            try {
+                var sb = getSafetyVerseSupabase();
+                if (!sb) return;
+
+                // Fetch employee count
+                var empResult = await sb.from('employees').select('id', { count: 'exact', head: true });
+                var empCount = empResult.count || 0;
+                document.getElementById('adminStatEmployees').textContent = empCount;
+
+                // Fetch open corrective actions (status != 'Closed')
+                var actResult = await sb.from('corrective_actions').select('id', { count: 'exact', head: true }).neq('status', 'Closed');
+                var actCount = actResult.count || 0;
+                document.getElementById('adminStatActions').textContent = actCount;
+
+                // Fetch expiring certs (within 90 days)
+                var now = new Date();
+                var future = new Date(now.getTime() + 90 * 24 * 60 * 60 * 1000);
+                var certResult = await sb.from('certifications').select('id', { count: 'exact', head: true }).lte('expiry_date', future.toISOString().split('T')[0]);
+                var certCount = certResult.count || 0;
+                document.getElementById('adminStatCerts').textContent = certCount;
+
+                // Incidents placeholder (set to 0 for now — table may not exist yet)
+                document.getElementById('adminStatIncidents').textContent = '0';
+
+            } catch (err) {
+                console.warn('Admin stats load error:', err);
+            }
+        }
+
+        // ─── Compact Training Link Progress ───
+        function updateTrainingLinkProgress() {
+            try {
+                var d = localStorage.getItem('safetyverse-progress');
+                var progress = d ? JSON.parse(d) : {};
+                var modules = progress.modules || {};
+                var completed = 0;
+                for (var key in modules) {
+                    if (modules[key] && modules[key].completed) completed++;
+                }
+                var el = document.getElementById('trainingLinkProgress');
+                if (el) el.textContent = completed + '/20 modules completed';
+                var fill = document.getElementById('trainingLinkFill');
+                if (fill) fill.style.width = Math.round((completed / 20) * 100) + '%';
+            } catch (e) {}
+        }
 
         /* ═══════════════════════════════════════════
            MODULE & PATH DEFINITIONS
