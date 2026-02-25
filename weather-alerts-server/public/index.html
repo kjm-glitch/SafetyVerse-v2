@@ -264,11 +264,16 @@ body{font-family:'Inter',sans-serif;background:#0f172a;color:#e2e8f0;min-height:
         <option value="winter_weather">Winter Weather</option>
         <option value="severe_storm">Severe Storm</option>
         <option value="nws_alert">NWS Alert</option>
-        <option value="forecast_heat">Forecast: Heat</option>
-        <option value="forecast_cold">Forecast: Cold</option>
-        <option value="forecast_wind">Forecast: Wind</option>
-        <option value="forecast_winter">Forecast: Winter</option>
-        <option value="forecast_storm">Forecast: Storm</option>
+        <option value="forecast_heat">24hr: Heat</option>
+        <option value="forecast_cold">24hr: Cold</option>
+        <option value="forecast_wind">24hr: Wind</option>
+        <option value="forecast_winter">24hr: Winter</option>
+        <option value="forecast_storm">24hr: Storm</option>
+        <option value="48hr_heat">48hr: Heat</option>
+        <option value="48hr_cold">48hr: Cold</option>
+        <option value="48hr_wind">48hr: Wind</option>
+        <option value="48hr_winter">48hr: Winter</option>
+        <option value="48hr_storm">48hr: Storm</option>
       </select>
       <select class="sv-select" id="filter-severity" onchange="loadHistory()">
         <option value="">All Severities</option>
@@ -376,8 +381,10 @@ async function api(path, opts = {}) {
 const ALERT_LABELS = {
   heat_index:'Heat Index', cold_temp:'Cold Temperature', wind_speed:'Wind Speed', aqi:'Air Quality',
   winter_weather:'Winter Weather', severe_storm:'Severe Storm', nws_alert:'NWS Alert',
-  forecast_heat:'Forecast: Heat', forecast_cold:'Forecast: Cold', forecast_wind:'Forecast: Wind',
-  forecast_aqi:'Forecast: AQI', forecast_winter:'Forecast: Winter', forecast_storm:'Forecast: Storm'
+  forecast_heat:'24hr: Heat', forecast_cold:'24hr: Cold', forecast_wind:'24hr: Wind',
+  forecast_aqi:'24hr: AQI', forecast_winter:'24hr: Winter', forecast_storm:'24hr: Storm',
+  '48hr_heat':'48hr: Heat', '48hr_cold':'48hr: Cold', '48hr_wind':'48hr: Wind',
+  '48hr_aqi':'48hr: AQI', '48hr_winter':'48hr: Winter', '48hr_storm':'48hr: Storm'
 };
 function alertUnit(type) {
   if (type.includes('aqi')) return ' AQI';

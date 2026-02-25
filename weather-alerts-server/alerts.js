@@ -91,30 +91,44 @@ function evaluateThresholds(conditions) {
 
 // ═══════════════════════════════════════════════════════════
 // FORECAST LOOKAHEAD → ADVISORY (yellow)
-// Scans next 24 hours of hourly data
+// Two windows: 48-hour early heads-up + 24-hour reminder
 // ═══════════════════════════════════════════════════════════
 
 function evaluateForecast(conditions) {
   const advisories = [];
   const hourlyFull = conditions.hourlyFull || [];
-
-  // Only look at next 24 hours
   const now = new Date();
+
+  // Split into two forecast windows
   const next24 = hourlyFull.filter(h => {
-    const t = new Date(h.time);
-    const hoursAhead = (t - now) / (1000 * 60 * 60);
+    const hoursAhead = (new Date(h.time) - now) / (1000 * 60 * 60);
     return hoursAhead > 0 && hoursAhead <= 24;
   });
 
-  if (next24.length === 0) return advisories;
+  const next24to48 = hourlyFull.filter(h => {
+    const hoursAhead = (new Date(h.time) - now) / (1000 * 60 * 60);
+    return hoursAhead > 24 && hoursAhead <= 48;
+  });
 
-  // Check for forecast heat index exceedance
-  const heatHours = next24.filter(h => h.apparent_temperature > config.FORECAST_THRESHOLDS.heat_index);
+  // Scan both windows — 48hr gets "48hr_" prefix types, 24hr keeps "forecast_" prefix
+  if (next24to48.length > 0) {
+    scanWindow(next24to48, '48hr_', '48-Hour', advisories);
+  }
+  if (next24.length > 0) {
+    scanWindow(next24, 'forecast_', '24-Hour', advisories);
+  }
+
+  return advisories;
+}
+
+function scanWindow(hours, typePrefix, labelPrefix, advisories) {
+  // Heat index
+  const heatHours = hours.filter(h => h.apparent_temperature > config.FORECAST_THRESHOLDS.heat_index);
   if (heatHours.length > 0) {
     const worst = heatHours.reduce((a, b) => a.apparent_temperature > b.apparent_temperature ? a : b);
     advisories.push({
-      type: 'forecast_heat',
-      label: 'Heat Index Advisory',
+      type: typePrefix + 'heat',
+      label: `${labelPrefix} Heat Index Advisory`,
       severity: 'advisory',
       threshold: config.FORECAST_THRESHOLDS.heat_index,
       actual: worst.apparent_temperature,
@@ -123,13 +137,13 @@ function evaluateForecast(conditions) {
     });
   }
 
-  // Check for forecast cold
-  const coldHours = next24.filter(h => h.temperature < config.FORECAST_THRESHOLDS.cold_temp);
+  // Cold
+  const coldHours = hours.filter(h => h.temperature < config.FORECAST_THRESHOLDS.cold_temp);
   if (coldHours.length > 0) {
     const worst = coldHours.reduce((a, b) => a.temperature < b.temperature ? a : b);
     advisories.push({
-      type: 'forecast_cold',
-      label: 'Cold Temperature Advisory',
+      type: typePrefix + 'cold',
+      label: `${labelPrefix} Cold Temperature Advisory`,
       severity: 'advisory',
       threshold: config.FORECAST_THRESHOLDS.cold_temp,
       actual: worst.temperature,
@@ -138,13 +152,13 @@ function evaluateForecast(conditions) {
     });
   }
 
-  // Check for forecast wind
-  const windHours = next24.filter(h => h.wind_speed > config.FORECAST_THRESHOLDS.wind_speed);
+  // Wind
+  const windHours = hours.filter(h => h.wind_speed > config.FORECAST_THRESHOLDS.wind_speed);
   if (windHours.length > 0) {
     const worst = windHours.reduce((a, b) => a.wind_speed > b.wind_speed ? a : b);
     advisories.push({
-      type: 'forecast_wind',
-      label: 'High Wind Advisory',
+      type: typePrefix + 'wind',
+      label: `${labelPrefix} High Wind Advisory`,
       severity: 'advisory',
       threshold: config.FORECAST_THRESHOLDS.wind_speed,
       actual: worst.wind_speed,
@@ -153,13 +167,13 @@ function evaluateForecast(conditions) {
     });
   }
 
-  // Check for forecast AQI
-  const aqiHours = next24.filter(h => h.aqi != null && h.aqi > config.FORECAST_THRESHOLDS.aqi);
+  // AQI
+  const aqiHours = hours.filter(h => h.aqi != null && h.aqi > config.FORECAST_THRESHOLDS.aqi);
   if (aqiHours.length > 0) {
     const worst = aqiHours.reduce((a, b) => a.aqi > b.aqi ? a : b);
     advisories.push({
-      type: 'forecast_aqi',
-      label: 'Air Quality Advisory',
+      type: typePrefix + 'aqi',
+      label: `${labelPrefix} Air Quality Advisory`,
       severity: 'advisory',
       threshold: config.FORECAST_THRESHOLDS.aqi,
       actual: worst.aqi,
@@ -168,13 +182,13 @@ function evaluateForecast(conditions) {
     });
   }
 
-  // Check for upcoming winter weather
-  const winterHours = next24.filter(h => h.is_winter_weather);
+  // Winter weather
+  const winterHours = hours.filter(h => h.is_winter_weather);
   if (winterHours.length > 0) {
     const first = winterHours[0];
     advisories.push({
-      type: 'forecast_winter',
-      label: 'Winter Weather Advisory',
+      type: typePrefix + 'winter',
+      label: `${labelPrefix} Winter Weather Advisory`,
       severity: 'advisory',
       threshold: 0,
       actual: 0,
@@ -183,13 +197,13 @@ function evaluateForecast(conditions) {
     });
   }
 
-  // Check for upcoming severe storms
-  const stormHours = next24.filter(h => h.is_severe_storm);
+  // Severe storms
+  const stormHours = hours.filter(h => h.is_severe_storm);
   if (stormHours.length > 0) {
     const first = stormHours[0];
     advisories.push({
-      type: 'forecast_storm',
-      label: 'Severe Storm Advisory',
+      type: typePrefix + 'storm',
+      label: `${labelPrefix} Severe Storm Advisory`,
       severity: 'advisory',
       threshold: 0,
       actual: 0,
@@ -197,8 +211,6 @@ function evaluateForecast(conditions) {
       description: `${first.weather_description} expected at ${formatTime(first.time)}`
     });
   }
-
-  return advisories;
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -235,8 +247,8 @@ function evaluateNwsAlerts(nwsAlerts) {
 // ═══════════════════════════════════════════════════════════
 
 function getSafetyProtocol(alertType) {
-  // Strip "forecast_" prefix to reuse same protocols
-  const baseType = alertType.replace('forecast_', '');
+  // Strip "forecast_" or "48hr_" prefix to reuse same protocols
+  const baseType = alertType.replace('forecast_', '').replace('48hr_', '');
   const protocols = {
     heat_index: [
       'Implement work/rest cycles per OSHA heat illness prevention guidelines',
@@ -338,7 +350,7 @@ function getSafetyProtocol(alertType) {
 }
 
 function getPpeReminders(alertType) {
-  const baseType = alertType.replace('forecast_', '');
+  const baseType = alertType.replace('forecast_', '').replace('48hr_', '');
   const ppe = {
     heat_index: [
       'Lightweight, light-colored, loose-fitting clothing',

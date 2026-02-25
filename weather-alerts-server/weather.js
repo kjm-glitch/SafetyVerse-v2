@@ -10,7 +10,7 @@ async function fetchWeather(lat, lng) {
     longitude: lng,
     current: 'temperature_2m,apparent_temperature,wind_speed_10m,weather_code',
     hourly: 'temperature_2m,apparent_temperature,wind_speed_10m,weather_code',
-    forecast_days: '2',  // 2 days for 24hr lookahead from any time
+    forecast_days: '3',  // 3 days for 48hr lookahead from any time
     temperature_unit: 'fahrenheit',
     wind_speed_unit: 'mph',
     timezone: 'auto'
@@ -29,7 +29,7 @@ async function fetchAqi(lat, lng) {
     longitude: lng,
     current: 'us_aqi',
     hourly: 'us_aqi',
-    forecast_days: '2',
+    forecast_days: '3',
     timezone: 'auto'
   });
 
