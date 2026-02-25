@@ -1804,6 +1804,7 @@
                 var dept = (window.__svUser && window.__svUser.department) || 'Unassigned';
                 var moduleSlug = 'loto';
                 var row = {
+                    user_id: (window.__svUser && window.__svUser.id) || null,
                     employee_name: empName,
                     department: dept,
                     module_slug: moduleSlug,
