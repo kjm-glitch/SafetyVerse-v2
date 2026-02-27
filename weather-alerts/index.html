@@ -80,6 +80,18 @@ body{font-family:'Inter',sans-serif;background:#0f172a;color:#e2e8f0;min-height:
 .wc-metric-value.danger{color:#ef4444}
 .wc-description{font-size:.78rem;color:#94a3b8;margin-top:.8rem;text-align:center;font-style:italic}
 
+/* ── NWS Alert Banners on Cards ───────── */
+.wc-nws-alerts{margin-top:.75rem;display:flex;flex-direction:column;gap:.45rem}
+.wc-nws-item{background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.25);border-left:3px solid #ef4444;border-radius:0 8px 8px 0;padding:.6rem .75rem}
+.wc-nws-item.severity-moderate{border-left-color:#f59e0b;border-color:rgba(245,158,11,0.25);background:rgba(245,158,11,0.08)}
+.wc-nws-item.severity-minor{border-left-color:#3b82f6;border-color:rgba(59,130,246,0.25);background:rgba(59,130,246,0.08)}
+.wc-nws-event{font-size:.72rem;font-weight:700;color:#fca5a5;text-transform:uppercase;letter-spacing:.03em;display:flex;align-items:center;gap:.4rem}
+.wc-nws-item.severity-moderate .wc-nws-event{color:#fbbf24}
+.wc-nws-item.severity-minor .wc-nws-event{color:#60a5fa}
+.wc-nws-event .nws-icon{font-size:.8rem}
+.wc-nws-desc{font-size:.7rem;color:#94a3b8;margin-top:.25rem;line-height:1.45}
+.wc-nws-meta{font-size:.62rem;color:#64748b;margin-top:.3rem;display:flex;gap:.75rem;flex-wrap:wrap}
+
 /* ── Active Alerts Panel ─────────────── */
 .alerts-section-title{font-size:.85rem;font-weight:700;color:#f87171;text-transform:uppercase;letter-spacing:.06em;margin-bottom:.75rem;display:flex;align-items:center;gap:.5rem}
 .alerts-section-title .pulse{width:8px;height:8px;border-radius:50%;background:#ef4444;animation:pulse 2s infinite}
@@ -88,10 +100,15 @@ body{font-family:'Inter',sans-serif;background:#0f172a;color:#e2e8f0;min-height:
 .alert-item .ai-type{font-size:.82rem;font-weight:700;color:#fca5a5}
 .alert-item .ai-site{font-size:.78rem;color:#94a3b8;margin-top:2px}
 .alert-item .ai-detail{font-size:.78rem;color:#64748b;margin-top:4px}
+.alert-item .ai-nws-desc{font-size:.75rem;color:#94a3b8;margin-top:.4rem;line-height:1.5;border-left:2px solid #475569;padding-left:.6rem}
+.alert-item .ai-nws-instruction{font-size:.72rem;color:#fbbf24;margin-top:.4rem;font-style:italic}
 .alert-item.type-heat_index{border-left-color:#ef4444}
 .alert-item.type-cold_temp{border-left-color:#60a5fa}
 .alert-item.type-wind_speed{border-left-color:#fbbf24}
 .alert-item.type-aqi{border-left-color:#a78bfa}
+.alert-item.type-nws_alert{border-left-color:#ef4444}
+.alert-item.type-forecast_heat,.alert-item.type-forecast_cold,.alert-item.type-forecast_wind,.alert-item.type-forecast_aqi{border-left-color:#eab308}
+.alert-item.type-winter_weather,.alert-item.type-forecast_winter,.alert-item.type-severe_storm,.alert-item.type-forecast_storm{border-left-color:#60a5fa}
 
 /* ── Site List ────────────────────────── */
 .site-item{background:#0f172a;border:1px solid #334155;border-radius:10px;padding:1rem 1.25rem;margin-bottom:.6rem;display:flex;justify-content:space-between;align-items:flex-start;gap:1rem;flex-wrap:wrap}
@@ -236,6 +253,9 @@ body{font-family:'Inter',sans-serif;background:#0f172a;color:#e2e8f0;min-height:
         <option value="cold_temp">Cold Temperature</option>
         <option value="wind_speed">Wind Speed</option>
         <option value="aqi">Air Quality</option>
+        <option value="nws_alert">NWS Alerts</option>
+        <option value="winter_weather">Winter Weather</option>
+        <option value="severe_storm">Severe Storms</option>
       </select>
     </div>
     <div id="history-list-area">
@@ -342,18 +362,62 @@ const ALERT_LABELS = {
   heat_index: 'Heat Index',
   cold_temp: 'Cold Temperature',
   wind_speed: 'Wind Speed',
-  aqi: 'Air Quality'
+  aqi: 'Air Quality',
+  nws_alert: 'NWS Alert',
+  winter_weather: 'Winter Weather',
+  severe_storm: 'Severe Storm',
+  forecast_heat: 'Heat Forecast',
+  forecast_cold: 'Cold Forecast',
+  forecast_wind: 'Wind Forecast',
+  forecast_aqi: 'AQI Forecast',
+  forecast_winter: 'Winter Forecast',
+  forecast_storm: 'Storm Forecast',
+  '48hr_heat': '48hr Heat Outlook',
+  '48hr_cold': '48hr Cold Outlook',
+  '48hr_wind': '48hr Wind Outlook',
+  '48hr_aqi': '48hr AQI Outlook',
+  '48hr_winter': '48hr Winter Outlook',
+  '48hr_storm': '48hr Storm Outlook'
 };
 const ALERT_COLORS = {
   heat_index: '#ef4444',
   cold_temp: '#60a5fa',
   wind_speed: '#fbbf24',
-  aqi: '#a78bfa'
+  aqi: '#a78bfa',
+  nws_alert: '#ef4444',
+  winter_weather: '#60a5fa',
+  severe_storm: '#ef4444',
+  forecast_heat: '#eab308',
+  forecast_cold: '#eab308',
+  forecast_wind: '#eab308',
+  forecast_aqi: '#eab308'
 };
 function alertUnit(type) {
-  if (type === 'aqi') return ' AQI';
-  if (type === 'wind_speed') return ' mph';
+  if (type === 'aqi' || type === 'forecast_aqi' || type === '48hr_aqi') return ' AQI';
+  if (type === 'wind_speed' || type === 'forecast_wind' || type === '48hr_wind') return ' mph';
+  if (type === 'nws_alert' || type === 'winter_weather' || type === 'severe_storm' ||
+      type === 'forecast_winter' || type === 'forecast_storm' ||
+      type === '48hr_winter' || type === '48hr_storm') return '';
   return '°F';
+}
+
+// Extract NWS event name from description/headline stored in DB
+function getNwsEventName(alert) {
+  // The description field stores the NWS headline, e.g. "Red Flag Warning issued February 26..."
+  if (alert.description) {
+    // Try to extract event name before "issued" or "until" or "from"
+    const match = alert.description.match(/^(.+?)\s+(issued|until|from|in effect)/i);
+    if (match) return match[1].trim();
+    // If no match, return first ~40 chars
+    return alert.description.length > 50 ? alert.description.substring(0, 50) + '...' : alert.description;
+  }
+  return 'NWS Alert';
+}
+
+// Truncate text helper
+function truncate(str, len) {
+  if (!str) return '';
+  return str.length > len ? str.substring(0, len) + '...' : str;
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -404,14 +468,54 @@ async function loadDashboard() {
         continue;
       }
 
-      const statusClass = hasAlerts ? 'alert-active' : 'all-clear';
-      const statusBadge = hasAlerts
-        ? `<span class="wc-status warning">${siteAlerts.length} Alert${siteAlerts.length > 1 ? 's' : ''}</span>`
-        : '<span class="wc-status ok">All Clear</span>';
+      // Get NWS alerts from live conditions data
+      const nwsAlerts = item.conditions?.nwsAlerts || [];
+      const hasNws = nwsAlerts.length > 0;
+      const isAlerted = hasAlerts || hasNws;
+      const statusClass = isAlerted ? 'alert-active' : 'all-clear';
+
+      // Build status badge — show specific NWS event if that's the only alert type
+      let statusBadge;
+      if (hasNws && !hasAlerts) {
+        statusBadge = `<span class="wc-status warning">${nwsAlerts.length} WARNING${nwsAlerts.length > 1 ? 'S' : ''}</span>`;
+      } else if (isAlerted) {
+        const total = siteAlerts.length + nwsAlerts.length;
+        statusBadge = `<span class="wc-status warning">${total} Alert${total > 1 ? 's' : ''}</span>`;
+      } else {
+        statusBadge = '<span class="wc-status ok">All Clear</span>';
+      }
 
       const tempDanger = c.apparent_temperature > 95 || c.temperature < 20;
       const windDanger = c.wind_speed > 45;
       const aqiDanger = c.aqi != null && c.aqi > 150;
+
+      // Build NWS alert banners for this card
+      let nwsBannersHtml = '';
+      if (hasNws) {
+        nwsBannersHtml = '<div class="wc-nws-alerts">';
+        for (const nws of nwsAlerts) {
+          const sevClass = nws.severity === 'Moderate' ? 'severity-moderate'
+                         : nws.severity === 'Minor' ? 'severity-minor' : '';
+          const icon = nws.severity === 'Extreme' || nws.severity === 'Severe' ? '&#9888;&#65039;' : '&#9432;';
+          // Clean up description — take first sentence or first 150 chars
+          const descText = nws.description ? nws.description.replace(/\n/g, ' ').replace(/\s+/g, ' ').trim() : '';
+          const shortDesc = descText.length > 150 ? descText.substring(0, 150) + '...' : descText;
+          // Format expires
+          const expiresStr = nws.expires ? 'Expires: ' + new Date(nws.expires).toLocaleString([], {month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}) : '';
+          const sourceStr = nws.senderName ? 'Source: ' + esc(nws.senderName) : '';
+
+          nwsBannersHtml += `<div class="wc-nws-item ${sevClass}">
+            <div class="wc-nws-event"><span class="nws-icon">${icon}</span> ${esc(nws.event)}</div>
+            ${shortDesc ? `<div class="wc-nws-desc">${esc(shortDesc)}</div>` : ''}
+            ${nws.instruction ? `<div class="wc-nws-desc" style="color:#fbbf24;font-style:italic;margin-top:.2rem">${esc(truncate(nws.instruction.replace(/\n/g,' ').replace(/\s+/g,' '), 120))}</div>` : ''}
+            <div class="wc-nws-meta">
+              ${expiresStr ? `<span>${expiresStr}</span>` : ''}
+              ${sourceStr ? `<span>${sourceStr}</span>` : ''}
+            </div>
+          </div>`;
+        }
+        nwsBannersHtml += '</div>';
+      }
 
       cardsHtml += `<div class="weather-card ${statusClass}">
         <div class="wc-header">
@@ -438,6 +542,7 @@ async function loadDashboard() {
           </div>
         </div>
         <div class="wc-description">${esc(c.weather_description)}</div>
+        ${nwsBannersHtml}
       </div>`;
     }
     cardsHtml += '</div>';
@@ -448,10 +553,28 @@ async function loadDashboard() {
       let alertsHtml = `<div class="alerts-section-title"><span class="pulse"></span> Active Alerts (${activeAlerts.length})</div>`;
       for (const a of activeAlerts) {
         const time = new Date(a.created_at + 'Z').toLocaleString();
+        const isNws = a.alert_type === 'nws_alert';
+        const isForecast = a.alert_type.startsWith('forecast_') || a.alert_type.startsWith('48hr_');
+        const isWeatherEvent = a.alert_type === 'winter_weather' || a.alert_type === 'severe_storm';
+
+        // For NWS alerts, extract the event name from the description
+        const alertName = isNws ? getNwsEventName(a) : (ALERT_LABELS[a.alert_type] || a.alert_type);
+        const severityLabel = a.severity === 'warning' ? 'WARNING' : a.severity === 'watch' ? 'WATCH' : 'ADVISORY';
+
+        // Build detail line based on alert type
+        let detailHtml = '';
+        if (isNws || isWeatherEvent) {
+          detailHtml = `<div class="ai-detail">${esc(a.description || '')} &nbsp;|&nbsp; ${time}${a.email_sent ? ' &nbsp;|&nbsp; Email sent to ' + esc(a.email_recipient || a.manager_email || 'manager') : ''}</div>`;
+        } else if (isForecast) {
+          detailHtml = `<div class="ai-detail">${esc(a.description || '')} &nbsp;|&nbsp; ${time}${a.email_sent ? ' &nbsp;|&nbsp; Email sent' : ''}</div>`;
+        } else {
+          detailHtml = `<div class="ai-detail">Actual: ${a.actual_value}${alertUnit(a.alert_type)} &nbsp;|&nbsp; Threshold: ${a.threshold_value}${alertUnit(a.alert_type)} &nbsp;|&nbsp; ${time}${a.email_sent ? ' &nbsp;|&nbsp; Email sent to ' + esc(a.email_recipient || a.manager_email || 'manager') : ''}</div>`;
+        }
+
         alertsHtml += `<div class="alert-item type-${a.alert_type}">
-          <div class="ai-type">${ALERT_LABELS[a.alert_type] || a.alert_type} Warning</div>
+          <div class="ai-type">[${severityLabel}] ${esc(alertName)}</div>
           <div class="ai-site">${esc(a.site_name)} — ${esc(a.city || '')}${a.state ? ', ' + esc(a.state) : ''}</div>
-          <div class="ai-detail">${a.actual_value}${alertUnit(a.alert_type)} exceeds threshold of ${a.threshold_value}${alertUnit(a.alert_type)} &nbsp;|&nbsp; ${time}${a.email_sent ? ' &nbsp;|&nbsp; Email sent to ' + esc(a.email_recipient || a.manager_email || 'manager') : ''}</div>
+          ${detailHtml}
         </div>`;
       }
       alertsArea.innerHTML = alertsHtml;
@@ -652,11 +775,27 @@ async function loadHistory(append = false) {
         ? `<span class="hi-email sent">Email Sent</span>`
         : `<span class="hi-email not-sent">No Email</span>`;
 
+      const isNws = a.alert_type === 'nws_alert';
+      const isWeatherEvent = a.alert_type === 'winter_weather' || a.alert_type === 'severe_storm';
+      const isForecast = a.alert_type.startsWith('forecast_') || a.alert_type.startsWith('48hr_');
+      const alertName = isNws ? getNwsEventName(a) : (ALERT_LABELS[a.alert_type] || a.alert_type);
+      const severityLabel = a.severity === 'warning' ? 'WARNING' : a.severity === 'watch' ? 'WATCH' : 'ADVISORY';
+
+      // Values line — different for NWS/weather-event vs threshold alerts
+      let valuesHtml;
+      if (isNws || isWeatherEvent) {
+        valuesHtml = a.description ? esc(truncate(a.description, 100)) : '';
+      } else if (isForecast) {
+        valuesHtml = a.description ? esc(truncate(a.description, 100)) : `Threshold: ${a.threshold_value}${alertUnit(a.alert_type)} | Actual: ${a.actual_value}${alertUnit(a.alert_type)}`;
+      } else {
+        valuesHtml = `Threshold: ${a.threshold_value}${alertUnit(a.alert_type)} &nbsp;|&nbsp; Actual: ${a.actual_value}${alertUnit(a.alert_type)}`;
+      }
+
       html += `<div class="history-item">
         <div class="hi-main">
-          <div class="hi-type" style="color:${ALERT_COLORS[a.alert_type] || '#e2e8f0'}">${ALERT_LABELS[a.alert_type] || a.alert_type} Warning</div>
+          <div class="hi-type" style="color:${ALERT_COLORS[a.alert_type] || '#e2e8f0'}">[${severityLabel}] ${esc(alertName)}</div>
           <div class="hi-site">${esc(a.site_name)} — ${esc(a.city || '')}${a.state ? ', ' + esc(a.state) : ''}</div>
-          <div class="hi-values">Threshold: ${a.threshold_value}${alertUnit(a.alert_type)} &nbsp;|&nbsp; Actual: ${a.actual_value}${alertUnit(a.alert_type)}</div>
+          <div class="hi-values">${valuesHtml}</div>
         </div>
         <div class="hi-meta">
           <div class="hi-time">${time}</div>

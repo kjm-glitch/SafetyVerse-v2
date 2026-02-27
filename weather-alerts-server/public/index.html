@@ -50,6 +50,7 @@ body{font-family:'Inter',sans-serif;background:#0f172a;color:#e2e8f0;min-height:
 .sv-select option{background:#1e293b;color:#e2e8f0}
 .sv-helper{font-size:.72rem;color:#64748b;margin-top:.3rem}
 .sv-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.sv-row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem}
 
 /* ── Buttons ─────────────────────────── */
 .btn-primary{display:inline-flex;align-items:center;gap:8px;padding:.7rem 1.8rem;border-radius:10px;border:none;background:linear-gradient(135deg,#f59e0b,#d97706);color:#0f172a;font-family:inherit;font-size:.85rem;font-weight:700;cursor:pointer;transition:all .2s}
@@ -64,50 +65,50 @@ body{font-family:'Inter',sans-serif;background:#0f172a;color:#e2e8f0;min-height:
 /* ── Weather Cards Grid ──────────────── */
 .weather-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1rem;margin-bottom:1.5rem}
 .weather-card{background:#1e293b;border:1px solid #334155;border-radius:14px;padding:1.25rem;transition:border-color .2s}
-.weather-card.severity-warning{border-color:#ef4444;box-shadow:0 0 20px rgba(239,68,68,0.15)}
-.weather-card.severity-watch{border-color:#f97316;box-shadow:0 0 20px rgba(249,115,22,0.1)}
-.weather-card.severity-advisory{border-color:#eab308;box-shadow:0 0 20px rgba(234,179,8,0.1)}
+.weather-card.alert-active{border-color:#ef4444;box-shadow:0 0 20px rgba(239,68,68,0.1)}
 .weather-card.all-clear{border-color:#22c55e33}
 .wc-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1rem}
 .wc-site-name{font-size:.95rem;font-weight:700;color:#f1f5f9}
 .wc-location{font-size:.75rem;color:#94a3b8;margin-top:2px}
 .wc-status{font-size:.65rem;font-weight:700;padding:.3rem .6rem;border-radius:20px;text-transform:uppercase;letter-spacing:.04em}
 .wc-status.ok{background:rgba(34,197,94,0.15);color:#4ade80}
-.wc-status.sev-warning{background:rgba(239,68,68,0.15);color:#f87171}
-.wc-status.sev-watch{background:rgba(249,115,22,0.15);color:#fb923c}
-.wc-status.sev-advisory{background:rgba(234,179,8,0.15);color:#facc15}
+.wc-status.warning{background:rgba(239,68,68,0.15);color:#f87171}
 .wc-conditions{display:grid;grid-template-columns:1fr 1fr;gap:.6rem}
 .wc-metric{background:#0f172a;border-radius:8px;padding:.65rem .8rem}
 .wc-metric-label{font-size:.65rem;color:#64748b;text-transform:uppercase;letter-spacing:.04em}
 .wc-metric-value{font-size:1.1rem;font-weight:700;color:#e2e8f0;margin-top:2px}
 .wc-metric-value.danger{color:#ef4444}
-.wc-metric-value.caution{color:#f97316}
 .wc-description{font-size:.78rem;color:#94a3b8;margin-top:.8rem;text-align:center;font-style:italic}
-.wc-nws-banner{background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);border-radius:8px;padding:.6rem .8rem;margin-top:.8rem;font-size:.75rem;color:#fca5a5}
-.wc-nws-banner strong{color:#f87171}
+
+/* ── NWS Alert Banners on Cards ───────── */
+.wc-nws-alerts{margin-top:.75rem;display:flex;flex-direction:column;gap:.45rem}
+.wc-nws-item{background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.25);border-left:3px solid #ef4444;border-radius:0 8px 8px 0;padding:.6rem .75rem}
+.wc-nws-item.severity-moderate{border-left-color:#f59e0b;border-color:rgba(245,158,11,0.25);background:rgba(245,158,11,0.08)}
+.wc-nws-item.severity-minor{border-left-color:#3b82f6;border-color:rgba(59,130,246,0.25);background:rgba(59,130,246,0.08)}
+.wc-nws-event{font-size:.72rem;font-weight:700;color:#fca5a5;text-transform:uppercase;letter-spacing:.03em;display:flex;align-items:center;gap:.4rem}
+.wc-nws-item.severity-moderate .wc-nws-event{color:#fbbf24}
+.wc-nws-item.severity-minor .wc-nws-event{color:#60a5fa}
+.wc-nws-event .nws-icon{font-size:.8rem}
+.wc-nws-desc{font-size:.7rem;color:#94a3b8;margin-top:.25rem;line-height:1.45}
+.wc-nws-meta{font-size:.62rem;color:#64748b;margin-top:.3rem;display:flex;gap:.75rem;flex-wrap:wrap}
 
 /* ── Active Alerts Panel ─────────────── */
-.alerts-section-title{font-size:.85rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:.75rem;display:flex;align-items:center;gap:.5rem}
-.alerts-section-title .pulse{width:8px;height:8px;border-radius:50%;animation:pulse 2s infinite}
+.alerts-section-title{font-size:.85rem;font-weight:700;color:#f87171;text-transform:uppercase;letter-spacing:.06em;margin-bottom:.75rem;display:flex;align-items:center;gap:.5rem}
+.alerts-section-title .pulse{width:8px;height:8px;border-radius:50%;background:#ef4444;animation:pulse 2s infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
-.alert-item{background:#1e293b;border:1px solid #334155;border-left:4px solid #64748b;border-radius:0 10px 10px 0;padding:1rem 1.25rem;margin-bottom:.5rem}
-.alert-item .ai-header{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap}
-.alert-item .ai-type{font-size:.82rem;font-weight:700}
-.alert-item .ai-severity{font-size:.6rem;font-weight:700;padding:.2rem .5rem;border-radius:10px;text-transform:uppercase;letter-spacing:.04em}
+.alert-item{background:#1e293b;border:1px solid #334155;border-left:4px solid #ef4444;border-radius:0 10px 10px 0;padding:1rem 1.25rem;margin-bottom:.5rem}
+.alert-item .ai-type{font-size:.82rem;font-weight:700;color:#fca5a5}
 .alert-item .ai-site{font-size:.78rem;color:#94a3b8;margin-top:2px}
-.alert-item .ai-desc{font-size:.78rem;color:#94a3b8;margin-top:3px;font-style:italic}
 .alert-item .ai-detail{font-size:.78rem;color:#64748b;margin-top:4px}
-
-/* Severity colors for alert items */
-.alert-item.sev-warning{border-left-color:#ef4444}
-.alert-item.sev-warning .ai-type{color:#fca5a5}
-.alert-item.sev-warning .ai-severity{background:rgba(239,68,68,0.15);color:#f87171}
-.alert-item.sev-watch{border-left-color:#f97316}
-.alert-item.sev-watch .ai-type{color:#fed7aa}
-.alert-item.sev-watch .ai-severity{background:rgba(249,115,22,0.15);color:#fb923c}
-.alert-item.sev-advisory{border-left-color:#eab308}
-.alert-item.sev-advisory .ai-type{color:#fef08a}
-.alert-item.sev-advisory .ai-severity{background:rgba(234,179,8,0.15);color:#facc15}
+.alert-item .ai-nws-desc{font-size:.75rem;color:#94a3b8;margin-top:.4rem;line-height:1.5;border-left:2px solid #475569;padding-left:.6rem}
+.alert-item .ai-nws-instruction{font-size:.72rem;color:#fbbf24;margin-top:.4rem;font-style:italic}
+.alert-item.type-heat_index{border-left-color:#ef4444}
+.alert-item.type-cold_temp{border-left-color:#60a5fa}
+.alert-item.type-wind_speed{border-left-color:#fbbf24}
+.alert-item.type-aqi{border-left-color:#a78bfa}
+.alert-item.type-nws_alert{border-left-color:#ef4444}
+.alert-item.type-forecast_heat,.alert-item.type-forecast_cold,.alert-item.type-forecast_wind,.alert-item.type-forecast_aqi{border-left-color:#eab308}
+.alert-item.type-winter_weather,.alert-item.type-forecast_winter,.alert-item.type-severe_storm,.alert-item.type-forecast_storm{border-left-color:#60a5fa}
 
 /* ── Site List ────────────────────────── */
 .site-item{background:#0f172a;border:1px solid #334155;border-radius:10px;padding:1rem 1.25rem;margin-bottom:.6rem;display:flex;justify-content:space-between;align-items:flex-start;gap:1rem;flex-wrap:wrap}
@@ -115,19 +116,10 @@ body{font-family:'Inter',sans-serif;background:#0f172a;color:#e2e8f0;min-height:
 .si-info .si-detail{font-size:.78rem;color:#94a3b8;line-height:1.5;margin-top:3px}
 .si-actions{display:flex;gap:.35rem;flex-shrink:0}
 
-/* ── Alert History ───────────────────── */
-.history-item{background:#0f172a;border:1px solid #334155;border-left:4px solid #64748b;border-radius:0 10px 10px 0;padding:1rem 1.25rem;margin-bottom:.5rem;display:grid;grid-template-columns:1fr auto;gap:.5rem;align-items:start}
-.history-item.sev-warning{border-left-color:#ef4444}
-.history-item.sev-watch{border-left-color:#f97316}
-.history-item.sev-advisory{border-left-color:#eab308}
-.hi-main .hi-header{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap}
+/* ── Alert History Table ─────────────── */
+.history-item{background:#0f172a;border:1px solid #334155;border-radius:10px;padding:1rem 1.25rem;margin-bottom:.5rem;display:grid;grid-template-columns:1fr auto;gap:.5rem;align-items:start}
 .hi-main .hi-type{font-size:.82rem;font-weight:700;color:#f1f5f9}
-.hi-main .hi-severity{font-size:.58rem;font-weight:700;padding:.15rem .4rem;border-radius:8px;text-transform:uppercase;letter-spacing:.04em}
-.hi-severity.sev-warning{background:rgba(239,68,68,0.15);color:#f87171}
-.hi-severity.sev-watch{background:rgba(249,115,22,0.15);color:#fb923c}
-.hi-severity.sev-advisory{background:rgba(234,179,8,0.15);color:#facc15}
 .hi-main .hi-site{font-size:.75rem;color:#94a3b8;margin-top:2px}
-.hi-main .hi-desc{font-size:.73rem;color:#94a3b8;margin-top:2px;font-style:italic}
 .hi-main .hi-values{font-size:.75rem;color:#64748b;margin-top:3px}
 .hi-meta{text-align:right}
 .hi-meta .hi-time{font-size:.72rem;color:#94a3b8}
@@ -143,7 +135,7 @@ body{font-family:'Inter',sans-serif;background:#0f172a;color:#e2e8f0;min-height:
 
 /* ── Filters ─────────────────────────── */
 .filter-bar{display:flex;gap:.75rem;margin-bottom:1rem;flex-wrap:wrap;align-items:center}
-.filter-bar .sv-select{width:auto;min-width:160px;padding:.55rem .85rem;font-size:.78rem}
+.filter-bar .sv-select,.filter-bar .sv-input{width:auto;min-width:160px;padding:.55rem .85rem;font-size:.78rem}
 
 /* ── Empty State ─────────────────────── */
 .empty-state{text-align:center;padding:3rem 1rem;color:#64748b}
@@ -171,14 +163,14 @@ body{font-family:'Inter',sans-serif;background:#0f172a;color:#e2e8f0;min-height:
 
 /* ── Responsive ──────────────────────── */
 @media(max-width:640px){
-  .sv-row{grid-template-columns:1fr}
+  .sv-row,.sv-row-3{grid-template-columns:1fr}
   .content{padding:1rem .75rem 2rem}
   .card{padding:1.25rem}
   .toolbar{flex-direction:column;align-items:stretch}
   .toolbar-right{justify-content:flex-end}
   .weather-grid{grid-template-columns:1fr}
   .filter-bar{flex-direction:column}
-  .filter-bar .sv-select{width:100%}
+  .filter-bar .sv-select,.filter-bar .sv-input{width:100%}
   .history-item{grid-template-columns:1fr}
   .hi-meta{text-align:left}
 }
@@ -203,7 +195,7 @@ body{font-family:'Inter',sans-serif;background:#0f172a;color:#e2e8f0;min-height:
 <!-- ═══ HERO ═══ -->
 <div class="hero">
   <h1>Weather <em>Alerts</em></h1>
-  <p>Automated weather monitoring for your job sites. Real-time conditions, 24-hour forecast alerts, and NWS severe weather warnings.</p>
+  <p>Automated weather monitoring for your job sites. Get real-time conditions and email alerts when safety thresholds are crossed.</p>
 </div>
 
 <!-- ═══ TABS ═══ -->
@@ -261,25 +253,9 @@ body{font-family:'Inter',sans-serif;background:#0f172a;color:#e2e8f0;min-height:
         <option value="cold_temp">Cold Temperature</option>
         <option value="wind_speed">Wind Speed</option>
         <option value="aqi">Air Quality</option>
+        <option value="nws_alert">NWS Alerts</option>
         <option value="winter_weather">Winter Weather</option>
-        <option value="severe_storm">Severe Storm</option>
-        <option value="nws_alert">NWS Alert</option>
-        <option value="forecast_heat">24hr: Heat</option>
-        <option value="forecast_cold">24hr: Cold</option>
-        <option value="forecast_wind">24hr: Wind</option>
-        <option value="forecast_winter">24hr: Winter</option>
-        <option value="forecast_storm">24hr: Storm</option>
-        <option value="48hr_heat">48hr: Heat</option>
-        <option value="48hr_cold">48hr: Cold</option>
-        <option value="48hr_wind">48hr: Wind</option>
-        <option value="48hr_winter">48hr: Winter</option>
-        <option value="48hr_storm">48hr: Storm</option>
-      </select>
-      <select class="sv-select" id="filter-severity" onchange="loadHistory()">
-        <option value="">All Severities</option>
-        <option value="warning">Warning (Red)</option>
-        <option value="watch">Watch (Orange)</option>
-        <option value="advisory">Advisory (Yellow)</option>
+        <option value="severe_storm">Severe Storms</option>
       </select>
     </div>
     <div id="history-list-area">
@@ -327,8 +303,8 @@ body{font-family:'Inter',sans-serif;background:#0f172a;color:#e2e8f0;min-height:
         <input type="text" class="sv-input" id="sf-manager" placeholder="John Smith">
       </div>
       <div class="sv-field">
-        <label class="sv-label">Alert Emails <span style="font-weight:400;color:#94a3b8;font-size:12px;">(comma-separated for multiple)</span></label>
-        <input type="text" class="sv-input" id="sf-email" placeholder="john@example.com, jane@example.com">
+        <label class="sv-label">Manager Email</label>
+        <input type="email" class="sv-input" id="sf-email" placeholder="john@example.com">
       </div>
     </div>
     <div class="form-actions">
@@ -342,6 +318,7 @@ body{font-family:'Inter',sans-serif;background:#0f172a;color:#e2e8f0;min-height:
 <div class="toast" id="toast"></div>
 
 <script>
+// ── Config ──────────────────────────────────────────────
 const API = 'https://weather-alerts-server-production.up.railway.app/api';
 
 // ── Tabs ────────────────────────────────────────────────
@@ -351,12 +328,14 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
     document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
     btn.classList.add('active');
     document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+
     if (btn.dataset.tab === 'dashboard') loadDashboard();
     if (btn.dataset.tab === 'sites') loadSites();
     if (btn.dataset.tab === 'history') { loadHistoryFilters(); loadHistory(); }
   });
 });
 
+// ── Toast ────────────────────────────────────────────────
 function showToast(msg, type = 'success') {
   const t = document.getElementById('toast');
   t.textContent = msg;
@@ -364,6 +343,7 @@ function showToast(msg, type = 'success') {
   setTimeout(() => t.classList.remove('show'), 3500);
 }
 
+// ── API helpers ──────────────────────────────────────────
 async function api(path, opts = {}) {
   const res = await fetch(API + path, {
     headers: { 'Content-Type': 'application/json' },
@@ -377,130 +357,238 @@ async function api(path, opts = {}) {
   return res.json();
 }
 
-// ── Alert helpers ────────────────────────────────────────
+// ── Alert type helpers ───────────────────────────────────
 const ALERT_LABELS = {
-  heat_index:'Heat Index', cold_temp:'Cold Temperature', wind_speed:'Wind Speed', aqi:'Air Quality',
-  winter_weather:'Winter Weather', severe_storm:'Severe Storm', nws_alert:'NWS Alert',
-  forecast_heat:'24hr: Heat', forecast_cold:'24hr: Cold', forecast_wind:'24hr: Wind',
-  forecast_aqi:'24hr: AQI', forecast_winter:'24hr: Winter', forecast_storm:'24hr: Storm',
-  '48hr_heat':'48hr: Heat', '48hr_cold':'48hr: Cold', '48hr_wind':'48hr: Wind',
-  '48hr_aqi':'48hr: AQI', '48hr_winter':'48hr: Winter', '48hr_storm':'48hr: Storm'
+  heat_index: 'Heat Index',
+  cold_temp: 'Cold Temperature',
+  wind_speed: 'Wind Speed',
+  aqi: 'Air Quality',
+  nws_alert: 'NWS Alert',
+  winter_weather: 'Winter Weather',
+  severe_storm: 'Severe Storm',
+  forecast_heat: 'Heat Forecast',
+  forecast_cold: 'Cold Forecast',
+  forecast_wind: 'Wind Forecast',
+  forecast_aqi: 'AQI Forecast',
+  forecast_winter: 'Winter Forecast',
+  forecast_storm: 'Storm Forecast',
+  '48hr_heat': '48hr Heat Outlook',
+  '48hr_cold': '48hr Cold Outlook',
+  '48hr_wind': '48hr Wind Outlook',
+  '48hr_aqi': '48hr AQI Outlook',
+  '48hr_winter': '48hr Winter Outlook',
+  '48hr_storm': '48hr Storm Outlook'
+};
+const ALERT_COLORS = {
+  heat_index: '#ef4444',
+  cold_temp: '#60a5fa',
+  wind_speed: '#fbbf24',
+  aqi: '#a78bfa',
+  nws_alert: '#ef4444',
+  winter_weather: '#60a5fa',
+  severe_storm: '#ef4444',
+  forecast_heat: '#eab308',
+  forecast_cold: '#eab308',
+  forecast_wind: '#eab308',
+  forecast_aqi: '#eab308'
 };
 function alertUnit(type) {
-  if (type.includes('aqi')) return ' AQI';
-  if (type.includes('wind')) return ' mph';
-  if (type.includes('heat') || type.includes('cold') || type === 'heat_index' || type === 'cold_temp') return '°F';
-  return '';
-}
-function sevColor(sev) {
-  return { warning:'#ef4444', watch:'#f97316', advisory:'#eab308' }[sev] || '#64748b';
-}
-function sevLabel(sev) {
-  return { warning:'WARNING', watch:'WATCH', advisory:'ADVISORY' }[sev] || 'ALERT';
+  if (type === 'aqi' || type === 'forecast_aqi' || type === '48hr_aqi') return ' AQI';
+  if (type === 'wind_speed' || type === 'forecast_wind' || type === '48hr_wind') return ' mph';
+  if (type === 'nws_alert' || type === 'winter_weather' || type === 'severe_storm' ||
+      type === 'forecast_winter' || type === 'forecast_storm' ||
+      type === '48hr_winter' || type === '48hr_storm') return '';
+  return '°F';
 }
 
-// ═══ DASHBOARD ══════════════════════════════════════════
+// Extract NWS event name from description/headline stored in DB
+function getNwsEventName(alert) {
+  // The description field stores the NWS headline, e.g. "Red Flag Warning issued February 26..."
+  if (alert.description) {
+    // Try to extract event name before "issued" or "until" or "from"
+    const match = alert.description.match(/^(.+?)\s+(issued|until|from|in effect)/i);
+    if (match) return match[1].trim();
+    // If no match, return first ~40 chars
+    return alert.description.length > 50 ? alert.description.substring(0, 50) + '...' : alert.description;
+  }
+  return 'NWS Alert';
+}
+
+// Truncate text helper
+function truncate(str, len) {
+  if (!str) return '';
+  return str.length > len ? str.substring(0, len) + '...' : str;
+}
+
+// ═══════════════════════════════════════════════════════════
+// DASHBOARD TAB
+// ═══════════════════════════════════════════════════════════
 async function loadDashboard() {
   const area = document.getElementById('weather-cards-area');
   const alertsArea = document.getElementById('active-alerts-area');
   area.innerHTML = '<div class="loading-overlay"><span class="spinner"></span> Loading weather data...</div>';
 
   try {
-    const [weatherData, activeAlerts] = await Promise.all([api('/weather/all'), api('/alerts/active')]);
-    document.getElementById('last-check-time').textContent = 'Updated: ' + new Date().toLocaleTimeString();
+    const [weatherData, activeAlerts] = await Promise.all([
+      api('/weather/all'),
+      api('/alerts/active')
+    ]);
+
+    document.getElementById('last-check-time').textContent =
+      'Updated: ' + new Date().toLocaleTimeString();
 
     if (weatherData.length === 0) {
-      area.innerHTML = '<div class="empty-state"><div class="es-icon">&#127782;&#65039;</div><div class="es-text">No job sites configured</div><div class="es-sub">Add a job site in the "Job Sites" tab to start monitoring.</div></div>';
+      area.innerHTML = `<div class="empty-state">
+        <div class="es-icon">&#127782;&#65039;</div>
+        <div class="es-text">No job sites configured</div>
+        <div class="es-sub">Add a job site in the "Job Sites" tab to start monitoring weather conditions.</div>
+      </div>`;
       alertsArea.innerHTML = '';
       return;
     }
 
+    // Build weather cards
     let cardsHtml = '<div class="weather-grid">';
     for (const item of weatherData) {
       const s = item.site;
       const c = item.conditions?.current;
-      const nwsAlerts = item.conditions?.nwsAlerts || [];
-      if (!c) {
-        cardsHtml += `<div class="weather-card"><div class="wc-header"><div><div class="wc-site-name">${esc(s.name)}</div><div class="wc-location">${esc(s.city||'')}${s.state?', '+esc(s.state):''}</div></div><span class="wc-status sev-warning">Error</span></div><div style="color:#f87171;font-size:.82rem;">Unable to fetch weather data</div></div>`;
+      const hasError = !c;
+      const siteAlerts = activeAlerts.filter(a => a.site_id === s.id);
+      const hasAlerts = siteAlerts.length > 0;
+
+      if (hasError) {
+        cardsHtml += `<div class="weather-card">
+          <div class="wc-header">
+            <div><div class="wc-site-name">${esc(s.name)}</div>
+            <div class="wc-location">${esc(s.city || '')}${s.state ? ', ' + esc(s.state) : ''}</div></div>
+            <span class="wc-status warning">Error</span>
+          </div>
+          <div style="color:#f87171;font-size:.82rem;">Unable to fetch weather data</div>
+        </div>`;
         continue;
       }
 
-      const siteAlerts = activeAlerts.filter(a => a.site_id === s.id);
-      const worstSeverity = siteAlerts.length > 0
-        ? (siteAlerts.find(a=>a.severity==='warning') ? 'warning' : siteAlerts.find(a=>a.severity==='watch') ? 'watch' : 'advisory')
-        : null;
-      const cardClass = worstSeverity ? 'severity-'+worstSeverity : 'all-clear';
-      const statusBadge = worstSeverity
-        ? `<span class="wc-status sev-${worstSeverity}">${siteAlerts.length} ${sevLabel(worstSeverity)}</span>`
-        : '<span class="wc-status ok">All Clear</span>';
+      // Get NWS alerts from live conditions data
+      const nwsAlerts = item.conditions?.nwsAlerts || [];
+      const hasNws = nwsAlerts.length > 0;
+      const isAlerted = hasAlerts || hasNws;
+      const statusClass = isAlerted ? 'alert-active' : 'all-clear';
 
-      const heatDanger = c.apparent_temperature > 95;
-      const coldDanger = c.temperature < 20;
+      // Build status badge — show specific NWS event if that's the only alert type
+      let statusBadge;
+      if (hasNws && !hasAlerts) {
+        statusBadge = `<span class="wc-status warning">${nwsAlerts.length} WARNING${nwsAlerts.length > 1 ? 'S' : ''}</span>`;
+      } else if (isAlerted) {
+        const total = siteAlerts.length + nwsAlerts.length;
+        statusBadge = `<span class="wc-status warning">${total} Alert${total > 1 ? 's' : ''}</span>`;
+      } else {
+        statusBadge = '<span class="wc-status ok">All Clear</span>';
+      }
+
+      const tempDanger = c.apparent_temperature > 95 || c.temperature < 20;
       const windDanger = c.wind_speed > 45;
       const aqiDanger = c.aqi != null && c.aqi > 150;
 
-      let nwsBanner = '';
-      if (nwsAlerts.length > 0) {
-        nwsBanner = `<div class="wc-nws-banner"><strong>NWS:</strong> ${esc(nwsAlerts[0].headline || nwsAlerts[0].event)}${nwsAlerts.length > 1 ? ' (+' + (nwsAlerts.length-1) + ' more)' : ''}</div>`;
+      // Build NWS alert banners for this card
+      let nwsBannersHtml = '';
+      if (hasNws) {
+        nwsBannersHtml = '<div class="wc-nws-alerts">';
+        for (const nws of nwsAlerts) {
+          const sevClass = nws.severity === 'Moderate' ? 'severity-moderate'
+                         : nws.severity === 'Minor' ? 'severity-minor' : '';
+          const icon = nws.severity === 'Extreme' || nws.severity === 'Severe' ? '&#9888;&#65039;' : '&#9432;';
+          // Clean up description — take first sentence or first 150 chars
+          const descText = nws.description ? nws.description.replace(/\n/g, ' ').replace(/\s+/g, ' ').trim() : '';
+          const shortDesc = descText.length > 150 ? descText.substring(0, 150) + '...' : descText;
+          // Format expires
+          const expiresStr = nws.expires ? 'Expires: ' + new Date(nws.expires).toLocaleString([], {month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}) : '';
+          const sourceStr = nws.senderName ? 'Source: ' + esc(nws.senderName) : '';
+
+          nwsBannersHtml += `<div class="wc-nws-item ${sevClass}">
+            <div class="wc-nws-event"><span class="nws-icon">${icon}</span> ${esc(nws.event)}</div>
+            ${shortDesc ? `<div class="wc-nws-desc">${esc(shortDesc)}</div>` : ''}
+            ${nws.instruction ? `<div class="wc-nws-desc" style="color:#fbbf24;font-style:italic;margin-top:.2rem">${esc(truncate(nws.instruction.replace(/\n/g,' ').replace(/\s+/g,' '), 120))}</div>` : ''}
+            <div class="wc-nws-meta">
+              ${expiresStr ? `<span>${expiresStr}</span>` : ''}
+              ${sourceStr ? `<span>${sourceStr}</span>` : ''}
+            </div>
+          </div>`;
+        }
+        nwsBannersHtml += '</div>';
       }
 
-      cardsHtml += `<div class="weather-card ${cardClass}">
-        <div class="wc-header"><div><div class="wc-site-name">${esc(s.name)}</div><div class="wc-location">${esc(s.city||'')}${s.state?', '+esc(s.state):''}</div></div>${statusBadge}</div>
+      cardsHtml += `<div class="weather-card ${statusClass}">
+        <div class="wc-header">
+          <div><div class="wc-site-name">${esc(s.name)}</div>
+          <div class="wc-location">${esc(s.city || '')}${s.state ? ', ' + esc(s.state) : ''}</div></div>
+          ${statusBadge}
+        </div>
         <div class="wc-conditions">
-          <div class="wc-metric"><div class="wc-metric-label">Temperature</div><div class="wc-metric-value${coldDanger?' danger':''}">${c.temperature}°F</div></div>
-          <div class="wc-metric"><div class="wc-metric-label">Feels Like</div><div class="wc-metric-value${heatDanger?' danger':''}">${c.apparent_temperature}°F</div></div>
-          <div class="wc-metric"><div class="wc-metric-label">Wind Speed</div><div class="wc-metric-value${windDanger?' danger':''}">${c.wind_speed} mph</div></div>
-          <div class="wc-metric"><div class="wc-metric-label">Air Quality</div><div class="wc-metric-value${aqiDanger?' danger':''}">${c.aqi!=null?c.aqi+' '+c.aqi_label:'N/A'}</div></div>
+          <div class="wc-metric">
+            <div class="wc-metric-label">Temperature</div>
+            <div class="wc-metric-value${c.temperature < 20 ? ' danger' : ''}">${c.temperature}°F</div>
+          </div>
+          <div class="wc-metric">
+            <div class="wc-metric-label">Feels Like</div>
+            <div class="wc-metric-value${c.apparent_temperature > 95 ? ' danger' : ''}">${c.apparent_temperature}°F</div>
+          </div>
+          <div class="wc-metric">
+            <div class="wc-metric-label">Wind Speed</div>
+            <div class="wc-metric-value${windDanger ? ' danger' : ''}">${c.wind_speed} mph</div>
+          </div>
+          <div class="wc-metric">
+            <div class="wc-metric-label">Air Quality</div>
+            <div class="wc-metric-value${aqiDanger ? ' danger' : ''}">${c.aqi != null ? c.aqi + ' ' + c.aqi_label : 'N/A'}</div>
+          </div>
         </div>
         <div class="wc-description">${esc(c.weather_description)}</div>
-        ${nwsBanner}
+        ${nwsBannersHtml}
       </div>`;
     }
     cardsHtml += '</div>';
     area.innerHTML = cardsHtml;
 
-    // Active alerts grouped by severity
+    // Active alerts
     if (activeAlerts.length > 0) {
-      const warnings = activeAlerts.filter(a => a.severity === 'warning');
-      const watches = activeAlerts.filter(a => a.severity === 'watch');
-      const advisories = activeAlerts.filter(a => a.severity === 'advisory');
+      let alertsHtml = `<div class="alerts-section-title"><span class="pulse"></span> Active Alerts (${activeAlerts.length})</div>`;
+      for (const a of activeAlerts) {
+        const time = new Date(a.created_at + 'Z').toLocaleString();
+        const isNws = a.alert_type === 'nws_alert';
+        const isForecast = a.alert_type.startsWith('forecast_') || a.alert_type.startsWith('48hr_');
+        const isWeatherEvent = a.alert_type === 'winter_weather' || a.alert_type === 'severe_storm';
 
-      let alertsHtml = '';
-      if (warnings.length > 0) {
-        alertsHtml += `<div class="alerts-section-title" style="color:#ef4444"><span class="pulse" style="background:#ef4444"></span> Warnings (${warnings.length})</div>`;
-        alertsHtml += warnings.map(renderAlertItem).join('');
-      }
-      if (watches.length > 0) {
-        alertsHtml += `<div class="alerts-section-title" style="color:#f97316;${warnings.length?'margin-top:1rem':''}"><span class="pulse" style="background:#f97316"></span> Watches (${watches.length})</div>`;
-        alertsHtml += watches.map(renderAlertItem).join('');
-      }
-      if (advisories.length > 0) {
-        alertsHtml += `<div class="alerts-section-title" style="color:#eab308;${warnings.length||watches.length?'margin-top:1rem':''}"><span class="pulse" style="background:#eab308"></span> Advisories (${advisories.length})</div>`;
-        alertsHtml += advisories.map(renderAlertItem).join('');
+        // For NWS alerts, extract the event name from the description
+        const alertName = isNws ? getNwsEventName(a) : (ALERT_LABELS[a.alert_type] || a.alert_type);
+        const severityLabel = a.severity === 'warning' ? 'WARNING' : a.severity === 'watch' ? 'WATCH' : 'ADVISORY';
+
+        // Build detail line based on alert type
+        let detailHtml = '';
+        if (isNws || isWeatherEvent) {
+          detailHtml = `<div class="ai-detail">${esc(a.description || '')} &nbsp;|&nbsp; ${time}${a.email_sent ? ' &nbsp;|&nbsp; Email sent to ' + esc(a.email_recipient || a.manager_email || 'manager') : ''}</div>`;
+        } else if (isForecast) {
+          detailHtml = `<div class="ai-detail">${esc(a.description || '')} &nbsp;|&nbsp; ${time}${a.email_sent ? ' &nbsp;|&nbsp; Email sent' : ''}</div>`;
+        } else {
+          detailHtml = `<div class="ai-detail">Actual: ${a.actual_value}${alertUnit(a.alert_type)} &nbsp;|&nbsp; Threshold: ${a.threshold_value}${alertUnit(a.alert_type)} &nbsp;|&nbsp; ${time}${a.email_sent ? ' &nbsp;|&nbsp; Email sent to ' + esc(a.email_recipient || a.manager_email || 'manager') : ''}</div>`;
+        }
+
+        alertsHtml += `<div class="alert-item type-${a.alert_type}">
+          <div class="ai-type">[${severityLabel}] ${esc(alertName)}</div>
+          <div class="ai-site">${esc(a.site_name)} — ${esc(a.city || '')}${a.state ? ', ' + esc(a.state) : ''}</div>
+          ${detailHtml}
+        </div>`;
       }
       alertsArea.innerHTML = alertsHtml;
     } else {
       alertsArea.innerHTML = '';
     }
   } catch (err) {
-    area.innerHTML = `<div class="empty-state"><div class="es-icon">&#9888;&#65039;</div><div class="es-text">Could not connect to server</div><div class="es-sub">Make sure the weather alerts server is running.<br><code style="color:#f59e0b;font-size:.75rem;">cd weather-alerts-server && node server.js</code></div></div>`;
+    area.innerHTML = `<div class="empty-state">
+      <div class="es-icon">&#9888;&#65039;</div>
+      <div class="es-text">Could not connect to server</div>
+      <div class="es-sub">Make sure the weather alerts server is running on port 3456.<br><code style="color:#f59e0b;font-size:.75rem;">cd weather-alerts-server && node server.js</code></div>
+    </div>`;
     alertsArea.innerHTML = '';
   }
-}
-
-function renderAlertItem(a) {
-  const sev = a.severity || 'watch';
-  const time = new Date(a.created_at).toLocaleString();
-  const label = ALERT_LABELS[a.alert_type] || a.alert_type;
-  const unit = alertUnit(a.alert_type);
-  const thresholdInfo = a.threshold_value && unit ? `${a.actual_value}${unit} exceeds ${a.threshold_value}${unit}` : '';
-  const desc = a.description ? `<div class="ai-desc">${esc(a.description)}</div>` : '';
-  return `<div class="alert-item sev-${sev}">
-    <div class="ai-header"><span class="ai-type">${esc(label)}</span><span class="ai-severity">${sevLabel(sev)}</span></div>
-    <div class="ai-site">${esc(a.site_name)} — ${esc(a.city||'')}${a.state?', '+esc(a.state):''}</div>
-    ${desc}
-    <div class="ai-detail">${thresholdInfo}${thresholdInfo?' &nbsp;|&nbsp; ':''}${time}${a.email_sent?' &nbsp;|&nbsp; Email sent':''}</div>
-  </div>`;
 }
 
 async function triggerManualCheck() {
@@ -519,21 +607,39 @@ async function triggerManualCheck() {
   }
 }
 
-// ═══ JOB SITES ══════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════
+// JOB SITES TAB
+// ═══════════════════════════════════════════════════════════
 async function loadSites() {
   const area = document.getElementById('sites-list-area');
   area.innerHTML = '<div class="loading-overlay"><span class="spinner"></span> Loading sites...</div>';
   try {
     const sites = await api('/sites');
     if (sites.length === 0) {
-      area.innerHTML = '<div class="empty-state"><div class="es-icon">&#128205;</div><div class="es-text">No job sites yet</div><div class="es-sub">Add your first job site to start monitoring weather conditions.</div></div>';
+      area.innerHTML = `<div class="empty-state">
+        <div class="es-icon">&#128205;</div>
+        <div class="es-text">No job sites yet</div>
+        <div class="es-sub">Add your first job site to start monitoring weather conditions.</div>
+      </div>`;
       return;
     }
     let html = '';
     for (const s of sites) {
-      const emails = s.manager_email ? s.manager_email.split(',').map(e => e.trim()).filter(Boolean) : [];
-      const emailDisplay = emails.length > 0 ? '<br>Alerts to: ' + emails.map(e => esc(e)).join(', ') : '';
-      html += `<div class="site-item"><div class="si-info"><div class="si-name">${esc(s.name)}</div><div class="si-detail">${esc(s.city||'')}${s.state?', '+esc(s.state):''} &nbsp;|&nbsp; Lat: ${s.latitude}, Lng: ${s.longitude}${s.manager_name?'<br>Manager: '+esc(s.manager_name):''}${emailDisplay}</div></div><div class="si-actions"><button class="btn-edit" onclick="editSite(${s.id})">Edit</button><button class="btn-danger" onclick="deleteSite(${s.id},'${esc(s.name)}')">Remove</button></div></div>`;
+      html += `<div class="site-item">
+        <div class="si-info">
+          <div class="si-name">${esc(s.name)}</div>
+          <div class="si-detail">
+            ${esc(s.city || '')}${s.state ? ', ' + esc(s.state) : ''} &nbsp;|&nbsp;
+            Lat: ${s.latitude}, Lng: ${s.longitude}
+            ${s.manager_name ? '<br>Manager: ' + esc(s.manager_name) : ''}
+            ${s.manager_email ? ' (' + esc(s.manager_email) + ')' : ''}
+          </div>
+        </div>
+        <div class="si-actions">
+          <button class="btn-edit" onclick="editSite(${s.id})">Edit</button>
+          <button class="btn-danger" onclick="deleteSite(${s.id}, '${esc(s.name)}')">Remove</button>
+        </div>
+      </div>`;
     }
     area.innerHTML = html;
   } catch (err) {
@@ -553,32 +659,71 @@ function openSiteForm(site = null) {
   document.getElementById('sf-email').value = site ? site.manager_email || '' : '';
   document.getElementById('site-form-overlay').classList.add('show');
 }
-function closeSiteForm() { document.getElementById('site-form-overlay').classList.remove('show'); }
+
+function closeSiteForm() {
+  document.getElementById('site-form-overlay').classList.remove('show');
+}
 
 async function editSite(id) {
-  try { openSiteForm(await api('/sites/' + id)); } catch (err) { showToast('Error: ' + err.message, 'error'); }
+  try {
+    const site = await api('/sites/' + id);
+    openSiteForm(site);
+  } catch (err) {
+    showToast('Error loading site: ' + err.message, 'error');
+  }
 }
 
 async function saveSite() {
   const id = document.getElementById('sf-id').value;
-  const body = { name: document.getElementById('sf-name').value.trim(), city: document.getElementById('sf-city').value.trim(), state: document.getElementById('sf-state').value.trim(), latitude: document.getElementById('sf-lat').value, longitude: document.getElementById('sf-lng').value, manager_name: document.getElementById('sf-manager').value.trim(), manager_email: document.getElementById('sf-email').value.trim() };
-  if (!body.name || !body.latitude || !body.longitude) { showToast('Name, latitude, and longitude are required', 'error'); return; }
+  const body = {
+    name: document.getElementById('sf-name').value.trim(),
+    city: document.getElementById('sf-city').value.trim(),
+    state: document.getElementById('sf-state').value.trim(),
+    latitude: document.getElementById('sf-lat').value,
+    longitude: document.getElementById('sf-lng').value,
+    manager_name: document.getElementById('sf-manager').value.trim(),
+    manager_email: document.getElementById('sf-email').value.trim()
+  };
+
+  if (!body.name || !body.latitude || !body.longitude) {
+    showToast('Name, latitude, and longitude are required', 'error');
+    return;
+  }
+
   try {
-    if (id) { await api('/sites/' + id, { method: 'PUT', body }); showToast('Site updated'); }
-    else { await api('/sites', { method: 'POST', body }); showToast('Site added'); }
-    closeSiteForm(); loadSites();
-  } catch (err) { showToast('Error: ' + err.message, 'error'); }
+    if (id) {
+      await api('/sites/' + id, { method: 'PUT', body });
+      showToast('Site updated');
+    } else {
+      await api('/sites', { method: 'POST', body });
+      showToast('Site added');
+    }
+    closeSiteForm();
+    loadSites();
+  } catch (err) {
+    showToast('Error: ' + err.message, 'error');
+  }
 }
 
 async function deleteSite(id, name) {
-  if (!confirm('Remove "' + name + '"?')) return;
-  try { await api('/sites/' + id, { method: 'DELETE' }); showToast('Site removed'); loadSites(); }
-  catch (err) { showToast('Error: ' + err.message, 'error'); }
+  if (!confirm('Remove "' + name + '" from monitoring? This will deactivate the site.')) return;
+  try {
+    await api('/sites/' + id, { method: 'DELETE' });
+    showToast('Site removed');
+    loadSites();
+  } catch (err) {
+    showToast('Error: ' + err.message, 'error');
+  }
 }
 
-document.getElementById('site-form-overlay').addEventListener('click', e => { if (e.target === e.currentTarget) closeSiteForm(); });
+// Close modal on overlay click
+document.getElementById('site-form-overlay').addEventListener('click', e => {
+  if (e.target === e.currentTarget) closeSiteForm();
+});
 
-// ═══ ALERT HISTORY ══════════════════════════════════════
+// ═══════════════════════════════════════════════════════════
+// ALERT HISTORY TAB
+// ═══════════════════════════════════════════════════════════
 let historyOffset = 0;
 const HISTORY_LIMIT = 30;
 
@@ -588,9 +733,11 @@ async function loadHistoryFilters() {
     const sel = document.getElementById('filter-site');
     const current = sel.value;
     sel.innerHTML = '<option value="">All Sites</option>';
-    sites.forEach(s => { sel.innerHTML += `<option value="${s.id}">${esc(s.name)}</option>`; });
+    sites.forEach(s => {
+      sel.innerHTML += `<option value="${s.id}">${esc(s.name)}</option>`;
+    });
     sel.value = current;
-  } catch (e) {}
+  } catch (e) { /* ignore */ }
 }
 
 async function loadHistory(append = false) {
@@ -598,56 +745,89 @@ async function loadHistory(append = false) {
   const area = document.getElementById('history-list-area');
   const siteId = document.getElementById('filter-site').value;
   const typeFilter = document.getElementById('filter-type').value;
-  const sevFilter = document.getElementById('filter-severity').value;
 
-  if (!append) area.innerHTML = '<div class="loading-overlay"><span class="spinner"></span> Loading alert history...</div>';
+  if (!append) {
+    area.innerHTML = '<div class="loading-overlay"><span class="spinner"></span> Loading alert history...</div>';
+  }
 
   try {
     let url = `/alerts?limit=${HISTORY_LIMIT}&offset=${historyOffset}`;
     if (siteId) url += `&siteId=${siteId}`;
-    let alerts = await api(url);
+    const alerts = await api(url);
 
-    // Client-side filters
-    if (typeFilter) alerts = alerts.filter(a => a.alert_type === typeFilter);
-    if (sevFilter) alerts = alerts.filter(a => a.severity === sevFilter);
+    // Client-side type filter (server returns all types for a site)
+    const filtered = typeFilter ? alerts.filter(a => a.alert_type === typeFilter) : alerts;
 
-    if (!append && alerts.length === 0) {
-      area.innerHTML = '<div class="empty-state"><div class="es-icon">&#128196;</div><div class="es-text">No alerts found</div><div class="es-sub">When weather thresholds are crossed, alerts will appear here.</div></div>';
+    if (!append && filtered.length === 0) {
+      area.innerHTML = `<div class="empty-state">
+        <div class="es-icon">&#128196;</div>
+        <div class="es-text">No alerts found</div>
+        <div class="es-sub">When weather thresholds are crossed, alerts will appear here.</div>
+      </div>`;
       document.getElementById('btn-load-more').style.display = 'none';
       return;
     }
 
     let html = append ? area.innerHTML : '';
-    for (const a of alerts) {
-      const sev = a.severity || 'watch';
-      const time = new Date(a.created_at).toLocaleString();
-      const label = ALERT_LABELS[a.alert_type] || a.alert_type;
-      const unit = alertUnit(a.alert_type);
-      const valuesLine = a.threshold_value && unit ? `Threshold: ${a.threshold_value}${unit} | Actual: ${a.actual_value}${unit}` : '';
-      const desc = a.description ? `<div class="hi-desc">${esc(a.description)}</div>` : '';
-      const emailBadge = a.email_sent ? '<span class="hi-email sent">Email Sent</span>' : '<span class="hi-email not-sent">No Email</span>';
+    for (const a of filtered) {
+      const time = new Date(a.created_at + 'Z').toLocaleString();
+      const emailStatus = a.email_sent
+        ? `<span class="hi-email sent">Email Sent</span>`
+        : `<span class="hi-email not-sent">No Email</span>`;
 
-      html += `<div class="history-item sev-${sev}">
+      const isNws = a.alert_type === 'nws_alert';
+      const isWeatherEvent = a.alert_type === 'winter_weather' || a.alert_type === 'severe_storm';
+      const isForecast = a.alert_type.startsWith('forecast_') || a.alert_type.startsWith('48hr_');
+      const alertName = isNws ? getNwsEventName(a) : (ALERT_LABELS[a.alert_type] || a.alert_type);
+      const severityLabel = a.severity === 'warning' ? 'WARNING' : a.severity === 'watch' ? 'WATCH' : 'ADVISORY';
+
+      // Values line — different for NWS/weather-event vs threshold alerts
+      let valuesHtml;
+      if (isNws || isWeatherEvent) {
+        valuesHtml = a.description ? esc(truncate(a.description, 100)) : '';
+      } else if (isForecast) {
+        valuesHtml = a.description ? esc(truncate(a.description, 100)) : `Threshold: ${a.threshold_value}${alertUnit(a.alert_type)} | Actual: ${a.actual_value}${alertUnit(a.alert_type)}`;
+      } else {
+        valuesHtml = `Threshold: ${a.threshold_value}${alertUnit(a.alert_type)} &nbsp;|&nbsp; Actual: ${a.actual_value}${alertUnit(a.alert_type)}`;
+      }
+
+      html += `<div class="history-item">
         <div class="hi-main">
-          <div class="hi-header"><span class="hi-type">${esc(label)}</span><span class="hi-severity sev-${sev}">${sevLabel(sev)}</span></div>
-          <div class="hi-site">${esc(a.site_name)} — ${esc(a.city||'')}${a.state?', '+esc(a.state):''}</div>
-          ${desc}
-          <div class="hi-values">${valuesLine}</div>
+          <div class="hi-type" style="color:${ALERT_COLORS[a.alert_type] || '#e2e8f0'}">[${severityLabel}] ${esc(alertName)}</div>
+          <div class="hi-site">${esc(a.site_name)} — ${esc(a.city || '')}${a.state ? ', ' + esc(a.state) : ''}</div>
+          <div class="hi-values">${valuesHtml}</div>
         </div>
-        <div class="hi-meta"><div class="hi-time">${time}</div>${emailBadge}</div>
+        <div class="hi-meta">
+          <div class="hi-time">${time}</div>
+          ${emailStatus}
+        </div>
       </div>`;
     }
     area.innerHTML = html;
-    document.getElementById('btn-load-more').style.display = alerts.length === HISTORY_LIMIT ? '' : 'none';
+
+    // Show/hide load more
+    document.getElementById('btn-load-more').style.display =
+      alerts.length === HISTORY_LIMIT ? '' : 'none';
   } catch (err) {
-    if (!append) area.innerHTML = `<div class="empty-state"><div class="es-icon">&#9888;&#65039;</div><div class="es-text">${esc(err.message)}</div></div>`;
+    if (!append) {
+      area.innerHTML = `<div class="empty-state"><div class="es-icon">&#9888;&#65039;</div><div class="es-text">${esc(err.message)}</div></div>`;
+    }
   }
 }
 
-function loadMoreHistory() { historyOffset += HISTORY_LIMIT; loadHistory(true); }
+function loadMoreHistory() {
+  historyOffset += HISTORY_LIMIT;
+  loadHistory(true);
+}
 
-function esc(str) { const d = document.createElement('div'); d.textContent = str || ''; return d.innerHTML; }
+// ── Utility ──────────────────────────────────────────────
+function esc(str) {
+  const d = document.createElement('div');
+  d.textContent = str || '';
+  return d.innerHTML;
+}
 
+// ── Initial load ─────────────────────────────────────────
 loadDashboard();
 </script>
 </body>
