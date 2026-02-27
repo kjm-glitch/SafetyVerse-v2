@@ -10,6 +10,8 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="../auth/supabase-config.js"></script>
     <script src="../auth/auth-guard.js"></script>
+    <link rel="stylesheet" href="../shared/header.css">
+    <script src="../shared/header.js"></script>
     <style>
         :root {
             --primary: #FFD700;
@@ -62,80 +64,6 @@
                 radial-gradient(circle at 80% 20%, rgba(139,90,43,0.02) 0%, transparent 50%),
                 radial-gradient(circle at 50% 80%, rgba(139,90,43,0.03) 0%, transparent 50%);
         }
-
-        /* ═══ HEADER ═══ */
-        .header {
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            background: linear-gradient(180deg, var(--accent-black) 0%, #2A2A2A 100%);
-            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-            border-bottom: 4px solid var(--primary);
-        }
-
-        .header-inner {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 24px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            height: 64px;
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            text-decoration: none;
-            flex-shrink: 0;
-        }
-
-        .logo-icon {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-        }
-        .logo-icon img {
-            display: block;
-            height: 50px;
-            width: auto;
-            image-rendering: -webkit-optimize-contrast;
-            image-rendering: crisp-edges;
-            box-shadow: 4px 4px 0px rgba(0,0,0,0.15);
-            border-radius: 12px;
-            transition: transform 0.2s ease;
-        }
-
-        .logo-text {
-            font-family: var(--font-heading);
-            font-size: 22px; font-weight: 900;
-            color: var(--white);
-            letter-spacing: -0.5px;
-        }
-
-        .logo-text em { color: var(--primary); font-style: normal; }
-
-        .nav-links {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            list-style: none;
-        }
-
-        .nav-links a {
-            text-decoration: none;
-            color: rgba(255,255,255,0.7);
-            padding: 8px 16px;
-            border-radius: var(--radius-sm);
-            font-weight: 600;
-            font-size: 14px;
-            transition: var(--transition);
-        }
-
-        .nav-links a:hover { color: var(--white); background: rgba(255,255,255,0.1); }
-        .nav-links a.active { color: var(--accent-black); background: var(--primary); }
 
         /* ═══ PAGE HERO ═══ */
         .page-hero {
@@ -552,7 +480,6 @@
 
         /* ═══ RESPONSIVE ═══ */
         @media (max-width: 768px) {
-            .header-inner { height: 56px; }
             .nav-links { display: none; }
             .page-hero { padding: 32px 20px; }
             .page-hero-text h1 { font-size: 28px; }
@@ -605,22 +532,7 @@
 </head>
 <body>
 
-    <!-- ═══ HEADER ═══ -->
-    <header class="header" role="banner">
-        <div class="header-inner">
-            <a href="../index.html" class="logo" aria-label="TheSafetyVerse Home">
-                <div class="logo-icon" aria-hidden="true"><img src="logo.png?v=2" alt="TheSafetyVerse Logo" style="height: 50px; width: auto;"></div>
-                <div class="logo-text"><em>The</em>Safety<em>Verse</em></div>
-            </a>
-            <nav>
-                <ul class="nav-links">
-                    <li><a href="../index.html">Home</a></li>
-                    <li><a href="index.html" class="active">Lessons</a></li>
-                    <li><a href="../games/safety-clue/index.html">Games</a></li>
-                </ul>
-            </nav>
-        </div>
-    </header>
+    <!-- Header injected by shared/header.js -->
 
     <!-- ═══ PAGE HERO ═══ -->
     <section class="page-hero">

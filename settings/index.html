@@ -9,20 +9,12 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="../auth/supabase-config.js"></script>
 <script src="../auth/auth-guard.js"></script>
+<link rel="stylesheet" href="../shared/header.css">
+<script src="../shared/header.js"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Inter',sans-serif;background:#0f172a;color:#e2e8f0;min-height:100vh}
-
-.sv-header{display:flex;align-items:center;justify-content:space-between;padding:10px 20px;background:rgba(0,0,0,0.6);border-bottom:2px solid rgba(245,158,11,0.3)}
-.sv-header-left{display:flex;align-items:center;gap:14px}
-.sv-header .btn-back{display:flex;align-items:center;gap:6px;padding:6px 14px;border-radius:20px;background:rgba(245,158,11,0.15);border:1px solid rgba(245,158,11,0.3);color:#f59e0b;font-size:.8rem;font-weight:600;text-decoration:none;transition:all .2s}
-.sv-header .btn-back:hover{background:rgba(245,158,11,0.3)}
-.sv-header .btn-back svg{width:14px;height:14px}
-.sv-header .logo{display:flex;align-items:center;gap:8px;text-decoration:none}
-.sv-header .logo img{height:36px;width:auto}
-.sv-header .logo-text{font-size:1.1rem;font-weight:800;color:#fff}
-.sv-header .logo-text em{color:#f59e0b;font-style:normal}
 
 .hero{background:linear-gradient(135deg,#1e293b 0%,#0f172a 100%);border-bottom:3px solid #2563eb;padding:2.5rem 1.5rem 2rem;text-align:center}
 .hero h1{font-size:1.75rem;font-weight:800;color:#fff;margin-bottom:.5rem}
@@ -84,18 +76,7 @@ body{font-family:'Inter',sans-serif;background:#0f172a;color:#e2e8f0;min-height:
 </head>
 <body>
 
-<div class="sv-header">
-  <div class="sv-header-left">
-    <a href="../user-dashboard/index.html" class="btn-back" aria-label="Back to Dashboard">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
-      Dashboard
-    </a>
-  </div>
-  <a href="../index.html" class="logo">
-    <img src="logo.png?v=2" alt="TheSafetyVerse Logo">
-    <span class="logo-text"><em>The</em>Safety<em>Verse</em></span>
-  </a>
-</div>
+<!-- Header injected by shared/header.js -->
 
 <div class="hero">
   <h1>Company <em>Settings</em></h1>

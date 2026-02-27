@@ -1,0 +1,235 @@
+/* ═══════════════════════════════════════════
+   SHARED SITE HEADER — TheSafetyVerse
+   All logged-in pages include this file.
+   ═══════════════════════════════════════════ */
+
+.sv-site-header {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    background: linear-gradient(180deg, #1A1A1A 0%, #2A2A2A 100%);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    border-bottom: 4px solid #FFD700;
+}
+
+.sv-site-header-inner {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 64px;
+}
+
+/* ── Logo ── */
+.sv-site-header .sv-logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+    flex-shrink: 0;
+}
+
+.sv-site-header .sv-logo-img {
+    display: block;
+    height: 50px;
+    width: auto;
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+    box-shadow: 4px 4px 0px rgba(0,0,0,0.15);
+    border-radius: 12px;
+    transition: transform 0.2s ease;
+}
+
+.sv-site-header .sv-logo:hover .sv-logo-img {
+    transform: scale(1.05);
+}
+
+.sv-site-header .sv-logo-text {
+    font-family: 'Segoe UI', 'Arial Black', sans-serif;
+    font-size: 22px;
+    font-weight: 900;
+    color: #FFFFFF;
+    letter-spacing: -0.5px;
+}
+
+.sv-site-header .sv-logo-text em {
+    color: #FFD700;
+    font-style: normal;
+}
+
+/* ── Left group (logo + optional admin badge) ── */
+.sv-site-header-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
+}
+
+/* ── Admin Badge ── */
+.sv-admin-badge {
+    display: none;
+    background: #FFD700;
+    color: #1A1A1A;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.sv-site-header.is-admin-page .sv-admin-badge {
+    display: inline-block;
+}
+
+/* ── Nav Links ── */
+.sv-site-nav {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.sv-site-nav a {
+    text-decoration: none;
+    color: rgba(255,255,255,0.65);
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 14px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.sv-site-nav a:hover {
+    color: #FFFFFF;
+    background: rgba(255,255,255,0.08);
+}
+
+.sv-site-nav a.active {
+    color: #1A1A1A;
+    background: #FFD700;
+}
+
+.sv-site-nav .sv-nav-admin {
+    display: none;
+}
+
+/* ── Right side (greeting + logout) ── */
+.sv-site-header-right {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-shrink: 0;
+}
+
+.sv-site-greeting {
+    font-size: 13px;
+    color: rgba(255,255,255,0.5);
+    font-weight: 600;
+}
+
+.sv-site-logout {
+    color: rgba(255,255,255,0.6);
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 500;
+    padding: 6px 12px;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    background: none;
+    border: none;
+    font-family: inherit;
+}
+
+.sv-site-logout:hover {
+    color: #fff;
+    background: rgba(255,255,255,0.1);
+}
+
+/* ── Hamburger (mobile) ── */
+.sv-site-hamburger {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    cursor: pointer;
+    padding: 6px;
+    border: none;
+    background: none;
+}
+
+.sv-site-hamburger span {
+    display: block;
+    width: 24px;
+    height: 2.5px;
+    background: #FFFFFF;
+    border-radius: 2px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ── Mobile Menu ── */
+.sv-site-mobile-menu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: #1A1A1A;
+    border-bottom: 3px solid #FFD700;
+    padding: 16px 24px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+}
+
+.sv-site-mobile-menu.open {
+    display: block;
+}
+
+.sv-site-mobile-menu a {
+    display: block;
+    color: rgba(255,255,255,0.7);
+    text-decoration: none;
+    padding: 12px 0;
+    font-weight: 600;
+    font-size: 15px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.sv-site-mobile-menu a:hover {
+    color: #FFD700;
+}
+
+.sv-site-mobile-menu a:last-child {
+    border-bottom: none;
+}
+
+.sv-site-mobile-menu .sv-nav-admin {
+    display: none;
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+    .sv-site-nav {
+        display: none;
+    }
+
+    .sv-site-header-right {
+        display: none;
+    }
+
+    .sv-site-hamburger {
+        display: flex;
+    }
+
+    .sv-site-header .sv-logo-text {
+        font-size: 18px;
+    }
+
+    .sv-site-header .sv-logo-img {
+        height: 40px;
+    }
+}

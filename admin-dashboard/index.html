@@ -9,6 +9,8 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="../auth/supabase-config.js"></script>
     <script src="../auth/auth-guard.js"></script>
+    <link rel="stylesheet" href="../shared/header.css">
+    <script src="../shared/header.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
     <style>
         /* ===== CSS VARIABLES ===== */
@@ -68,113 +70,6 @@
                 radial-gradient(circle at 20% 50%, rgba(139,90,43,0.03) 0%, transparent 50%),
                 radial-gradient(circle at 80% 20%, rgba(139,90,43,0.02) 0%, transparent 50%),
                 radial-gradient(circle at 50% 80%, rgba(139,90,43,0.03) 0%, transparent 50%);
-        }
-
-        /* ===== HEADER ===== */
-        .header {
-            background: linear-gradient(135deg, var(--accent-black), #2A2A2A);
-            border-bottom: 4px solid var(--primary);
-            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            height: 64px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 24px;
-        }
-
-        .header-left {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-        }
-
-        .header-logo {
-            color: var(--white);
-            font-family: var(--font-heading);
-            font-size: 20px;
-            font-weight: 900;
-            text-decoration: none;
-        }
-
-        .header-logo em {
-            color: var(--primary-dark);
-            font-style: normal;
-        }
-
-        .admin-badge {
-            background: var(--primary);
-            color: var(--accent-black);
-            font-size: 11px;
-            font-weight: 700;
-            padding: 3px 10px;
-            border-radius: 20px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .mobile-menu-btn {
-            display: none;
-            background: none;
-            border: none;
-            color: var(--white);
-            font-size: 24px;
-            cursor: pointer;
-            padding: 4px;
-        }
-
-        .header-right {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-        }
-
-        .header-user {
-            color: var(--white);
-            font-size: 14px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .header-user-avatar {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            background: var(--primary);
-            color: var(--accent-black);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-            font-size: 14px;
-        }
-
-        .header-link {
-            color: rgba(255,255,255,0.7);
-            text-decoration: none;
-            font-size: 13px;
-            transition: var(--transition);
-        }
-
-        .header-link:hover { color: var(--primary); }
-
-        .logout-btn {
-            background: rgba(255,255,255,0.1);
-            border: 1px solid rgba(255,255,255,0.2);
-            color: var(--white);
-            padding: 6px 16px;
-            border-radius: var(--radius-sm);
-            cursor: pointer;
-            font-size: 13px;
-            transition: var(--transition);
-        }
-
-        .logout-btn:hover {
-            background: var(--error);
-            border-color: var(--error);
         }
 
         /* ===== LAYOUT ===== */
@@ -818,15 +713,9 @@
 
             .sidebar.open { display: block; }
 
-            .mobile-menu-btn { display: block; }
-
             .main-content { padding: 20px 16px; }
 
             .overview-stats { grid-template-columns: 1fr; }
-
-            .header-user span { display: none; }
-
-            .header-link { display: none; }
 
             .table-toolbar { flex-direction: column; align-items: stretch; }
             .table-toolbar-left { flex-direction: column; }
@@ -841,8 +730,6 @@
         }
 
         @media (max-width: 480px) {
-            .header-logo { font-size: 17px; }
-            .admin-badge { font-size: 10px; padding: 2px 8px; }
             .section-header h1 { font-size: 22px; }
             .stat-value { font-size: 32px; }
         }
@@ -894,22 +781,7 @@
 </head>
 <body>
 
-<!-- ===== HEADER ===== -->
-<header class="header">
-    <div class="header-left">
-        <button class="mobile-menu-btn" onclick="toggleSidebar()" aria-label="Menu">&#9776;</button>
-        <a href="#" class="header-logo"><em>The</em>Safety<em>Verse</em></a>
-        <span class="admin-badge">Admin</span>
-    </div>
-    <div class="header-right">
-        <a href="../user-dashboard/index.html" class="header-link">User Dashboard</a>
-        <div class="header-user">
-            <div class="header-user-avatar" id="adminAvatar">KM</div>
-            <span id="adminUserName">Katie Mead</span>
-        </div>
-        <a href="#" class="logout-btn" onclick="event.preventDefault();getSafetyVerseSupabase().auth.signOut().then(function(){localStorage.clear();window.location.href='../login.html';});">Logout</a>
-    </div>
-</header>
+<!-- Header injected by shared/header.js -->
 
 <!-- ===== APP LAYOUT ===== -->
 <div class="app-layout">

@@ -10,6 +10,8 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="../auth/supabase-config.js"></script>
     <script src="../auth/auth-guard.js"></script>
+    <link rel="stylesheet" href="../shared/header.css">
+    <script src="../shared/header.js"></script>
     <style>
         /* ═══════════════════════════════════════════
            CSS VARIABLES & RESET
@@ -69,170 +71,6 @@
                 radial-gradient(circle at 80% 20%, rgba(139,90,43,0.02) 0%, transparent 50%),
                 radial-gradient(circle at 50% 80%, rgba(139,90,43,0.03) 0%, transparent 50%);
         }
-
-        /* ═══════════════════════════════════════════
-           HEADER
-           ═══════════════════════════════════════════ */
-        .header {
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            background: linear-gradient(180deg, var(--accent-black) 0%, #2A2A2A 100%);
-            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-            border-bottom: 4px solid var(--primary);
-        }
-
-        .header-inner {
-            max-width: 1280px;
-            margin: 0 auto;
-            padding: 0 24px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            height: 64px;
-        }
-
-        .header-left {
-            display: flex;
-            align-items: center;
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            text-decoration: none;
-            flex-shrink: 0;
-        }
-
-        .logo-icon {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-        }
-        .logo-icon img {
-            display: block;
-            height: 50px;
-            width: auto;
-            image-rendering: -webkit-optimize-contrast;
-            image-rendering: crisp-edges;
-            box-shadow: 4px 4px 0px rgba(0,0,0,0.15);
-            border-radius: 12px;
-            transition: transform 0.2s ease;
-        }
-
-        .logo-text {
-            font-family: var(--font-heading);
-            font-size: 22px; font-weight: 900;
-            color: var(--white);
-            letter-spacing: -0.5px;
-        }
-
-        .logo-text em { color: var(--primary); font-style: normal; }
-
-        .nav-links {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            list-style: none;
-        }
-
-        .nav-links a {
-            text-decoration: none;
-            color: rgba(255,255,255,0.65);
-            padding: 8px 14px;
-            border-radius: var(--radius-sm);
-            font-weight: 600;
-            font-size: 14px;
-            transition: var(--transition);
-        }
-
-        .nav-links a:hover { color: var(--white); background: rgba(255,255,255,0.08); }
-        .nav-links a.active { color: var(--accent-black); background: var(--primary); }
-
-        .header-right {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-        }
-        .logout-link {
-            color: rgba(255,255,255,0.6);
-            text-decoration: none;
-            font-size: 13px;
-            font-weight: 500;
-            padding: 6px 12px;
-            border-radius: 6px;
-            transition: all 0.2s ease;
-        }
-        .logout-link:hover {
-            color: #fff;
-            background: rgba(255,255,255,0.1);
-        }
-
-        .header-avatar {
-            width: 36px; height: auto;
-            border-radius: 8px;
-            border: 2px solid var(--primary);
-            background: #fff;
-            padding: 2px;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .header-avatar:hover { box-shadow: 0 0 0 3px rgba(255,215,0,0.3); }
-
-        .header-greeting {
-            font-size: 13px;
-            color: rgba(255,255,255,0.5);
-            font-weight: 600;
-        }
-
-        /* Mobile hamburger */
-        .hamburger {
-            display: none;
-            flex-direction: column;
-            gap: 5px;
-            cursor: pointer;
-            padding: 6px;
-            border: none;
-            background: none;
-        }
-
-        .hamburger span {
-            display: block;
-            width: 24px; height: 2.5px;
-            background: var(--white);
-            border-radius: 2px;
-            transition: var(--transition);
-        }
-
-        .mobile-menu {
-            display: none;
-            position: absolute;
-            top: 100%;
-            left: 0; right: 0;
-            background: var(--accent-black);
-            border-bottom: 3px solid var(--primary);
-            padding: 16px 24px;
-            box-shadow: 0 8px 30px rgba(0,0,0,0.3);
-        }
-
-        .mobile-menu.open { display: block; }
-
-        .mobile-menu a {
-            display: block;
-            color: rgba(255,255,255,0.7);
-            text-decoration: none;
-            padding: 12px 0;
-            font-weight: 600;
-            font-size: 15px;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-            transition: var(--transition);
-        }
-
-        .mobile-menu a:hover { color: var(--primary); }
-        .mobile-menu a:last-child { border-bottom: none; }
 
         /* ═══════════════════════════════════════════
            HERO SECTION
@@ -1240,10 +1078,6 @@
         }
 
         @media (max-width: 768px) {
-            .header-inner { height: 56px; }
-            .nav-links { display: none; }
-            .hamburger { display: flex; }
-            .header-greeting { display: none; }
             .hero { padding: 32px 20px 40px; }
             .hero-dashboard h1 { font-size: 22px; }
             .progress-ring-wrap { width: 160px; height: 160px; }
@@ -1382,7 +1216,7 @@
         .admin-overview-link {
             display: block;
             text-align: center;
-            color: var(--primary);
+            color: var(--text-dark);
             font-size: 14px;
             font-weight: 600;
             text-decoration: none;
@@ -1483,38 +1317,7 @@
 <body>
 
     <!-- ═══ HEADER ═══ -->
-    <header class="header" role="banner">
-        <div class="header-inner">
-            <div class="header-left">
-                <a href="../index.html" class="logo" aria-label="TheSafetyVerse Home">
-                    <div class="logo-icon" aria-hidden="true"><img src="logo.png?v=2" alt="TheSafetyVerse Logo" style="height: 50px; width: auto;"></div>
-                    <div class="logo-text"><em>The</em>Safety<em>Verse</em></div>
-                </a>
-            </div>
-            <nav aria-label="Main navigation">
-                <ul class="nav-links">
-                    <li><a href="index.html" class="active">Home</a></li>
-                    <li><a href="../lessons/index.html">My Progress</a></li>
-                    <li><a href="../games/safety-clue/index.html">Games</a></li>
-                    <li id="adminNavItem" style="display:none;"><a href="../admin-dashboard/index.html">Admin</a></li>
-                </ul>
-            </nav>
-            <div class="header-right">
-                <span class="header-greeting" id="headerGreeting">Welcome back!</span>
-                <a href="#" class="logout-link" onclick="event.preventDefault();getSafetyVerseSupabase().auth.signOut().then(function(){localStorage.clear();window.location.href='../login.html';});">Logout</a>
-            </div>
-            <button class="hamburger" aria-label="Toggle menu" onclick="toggleMobileMenu()">
-                <span></span><span></span><span></span>
-            </button>
-        </div>
-        <div class="mobile-menu" id="mobileMenu" role="navigation" aria-label="Mobile navigation">
-            <a href="index.html">Home</a>
-            <a href="../lessons/index.html">My Progress</a>
-            <a href="../games/safety-clue/index.html">Games</a>
-            <a href="../admin-dashboard/index.html" id="adminMobileNavItem" style="display:none;">Admin</a>
-            <a href="#" onclick="event.preventDefault();getSafetyVerseSupabase().auth.signOut().then(function(){localStorage.clear();window.location.href='../login.html';});">Logout</a>
-        </div>
-    </header>
+    <!-- Header injected by shared/header.js -->
 
     <!-- ═══ HERO SECTION (user only) ═══ -->
     <section class="hero section-user-only" role="region" aria-label="Training progress overview">
@@ -2236,27 +2039,9 @@
             // Set body class for CSS-based layout switching
             document.body.classList.add('role-' + role);
 
-            // Show admin nav if user has admin role
+            // Load admin overview stats if admin
             if (role === 'admin') {
-                var adminNav = document.getElementById('adminNavItem');
-                var adminMobile = document.getElementById('adminMobileNavItem');
-                if (adminNav) adminNav.style.display = '';
-                if (adminMobile) adminMobile.style.display = '';
-                // Load admin overview stats
                 loadAdminOverviewStats();
-            }
-
-            // Personalize greeting
-            var greetEl = document.getElementById('headerGreeting');
-            if (greetEl && user.full_name) {
-                var firstName = user.full_name.split(' ')[0];
-                if (role === 'admin') {
-                    greetEl.textContent = 'Welcome, ' + firstName + ' (Admin)';
-                } else if (role === 'manager') {
-                    greetEl.textContent = 'Welcome, ' + firstName;
-                } else {
-                    greetEl.textContent = 'Welcome, ' + firstName + '!';
-                }
             }
 
             // Hide manager-only tools for 'user' role
@@ -2767,14 +2552,6 @@
                 btn.querySelector('span:first-child').textContent = 'Hide Modules';
                 btn.setAttribute('aria-expanded', 'true');
             }
-        };
-
-        /* ═══════════════════════════════════════════
-           MOBILE MENU
-           ═══════════════════════════════════════════ */
-        window.toggleMobileMenu = function() {
-            var menu = document.getElementById('mobileMenu');
-            if (menu) menu.classList.toggle('open');
         };
 
         /* ═══════════════════════════════════════════

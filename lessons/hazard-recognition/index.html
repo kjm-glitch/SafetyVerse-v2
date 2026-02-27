@@ -9,6 +9,8 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="../../auth/supabase-config.js"></script>
     <script src="../../auth/auth-guard.js"></script>
+    <link rel="stylesheet" href="../../shared/header.css">
+    <script src="../../shared/header.js"></script>
     <style>
         /* ═══════════════════════════════════════════
            CSS VARIABLES & RESET
@@ -71,106 +73,6 @@
                 radial-gradient(circle at 20% 50%, rgba(139,90,43,0.03) 0%, transparent 50%),
                 radial-gradient(circle at 80% 20%, rgba(139,90,43,0.02) 0%, transparent 50%),
                 radial-gradient(circle at 50% 80%, rgba(139,90,43,0.03) 0%, transparent 50%);
-        }
-
-        /* ═══════════════════════════════════════════
-           HEADER
-           ═══════════════════════════════════════════ */
-        .header {
-            background: linear-gradient(180deg, var(--accent-black) 0%, #2A2A2A 100%);
-            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-            border-bottom: 4px solid var(--primary);
-            z-index: 100;
-            flex-shrink: 0;
-        }
-
-        .header-inner {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 0 24px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            height: 64px;
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            text-decoration: none;
-            flex-shrink: 0;
-        }
-
-        .logo-icon {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-        }
-        .logo-icon img {
-            display: block;
-            height: 50px;
-            width: auto;
-            image-rendering: -webkit-optimize-contrast;
-            image-rendering: crisp-edges;
-            box-shadow: 4px 4px 0px rgba(0,0,0,0.15);
-            border-radius: 12px;
-            transition: transform 0.2s ease;
-        }
-
-        .logo-text {
-            font-family: var(--font-heading);
-            font-size: 22px; font-weight: 900;
-            color: var(--white);
-            letter-spacing: -0.5px;
-        }
-
-        .logo-text em {
-            color: var(--primary);
-            font-style: normal;
-        }
-
-        .header-center {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            position: absolute;
-            left: 50%;
-            transform: translateX(-50%);
-        }
-
-        .header-module-tag {
-            background: rgba(255,215,0,0.15);
-            color: var(--primary);
-            font-size: 11px; font-weight: 800;
-            padding: 3px 10px;
-            border-radius: 12px;
-            text-transform: uppercase;
-            letter-spacing: 0.8px;
-        }
-
-        .header-module-title {
-            color: rgba(255,255,255,0.8);
-            font-size: 14px; font-weight: 600;
-        }
-
-        .back-btn {
-            display: flex; align-items: center; gap: 6px;
-            text-decoration: none;
-            color: rgba(255,255,255,0.7);
-            font-size: 13px; font-weight: 600;
-            padding: 7px 14px;
-            border-radius: var(--radius-sm);
-            transition: var(--transition);
-            background: rgba(255,255,255,0.06);
-            border: 1px solid rgba(255,255,255,0.1);
-        }
-
-        .back-btn:hover {
-            color: var(--white);
-            background: rgba(255,255,255,0.12);
-            border-color: rgba(255,255,255,0.2);
         }
 
         /* ═══════════════════════════════════════════
@@ -1200,10 +1102,6 @@
            RESPONSIVE
            ═══════════════════════════════════════════ */
         @media (max-width: 768px) {
-            .header-inner { height: 56px; padding: 0 16px; }
-            .header-center { display: none; }
-            .logo-text { font-size: 19px; }
-            .back-btn { padding: 6px 10px; font-size: 12px; }
             .progress-bar-inner { padding: 6px 16px; }
 
             .slide { padding: 16px; }
@@ -1277,22 +1175,7 @@
 </head>
 <body>
 
-    <!-- ═══════════════════════════════════════════
-         HEADER
-         ═══════════════════════════════════════════ -->
-    <header class="header" role="banner">
-        <div class="header-inner">
-            <a href="../../user-dashboard/index.html" class="logo" aria-label="TheSafetyVerse Home">
-                <div class="logo-icon" aria-hidden="true"><img src="logo.png?v=2" alt="TheSafetyVerse Logo" style="height: 50px; width: auto;"></div>
-                <div class="logo-text"><em>The</em>Safety<em>Verse</em></div>
-            </a>
-            <div class="header-center">
-                <span class="header-module-tag">Module 2</span>
-                <span class="header-module-title">Hazard Recognition</span>
-            </div>
-            <a href="../../user-dashboard/index.html" class="back-btn">&#8592; Back to Dashboard</a>
-        </div>
-    </header>
+    <!-- Header injected by shared/header.js -->
 
     <!-- ═══════════════════════════════════════════
          PROGRESS BAR
