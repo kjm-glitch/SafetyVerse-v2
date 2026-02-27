@@ -313,6 +313,54 @@ app.post('/api/admin/send-alert/:siteId', async (req, res) => {
   }
 });
 
+// Send a sample protocol email (for testing operational response formatting)
+app.post('/api/admin/test-protocol', async (req, res) => {
+  try {
+    const { to, alertType = 'cold_temp', severity = 'watch' } = req.body;
+    const recipient = to || 'katie.mead@cencoregroup.com';
+
+    if (!isEmailConfigured()) {
+      return res.status(400).json({ error: 'Email is not configured.' });
+    }
+
+    // Use a real site for sample data
+    const sites = await db.getAllSites();
+    const site = sites[0] || { name: 'Test Site', city: 'Denver', state: 'CO', latitude: 39.7, longitude: -104.9 };
+
+    // Fetch real weather so forecast table is populated
+    const conditions = await weather.fetchAllConditions(site.latitude, site.longitude);
+
+    // Build a fake alert to test the protocol rendering
+    const fakeAlert = {
+      type: alertType,
+      severity: severity,
+      label: `${alertType.replace(/_/g, ' ').toUpperCase()} ${severity.toUpperCase()}`,
+      threshold: alertType === 'heat_index' ? 95 : alertType === 'cold_temp' ? 20 : alertType === 'wind_speed' ? 45 : 150,
+      actual: alertType === 'heat_index' ? 102 : alertType === 'cold_temp' ? 12 : alertType === 'wind_speed' ? 55 : 175,
+      unit: alertType === 'aqi' ? '' : (alertType === 'wind_speed' ? ' mph' : '°F'),
+      description: `[TEST] Sample ${severity} alert for protocol email verification`
+    };
+
+    const severityPrefix = { warning: 'WARNING', watch: 'WATCH', advisory: 'ADVISORY' };
+    const prefix = severityPrefix[severity] || 'ALERT';
+    const subject = `[${prefix}] [TEST] ${fakeAlert.label} — ${site.name}`;
+    const html = renderAlertEmail(fakeAlert, site, conditions, conditions.hourly);
+
+    const result = await sendAlertEmail(recipient, subject, html);
+
+    res.json({
+      success: result.sent,
+      message: result.sent
+        ? `Test protocol email (${alertType}/${severity}) sent to ${recipient}`
+        : `Failed: ${result.reason}`,
+      alertType,
+      severity
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // ── Start ───────────────────────────────────────────────
 
 db.initDb().then(() => {
