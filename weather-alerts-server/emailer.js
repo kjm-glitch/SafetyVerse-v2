@@ -39,7 +39,7 @@ function renderAlertEmail(alert, site, conditions, forecast) {
   const severityLabel = (alert.severity || 'watch').toUpperCase();
 
   const now = new Date();
-  const timestamp = now.toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' });
+  const timestamp = now.toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short', timeZone: 'America/Denver' }) + ' MST';
 
   // Forecast rows (every 3 hours)
   const forecastRows = (forecast || []).map(h => {

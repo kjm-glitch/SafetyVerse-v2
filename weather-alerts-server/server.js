@@ -196,7 +196,7 @@ app.post('/api/admin/test-email', async (req, res) => {
           <p style="margin:0 0 10px;">If you're reading this, your SMTP configuration is working correctly.</p>
           <p style="margin:0;color:#64748b;font-size:13px;">
             Host: ${config.EMAIL.host} | Port: ${config.EMAIL.port} | Secure: ${config.EMAIL.secure}<br>
-            Sent at: ${new Date().toISOString()}
+            Sent at: ${new Date().toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short', timeZone: 'America/Denver' })} MST
           </p>
         </div>
       </div>`;
@@ -252,7 +252,7 @@ app.post('/api/admin/send-alert/:siteId', async (req, res) => {
               <tr><td style="padding:4px 0;">Conditions:</td><td>${c.weather_description}</td></tr>
             </table>
             ${conditions.nwsAlerts.length > 0 ? '<p style="margin-top:12px;color:#ea580c;"><strong>NWS Alerts:</strong> ' + conditions.nwsAlerts.map(n => n.event).join(', ') + '</p>' : ''}
-            <p style="margin-top:16px;color:#94a3b8;font-size:12px;">Sent at: ${new Date().toISOString()}</p>
+            <p style="margin-top:16px;color:#94a3b8;font-size:12px;">Sent at: ${new Date().toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short', timeZone: 'America/Denver' })} MST</p>
           </div>
         </div>`;
 
