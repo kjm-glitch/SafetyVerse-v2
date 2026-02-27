@@ -165,16 +165,14 @@ app.get('/api/config/thresholds', (req, res) => {
 
 // ── Admin: Email Testing & Manual Triggers ─────────────
 
-// Test that SMTP is configured and can connect
+// Test that email (Resend API) is configured
 app.get('/api/admin/email-status', (req, res) => {
   const configured = isEmailConfigured();
   res.json({
     configured,
-    host: config.EMAIL.host,
-    port: config.EMAIL.port,
-    secure: config.EMAIL.secure,
-    user: config.EMAIL.auth.user,
-    from: config.EMAIL.from
+    provider: 'Resend HTTP API',
+    from: config.EMAIL.from,
+    apiKeySet: !!(config.EMAIL.auth.pass && config.EMAIL.auth.pass.startsWith('re_'))
   });
 });
 

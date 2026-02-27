@@ -1,22 +1,26 @@
-const nodemailer = require('nodemailer');
 const config = require('./config');
 const { getSafetyProtocol, getPpeReminders, getHydrationSchedule } = require('./alerts');
 
-let transporter = null;
+// ═══════════════════════════════════════════════════════════
+// EMAIL DELIVERY via Resend HTTP API
+// Railway blocks outbound SMTP (ports 465/587), so we use
+// Resend's REST API directly instead of Nodemailer.
+// ═══════════════════════════════════════════════════════════
 
-function createTransporter() {
-  if (transporter) return transporter;
-  transporter = nodemailer.createTransport({
-    host: config.EMAIL.host,
-    port: config.EMAIL.port,
-    secure: config.EMAIL.secure,
-    auth: config.EMAIL.auth
-  });
-  return transporter;
-}
+const RESEND_API_URL = 'https://api.resend.com/emails';
 
 function isEmailConfigured() {
-  return config.EMAIL.host !== 'smtp.example.com' && config.EMAIL.auth.user !== 'your-email@example.com';
+  // SMTP_PASS holds the Resend API key (re_...)
+  const apiKey = config.EMAIL.auth.pass;
+  return apiKey && apiKey !== 'your-app-password' && apiKey.startsWith('re_');
+}
+
+function getResendApiKey() {
+  return config.EMAIL.auth.pass; // Resend API key stored in SMTP_PASS env var
+}
+
+function getFromAddress() {
+  return config.EMAIL.from || '"SafetyVerse Weather Alerts" <alerts@thesafetyverse.com>';
 }
 
 function renderAlertEmail(alert, site, conditions, forecast) {
@@ -181,19 +185,40 @@ async function sendAlertEmail(to, subject, html) {
   if (!isEmailConfigured()) {
     console.log(`[EMAIL SKIPPED] Not configured. Would send to: ${to}`);
     console.log(`  Subject: ${subject}`);
-    return { sent: false, reason: 'Email not configured' };
+    return { sent: false, reason: 'Email not configured (missing Resend API key)' };
   }
 
   try {
-    const transport = createTransporter();
-    const info = await transport.sendMail({
-      from: config.EMAIL.from,
-      to,
-      subject,
-      html
+    const apiKey = getResendApiKey();
+    const from = getFromAddress();
+
+    // Resend accepts comma-separated recipients — split into array
+    const toArray = to.split(',').map(e => e.trim()).filter(Boolean);
+
+    const response = await fetch(RESEND_API_URL, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${apiKey}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        from,
+        to: toArray,
+        subject,
+        html
+      })
     });
-    console.log(`[EMAIL SENT] To: ${to} | Message ID: ${info.messageId}`);
-    return { sent: true, messageId: info.messageId };
+
+    const data = await response.json();
+
+    if (response.ok) {
+      console.log(`[EMAIL SENT] To: ${to} | Resend ID: ${data.id}`);
+      return { sent: true, messageId: data.id };
+    } else {
+      const errMsg = data.message || data.error || JSON.stringify(data);
+      console.error(`[EMAIL ERROR] To: ${to} | Resend ${response.status}: ${errMsg}`);
+      return { sent: false, reason: `Resend API ${response.status}: ${errMsg}` };
+    }
   } catch (err) {
     console.error(`[EMAIL ERROR] To: ${to} | Error: ${err.message}`);
     return { sent: false, reason: err.message };
