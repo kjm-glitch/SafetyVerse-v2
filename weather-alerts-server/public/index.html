@@ -89,6 +89,10 @@ body{font-family:'Inter',sans-serif;background:#0f172a;color:#e2e8f0;min-height:
 .wc-nws-item.severity-moderate .wc-nws-event{color:#fbbf24}
 .wc-nws-item.severity-minor .wc-nws-event{color:#60a5fa}
 .wc-nws-event .nws-icon{font-size:.8rem}
+.wc-nws-preview{font-size:.7rem;color:#94a3b8;margin-top:.25rem;line-height:1.45}
+.wc-nws-full{display:none}
+.wc-nws-item.expanded .wc-nws-preview{display:none}
+.wc-nws-item.expanded .wc-nws-full{display:block}
 .wc-nws-desc{font-size:.7rem;color:#94a3b8;margin-top:.25rem;line-height:1.45}
 .wc-nws-meta{font-size:.62rem;color:#64748b;margin-top:.3rem;display:flex;gap:.75rem;flex-wrap:wrap}
 
@@ -420,6 +424,15 @@ function truncate(str, len) {
   return str.length > len ? str.substring(0, len) + '...' : str;
 }
 
+// Parse PostgreSQL timestamp safely (handles "2026-02-27 04:02:12+00" format)
+function parseTimestamp(ts) {
+  if (!ts) return null;
+  // Replace the space between date and time with 'T' for ISO 8601 compliance
+  const iso = ts.replace(' ', 'T');
+  const d = new Date(iso);
+  return isNaN(d.getTime()) ? null : d;
+}
+
 // ═══════════════════════════════════════════════════════════
 // DASHBOARD TAB
 // ═══════════════════════════════════════════════════════════
@@ -504,13 +517,19 @@ async function loadDashboard() {
           const expiresStr = nws.expires ? 'Expires: ' + new Date(nws.expires).toLocaleString([], {month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}) : '';
           const sourceStr = nws.senderName ? 'Source: ' + esc(nws.senderName) : '';
 
-          nwsBannersHtml += `<div class="wc-nws-item ${sevClass}">
-            <div class="wc-nws-event"><span class="nws-icon">${icon}</span> ${esc(nws.event)}</div>
-            ${shortDesc ? `<div class="wc-nws-desc">${esc(shortDesc)}</div>` : ''}
-            ${nws.instruction ? `<div class="wc-nws-desc" style="color:#fbbf24;font-style:italic;margin-top:.2rem">${esc(truncate(nws.instruction.replace(/\n/g,' ').replace(/\s+/g,' '), 120))}</div>` : ''}
-            <div class="wc-nws-meta">
-              ${expiresStr ? `<span>${expiresStr}</span>` : ''}
-              ${sourceStr ? `<span>${sourceStr}</span>` : ''}
+          // Build full detail (shown on expand)
+          const instrText = nws.instruction ? nws.instruction.replace(/\n/g, ' ').replace(/\s+/g, ' ').trim() : '';
+
+          nwsBannersHtml += `<div class="wc-nws-item ${sevClass}" onclick="this.classList.toggle('expanded')" style="cursor:pointer">
+            <div class="wc-nws-event"><span class="nws-icon">${icon}</span> ${esc(nws.event)} <span style="font-size:.6rem;font-weight:400;opacity:.6;margin-left:auto">tap for details</span></div>
+            <div class="wc-nws-preview">${esc(truncate(descText, 100))}</div>
+            <div class="wc-nws-full">
+              ${shortDesc ? `<div class="wc-nws-desc">${esc(descText)}</div>` : ''}
+              ${instrText ? `<div class="wc-nws-desc" style="color:#fbbf24;font-style:italic;margin-top:.35rem"><strong>Instructions:</strong> ${esc(instrText)}</div>` : ''}
+              <div class="wc-nws-meta">
+                ${expiresStr ? `<span>${expiresStr}</span>` : ''}
+                ${sourceStr ? `<span>${sourceStr}</span>` : ''}
+              </div>
             </div>
           </div>`;
         }
@@ -552,7 +571,7 @@ async function loadDashboard() {
     if (activeAlerts.length > 0) {
       let alertsHtml = `<div class="alerts-section-title"><span class="pulse"></span> Active Alerts (${activeAlerts.length})</div>`;
       for (const a of activeAlerts) {
-        const time = new Date(a.created_at + 'Z').toLocaleString();
+        const time = (parseTimestamp(a.created_at) || new Date()).toLocaleString();
         const isNws = a.alert_type === 'nws_alert';
         const isForecast = a.alert_type.startsWith('forecast_') || a.alert_type.startsWith('48hr_');
         const isWeatherEvent = a.alert_type === 'winter_weather' || a.alert_type === 'severe_storm';
@@ -770,7 +789,7 @@ async function loadHistory(append = false) {
 
     let html = append ? area.innerHTML : '';
     for (const a of filtered) {
-      const time = new Date(a.created_at + 'Z').toLocaleString();
+      const time = (parseTimestamp(a.created_at) || new Date()).toLocaleString();
       const emailStatus = a.email_sent
         ? `<span class="hi-email sent">Email Sent</span>`
         : `<span class="hi-email not-sent">No Email</span>`;
