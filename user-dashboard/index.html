@@ -25,7 +25,7 @@
             --bg-clay-light: #FAF0E6;
             --text-dark: #1A1A1A;
             --text-medium: #444444;
-            --text-light: #777777;
+            --text-light: #666666;
             --accent-black: #1A1A1A;
             --white: #FFFFFF;
             --success: #4CAF50;
@@ -33,14 +33,14 @@
             --error: #E53935;
             --info: #2196F3;
             --locked-gray: #9E9E9E;
-            --shadow-soft: 0 4px 15px rgba(0,0,0,0.08);
-            --shadow-medium: 0 6px 25px rgba(0,0,0,0.12);
-            --shadow-hard: 0 8px 35px rgba(0,0,0,0.18);
+            --shadow-soft: 0 4px 20px rgba(0,0,0,0.08);
+            --shadow-medium: 0 8px 32px rgba(0,0,0,0.12);
+            --shadow-hard: 0 12px 48px rgba(0,0,0,0.18);
             --shadow-clay: 4px 4px 0px rgba(0,0,0,0.12), inset 0 2px 4px rgba(255,255,255,0.3);
             --radius-sm: 8px;
-            --radius-md: 12px;
-            --radius-lg: 20px;
-            --radius-xl: 28px;
+            --radius-md: 14px;
+            --radius-lg: 22px;
+            --radius-xl: 32px;
             --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             --font-heading: 'Segoe UI', 'Arial Black', sans-serif;
             --font-body: 'Segoe UI', system-ui, -apple-system, sans-serif;
@@ -239,7 +239,7 @@
            HERO SECTION
            ═══════════════════════════════════════════ */
         .hero {
-            background: linear-gradient(135deg, var(--accent-black) 0%, #222 40%, #2D2D2D 100%);
+            background: linear-gradient(180deg, var(--white) 0%, var(--bg-clay-light) 100%);
             padding: 48px 24px 56px;
             position: relative;
             overflow: hidden;
@@ -248,18 +248,22 @@
         .hero::before {
             content: '';
             position: absolute;
-            top: -30%; right: -8%;
-            width: 600px; height: 600px;
-            background: radial-gradient(circle, rgba(255,215,0,0.06) 0%, transparent 65%);
+            top: -120px; right: -120px;
+            width: 500px; height: 500px;
+            border-radius: 50%;
+            background: rgba(255, 215, 0, 0.15);
+            filter: blur(80px);
             pointer-events: none;
         }
 
         .hero::after {
             content: '';
             position: absolute;
-            bottom: -20%; left: -5%;
+            bottom: -100px; left: -80px;
             width: 400px; height: 400px;
-            background: radial-gradient(circle, rgba(255,140,0,0.04) 0%, transparent 65%);
+            border-radius: 50%;
+            background: rgba(255, 140, 0, 0.08);
+            filter: blur(80px);
             pointer-events: none;
         }
 
@@ -282,12 +286,12 @@
         .hero-dashboard h1 {
             font-family: var(--font-heading);
             font-size: 28px; font-weight: 900;
-            color: var(--white);
+            color: var(--text-dark);
             margin-bottom: 28px;
             text-align: left;
         }
 
-        .hero-dashboard h1 em { color: var(--primary); font-style: normal; }
+        .hero-dashboard h1 em { color: var(--primary-dark); font-style: normal; }
 
         .progress-ring-wrap {
             position: relative;
@@ -302,7 +306,7 @@
 
         .progress-ring-bg {
             fill: none;
-            stroke: rgba(255,255,255,0.08);
+            stroke: var(--bg-clay-dark);
             stroke-width: 12;
         }
 
@@ -331,7 +335,7 @@
 
         .progress-ring-label {
             font-size: 13px;
-            color: rgba(255,255,255,0.5);
+            color: var(--text-light);
             font-weight: 600;
             margin-top: 4px;
             display: block;
@@ -350,12 +354,12 @@
         .hero-stat-val {
             font-family: var(--font-heading);
             font-size: 22px; font-weight: 900;
-            color: var(--white);
+            color: var(--text-dark);
         }
 
         .hero-stat-lbl {
             font-size: 11px; font-weight: 700;
-            color: rgba(255,255,255,0.35);
+            color: var(--text-light);
             text-transform: uppercase;
             letter-spacing: 1px;
             margin-top: 2px;
@@ -363,21 +367,21 @@
 
         /* Continue Learning Card (Right) */
         .continue-card {
-            background: linear-gradient(135deg, #2A2A2A, #333);
+            background: var(--white);
             border-radius: var(--radius-lg);
-            border: 1px solid rgba(255,215,0,0.15);
+            border: 2px solid rgba(255, 215, 0, 0.2);
             padding: 28px;
             position: relative;
             overflow: hidden;
+            box-shadow: var(--shadow-medium);
         }
 
         .continue-card::before {
             content: '';
             position: absolute;
-            top: 0; right: 0;
-            width: 120px; height: 120px;
-            background: radial-gradient(circle, rgba(255,215,0,0.08) 0%, transparent 70%);
-            pointer-events: none;
+            top: 0; left: 0; right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary), var(--primary));
         }
 
         .continue-badge {
@@ -395,13 +399,13 @@
         .continue-module-title {
             font-family: var(--font-heading);
             font-size: 20px; font-weight: 800;
-            color: var(--white);
+            color: var(--text-dark);
             margin-bottom: 8px;
         }
 
         .continue-module-path {
             font-size: 13px;
-            color: rgba(255,255,255,0.4);
+            color: var(--text-light);
             margin-bottom: 16px;
         }
 
@@ -415,7 +419,7 @@
         .continue-progress-track {
             flex: 1;
             height: 8px;
-            background: rgba(255,255,255,0.08);
+            background: var(--bg-clay);
             border-radius: 4px;
             overflow: hidden;
         }
@@ -436,7 +440,7 @@
 
         .continue-time {
             font-size: 12px;
-            color: rgba(255,255,255,0.35);
+            color: var(--text-light);
             margin-bottom: 20px;
         }
 
@@ -484,7 +488,7 @@
 
         .katie-tip-text {
             font-size: 13px;
-            color: rgba(255,255,255,0.6);
+            color: var(--text-medium);
             font-style: italic;
             line-height: 1.5;
         }
@@ -858,7 +862,7 @@
 
         .game-thumb {
             height: 160px;
-            background: linear-gradient(135deg, var(--accent-black), #333);
+            background: var(--bg-clay-light);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -877,7 +881,7 @@
         }
 
         .game-badge.available-badge { background: var(--primary); color: var(--accent-black); }
-        .game-badge.coming-badge { background: rgba(255,255,255,0.15); color: rgba(255,255,255,0.5); }
+        .game-badge.coming-badge { background: rgba(0,0,0,0.06); color: var(--text-light); }
 
         .game-card-body { padding: 20px; }
 
@@ -951,7 +955,7 @@
            INCIDENT & REPORTING SECTION
            ═══════════════════════════════════════════ */
         .incident-section {
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            background: var(--bg-clay);
             padding: 48px 24px;
         }
 
@@ -960,10 +964,6 @@
             margin: 0 auto;
         }
 
-        .incident-section .section-title { color: var(--white); }
-        .incident-section .section-subtitle { color: rgba(255,255,255,0.4); }
-        .incident-section .section-label { color: rgba(255,255,255,0.3); }
-
         .incident-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -971,21 +971,21 @@
         }
 
         .incident-card {
-            background: rgba(255,255,255,0.06);
+            background: var(--white);
             border-radius: var(--radius-lg);
             overflow: hidden;
             transition: var(--transition);
-            border: 2px solid rgba(255,255,255,0.08);
-            backdrop-filter: blur(10px);
+            border: 1px solid rgba(0,0,0,0.04);
+            box-shadow: var(--shadow-soft);
         }
 
         .incident-card:hover {
             transform: translateY(-4px);
-            box-shadow: 0 8px 35px rgba(0,0,0,0.3);
+            box-shadow: var(--shadow-medium);
         }
 
         .incident-card.available-incident {
-            border-color: rgba(245,158,11,0.4);
+            border-color: var(--primary);
         }
 
         .incident-card.locked-incident {
@@ -1004,7 +1004,7 @@
             justify-content: center;
             font-size: 52px;
             position: relative;
-            background: rgba(255,255,255,0.03);
+            background: var(--bg-clay-light);
         }
 
         .incident-badge {
@@ -1018,27 +1018,27 @@
         }
 
         .incident-badge.available-badge { background: #f59e0b; color: #0f172a; }
-        .incident-badge.coming-badge { background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.4); }
+        .incident-badge.coming-badge { background: rgba(0,0,0,0.06); color: var(--text-light); }
 
         .incident-card-body { padding: 20px; }
 
         .incident-card-body h3 {
             font-family: var(--font-heading);
             font-size: 17px; font-weight: 800;
-            color: var(--white);
+            color: var(--text-dark);
             margin-bottom: 2px;
         }
 
         .incident-card-body .incident-type {
             font-size: 12px;
-            color: rgba(255,255,255,0.4);
+            color: var(--text-light);
             font-weight: 600;
             margin-bottom: 8px;
         }
 
         .incident-card-body .incident-desc {
             font-size: 13px;
-            color: rgba(255,255,255,0.6);
+            color: var(--text-medium);
             margin-bottom: 14px;
             line-height: 1.5;
         }
@@ -1065,8 +1065,8 @@
         .incident-action-btn.incident-available:hover { transform: translateY(-2px); box-shadow: 0 4px 16px rgba(245,158,11,0.4); }
 
         .incident-action-btn.incident-locked {
-            background: rgba(255,255,255,0.08);
-            color: rgba(255,255,255,0.35);
+            background: var(--bg-clay);
+            color: var(--text-light);
             cursor: default;
         }
 
@@ -1078,7 +1078,7 @@
            CERTIFICATES SECTION
            ═══════════════════════════════════════════ */
         .certs-section {
-            background: linear-gradient(135deg, var(--accent-black) 0%, #2A2A2A 100%);
+            background: linear-gradient(180deg, var(--bg-clay-light) 0%, var(--white) 100%);
             padding: 48px 24px;
         }
 
@@ -1086,10 +1086,6 @@
             max-width: 1280px;
             margin: 0 auto;
         }
-
-        .certs-section .section-title { color: var(--white); }
-        .certs-section .section-subtitle { color: rgba(255,255,255,0.4); }
-        .certs-section .section-label { color: rgba(255,255,255,0.3); }
 
         .certs-grid {
             display: grid;
@@ -1099,24 +1095,33 @@
         }
 
         .cert-card {
-            background: rgba(255,255,255,0.04);
-            border: 1px solid rgba(255,255,255,0.06);
+            background: var(--white);
+            border: 1px solid rgba(0,0,0,0.06);
             border-radius: var(--radius-lg);
             padding: 24px 18px;
             text-align: center;
             transition: var(--transition);
             position: relative;
+            box-shadow: var(--shadow-soft);
+            overflow: hidden;
         }
 
-        .cert-card:hover { background: rgba(255,255,255,0.07); }
+        .cert-card:hover { box-shadow: var(--shadow-medium); transform: translateY(-2px); }
 
         .cert-card.earned {
-            border-color: rgba(255,215,0,0.3);
-            background: rgba(255,215,0,0.05);
+            border-color: var(--primary);
+            background: rgba(255,215,0,0.04);
+        }
+
+        .cert-card.earned::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary), var(--primary));
         }
 
         .cert-card.master-cert {
-            border-color: rgba(255,215,0,0.2);
+            border-color: rgba(255,215,0,0.3);
         }
 
         .cert-icon {
@@ -1130,21 +1135,21 @@
         }
 
         .cert-icon.earned-icon { background: rgba(255,215,0,0.15); }
-        .cert-icon.locked-cert-icon { background: rgba(255,255,255,0.05); filter: grayscale(1); opacity: 0.4; }
+        .cert-icon.locked-cert-icon { background: var(--bg-clay); filter: grayscale(1); opacity: 0.4; }
         .cert-icon.master-icon { background: rgba(255,215,0,0.12); }
 
         .cert-card h4 {
             font-family: var(--font-heading);
             font-size: 14px; font-weight: 800;
-            color: var(--white);
+            color: var(--text-dark);
             margin-bottom: 6px;
         }
 
-        .cert-card.locked-cert h4 { color: rgba(255,255,255,0.3); }
+        .cert-card.locked-cert h4 { color: var(--text-light); }
 
         .cert-card .cert-status {
             font-size: 11px; font-weight: 700;
-            color: rgba(255,255,255,0.3);
+            color: var(--text-light);
         }
 
         .cert-card.earned .cert-status { color: var(--primary); }
@@ -1153,7 +1158,7 @@
            FOOTER
            ═══════════════════════════════════════════ */
         .footer {
-            background: #111;
+            background: var(--accent-black);
             border-top: 4px solid var(--primary);
             padding: 48px 24px 24px;
         }
@@ -1332,10 +1337,10 @@
             align-items: center;
             gap: 10px;
             padding: 14px 24px;
-            background: linear-gradient(135deg, #1A1A1A 0%, #2D2D2D 100%);
-            border: 1.5px solid rgba(255,215,0,0.25);
-            border-radius: 12px;
-            color: #fff;
+            background: var(--white);
+            border: 2px solid rgba(0,0,0,0.06);
+            border-radius: var(--radius-md);
+            color: var(--text-dark);
             text-decoration: none;
             font-size: 14px;
             font-weight: 600;
@@ -1345,19 +1350,19 @@
             min-width: 180px;
             max-width: 260px;
             justify-content: center;
+            box-shadow: var(--shadow-soft);
         }
         .qa-btn:hover {
-            background: linear-gradient(135deg, #2D2D2D 0%, #3A3A3A 100%);
             border-color: var(--primary);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 16px rgba(255,215,0,0.2);
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-medium);
         }
         .qa-icon { font-size: 20px; }
         .qa-label { white-space: nowrap; }
 
         /* ─── ADMIN OVERVIEW ─── */
         .admin-overview {
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            background: var(--bg-clay);
             padding: 40px 24px;
         }
         .admin-overview-inner {
@@ -1365,14 +1370,14 @@
             margin: 0 auto;
         }
         .admin-overview-inner h2 {
-            color: #fff;
+            color: var(--text-dark);
             font-size: 22px;
             font-weight: 800;
             margin-bottom: 20px;
             text-align: center;
         }
         .admin-overview-inner h2 em {
-            color: var(--primary);
+            color: var(--primary-dark);
             font-style: normal;
         }
         .admin-stats-grid {
@@ -1382,16 +1387,17 @@
             margin-bottom: 20px;
         }
         .admin-stat-card {
-            background: rgba(255,255,255,0.06);
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 14px;
+            background: var(--white);
+            border: 1px solid rgba(0,0,0,0.04);
+            border-radius: var(--radius-md);
             padding: 24px 16px;
             text-align: center;
             transition: all 0.25s ease;
+            box-shadow: var(--shadow-soft);
         }
         .admin-stat-card:hover {
-            background: rgba(255,215,0,0.08);
-            border-color: rgba(255,215,0,0.3);
+            box-shadow: var(--shadow-medium);
+            transform: translateY(-3px);
         }
         .admin-stat-value {
             display: block;
@@ -1403,7 +1409,7 @@
         .admin-stat-label {
             display: block;
             font-size: 13px;
-            color: rgba(255,255,255,0.6);
+            color: var(--text-light);
             margin-top: 6px;
             font-weight: 500;
         }
@@ -1418,7 +1424,7 @@
             transition: all 0.2s;
         }
         .admin-overview-link:hover {
-            color: #fff;
+            color: var(--text-dark);
             text-decoration: underline;
         }
 
@@ -2088,7 +2094,7 @@
         <div class="incident-inner">
             <div class="section-header">
                 <div class="section-label">Workplace Safety Tools</div>
-                <h2 class="section-title">Incident &amp; Reporting <a href="../settings/index.html" style="display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.4);font-size:14px;text-decoration:none;vertical-align:middle;margin-left:8px;transition:all 0.2s;" title="Company Settings" onmouseover="this.style.color='#f59e0b';this.style.borderColor='#f59e0b'" onmouseout="this.style.color='rgba(255,255,255,0.4)';this.style.borderColor='rgba(255,255,255,0.15)'">&#9881;</a></h2>
+                <h2 class="section-title">Incident &amp; Reporting <a href="../settings/index.html" style="display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;background:var(--bg-clay-light);border:1px solid rgba(0,0,0,0.08);color:var(--text-light);font-size:14px;text-decoration:none;vertical-align:middle;margin-left:8px;transition:all 0.2s;" title="Company Settings" onmouseover="this.style.color='#E6C200';this.style.borderColor='#E6C200'" onmouseout="this.style.color='#666';this.style.borderColor='rgba(0,0,0,0.08)'">&#9881;</a></h2>
                 <p class="section-subtitle">Triage injuries, report hazards, and document safety incidents</p>
             </div>
 
@@ -2176,7 +2182,7 @@
             </div>
             <div style="display:flex;justify-content:center;gap:16px;flex-wrap:wrap;">
                 <a href="../admin-dashboard/index.html#section-users" class="admin-overview-link" style="padding:12px 24px;background:rgba(255,215,0,0.1);border:1px solid rgba(255,215,0,0.3);border-radius:10px;">+ Invite User</a>
-                <a href="../admin-dashboard/index.html" class="admin-overview-link" style="padding:12px 24px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.15);border-radius:10px;">Open Admin Dashboard &#8594;</a>
+                <a href="../admin-dashboard/index.html" class="admin-overview-link" style="padding:12px 24px;background:var(--white);border:1px solid rgba(0,0,0,0.08);border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,0.06);">Open Admin Dashboard &#8594;</a>
             </div>
         </div>
     </section>
