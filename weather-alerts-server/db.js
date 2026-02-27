@@ -6,11 +6,13 @@ const config = require('./config');
 types.setTypeParser(1184, (val) => val); // TIMESTAMPTZ
 types.setTypeParser(1114, (val) => val); // TIMESTAMP
 
-// Create connection pool — SSL required on Railway
-const isProduction = !!process.env.DATABASE_URL;
+// Create connection pool
+// Use SSL only when DATABASE_URL contains a non-internal host (e.g., Railway's managed Postgres add-on)
+// Internal networking (*.railway.internal) does not use SSL
+const useSSL = !!process.env.DATABASE_URL && !config.DATABASE_URL.includes('.railway.internal');
 const pool = new Pool({
   connectionString: config.DATABASE_URL,
-  ssl: isProduction ? { rejectUnauthorized: false } : false
+  ssl: useSSL ? { rejectUnauthorized: false } : false
 });
 
 // ── Schema ──────────────────────────────────────────────
