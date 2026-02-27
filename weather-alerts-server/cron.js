@@ -85,7 +85,11 @@ async function checkSite(site) {
       console.log(`  [${site.name}] No manager email set — alert logged but no email sent`);
     }
 
-    // Record alert
+    // Record alert — for NWS alerts, store the full NWS detail in forecast_json
+    const forecastData = alert.nwsDetail
+      ? alert.nwsDetail
+      : conditions.hourly;
+
     await db.insertAlert({
       site_id: site.id,
       alert_type: alert.type,
@@ -94,7 +98,7 @@ async function checkSite(site) {
       actual_value: alert.actual,
       description: alert.description || null,
       conditions_json: JSON.stringify(conditions.current),
-      forecast_json: JSON.stringify(conditions.hourly),
+      forecast_json: JSON.stringify(forecastData),
       email_sent: emailSent,
       email_recipient: emailRecipient
     });

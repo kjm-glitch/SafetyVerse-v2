@@ -223,6 +223,14 @@ function evaluateNwsAlerts(nwsAlerts) {
   return nwsAlerts.map(nws => {
     // NWS severity: Extreme/Severe → red warning, Moderate/Minor → orange watch
     const isHighSeverity = ['Extreme', 'Severe'].includes(nws.severity);
+
+    // Build a description that includes both the headline AND what the alert is about
+    // The headline alone (e.g. "Special Weather Statement issued Feb 27...") doesn't say WHAT it is
+    const fullDesc = nws.description ? nws.description.replace(/\n/g, ' ').replace(/\s+/g, ' ').trim() : '';
+    const descriptionText = nws.headline
+      ? `${nws.headline}${fullDesc ? ' — ' + fullDesc : ''}`
+      : fullDesc || nws.event;
+
     return {
       type: 'nws_alert',
       label: nws.event,
@@ -230,8 +238,9 @@ function evaluateNwsAlerts(nwsAlerts) {
       threshold: 0,
       actual: 0,
       unit: '',
-      description: nws.headline,
+      description: descriptionText,
       nwsDetail: {
+        event: nws.event,
         instruction: nws.instruction,
         onset: nws.onset,
         expires: nws.expires,

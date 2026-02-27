@@ -4,6 +4,8 @@ const config = require('./config');
 const db = require('./db');
 const weather = require('./weather');
 const { startScheduler, runWeatherCheck } = require('./cron');
+const { renderAlertEmail, sendAlertEmail, isEmailConfigured } = require('./emailer');
+const { evaluateThresholds, evaluateForecast, evaluateNwsAlerts } = require('./alerts');
 
 const app = express();
 app.use(express.json());
@@ -159,6 +161,158 @@ app.post('/api/alerts/check-now', async (req, res) => {
 
 app.get('/api/config/thresholds', (req, res) => {
   res.json(config.THRESHOLDS);
+});
+
+// ── Admin: Email Testing & Manual Triggers ─────────────
+
+// Test that SMTP is configured and can connect
+app.get('/api/admin/email-status', (req, res) => {
+  const configured = isEmailConfigured();
+  res.json({
+    configured,
+    host: config.EMAIL.host,
+    port: config.EMAIL.port,
+    secure: config.EMAIL.secure,
+    user: config.EMAIL.auth.user,
+    from: config.EMAIL.from
+  });
+});
+
+// Send a test email to verify SMTP delivery works
+app.post('/api/admin/test-email', async (req, res) => {
+  try {
+    const { to } = req.body;
+    if (!to) return res.status(400).json({ error: 'Recipient email (to) is required' });
+
+    if (!isEmailConfigured()) {
+      return res.status(400).json({ error: 'Email is not configured. Check SMTP environment variables.' });
+    }
+
+    const html = `
+      <div style="font-family:Arial,sans-serif;max-width:500px;margin:0 auto;padding:20px;">
+        <div style="background:#2563eb;color:#fff;padding:20px;text-align:center;border-radius:8px 8px 0 0;">
+          <h2 style="margin:0;">Email Test Successful ✓</h2>
+        </div>
+        <div style="background:#f8fafc;padding:20px;border:1px solid #e2e8f0;border-radius:0 0 8px 8px;">
+          <p style="margin:0 0 10px;">This is a test email from <strong>TheSafetyVerse Weather Alerts</strong>.</p>
+          <p style="margin:0 0 10px;">If you're reading this, your SMTP configuration is working correctly.</p>
+          <p style="margin:0;color:#64748b;font-size:13px;">
+            Host: ${config.EMAIL.host} | Port: ${config.EMAIL.port} | Secure: ${config.EMAIL.secure}<br>
+            Sent at: ${new Date().toISOString()}
+          </p>
+        </div>
+      </div>`;
+
+    const result = await sendAlertEmail(to, '[TEST] SafetyVerse Weather Alerts — Email Delivery Test', html);
+
+    if (result.sent) {
+      res.json({ success: true, message: `Test email sent to ${to}`, messageId: result.messageId });
+    } else {
+      res.status(500).json({ success: false, error: result.reason || 'Unknown error sending email' });
+    }
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Manually trigger alert emails for a specific site (bypasses cooldown)
+app.post('/api/admin/send-alert/:siteId', async (req, res) => {
+  try {
+    const site = await db.getSiteById(req.params.siteId);
+    if (!site) return res.status(404).json({ error: 'Site not found' });
+    if (!site.manager_email) return res.status(400).json({ error: 'No manager email set for this site' });
+
+    if (!isEmailConfigured()) {
+      return res.status(400).json({ error: 'Email is not configured. Check SMTP environment variables.' });
+    }
+
+    // Fetch current weather for the site
+    const conditions = await weather.fetchAllConditions(site.latitude, site.longitude);
+
+    // Evaluate all alert sources
+    const currentAlerts = evaluateThresholds(conditions);
+    const forecastAlerts = evaluateForecast(conditions);
+    const nwsAlerts = evaluateNwsAlerts(conditions.nwsAlerts);
+    const allAlerts = [...currentAlerts, ...forecastAlerts, ...nwsAlerts];
+
+    if (allAlerts.length === 0) {
+      // Send an "all clear" summary email instead
+      const c = conditions.current;
+      const html = `
+        <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;">
+          <div style="background:#22c55e;color:#fff;padding:20px;text-align:center;border-radius:8px 8px 0 0;">
+            <h2 style="margin:0;">All Clear — No Active Alerts</h2>
+            <p style="margin:6px 0 0;opacity:0.9;font-size:13px;">Manual check triggered by admin</p>
+          </div>
+          <div style="background:#f8fafc;padding:20px;border:1px solid #e2e8f0;border-radius:0 0 8px 8px;">
+            <h3 style="margin:0 0 12px;">${site.name} — ${site.city || ''}${site.state ? ', ' + site.state : ''}</h3>
+            <table style="font-size:14px;color:#334155;width:100%;">
+              <tr><td style="padding:4px 0;width:45%;">Temperature:</td><td><strong>${c.temperature}°F</strong></td></tr>
+              <tr><td style="padding:4px 0;">Feels Like:</td><td><strong>${c.apparent_temperature}°F</strong></td></tr>
+              <tr><td style="padding:4px 0;">Wind Speed:</td><td><strong>${c.wind_speed} mph</strong></td></tr>
+              <tr><td style="padding:4px 0;">Air Quality:</td><td><strong>${c.aqi != null ? c.aqi + ' (' + c.aqi_label + ')' : 'N/A'}</strong></td></tr>
+              <tr><td style="padding:4px 0;">Conditions:</td><td>${c.weather_description}</td></tr>
+            </table>
+            ${conditions.nwsAlerts.length > 0 ? '<p style="margin-top:12px;color:#ea580c;"><strong>NWS Alerts:</strong> ' + conditions.nwsAlerts.map(n => n.event).join(', ') + '</p>' : ''}
+            <p style="margin-top:16px;color:#94a3b8;font-size:12px;">Sent at: ${new Date().toISOString()}</p>
+          </div>
+        </div>`;
+
+      const result = await sendAlertEmail(
+        site.manager_email,
+        `[ALL CLEAR] Weather Status — ${site.name}`,
+        html
+      );
+
+      return res.json({
+        success: result.sent,
+        alertsFound: 0,
+        emailsSent: result.sent ? 1 : 0,
+        message: result.sent
+          ? `All-clear status email sent to ${site.manager_email}`
+          : `Failed to send: ${result.reason}`
+      });
+    }
+
+    // Send each alert email (bypassing cooldown)
+    let emailsSent = 0;
+    const results = [];
+    for (const alert of allAlerts) {
+      const severityPrefix = { warning: 'WARNING', watch: 'WATCH', advisory: 'ADVISORY' };
+      const prefix = severityPrefix[alert.severity] || 'ALERT';
+      const subject = `[${prefix}] ${alert.label} — ${site.name}`;
+      const html = renderAlertEmail(alert, site, conditions, conditions.hourly);
+
+      const result = await sendAlertEmail(site.manager_email, subject, html);
+      if (result.sent) emailsSent++;
+      results.push({ alert: alert.label, severity: alert.severity, sent: result.sent, error: result.reason });
+
+      // Record in alert history
+      const forecastData = alert.nwsDetail ? alert.nwsDetail : conditions.hourly;
+      await db.insertAlert({
+        site_id: site.id,
+        alert_type: alert.type,
+        severity: alert.severity || 'watch',
+        threshold_value: alert.threshold,
+        actual_value: alert.actual,
+        description: (alert.description || '') + ' [MANUAL]',
+        conditions_json: JSON.stringify(conditions.current),
+        forecast_json: JSON.stringify(forecastData),
+        email_sent: result.sent ? 1 : 0,
+        email_recipient: site.manager_email
+      });
+    }
+
+    res.json({
+      success: emailsSent > 0,
+      alertsFound: allAlerts.length,
+      emailsSent,
+      message: `${emailsSent}/${allAlerts.length} alert email(s) sent to ${site.manager_email}`,
+      details: results
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 // ── Start ───────────────────────────────────────────────
