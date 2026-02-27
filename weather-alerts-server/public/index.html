@@ -166,9 +166,6 @@ body{font-family:'Inter',sans-serif;background:#0f172a;color:#e2e8f0;min-height:
 .loading-overlay{display:flex;align-items:center;justify-content:center;padding:3rem;gap:.5rem;color:#94a3b8;font-size:.85rem}
 
 /* ── Admin Email Controls ──────────── */
-.email-status-bar{padding:.65rem 1rem;border-radius:8px;margin-bottom:1rem;font-size:.78rem;display:flex;align-items:center;gap:.5rem;flex-wrap:wrap}
-.email-status-bar.ok{background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.25);color:#4ade80}
-.email-status-bar.err{background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.25);color:#f87171}
 .wc-actions{display:flex;gap:.35rem;margin-top:.6rem;flex-wrap:wrap}
 .btn-send-alert{background:rgba(37,99,235,0.15);color:#60a5fa;border:1px solid rgba(37,99,235,0.3);border-radius:6px;padding:.35rem .7rem;font-size:.68rem;font-weight:600;cursor:pointer;font-family:inherit;transition:all .2s}
 .btn-send-alert:hover{background:rgba(37,99,235,0.3)}
@@ -232,8 +229,7 @@ body{font-family:'Inter',sans-serif;background:#0f172a;color:#e2e8f0;min-height:
       </div>
     </div>
 
-    <!-- Email status banner -->
-    <div id="email-status-banner" style="display:none"></div>
+
 
     <div id="weather-cards-area">
       <div class="loading-overlay"><span class="spinner"></span> Loading weather data...</div>
@@ -638,6 +634,9 @@ async function loadDashboard() {
 
           // Also check forecast_json for NWS detail (new records store it there)
           let nwsInstruction = '';
+          if (a.forecast_json && a.forecast_json.fullDescription && !fullDetail) {
+            fullDetail = a.forecast_json.fullDescription.replace(/\n/g, ' ').replace(/\s+/g, ' ').trim();
+          }
           if (a.forecast_json && a.forecast_json.instruction) {
             nwsInstruction = a.forecast_json.instruction;
           } else if (isNws && liveNwsBySite[a.site_id]) {
@@ -650,6 +649,8 @@ async function loadDashboard() {
           detailHtml = `<div class="ai-detail">${esc(headline)} &nbsp;|&nbsp; ${time} ${emailTag}</div>`;
           if (fullDetail) {
             detailHtml += `<div class="ai-nws-desc">${esc(truncate(fullDetail, 300))}</div>`;
+          } else if (isNws) {
+            detailHtml += `<div class="ai-nws-desc" style="color:#64748b;font-style:italic">NWS alert has expired — full details no longer available from NWS.</div>`;
           }
           if (nwsInstruction) {
             detailHtml += `<div class="ai-nws-instruction"><strong>Instructions:</strong> ${esc(truncate(nwsInstruction, 250))}</div>`;
@@ -966,25 +967,8 @@ async function sendSiteAlert(siteId, siteName, btnEl) {
   }
 }
 
-// Check email configuration status on load
-async function checkEmailStatus() {
-  try {
-    const status = await api('/admin/email-status');
-    const banner = document.getElementById('email-status-banner');
-    if (status.configured) {
-      banner.className = 'email-status-bar ok';
-      banner.innerHTML = `&#10003; Email alerts active via ${esc(status.provider)} | From: ${esc(status.from)}`;
-    } else {
-      banner.className = 'email-status-bar err';
-      banner.innerHTML = '&#9888; Email NOT configured — set Resend API key on Railway to enable alert emails';
-    }
-    banner.style.display = 'flex';
-  } catch (e) { /* silent */ }
-}
-
 // ── Initial load ─────────────────────────────────────────
 loadDashboard();
-checkEmailStatus();
 </script>
 </body>
 </html>
