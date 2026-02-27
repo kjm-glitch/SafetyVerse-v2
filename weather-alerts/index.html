@@ -115,10 +115,11 @@ body{font-family:'Inter',sans-serif;background:#0f172a;color:#e2e8f0;min-height:
 .alert-item.type-winter_weather,.alert-item.type-forecast_winter,.alert-item.type-severe_storm,.alert-item.type-forecast_storm{border-left-color:#60a5fa}
 
 /* ── Site List ────────────────────────── */
-.site-item{background:#0f172a;border:1px solid #334155;border-radius:10px;padding:1rem 1.25rem;margin-bottom:.6rem;display:flex;justify-content:space-between;align-items:flex-start;gap:1rem;flex-wrap:wrap}
+.site-item{background:#0f172a;border:1px solid #334155;border-radius:10px;padding:1rem 1.25rem;margin-bottom:.6rem;display:flex;justify-content:space-between;align-items:flex-start;gap:1rem}
+.si-info{min-width:0;flex:1}
 .si-info .si-name{font-size:.88rem;font-weight:700;color:#f1f5f9}
-.si-info .si-detail{font-size:.78rem;color:#94a3b8;line-height:1.5;margin-top:3px}
-.si-actions{display:flex;gap:.35rem;flex-shrink:0}
+.si-info .si-detail{font-size:.78rem;color:#94a3b8;line-height:1.5;margin-top:3px;word-break:break-word}
+.si-actions{display:flex;gap:.35rem;flex-shrink:0;align-self:flex-start}
 
 /* ── Alert History Table ─────────────── */
 .history-item{background:#0f172a;border:1px solid #334155;border-radius:10px;padding:1rem 1.25rem;margin-bottom:.5rem;display:grid;grid-template-columns:1fr auto;gap:.5rem;align-items:start}
