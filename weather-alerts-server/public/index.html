@@ -586,6 +586,15 @@ async function loadDashboard() {
     cardsHtml += '</div>';
     area.innerHTML = cardsHtml;
 
+    // Build a lookup of live NWS alerts per site so we can enrich DB records
+    const liveNwsBySite = {};
+    for (const item of weatherData) {
+      const nws = item.conditions?.nwsAlerts || [];
+      if (nws.length > 0) {
+        liveNwsBySite[item.site.id] = nws;
+      }
+    }
+
     // Active alerts
     if (activeAlerts.length > 0) {
       let alertsHtml = `<div class="alerts-section-title"><span class="pulse"></span> Active Alerts (${activeAlerts.length})</div>`;
@@ -607,22 +616,43 @@ async function loadDashboard() {
         // Build detail line based on alert type
         let detailHtml = '';
         if (isNws || isWeatherEvent) {
-          // For NWS alerts, show a more descriptive breakdown
+          // Try to get full NWS detail from:
+          // 1. The DB description (new format has " — " separator with full text)
+          // 2. Live NWS data matched by event name (fallback for old DB records)
+          // 3. forecast_json stored NWS detail
           const desc = a.description || '';
-          const dashIdx = desc.indexOf(' \u2014 ');
           const dashIdx2 = desc.indexOf(' — ');
-          const sepIdx = dashIdx > 0 ? dashIdx : dashIdx2;
-          const sepLen = dashIdx > 0 ? 3 : 4;
-          const headline = sepIdx > 0 ? desc.substring(0, sepIdx) : desc;
-          const fullDetail = sepIdx > 0 ? desc.substring(sepIdx + sepLen) : '';
+          let headline = dashIdx2 > 0 ? desc.substring(0, dashIdx2) : desc;
+          let fullDetail = dashIdx2 > 0 ? desc.substring(dashIdx2 + 3) : '';
+
+          // If no full detail in DB, try to get from live NWS data
+          if (!fullDetail && isNws && liveNwsBySite[a.site_id]) {
+            const liveMatch = liveNwsBySite[a.site_id].find(n => n.event === alertName);
+            if (liveMatch) {
+              fullDetail = liveMatch.description ? liveMatch.description.replace(/\n/g, ' ').replace(/\s+/g, ' ').trim() : '';
+              if (!fullDetail && liveMatch.headline) {
+                headline = liveMatch.headline;
+              }
+            }
+          }
+
+          // Also check forecast_json for NWS detail (new records store it there)
+          let nwsInstruction = '';
+          if (a.forecast_json && a.forecast_json.instruction) {
+            nwsInstruction = a.forecast_json.instruction;
+          } else if (isNws && liveNwsBySite[a.site_id]) {
+            const liveMatch = liveNwsBySite[a.site_id].find(n => n.event === alertName);
+            if (liveMatch && liveMatch.instruction) {
+              nwsInstruction = liveMatch.instruction;
+            }
+          }
 
           detailHtml = `<div class="ai-detail">${esc(headline)} &nbsp;|&nbsp; ${time} ${emailTag}</div>`;
           if (fullDetail) {
             detailHtml += `<div class="ai-nws-desc">${esc(truncate(fullDetail, 300))}</div>`;
           }
-          // Show NWS instruction if stored in forecast_json
-          if (a.forecast_json && a.forecast_json.instruction) {
-            detailHtml += `<div class="ai-nws-instruction"><strong>Instructions:</strong> ${esc(truncate(a.forecast_json.instruction, 250))}</div>`;
+          if (nwsInstruction) {
+            detailHtml += `<div class="ai-nws-instruction"><strong>Instructions:</strong> ${esc(truncate(nwsInstruction, 250))}</div>`;
           }
         } else if (isForecast) {
           detailHtml = `<div class="ai-detail">${esc(a.description || '')} &nbsp;|&nbsp; ${time} ${emailTag}</div>`;
@@ -943,10 +973,10 @@ async function checkEmailStatus() {
     const banner = document.getElementById('email-status-banner');
     if (status.configured) {
       banner.className = 'email-status-bar ok';
-      banner.innerHTML = `&#10003; Email configured: ${esc(status.host)}:${status.port} | From: ${esc(status.from)}`;
+      banner.innerHTML = `&#10003; Email alerts active via ${esc(status.provider)} | From: ${esc(status.from)}`;
     } else {
       banner.className = 'email-status-bar err';
-      banner.innerHTML = '&#9888; Email NOT configured — set SMTP environment variables on Railway to enable alert emails';
+      banner.innerHTML = '&#9888; Email NOT configured — set Resend API key on Railway to enable alert emails';
     }
     banner.style.display = 'flex';
   } catch (e) { /* silent */ }
