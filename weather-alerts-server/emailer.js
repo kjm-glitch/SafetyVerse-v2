@@ -19,7 +19,7 @@ function getResendApiKey() {
 }
 
 function getFromAddress() {
-  return config.EMAIL.from || '"SafetyVerse Weather Alerts" <alerts@thesafetyverse.com>';
+  return config.EMAIL.from || '"TheSafetyVerse Weather Alerts" <alerts@thesafetyverse.com>';
 }
 
 // ═══════════════════════════════════════════════════════════

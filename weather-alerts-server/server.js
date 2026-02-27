@@ -201,7 +201,7 @@ app.post('/api/admin/test-email', async (req, res) => {
         </div>
       </div>`;
 
-    const result = await sendAlertEmail(to, '[TEST] SafetyVerse Weather Alerts — Email Delivery Test', html);
+    const result = await sendAlertEmail(to, '[TEST] TheSafetyVerse Weather Alerts — Email Delivery Test', html);
 
     if (result.sent) {
       res.json({ success: true, message: `Test email sent to ${to}`, messageId: result.messageId });
