@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="logo.png?v=2">
+    <title>Privacy Policy &mdash; TheSafetyVerse</title>
+    <style>
+        :root {
+            --primary: #FFD700;
+            --primary-dark: #E6C200;
+            --primary-glow: rgba(255, 215, 0, 0.25);
+            --secondary: #FF8C00;
+            --bg-clay: #F5E6D3;
+            --bg-clay-dark: #E8D5C0;
+            --bg-clay-light: #FAF0E6;
+            --text-dark: #1A1A1A;
+            --text-medium: #444444;
+            --text-light: #666666;
+            --accent-black: #1A1A1A;
+            --white: #FFFFFF;
+            --shadow-soft: 0 4px 20px rgba(0,0,0,0.08);
+            --shadow-medium: 0 8px 32px rgba(0,0,0,0.12);
+            --radius-sm: 8px;
+            --radius-md: 14px;
+            --radius-lg: 22px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --font-heading: 'Segoe UI', 'Arial Black', sans-serif;
+            --font-body: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: var(--font-body);
+            background-color: var(--bg-clay);
+            color: var(--text-dark);
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 9999;
+            background-image:
+                radial-gradient(circle at 20% 50%, rgba(139,90,43,0.03) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(139,90,43,0.02) 0%, transparent 50%),
+                radial-gradient(circle at 50% 80%, rgba(139,90,43,0.03) 0%, transparent 50%);
+        }
+
+        /* Header */
+        .header {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(0,0,0,0.06);
+            transition: var(--transition);
+        }
+        .header.scrolled { box-shadow: 0 2px 20px rgba(0,0,0,0.1); }
+        .header-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 72px;
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+        }
+        .logo-icon img {
+            display: block;
+            height: 50px;
+            width: auto;
+            box-shadow: 4px 4px 0px rgba(0,0,0,0.15);
+            border-radius: 12px;
+        }
+        .logo-text {
+            font-family: var(--font-heading);
+            font-size: 24px;
+            font-weight: 900;
+            color: var(--text-dark);
+            letter-spacing: -0.5px;
+        }
+        .logo-text em { color: var(--primary-dark); font-style: normal; }
+        .back-btn {
+            background: var(--primary);
+            color: var(--accent-black);
+            border: none;
+            padding: 10px 28px;
+            font-size: 15px;
+            font-weight: 800;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 3px 3px 0px rgba(0,0,0,0.15);
+            text-decoration: none;
+        }
+        .back-btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+            box-shadow: 4px 5px 0px rgba(0,0,0,0.15);
+        }
+
+        /* Safety stripe */
+        .safety-stripe {
+            height: 6px;
+            background: repeating-linear-gradient(
+                -45deg,
+                var(--primary) 0px, var(--primary) 12px,
+                var(--accent-black) 12px, var(--accent-black) 24px
+            );
+            position: fixed;
+            top: 72px; left: 0; right: 0;
+            z-index: 999;
+        }
+
+        /* Content */
+        .page-content {
+            margin-top: 78px;
+            padding: 60px 32px 80px;
+            max-width: 860px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .page-title {
+            font-family: var(--font-heading);
+            font-size: 42px;
+            font-weight: 900;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+        }
+        .page-title em { color: var(--primary-dark); font-style: normal; }
+        .effective-date {
+            font-size: 14px;
+            color: var(--text-light);
+            font-weight: 600;
+            margin-bottom: 40px;
+        }
+        .policy-card {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            padding: 40px 44px;
+            box-shadow: var(--shadow-medium);
+            border: 2px solid rgba(255, 215, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+        .policy-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary), var(--primary));
+        }
+        .policy-card h2 {
+            font-family: var(--font-heading);
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--text-dark);
+            margin: 32px 0 12px;
+        }
+        .policy-card h2:first-child { margin-top: 0; }
+        .policy-card p {
+            font-size: 15px;
+            color: var(--text-medium);
+            line-height: 1.8;
+            margin-bottom: 12px;
+        }
+        .policy-card ul {
+            margin: 8px 0 16px 24px;
+            font-size: 15px;
+            color: var(--text-medium);
+            line-height: 1.8;
+        }
+        .policy-card li { margin-bottom: 4px; }
+        .policy-card a {
+            color: var(--primary-dark);
+            font-weight: 600;
+            text-decoration: none;
+        }
+        .policy-card a:hover { text-decoration: underline; }
+
+        /* Footer */
+        .footer {
+            background: var(--accent-black);
+            color: rgba(255,255,255,0.7);
+            padding: 40px 32px;
+            text-align: center;
+        }
+        .footer-bottom {
+            font-size: 13px;
+            color: rgba(255,255,255,0.4);
+        }
+        .footer-bottom em { color: var(--primary); font-style: normal; }
+
+        @media (max-width: 768px) {
+            .header-inner { padding: 0 20px; }
+            .page-content { padding: 40px 20px 60px; }
+            .page-title { font-size: 30px; }
+            .policy-card { padding: 28px 24px; }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="header" id="header">
+        <div class="header-inner">
+            <a href="index.html" class="logo">
+                <div class="logo-icon"><img src="logo.png?v=2" alt="TheSafetyVerse Logo"></div>
+                <span class="logo-text"><em>The</em>Safety<em>Verse</em></span>
+            </a>
+            <a href="index.html" class="back-btn">&larr; Back to Home</a>
+        </div>
+    </header>
+
+    <div class="safety-stripe"></div>
+
+    <main class="page-content">
+        <h1 class="page-title">Privacy <em>Policy</em></h1>
+        <p class="effective-date">Effective Date: February 27, 2026</p>
+
+        <div class="policy-card">
+            <h2>1. Introduction</h2>
+            <p>TheSafetyVerse ("we," "us," or "our") is committed to protecting the privacy of our users. This Privacy Policy describes how we collect, use, and safeguard information when you use our safety training platform.</p>
+
+            <h2>2. Information We Collect</h2>
+            <p>We may collect the following types of information:</p>
+            <ul>
+                <li><strong>Account Information:</strong> Name, email address, and role (user, manager, or admin) when you create an account or are invited to the platform.</li>
+                <li><strong>Training Progress:</strong> Lesson completion status, quiz scores, and certification records stored to track your learning journey.</li>
+                <li><strong>Incident &amp; Hazard Reports:</strong> Information you submit through incident reports or hazard observation forms, which may include descriptions, dates, locations, and any uploaded files.</li>
+                <li><strong>Usage Data:</strong> Browser type, pages visited, and general interaction data to help us improve the platform.</li>
+            </ul>
+
+            <h2>3. How We Use Your Information</h2>
+            <p>We use the information we collect to:</p>
+            <ul>
+                <li>Provide and maintain the safety training platform</li>
+                <li>Track and display your training progress and certifications</li>
+                <li>Process incident reports and hazard observations</li>
+                <li>Communicate important safety updates and platform changes</li>
+                <li>Improve our training content and user experience</li>
+                <li>Comply with applicable workplace safety regulations</li>
+            </ul>
+
+            <h2>4. Data Storage &amp; Security</h2>
+            <p>Your data is stored securely using industry-standard encryption and access controls. Training progress and account data are stored via our authentication and database provider. We implement appropriate technical and organizational measures to protect your personal information against unauthorized access, alteration, or destruction.</p>
+
+            <h2>5. Data Sharing</h2>
+            <p>We do not sell your personal information. We may share data in the following circumstances:</p>
+            <ul>
+                <li><strong>Within Your Organization:</strong> Managers and administrators within your organization may view training progress, incident reports, and hazard observations as needed for workplace safety compliance.</li>
+                <li><strong>Service Providers:</strong> We use third-party services (such as hosting and authentication providers) that process data on our behalf under strict confidentiality agreements.</li>
+                <li><strong>Legal Requirements:</strong> We may disclose information when required by law or in response to valid legal processes.</li>
+            </ul>
+
+            <h2>6. Your Rights</h2>
+            <p>You have the right to:</p>
+            <ul>
+                <li>Access the personal information we hold about you</li>
+                <li>Request correction of inaccurate information</li>
+                <li>Request deletion of your account and associated data</li>
+                <li>Opt out of non-essential communications</li>
+            </ul>
+
+            <h2>7. Cookies &amp; Local Storage</h2>
+            <p>We use the following technologies to operate the platform:</p>
+            <ul>
+                <li><strong>Session Cookies:</strong> Our authentication provider (Supabase) sets secure session cookies to keep you logged in. These are essential for the platform to function and cannot be disabled.</li>
+                <li><strong>Local Storage:</strong> We use browser local storage to save your training progress, quiz scores, theme preferences, and cookie consent choice. This data stays on your device.</li>
+                <li><strong>No Third-Party Tracking:</strong> We do not use advertising cookies, analytics trackers, or any third-party tracking technologies.</li>
+            </ul>
+            <p><strong>Your Cookie Choices:</strong> When you first visit TheSafetyVerse, a consent banner will ask you to accept or decline cookies. If you decline, essential session cookies for authentication will still be used (as they are necessary for the platform to work), but we will minimize any non-essential data storage. You can clear your cookie preferences at any time by clearing your browser's local storage.</p>
+
+            <h2>8. Children's Privacy</h2>
+            <p>TheSafetyVerse is designed for workplace safety training and is not intended for use by children under the age of 16. We do not knowingly collect personal information from children.</p>
+
+            <h2>9. Changes to This Policy</h2>
+            <p>We may update this Privacy Policy from time to time. When we do, we will revise the effective date at the top of this page. We encourage you to review this policy periodically.</p>
+
+            <h2>10. Contact Us</h2>
+            <p>If you have questions about this Privacy Policy or your personal data, please contact your organization's TheSafetyVerse administrator or reach out to us through the platform's contact features.</p>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-bottom">
+            <p>&copy; 2026 <em>The</em><strong>Safety</strong><em>Verse</em> &mdash; All rights reserved</p>
+        </div>
+    </footer>
+
+    <!-- ═══ COOKIE CONSENT BANNER ═══ -->
+    <style>
+        .cookie-banner {
+            position: fixed;
+            bottom: 0; left: 0; right: 0;
+            z-index: 10000;
+            background: var(--accent-black);
+            border-top: 3px solid var(--primary);
+            transform: translateY(100%);
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .cookie-banner.visible { transform: translateY(0); }
+        .cookie-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px 32px;
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+        .cookie-icon { font-size: 32px; flex-shrink: 0; }
+        .cookie-text {
+            flex: 1;
+            font-size: 14px;
+            color: rgba(255,255,255,0.8);
+            line-height: 1.6;
+        }
+        .cookie-text a { color: var(--primary); text-decoration: none; font-weight: 600; }
+        .cookie-text a:hover { text-decoration: underline; }
+        .cookie-buttons { display: flex; gap: 10px; flex-shrink: 0; }
+        .cookie-btn {
+            padding: 10px 24px; font-size: 14px; font-weight: 700;
+            border-radius: var(--radius-sm); cursor: pointer;
+            transition: var(--transition); border: none; font-family: var(--font-body);
+        }
+        .cookie-accept {
+            background: var(--primary); color: var(--accent-black);
+            box-shadow: 3px 3px 0px rgba(255,215,0,0.3);
+        }
+        .cookie-accept:hover { background: var(--primary-dark); transform: translateY(-1px); }
+        .cookie-decline {
+            background: transparent; color: rgba(255,255,255,0.6);
+            border: 2px solid rgba(255,255,255,0.2);
+        }
+        .cookie-decline:hover { border-color: rgba(255,255,255,0.5); color: rgba(255,255,255,0.9); }
+        @media (max-width: 768px) {
+            .cookie-inner { flex-direction: column; text-align: center; padding: 20px; gap: 16px; }
+            .cookie-icon { display: none; }
+            .cookie-buttons { width: 100%; justify-content: center; }
+        }
+    </style>
+
+    <div class="cookie-banner" id="cookieBanner">
+        <div class="cookie-inner">
+            <span class="cookie-icon">&#127850;</span>
+            <div class="cookie-text">
+                We use cookies and local storage to keep your training progress saved and your experience seamless. No third-party tracking &mdash; just the essentials.
+            </div>
+            <div class="cookie-buttons">
+                <button class="cookie-btn cookie-accept" id="cookieAccept">Accept</button>
+                <button class="cookie-btn cookie-decline" id="cookieDecline">Decline</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    (function() {
+        var header = document.getElementById('header');
+        window.addEventListener('scroll', function() {
+            header.classList.toggle('scrolled', window.scrollY > 20);
+        });
+
+        // Cookie consent
+        var consent = localStorage.getItem('safetyverse-cookie-consent');
+        if (!consent) {
+            var banner = document.getElementById('cookieBanner');
+            setTimeout(function() { banner.classList.add('visible'); }, 800);
+
+            document.getElementById('cookieAccept').addEventListener('click', function() {
+                localStorage.setItem('safetyverse-cookie-consent', 'accepted');
+                banner.classList.remove('visible');
+            });
+            document.getElementById('cookieDecline').addEventListener('click', function() {
+                localStorage.setItem('safetyverse-cookie-consent', 'declined');
+                banner.classList.remove('visible');
+            });
+        }
+    })();
+    </script>
+
+</body>
+</html>

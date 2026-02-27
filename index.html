@@ -884,7 +884,7 @@
                 </h1>
                 <p class="hero-subtitle">Your One-Stop Safety Hub</p>
                 <p class="hero-description">
-                    <em>The</em><strong>Safety</strong><em>Verse</em> is your command center. This the place where training, compliance, incident tracking and everything in between comes together.
+                    <em>The</em><strong>Safety</strong><em>Verse</em> is your command center. This is the place where training, compliance, incident tracking and everything in between comes together.
                 </p>
                 <div class="hero-ctas">
                     <button onclick="window.location.href='login.html'" class="cta-primary">&#9654; Start Learning</button>
@@ -1028,12 +1028,13 @@
             <div class="footer-section">
                 <h4>Resources</h4>
                 <a href="https://www.osha.gov" target="_blank" rel="noopener noreferrer">OSHA.gov</a>
-                <a href="games/safety-clue/index.html">Safety Clue Game</a>
+                <a href="https://www.weather.gov" target="_blank" rel="noopener noreferrer">Weather.gov</a>
+                <a href="https://www.ansi.org" target="_blank" rel="noopener noreferrer">ANSI.org</a>
+                <a href="https://www.weather.gov" target="_blank" rel="noopener noreferrer">Weather Dashboard</a>
                 <a href="incident-protocol/index.html">Incident Protocol</a>
                 <a href="incident-report/index.html">Incident Report</a>
                 <a href="hazard-observation/index.html">Hazard Observation</a>
-                <a href="#">Help Center</a>
-                <a href="#">Privacy Policy</a>
+                <a href="privacy-policy.html">Privacy Policy</a>
             </div>
         </div>
         <div class="footer-bottom">
@@ -1089,6 +1090,129 @@
             });
         }
 
+    })();
+    </script>
+
+    <!-- ═══ COOKIE CONSENT BANNER ═══ -->
+    <style>
+        .cookie-banner {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 10000;
+            background: var(--accent-black);
+            border-top: 3px solid var(--primary);
+            padding: 0;
+            transform: translateY(100%);
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .cookie-banner.visible {
+            transform: translateY(0);
+        }
+        .cookie-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px 32px;
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+        .cookie-icon {
+            font-size: 32px;
+            flex-shrink: 0;
+        }
+        .cookie-text {
+            flex: 1;
+            font-size: 14px;
+            color: rgba(255,255,255,0.8);
+            line-height: 1.6;
+        }
+        .cookie-text a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+        }
+        .cookie-text a:hover {
+            text-decoration: underline;
+        }
+        .cookie-buttons {
+            display: flex;
+            gap: 10px;
+            flex-shrink: 0;
+        }
+        .cookie-btn {
+            padding: 10px 24px;
+            font-size: 14px;
+            font-weight: 700;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+            font-family: var(--font-body);
+        }
+        .cookie-accept {
+            background: var(--primary);
+            color: var(--accent-black);
+            box-shadow: 3px 3px 0px rgba(255,215,0,0.3);
+        }
+        .cookie-accept:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+        .cookie-decline {
+            background: transparent;
+            color: rgba(255,255,255,0.6);
+            border: 2px solid rgba(255,255,255,0.2);
+        }
+        .cookie-decline:hover {
+            border-color: rgba(255,255,255,0.5);
+            color: rgba(255,255,255,0.9);
+        }
+        @media (max-width: 768px) {
+            .cookie-inner {
+                flex-direction: column;
+                text-align: center;
+                padding: 20px;
+                gap: 16px;
+            }
+            .cookie-icon { display: none; }
+            .cookie-buttons { width: 100%; justify-content: center; }
+        }
+    </style>
+
+    <div class="cookie-banner" id="cookieBanner">
+        <div class="cookie-inner">
+            <span class="cookie-icon">&#127850;</span>
+            <div class="cookie-text">
+                We use cookies and local storage to keep your training progress saved and your experience seamless. No third-party tracking &mdash; just the essentials.
+                <a href="privacy-policy.html">Read our Privacy Policy</a>
+            </div>
+            <div class="cookie-buttons">
+                <button class="cookie-btn cookie-accept" id="cookieAccept">Accept</button>
+                <button class="cookie-btn cookie-decline" id="cookieDecline">Decline</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    (function() {
+        var consent = localStorage.getItem('safetyverse-cookie-consent');
+        if (consent) return; // Already answered, don't show
+
+        var banner = document.getElementById('cookieBanner');
+        // Small delay so the slide-up animation is visible
+        setTimeout(function() { banner.classList.add('visible'); }, 800);
+
+        document.getElementById('cookieAccept').addEventListener('click', function() {
+            localStorage.setItem('safetyverse-cookie-consent', 'accepted');
+            banner.classList.remove('visible');
+        });
+
+        document.getElementById('cookieDecline').addEventListener('click', function() {
+            localStorage.setItem('safetyverse-cookie-consent', 'declined');
+            banner.classList.remove('visible');
+        });
     })();
     </script>
 
