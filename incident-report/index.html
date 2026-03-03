@@ -1296,15 +1296,14 @@ async function loadIncidents(){
     container.innerHTML=data.map(inc=>{
       const badge=inc.status==='closed'?'<span class="il-badge recorded">Closed</span>':'<span class="il-badge pending">Pending</span>';
       const date=inc.incident_date?new Date(inc.incident_date).toLocaleDateString():'N/A';
-      return `<div class="il-card" style="position:relative">
+      return `<div class="il-card">
         <div onclick="openIncidentFile('${inc.id}')" style="cursor:pointer" title="Open Incident File">
-          <div class="il-top"><span class="il-case">Case #${inc.case_number}</span>${badge}</div>
+          <div class="il-top"><span class="il-case">Case #${inc.case_number}</span><div style="display:flex;align-items:center;gap:.5rem">${badge}${isAdmin?'<button onclick="event.stopPropagation();deleteIncident(\''+inc.id+'\','+inc.case_number+')" style="background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.3);color:#f87171;font-size:.65rem;font-weight:600;padding:3px 8px;border-radius:6px;cursor:pointer;font-family:inherit" title="Delete this incident">Delete</button>':''}</div></div>
           <div class="il-top"><span class="il-date">${date} ${inc.incident_time||''}</span><span class="il-date">${inc.site_location||''}</span></div>
           <div class="il-details">${inc.no_injury?'No injury reported':(inc.injured_name||'Unknown')+' &mdash; '+(inc.severity||'N/A')+' &mdash; '+(inc.injury_types||[]).join(', ')}</div>
           <div style="margin-top:.5rem;font-size:.78rem;color:#64748b">${(inc.incident_description||'').substring(0,120)}${(inc.incident_description||'').length>120?'...':''}</div>
           <div style="margin-top:.4rem;font-size:.7rem;color:#f59e0b;font-weight:600">Click to open Incident File &rarr;</div>
         </div>
-        ${isAdmin?'<button onclick="event.stopPropagation();deleteIncident(\''+inc.id+'\','+inc.case_number+')" style="position:absolute;top:10px;right:10px;background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.3);color:#f87171;font-size:.68rem;font-weight:600;padding:4px 10px;border-radius:6px;cursor:pointer;font-family:inherit" title="Delete this incident">Delete</button>':''}
       </div>`;
     }).join('');
   }catch(e){
