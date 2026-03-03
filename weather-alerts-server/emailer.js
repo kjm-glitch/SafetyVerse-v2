@@ -543,6 +543,229 @@ function renderAlertEmail(alert, site, conditions, forecast) {
 }
 
 // ═══════════════════════════════════════════════════════════
+// BUNDLED EMAIL TEMPLATE — multiple alerts in one email
+// ═══════════════════════════════════════════════════════════
+
+const SEVERITY_RANK = { warning: 0, watch: 1, advisory: 2 };
+
+function renderBundledAlertEmail(alerts, site, conditions, forecast) {
+  // Sort by severity (warning first)
+  const sorted = [...alerts].sort((a, b) =>
+    (SEVERITY_RANK[a.severity] ?? 3) - (SEVERITY_RANK[b.severity] ?? 3)
+  );
+
+  const highestSeverity = sorted[0].severity || 'watch';
+
+  // Severity-based colors for email header
+  const severityColors = {
+    warning:  { bg: '#fef2f2', border: '#dc2626', banner: '#dc2626' },
+    watch:    { bg: '#fff7ed', border: '#ea580c', banner: '#ea580c' },
+    advisory: { bg: '#fefce8', border: '#ca8a04', banner: '#ca8a04' }
+  };
+  const headerColors = severityColors[highestSeverity] || severityColors.watch;
+  const headerLabel = highestSeverity.toUpperCase();
+
+  // Protocol card colors
+  const cardColors = {
+    red:   { bg: '#fef2f2', border: '#ef4444', title: '#dc2626' },
+    amber: { bg: '#fffbeb', border: '#f59e0b', title: '#d97706' },
+    green: { bg: '#f0fdf4', border: '#22c55e', title: '#16a34a' }
+  };
+
+  const now = new Date();
+  const timestamp = now.toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short', timeZone: 'America/Denver' }) + ' MST';
+
+  const c = conditions.current;
+  const aqiDisplay = c.aqi != null ? `${c.aqi} (${c.aqi_label})` : 'N/A';
+
+  // Forecast rows
+  const forecastRows = (forecast || []).map(h => {
+    const time = new Date(h.time).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+    const aqiCell = h.aqi != null ? `${h.aqi} (${h.aqi_label})` : 'N/A';
+    return `<tr>
+      <td style="padding:6px 10px;border-bottom:1px solid #e2e8f0;">${time}</td>
+      <td style="padding:6px 10px;border-bottom:1px solid #e2e8f0;">${h.temperature}°F</td>
+      <td style="padding:6px 10px;border-bottom:1px solid #e2e8f0;">${h.apparent_temperature}°F</td>
+      <td style="padding:6px 10px;border-bottom:1px solid #e2e8f0;">${h.wind_speed} mph</td>
+      <td style="padding:6px 10px;border-bottom:1px solid #e2e8f0;">${aqiCell}</td>
+    </tr>`;
+  }).join('');
+
+  // Build alert banners (one per alert, each with its own severity color)
+  const alertBanners = sorted.map(alert => {
+    const ac = severityColors[alert.severity] || severityColors.watch;
+    const thresholdLine = alert.threshold && alert.unit ? `
+      <p style="margin:0;font-size:14px;color:#475569;">
+        Threshold: ${alert.threshold}${alert.unit} &nbsp;|&nbsp; Actual: <strong>${alert.actual}${alert.unit}</strong>
+      </p>
+    ` : '';
+    const descLine = alert.description ? `
+      <p style="margin:8px 0 0;font-size:14px;color:#334155;font-style:italic;">${alert.description}</p>
+    ` : '';
+    return `
+    <div style="background:${ac.bg};border-left:5px solid ${ac.border};padding:14px;margin:8px 20px;">
+      <h3 style="margin:0 0 4px;font-size:16px;color:${ac.border};">${alert.label}
+        <span style="font-size:12px;font-weight:normal;opacity:0.8;margin-left:8px;">${(alert.severity || 'watch').toUpperCase()}</span>
+      </h3>
+      ${thresholdLine}
+      ${descLine}
+    </div>`;
+  }).join('');
+
+  // NWS instruction blocks (collect from all alerts that have nwsDetail)
+  const nwsBlocks = sorted.filter(a => a.nwsDetail?.instruction).map(alert => `
+  <div style="padding:18px;margin:16px 20px 0;background:#fef2f2;border-left:5px solid #dc2626;border-radius:0 8px 8px 0;">
+    <h3 style="margin:0 0 10px;font-size:16px;color:#dc2626;">NWS: ${alert.nwsDetail.event || 'Alert'}</h3>
+    <p style="font-size:14px;color:#334155;line-height:1.6;margin:0;">${alert.nwsDetail.instruction}</p>
+    ${alert.nwsDetail.senderName ? `<p style="font-size:12px;color:#94a3b8;margin:8px 0 0;">Source: ${alert.nwsDetail.senderName}</p>` : ''}
+    ${alert.nwsDetail.expires ? `<p style="font-size:12px;color:#94a3b8;margin:4px 0 0;">Expires: ${new Date(alert.nwsDetail.expires).toLocaleString('en-US')}</p>` : ''}
+  </div>
+  `).join('');
+
+  // Build protocols — collect data for condensed layout
+  const protocols = sorted.map(alert => ({
+    alert,
+    protocol: getWeatherResponseProtocol(alert.type, alert.severity)
+  }));
+
+  // Compact action blocks — one per alert (title + actions only)
+  const actionBlocks = protocols.map(({ alert, protocol }) => {
+    const pc = cardColors[protocol.cardColor] || cardColors.amber;
+    return `
+  <div style="margin:10px 20px;border:2px solid ${pc.border};border-radius:10px;overflow:hidden;">
+    <div style="background:${pc.bg};padding:12px 16px;">
+      <h3 style="margin:0;font-size:15px;color:${pc.title};">${protocol.title}</h3>
+    </div>
+    <div style="padding:12px 16px;">
+      <ol style="margin:0;padding-left:20px;font-size:13px;color:#334155;line-height:1.7;">
+        ${protocol.actions.map(a => `<li style="margin-bottom:3px;">${a}</li>`).join('')}
+      </ol>
+    </div>
+  </div>`;
+  }).join('');
+
+  // Combined "Watch For" — deduplicate across all protocols
+  const allWatchFor = new Set();
+  protocols.forEach(({ protocol }) => allWatchFor.add(protocol.watchFor));
+
+  // Combined "Work Modification" — deduplicate across all protocols
+  const allWorkMod = new Set();
+  protocols.forEach(({ protocol }) => allWorkMod.add(protocol.workMod));
+
+  // PPE — deduplicate across all alerts
+  const allPpe = new Set();
+  sorted.forEach(alert => {
+    getPpeReminders(alert.type).forEach(p => allPpe.add(p));
+  });
+
+  // Hydration — include if any alert is heat-related
+  const anyHeat = sorted.some(a => a.type === 'heat_index' || a.type === 'forecast_heat');
+  const hydration = anyHeat ? getHydrationSchedule() : [];
+
+  return `
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"></head>
+<body style="margin:0;padding:0;background:#f1f5f9;font-family:Arial,Helvetica,sans-serif;">
+<div style="max-width:640px;margin:0 auto;background:#ffffff;">
+
+  <!-- Header -->
+  <div style="background:${headerColors.banner};color:#ffffff;padding:24px;text-align:center;">
+    <h1 style="margin:0;font-size:22px;">Weather Safety ${headerLabel}</h1>
+    <p style="margin:6px 0 0;font-size:13px;opacity:0.9;">TheSafetyVerse Automated Weather Monitoring</p>
+  </div>
+
+  <!-- Site Info -->
+  <div style="padding:18px 20px 4px;">
+    <p style="margin:0;font-size:16px;"><strong>${site.name}</strong> — ${site.city || ''}${site.state ? ', ' + site.state : ''}</p>
+    <p style="margin:4px 0 0;font-size:13px;color:#64748b;">${sorted.length} active alert${sorted.length > 1 ? 's' : ''} as of ${timestamp}</p>
+  </div>
+
+  <!-- Alert Banners -->
+  ${alertBanners}
+
+  ${nwsBlocks}
+
+  <!-- Current Conditions -->
+  <div style="padding:18px;margin:16px 20px 0;background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;">
+    <h3 style="margin:0 0 12px;font-size:16px;color:#1e293b;">Current Conditions</h3>
+    <table style="width:100%;font-size:14px;color:#334155;">
+      <tr><td style="padding:4px 0;width:45%;">Temperature:</td><td><strong>${c.temperature}°F</strong></td></tr>
+      <tr><td style="padding:4px 0;">Feels Like (Heat Index):</td><td><strong>${c.apparent_temperature}°F</strong></td></tr>
+      <tr><td style="padding:4px 0;">Wind Speed:</td><td><strong>${c.wind_speed} mph</strong></td></tr>
+      <tr><td style="padding:4px 0;">Air Quality (AQI):</td><td><strong>${aqiDisplay}</strong></td></tr>
+      <tr><td style="padding:4px 0;">Conditions:</td><td>${c.weather_description}</td></tr>
+    </table>
+  </div>
+
+  <!-- 24-Hour Forecast -->
+  <div style="padding:18px;margin:16px 20px 0;background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;">
+    <h3 style="margin:0 0 12px;font-size:16px;color:#1e293b;">24-Hour Forecast</h3>
+    <table style="width:100%;font-size:12px;color:#334155;border-collapse:collapse;">
+      <thead>
+        <tr style="background:#e2e8f0;">
+          <th style="padding:6px 10px;text-align:left;">Time</th>
+          <th style="padding:6px 10px;text-align:left;">Temp</th>
+          <th style="padding:6px 10px;text-align:left;">Feels Like</th>
+          <th style="padding:6px 10px;text-align:left;">Wind</th>
+          <th style="padding:6px 10px;text-align:left;">AQI</th>
+        </tr>
+      </thead>
+      <tbody>${forecastRows}</tbody>
+    </table>
+  </div>
+
+  <!-- ═══ RESPONSE PROTOCOLS (condensed) ═══ -->
+  <div style="padding:4px 0 0;">
+    <h3 style="margin:16px 20px 0;font-size:16px;color:#1e293b;">&#9889; Immediate Actions</h3>
+    ${actionBlocks}
+  </div>
+
+  <!-- Watch For (combined) -->
+  <div style="padding:18px;margin:16px 20px 0;background:#fef2f2;border-left:5px solid #ef4444;border-radius:0 8px 8px 0;">
+    <h3 style="margin:0 0 10px;font-size:16px;color:#dc2626;">&#128064; Watch For These Symptoms</h3>
+    ${[...allWatchFor].map(w => `<p style="margin:0 0 8px;font-size:13px;color:#334155;line-height:1.6;">${w}</p>`).join('')}
+  </div>
+
+  <!-- Work Modification (combined) -->
+  <div style="padding:18px;margin:16px 20px 0;background:#fffbeb;border-left:5px solid #f59e0b;border-radius:0 8px 8px 0;">
+    <h3 style="margin:0 0 10px;font-size:16px;color:#d97706;">&#128736; Work Modifications</h3>
+    ${[...allWorkMod].map(w => `<p style="margin:0 0 8px;font-size:13px;color:#334155;line-height:1.6;">${w}</p>`).join('')}
+  </div>
+
+  <!-- PPE Reminders (deduplicated) -->
+  <div style="padding:18px;margin:16px 20px 0;background:#eff6ff;border-left:5px solid #3b82f6;border-radius:0 8px 8px 0;">
+    <h3 style="margin:0 0 10px;font-size:16px;color:#1e40af;">PPE Requirements</h3>
+    <ul style="margin:0;padding-left:20px;font-size:14px;color:#334155;line-height:1.7;">
+      ${[...allPpe].map(p => `<li>${p}</li>`).join('')}
+    </ul>
+  </div>
+
+  ${anyHeat ? `
+  <!-- Hydration Schedule -->
+  <div style="padding:18px;margin:16px 20px 0;background:#ecfdf5;border-left:5px solid #22c55e;border-radius:0 8px 8px 0;">
+    <h3 style="margin:0 0 10px;font-size:16px;color:#166534;">Hydration Schedule</h3>
+    <table style="width:100%;font-size:13px;color:#334155;border-collapse:collapse;">
+      ${hydration.map(h => `<tr>
+        <td style="padding:5px 0;width:40%;font-weight:600;">${h.range}</td>
+        <td style="padding:5px 0;">${h.instruction}</td>
+      </tr>`).join('')}
+    </table>
+  </div>
+  ` : ''}
+
+  <!-- Footer -->
+  <div style="padding:20px;text-align:center;color:#94a3b8;font-size:12px;margin-top:20px;border-top:1px solid #e2e8f0;">
+    <p style="margin:0 0 4px;">Automated alert from TheSafetyVerse Weather Monitoring System</p>
+    <p style="margin:0;">Generated: ${timestamp} &nbsp;|&nbsp; Next check in 30 minutes</p>
+  </div>
+
+</div>
+</body>
+</html>`;
+}
+
+// ═══════════════════════════════════════════════════════════
 // SEND EMAIL via Resend HTTP API
 // ═══════════════════════════════════════════════════════════
 
@@ -583,4 +806,4 @@ async function sendAlertEmail(to, subject, html) {
   }
 }
 
-module.exports = { renderAlertEmail, sendAlertEmail, isEmailConfigured };
+module.exports = { renderAlertEmail, renderBundledAlertEmail, sendAlertEmail, isEmailConfigured };

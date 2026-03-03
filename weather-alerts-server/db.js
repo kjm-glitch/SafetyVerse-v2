@@ -56,6 +56,13 @@ async function initDb() {
       UNIQUE(site_id, alert_type)
     );
   `);
+
+  // Migration: add severity column to alert_cooldowns for escalation tracking
+  await pool.query(`
+    ALTER TABLE alert_cooldowns
+    ADD COLUMN IF NOT EXISTS severity TEXT DEFAULT 'advisory'
+  `).catch(() => {}); // safe if column already exists
+
   console.log('[DB] PostgreSQL tables initialized');
 }
 
@@ -173,14 +180,30 @@ async function isCooldownActive(siteId, alertType) {
   return hoursAgo < config.COOLDOWN_HOURS;
 }
 
-async function setCooldown(siteId, alertType) {
+async function setCooldown(siteId, alertType, severity = 'advisory') {
   await pool.query(
-    `INSERT INTO alert_cooldowns (site_id, alert_type, last_alerted_at)
-     VALUES ($1, $2, CURRENT_TIMESTAMP)
+    `INSERT INTO alert_cooldowns (site_id, alert_type, severity, last_alerted_at)
+     VALUES ($1, $2, $3, CURRENT_TIMESTAMP)
      ON CONFLICT(site_id, alert_type)
-     DO UPDATE SET last_alerted_at = CURRENT_TIMESTAMP`,
+     DO UPDATE SET last_alerted_at = CURRENT_TIMESTAMP, severity = $3`,
+    [siteId, alertType, severity]
+  );
+}
+
+// Severity escalation: returns true if the new severity outranks
+// the severity stored from the last alert (advisory < watch < warning)
+const SEVERITY_RANK = { advisory: 0, watch: 1, warning: 2 };
+
+async function shouldEscalate(siteId, alertType, newSeverity) {
+  const { rows } = await pool.query(
+    'SELECT severity FROM alert_cooldowns WHERE site_id = $1 AND alert_type = $2',
     [siteId, alertType]
   );
+  if (rows.length === 0) return false;
+  const storedSeverity = rows[0].severity || 'advisory';
+  const storedRank = SEVERITY_RANK[storedSeverity] ?? 0;
+  const newRank = SEVERITY_RANK[newSeverity] ?? 0;
+  return newRank > storedRank;
 }
 
 // ── Exports ─────────────────────────────────────────────
@@ -197,5 +220,6 @@ module.exports = {
   getAlertHistory,
   getActiveAlerts,
   isCooldownActive,
-  setCooldown
+  setCooldown,
+  shouldEscalate
 };

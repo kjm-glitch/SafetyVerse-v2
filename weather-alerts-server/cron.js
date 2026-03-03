@@ -3,7 +3,40 @@ const config = require('./config');
 const db = require('./db');
 const weather = require('./weather');
 const { evaluateThresholds, evaluateForecast, evaluateNwsAlerts } = require('./alerts');
-const { renderAlertEmail, sendAlertEmail } = require('./emailer');
+const { renderBundledAlertEmail, sendAlertEmail } = require('./emailer');
+
+// ── Severity ranking for subject line ──────────────────
+const SEVERITY_RANK = { warning: 0, watch: 1, advisory: 2 };
+
+// ── Work-hours gating ──────────────────────────────────
+// Returns true if the alert should be suppressed (advisory + outside work hours)
+function isOvernightSuppressed(alert) {
+  // Only suppress advisories — warnings and watches are safety-critical 24/7
+  if (alert.severity !== 'advisory') return false;
+
+  const tz = config.DEFAULT_TIMEZONE || 'America/Denver';
+  const now = new Date();
+
+  // Get current local time in HH:MM (24h format)
+  const localTimeStr = now.toLocaleTimeString('en-US', {
+    timeZone: tz,
+    hour12: false,
+    hour: '2-digit',
+    minute: '2-digit'
+  });
+
+  const [hours, minutes] = localTimeStr.split(':').map(Number);
+  const currentMinutes = hours * 60 + minutes;
+
+  const [startH, startM] = config.WORK_HOURS.start.split(':').map(Number);
+  const [endH, endM] = config.WORK_HOURS.end.split(':').map(Number);
+  const startMinutes = startH * 60 + startM;  // 330 = 5:30 AM
+  const endMinutes = endH * 60 + endM;        // 1320 = 10:00 PM
+
+  // Suppress if OUTSIDE work hours
+  const isWithinWorkHours = currentMinutes >= startMinutes && currentMinutes < endMinutes;
+  return !isWithinWorkHours;
+}
 
 async function runWeatherCheck() {
   const startTime = Date.now();
@@ -43,8 +76,6 @@ async function runWeatherCheck() {
 }
 
 async function checkSite(site) {
-  let alertCount = 0;
-
   const conditions = await weather.fetchAllConditions(site.latitude, site.longitude);
 
   // Evaluate all three alert sources
@@ -59,36 +90,61 @@ async function checkSite(site) {
     return 0;
   }
 
+  // ── PHASE 1: Filter alerts through work-hours gate, cooldown, and escalation ──
+  const alertsToSend = [];
+
   for (const alert of allAlerts) {
-    // Check cooldown
-    if (await db.isCooldownActive(site.id, alert.type)) {
-      console.log(`  [${site.name}] ${alert.label} — COOLDOWN ACTIVE, skipping`);
+    // Work-hours gating: suppress advisories overnight (no cooldown set, so they fire in the morning)
+    if (isOvernightSuppressed(alert)) {
+      console.log(`  [${site.name}] ${alert.label} — OVERNIGHT SUPPRESSED, skipping`);
       continue;
     }
 
+    // Cooldown check with severity escalation override
+    const cooldownActive = await db.isCooldownActive(site.id, alert.type);
+    if (cooldownActive) {
+      const escalate = await db.shouldEscalate(site.id, alert.type, alert.severity);
+      if (!escalate) {
+        console.log(`  [${site.name}] ${alert.label} — COOLDOWN ACTIVE, skipping`);
+        continue;
+      }
+      console.log(`  [${site.name}] ${alert.label} — ESCALATION OVERRIDE (severity increased)`);
+    }
+
+    alertsToSend.push(alert);
+  }
+
+  if (alertsToSend.length === 0) return 0;
+
+  // ── PHASE 2: Bundle all passing alerts into ONE email ──
+  alertsToSend.sort((a, b) =>
+    (SEVERITY_RANK[a.severity] ?? 3) - (SEVERITY_RANK[b.severity] ?? 3)
+  );
+
+  const highestSeverity = alertsToSend[0].severity || 'watch';
+  const severityPrefix = { warning: 'WARNING', watch: 'WATCH', advisory: 'ADVISORY' };
+  const prefix = severityPrefix[highestSeverity] || 'ALERT';
+  const subject = alertsToSend.length === 1
+    ? `[${prefix}] ${alertsToSend[0].label} — ${site.name}`
+    : `[${prefix}] ${alertsToSend.length} Weather Alerts — ${site.name}`;
+
+  const html = renderBundledAlertEmail(alertsToSend, site, conditions, conditions.hourly);
+
+  let emailSent = 0;
+  let emailRecipient = site.manager_email || '';
+  if (site.manager_email) {
+    const result = await sendAlertEmail(site.manager_email, subject, html);
+    emailSent = result.sent ? 1 : 0;
+  } else {
+    console.log(`  [${site.name}] No manager email set — alerts logged but no email sent`);
+  }
+
+  // ── PHASE 3: Record each alert individually (audit trail) + set cooldowns ──
+  for (const alert of alertsToSend) {
     const severityTag = (alert.severity || 'watch').toUpperCase();
     console.log(`  [${site.name}] [${severityTag}] ${alert.label}${alert.description ? ' — ' + alert.description : ''}`);
 
-    // Generate email
-    const severityPrefix = { warning: 'WARNING', watch: 'WATCH', advisory: 'ADVISORY' };
-    const prefix = severityPrefix[alert.severity] || 'ALERT';
-    const subject = `[${prefix}] ${alert.label} — ${site.name}`;
-    const html = renderAlertEmail(alert, site, conditions, conditions.hourly);
-
-    // Send email if manager email is set
-    let emailSent = 0;
-    let emailRecipient = site.manager_email || '';
-    if (site.manager_email) {
-      const result = await sendAlertEmail(site.manager_email, subject, html);
-      emailSent = result.sent ? 1 : 0;
-    } else {
-      console.log(`  [${site.name}] No manager email set — alert logged but no email sent`);
-    }
-
-    // Record alert — for NWS alerts, store the full NWS detail in forecast_json
-    const forecastData = alert.nwsDetail
-      ? alert.nwsDetail
-      : conditions.hourly;
+    const forecastData = alert.nwsDetail ? alert.nwsDetail : conditions.hourly;
 
     await db.insertAlert({
       site_id: site.id,
@@ -103,12 +159,11 @@ async function checkSite(site) {
       email_recipient: emailRecipient
     });
 
-    // Set cooldown
-    await db.setCooldown(site.id, alert.type);
-    alertCount++;
+    // Set cooldown with severity (enables escalation override on next check)
+    await db.setCooldown(site.id, alert.type, alert.severity);
   }
 
-  return alertCount;
+  return alertsToSend.length;
 }
 
 function startScheduler() {

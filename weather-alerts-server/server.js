@@ -4,7 +4,7 @@ const config = require('./config');
 const db = require('./db');
 const weather = require('./weather');
 const { startScheduler, runWeatherCheck } = require('./cron');
-const { renderAlertEmail, sendAlertEmail, isEmailConfigured } = require('./emailer');
+const { renderAlertEmail, renderBundledAlertEmail, sendAlertEmail, isEmailConfigured } = require('./emailer');
 const { evaluateThresholds, evaluateForecast, evaluateNwsAlerts } = require('./alerts');
 
 const app = express();
@@ -272,20 +272,24 @@ app.post('/api/admin/send-alert/:siteId', async (req, res) => {
       });
     }
 
-    // Send each alert email (bypassing cooldown)
-    let emailsSent = 0;
-    const results = [];
+    // Send ONE bundled email with all alerts (bypassing cooldown + work-hours)
+    const SEVERITY_RANK = { warning: 0, watch: 1, advisory: 2 };
+    allAlerts.sort((a, b) =>
+      (SEVERITY_RANK[a.severity] ?? 3) - (SEVERITY_RANK[b.severity] ?? 3)
+    );
+
+    const highestSeverity = allAlerts[0].severity || 'watch';
+    const severityPrefix = { warning: 'WARNING', watch: 'WATCH', advisory: 'ADVISORY' };
+    const prefix = severityPrefix[highestSeverity] || 'ALERT';
+    const subject = allAlerts.length === 1
+      ? `[${prefix}] ${allAlerts[0].label} — ${site.name}`
+      : `[${prefix}] ${allAlerts.length} Weather Alerts — ${site.name}`;
+
+    const html = renderBundledAlertEmail(allAlerts, site, conditions, conditions.hourly);
+    const result = await sendAlertEmail(site.manager_email, subject, html);
+
+    // Record each alert individually for audit trail
     for (const alert of allAlerts) {
-      const severityPrefix = { warning: 'WARNING', watch: 'WATCH', advisory: 'ADVISORY' };
-      const prefix = severityPrefix[alert.severity] || 'ALERT';
-      const subject = `[${prefix}] ${alert.label} — ${site.name}`;
-      const html = renderAlertEmail(alert, site, conditions, conditions.hourly);
-
-      const result = await sendAlertEmail(site.manager_email, subject, html);
-      if (result.sent) emailsSent++;
-      results.push({ alert: alert.label, severity: alert.severity, sent: result.sent, error: result.reason });
-
-      // Record in alert history
       const forecastData = alert.nwsDetail ? alert.nwsDetail : conditions.hourly;
       await db.insertAlert({
         site_id: site.id,
@@ -302,11 +306,11 @@ app.post('/api/admin/send-alert/:siteId', async (req, res) => {
     }
 
     res.json({
-      success: emailsSent > 0,
+      success: result.sent,
       alertsFound: allAlerts.length,
-      emailsSent,
-      message: `${emailsSent}/${allAlerts.length} alert email(s) sent to ${site.manager_email}`,
-      details: results
+      emailsSent: result.sent ? 1 : 0,
+      message: `1 bundled email with ${allAlerts.length} alert(s) sent to ${site.manager_email}`,
+      alerts: allAlerts.map(a => ({ label: a.label, severity: a.severity }))
     });
   } catch (err) {
     res.status(500).json({ error: err.message });

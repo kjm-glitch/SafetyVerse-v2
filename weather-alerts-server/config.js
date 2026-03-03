@@ -14,6 +14,15 @@ module.exports = {
 
   COOLDOWN_HOURS: 12,
 
+  // ── Work-hours gating ──
+  // Advisory-level emails are suppressed outside these hours (warnings/watches send 24/7)
+  // Suppressed advisories fire naturally at the first morning check
+  WORK_HOURS: {
+    start: '05:30',  // 5:30 AM local time
+    end: '22:00'     // 10:00 PM local time
+  },
+  DEFAULT_TIMEZONE: process.env.DEFAULT_TIMEZONE || 'America/New_York',
+
   // ── Current condition thresholds (trigger ORANGE watch) ──
   THRESHOLDS: {
     heat_index: 95,    // °F apparent temperature
