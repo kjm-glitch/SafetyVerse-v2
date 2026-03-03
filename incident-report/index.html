@@ -302,7 +302,6 @@ body{font-family:'Inter',sans-serif;background:#0f172a;color:#e2e8f0;min-height:
   <div class="step-title">Step 1 of 9</div>
   <div class="step-heading">Who is reporting this incident?</div>
   <div class="sv-field"><label class="sv-label sv-required">Reporting Party Name</label><input type="text" class="sv-input" id="f_rp_name"></div>
-  <div class="sv-field"><label class="sv-label sv-required">Title / Position</label><input type="text" class="sv-input" id="f_rp_title"></div>
   <div class="sv-field"><label class="sv-label sv-required">Site / Location Name</label><select class="sv-input sv-select" id="f_site"><option value="">-- Select site location --</option></select></div>
 </div>
 <div class="wizard-nav"><div></div><button class="wbtn wbtn-next" onclick="nextStep()">Continue</button></div>
@@ -315,9 +314,9 @@ body{font-family:'Inter',sans-serif;background:#0f172a;color:#e2e8f0;min-height:
   <div class="step-heading">When and where did the incident occur?</div>
   <div class="sv-row">
     <div class="sv-field"><label class="sv-label sv-required">Date of Incident</label><input type="date" class="sv-input" id="f_date"></div>
-    <div class="sv-field"><label class="sv-label sv-required">Time of Incident</label><input type="time" class="sv-input" id="f_time"></div>
+    <div class="sv-field"><label class="sv-label sv-required">Time of Incident (24hr)</label><input type="time" class="sv-input" id="f_time" step="60"></div>
   </div>
-  <div class="sv-field"><label class="sv-label">Report Filed</label><input type="text" class="sv-input" id="f_report_time" readonly style="opacity:.6"></div>
+  <div class="sv-field"><label class="sv-label">Report Filed (24hr)</label><input type="text" class="sv-input" id="f_report_time" readonly style="opacity:.6"></div>
   <div class="sv-field"><label class="sv-label">Specific Location</label><input type="text" class="sv-input" id="f_specific_loc" placeholder="e.g., Loading dock B, north entrance"></div>
   <div class="sv-row">
     <div class="sv-field"><label class="sv-label">Visibility</label><select class="sv-input sv-select" id="f_visibility"><option value="">Select</option><option>Good</option><option>Fair</option><option>Poor</option><option>Dark</option></select></div>
@@ -342,13 +341,12 @@ body{font-family:'Inter',sans-serif;background:#0f172a;color:#e2e8f0;min-height:
     <div class="sv-field"><label class="sv-label sv-required">Job Title</label><input type="text" class="sv-input" id="f_inj_title"></div>
     <div class="sv-field"><label class="sv-label">Treatment</label>
       <div class="sv-radio-group" id="f_treatment">
-        <label class="sv-radio-card" onclick="selectRadio(this)"><input type="radio" name="treatment" value="refused">Refused</label>
+        <label class="sv-radio-card" onclick="selectRadio(this)"><input type="radio" name="treatment" value="declined">Declined</label>
         <label class="sv-radio-card" onclick="selectRadio(this)"><input type="radio" name="treatment" value="first_aid">First Aid</label>
         <label class="sv-radio-card" onclick="selectRadio(this)"><input type="radio" name="treatment" value="ems">EMS Transport</label>
         <label class="sv-radio-card" onclick="selectRadio(this)"><input type="radio" name="treatment" value="self_transport">Self-Transport</label>
       </div>
     </div>
-    <div class="sv-field"><label class="sv-label">Local Branch Contact</label><input type="text" class="sv-input" id="f_local_contact" placeholder="Name, phone, or email"></div>
   </div>
 </div>
 <div class="wizard-nav"><button class="wbtn wbtn-prev" onclick="prevStep()">Back</button><button class="wbtn wbtn-next" onclick="nextStep()">Continue</button></div>
@@ -378,7 +376,10 @@ body{font-family:'Inter',sans-serif;background:#0f172a;color:#e2e8f0;min-height:
       <label class="cb-item"><input type="checkbox" value="Laceration/Cut">Laceration/Cut</label>
       <label class="cb-item"><input type="checkbox" value="Sting">Sting</label>
       <label class="cb-item"><input type="checkbox" value="Strain/Sprain">Strain/Sprain</label>
-      <label class="cb-item"><input type="checkbox" value="Other">Other</label>
+      <label class="cb-item"><input type="checkbox" value="Other" id="f_injury_other_cb" onchange="toggleInjuryOther()">Other</label>
+    </div>
+    <div id="injuryOtherField" style="display:none;margin-top:.5rem">
+      <input type="text" class="sv-input" id="f_injury_other_text" placeholder="Describe other injury type...">
     </div>
   </div>
   <div class="sv-row">
@@ -543,6 +544,12 @@ body{font-family:'Inter',sans-serif;background:#0f172a;color:#e2e8f0;min-height:
       <div class="sv-field"><label class="sv-label">Days of Restricted Duty</label><input type="number" class="sv-input" id="f_days_restricted" min="0" value="0"></div>
     </div>
   </div>
+
+  <div class="sv-field" style="margin-top:1.5rem;padding-top:1.25rem;border-top:1px solid #334155">
+    <label class="sv-label">Additional Notification Emails</label>
+    <div class="sv-helper" style="margin-bottom:.4rem">A PDF summary will be auto-emailed to the fixed notification list. Add extra recipients below (comma-separated).</div>
+    <input type="text" class="sv-input" id="f_extra_emails" placeholder="e.g., supervisor@company.com, hr@company.com">
+  </div>
 </div>
 <div class="wizard-nav"><button class="wbtn wbtn-prev" onclick="prevStep()">Back</button><button class="wbtn wbtn-submit" onclick="submitReport()" id="submitBtn">Submit Incident Report</button></div>
 </div>
@@ -592,7 +599,10 @@ body{font-family:'Inter',sans-serif;background:#0f172a;color:#e2e8f0;min-height:
   <div id="ifContent" style="display:none">
     <div class="if-header">
       <h2>Incident File</h2>
-      <span class="if-id" id="ifDisplayId"></span>
+      <div style="display:flex;align-items:center;gap:.5rem">
+        <span class="if-id" id="ifDisplayId"></span>
+        <button id="ifDeleteBtn" style="display:none;background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.3);color:#f87171;font-size:.72rem;font-weight:600;padding:6px 12px;border-radius:6px;cursor:pointer;font-family:inherit" onclick="deleteCurrentIncidentFile()">Delete Case</button>
+      </div>
     </div>
 
     <div class="sub-tabs" id="subTabs">
@@ -914,7 +924,7 @@ document.addEventListener('DOMContentLoaded',()=>{
   const now=new Date();
   document.getElementById('f_date').value=now.toISOString().split('T')[0];
   document.getElementById('f_time').value=now.toTimeString().slice(0,5);
-  document.getElementById('f_report_time').value=now.toLocaleString();
+  document.getElementById('f_report_time').value=now.toLocaleString('en-US',{year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hour12:false});
 
   // Auto-fill from triage params
   const params=new URLSearchParams(window.location.search);
@@ -949,13 +959,14 @@ document.addEventListener('DOMContentLoaded',()=>{
   }
 });
 
+const RETIRED_SITES=['Annapolis - MD','Cheyenne - WY','Denver - CO','San Antonio - TX','Warrenton - VA'];
 async function loadSiteLocations(){
   try{
     const{data,error}=await sb.from('site_locations').select('*').order('name',{ascending:true});
     if(error)throw error;
     const sel=document.getElementById('f_site');
     sel.innerHTML='<option value="">-- Select site location --</option>';
-    (data||[]).forEach(s=>{sel.innerHTML+=`<option value="${s.name}">${s.name}</option>`;});
+    (data||[]).filter(s=>!RETIRED_SITES.includes(s.name)).forEach(s=>{sel.innerHTML+=`<option value="${s.name}">${s.name}</option>`;});
   }catch(e){console.error('Failed to load site locations:',e);}
 }
 
@@ -1014,7 +1025,7 @@ function validateStep(n){
       el.addEventListener('input',()=>el.classList.remove('sv-error'),{once:true});
     }
   };
-  if(n===1){check('f_rp_name');check('f_rp_title');check('f_site');}
+  if(n===1){check('f_rp_name');check('f_site');}
   if(n===2){check('f_date');check('f_time');}
   if(n===3&&!document.getElementById('f_no_injury').checked){check('f_inj_name');check('f_inj_title');}
   if(n===5){check('f_description');}
@@ -1027,10 +1038,10 @@ function collectStepData(n){
   const r=name=>{const el=document.querySelector(`input[name="${name}"]:checked`);return el?el.value:'';};
   const cbs=id=>[...document.querySelectorAll(`#${id} input:checked`)].map(c=>c.value);
 
-  if(n===1){formData.reporting_party_name=v('f_rp_name');formData.reporting_party_title=v('f_rp_title');formData.site_location=v('f_site');}
+  if(n===1){formData.reporting_party_name=v('f_rp_name');formData.site_location=v('f_site');}
   if(n===2){formData.incident_date=v('f_date');formData.incident_time=v('f_time');formData.specific_location=v('f_specific_loc');formData.visibility=v('f_visibility');formData.surface_conditions=v('f_surface');formData.temperature=v('f_temp');formData.num_people_involved=parseInt(v('f_people'))||1;}
-  if(n===3){formData.no_injury=document.getElementById('f_no_injury').checked;formData.injured_name=v('f_inj_name');formData.injured_title=v('f_inj_title');formData.treatment_type=r('treatment');formData.local_contact=v('f_local_contact');}
-  if(n===4){formData.injury_types=cbs('f_injury_types');formData.severity=v('f_severity');formData.body_part=v('f_body_part');formData.injury_comments=v('f_inj_comments');}
+  if(n===3){formData.no_injury=document.getElementById('f_no_injury').checked;formData.injured_name=v('f_inj_name');formData.injured_title=v('f_inj_title');formData.treatment_type=r('treatment');}
+  if(n===4){let types=cbs('f_injury_types');const otherText=v('f_injury_other_text');if(otherText&&types.includes('Other')){types=types.map(t=>t==='Other'?'Other: '+otherText:t);}formData.injury_types=types;formData.severity=v('f_severity');formData.body_part=v('f_body_part');formData.injury_comments=v('f_inj_comments');}
   if(n===5){formData.activity_before=v('f_activity');formData.incident_description=v('f_description');formData.what_caused_harm=v('f_cause');}
   if(n===6){formData.witnesses=collectWitnesses();}
   if(n===7){formData.motor_vehicle_applicable=vehicleApplicable;if(vehicleApplicable){formData.vehicle_info={make:v('f_v_make'),model:v('f_v_model'),color:v('f_v_color'),year:v('f_v_year'),plate:v('f_v_plate'),damage_location:v('f_v_damage')};}else{formData.vehicle_info={};}}
@@ -1061,6 +1072,13 @@ function toggleIllnessType(){
 function toggleNoInjury(){
   const checked=document.getElementById('f_no_injury').checked;
   document.getElementById('injuryFields').style.display=checked?'none':'block';
+}
+
+function toggleInjuryOther(){
+  const checked=document.getElementById('f_injury_other_cb').checked;
+  const field=document.getElementById('injuryOtherField');
+  field.style.display=checked?'block':'none';
+  if(!checked)document.getElementById('f_injury_other_text').value='';
 }
 
 function toggleVehicle(yes){
@@ -1119,7 +1137,6 @@ async function submitReport(){
 
   const row={
     reporting_party_name:formData.reporting_party_name,
-    reporting_party_title:formData.reporting_party_title,
     site_location:formData.site_location,
     incident_date:formData.incident_date||null,
     incident_time:formData.incident_time||null,
@@ -1130,7 +1147,6 @@ async function submitReport(){
     num_people_involved:formData.num_people_involved,
     injured_name:formData.injured_name,
     injured_title:formData.injured_title,
-    local_contact:formData.local_contact,
     treatment_type:formData.treatment_type||null,
     injury_types:formData.injury_types||[],
     severity:formData.severity,
@@ -1168,10 +1184,116 @@ async function submitReport(){
     if(needsMedicalPacket(lastSubmitted)){
       renderMedPacketHTML(lastSubmitted,'successMedPacket');
     }
+    // Send email notification (fire-and-forget)
+    sendIncidentEmailNotification(lastSubmitted);
   }catch(e){
     showToast('Error: '+e.message,'error');
   }
   btn.disabled=false;btn.textContent='Submit Incident Report';
+}
+
+async function sendIncidentEmailNotification(inc){
+  try{
+    // Get fixed notification recipients
+    const{data:fixedEmails}=await sb.from('incident_notification_emails').select('email,site_location').eq('active',true);
+    // Filter to global recipients + site-specific
+    const recipients=(fixedEmails||[])
+      .filter(e=>!e.site_location||e.site_location===inc.site_location)
+      .map(e=>e.email);
+    // Add extra emails from form
+    const extraField=document.getElementById('f_extra_emails').value.trim();
+    if(extraField){
+      extraField.split(',').map(e=>e.trim()).filter(e=>e.includes('@')).forEach(e=>{
+        if(!recipients.includes(e))recipients.push(e);
+      });
+    }
+    if(recipients.length===0){console.log('No notification recipients configured');return;}
+    // Generate a summary PDF as base64
+    let pdfBase64=null;let pdfFilename=null;
+    try{
+      const pdfBytes=await generateIncidentSummaryPdf(inc);
+      pdfBase64=btoa(String.fromCharCode(...new Uint8Array(pdfBytes)));
+      pdfFilename='Incident-Report-Case-'+inc.case_number+'.pdf';
+    }catch(pdfErr){console.warn('PDF generation for email failed:',pdfErr);}
+    // Call Edge Function
+    const{data,error}=await sb.functions.invoke('send-incident-email',{
+      body:{
+        recipients,
+        subject:'New Incident Report - Case #'+inc.case_number+' - '+(inc.site_location||''),
+        incident_summary:{
+          case_number:inc.case_number,
+          incident_date:inc.incident_date,
+          incident_time:inc.incident_time,
+          site_location:inc.site_location,
+          injured_name:inc.no_injury?'No injury reported':inc.injured_name,
+          severity:inc.severity,
+          reporting_party_name:inc.reporting_party_name,
+          incident_description:inc.incident_description
+        },
+        pdf_base64:pdfBase64,
+        pdf_filename:pdfFilename
+      }
+    });
+    if(error)throw error;
+    showToast('Email notification sent to '+recipients.length+' recipient(s)','success');
+  }catch(e){
+    console.error('Email notification failed:',e);
+    // Don't show error toast - email is best-effort and shouldn't block the user
+  }
+}
+
+async function generateIncidentSummaryPdf(inc){
+  const{PDFDocument,rgb,StandardFonts}=PDFLib;
+  const doc=await PDFDocument.create();
+  const page=doc.addPage([612,792]);
+  const font=await doc.embedFont(StandardFonts.Helvetica);
+  const fontBold=await doc.embedFont(StandardFonts.HelveticaBold);
+  const sz=10;let y=740;
+  const ln=(text,f,s)=>{page.drawText(text||'',{x:50,y,font:f||font,size:s||sz,color:rgb(0.1,0.1,0.1)});y-=(s||sz)+6;};
+  const gap=()=>{y-=8;};
+
+  ln('SAFETY INCIDENT REPORT',fontBold,16);gap();
+  ln('Case #'+inc.case_number,fontBold,12);
+  ln('Generated: '+new Date().toLocaleString('en-US',{hour12:false}));gap();
+
+  ln('INCIDENT DETAILS',fontBold,11);
+  ln('Date: '+(inc.incident_date||'N/A'));
+  ln('Time: '+(inc.incident_time||'N/A'));
+  ln('Site: '+(inc.site_location||'N/A'));
+  ln('Location: '+(inc.specific_location||'N/A'));
+  ln('Reported By: '+(inc.reporting_party_name||'N/A'));gap();
+
+  ln('INJURED PARTY',fontBold,11);
+  if(inc.no_injury){ln('No injury reported');}
+  else{
+    ln('Name: '+(inc.injured_name||'N/A'));
+    ln('Title: '+(inc.injured_title||'N/A'));
+    ln('Severity: '+(inc.severity||'N/A'));
+    ln('Body Part: '+(inc.body_part||'N/A'));
+    ln('Injury Types: '+((inc.injury_types||[]).join(', ')||'N/A'));
+    ln('Treatment: '+(inc.treatment_type||'N/A'));
+  }
+  gap();
+
+  ln('DESCRIPTION',fontBold,11);
+  const desc=inc.incident_description||'N/A';
+  // Word-wrap description
+  const words=desc.split(' ');let line='';
+  for(const w of words){
+    const test=line?line+' '+w:w;
+    if(font.widthOfTextAtSize(test,sz)>510){ln(line);line=w;}
+    else line=test;
+  }
+  if(line)ln(line);
+  gap();
+
+  ln('WHAT CAUSED HARM',fontBold,11);
+  ln(inc.what_caused_harm||'N/A');gap();
+
+  ln('OSHA CLASSIFICATION',fontBold,11);
+  ln('Outcome: '+(inc.osha_outcome||'Pending').replace(/_/g,' '));
+
+  return await doc.save();
 }
 
 function resetForm(){
@@ -1193,7 +1315,7 @@ function resetForm(){
   const now=new Date();
   document.getElementById('f_date').value=now.toISOString().split('T')[0];
   document.getElementById('f_time').value=now.toTimeString().slice(0,5);
-  document.getElementById('f_report_time').value=now.toLocaleString();
+  document.getElementById('f_report_time').value=now.toLocaleString('en-US',{year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hour12:false});
   showStep(1);
 }
 
@@ -1230,19 +1352,52 @@ async function loadIncidents(){
       return;
     }
     container.innerHTML=data.map(inc=>{
-      const badge=inc.osha_outcome==='na_pending'?'<span class="il-badge pending">Pending</span>':'<span class="il-badge recorded">Recorded</span>';
+      const badge=inc.status==='closed'?'<span class="il-badge recorded">Closed</span>':'<span class="il-badge pending">Pending</span>';
       const date=inc.incident_date?new Date(inc.incident_date).toLocaleDateString():'N/A';
-      return `<div class="il-card" onclick="openIncidentFile('${inc.id}')" style="cursor:pointer" title="Open Incident File">
-        <div class="il-top"><span class="il-case">Case #${inc.case_number}</span>${badge}</div>
-        <div class="il-top"><span class="il-date">${date} ${inc.incident_time||''}</span><span class="il-date">${inc.site_location||''}</span></div>
-        <div class="il-details">${inc.no_injury?'No injury reported':(inc.injured_name||'Unknown')+' &mdash; '+(inc.severity||'N/A')+' &mdash; '+(inc.injury_types||[]).join(', ')}</div>
-        <div style="margin-top:.5rem;font-size:.78rem;color:#64748b">${(inc.incident_description||'').substring(0,120)}${(inc.incident_description||'').length>120?'...':''}</div>
-        <div style="margin-top:.4rem;font-size:.7rem;color:#f59e0b;font-weight:600">Click to open Incident File &rarr;</div>
+      return `<div class="il-card" style="position:relative">
+        <div onclick="openIncidentFile('${inc.id}')" style="cursor:pointer" title="Open Incident File">
+          <div class="il-top"><span class="il-case">Case #${inc.case_number}</span>${badge}</div>
+          <div class="il-top"><span class="il-date">${date} ${inc.incident_time||''}</span><span class="il-date">${inc.site_location||''}</span></div>
+          <div class="il-details">${inc.no_injury?'No injury reported':(inc.injured_name||'Unknown')+' &mdash; '+(inc.severity||'N/A')+' &mdash; '+(inc.injury_types||[]).join(', ')}</div>
+          <div style="margin-top:.5rem;font-size:.78rem;color:#64748b">${(inc.incident_description||'').substring(0,120)}${(inc.incident_description||'').length>120?'...':''}</div>
+          <div style="margin-top:.4rem;font-size:.7rem;color:#f59e0b;font-weight:600">Click to open Incident File &rarr;</div>
+        </div>
+        ${isAdmin?'<button onclick="event.stopPropagation();deleteIncident(\''+inc.id+'\','+inc.case_number+')" style="position:absolute;top:10px;right:10px;background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.3);color:#f87171;font-size:.68rem;font-weight:600;padding:4px 10px;border-radius:6px;cursor:pointer;font-family:inherit" title="Delete this incident">Delete</button>':''}
       </div>`;
     }).join('');
   }catch(e){
     container.innerHTML='<div style="text-align:center;color:#f87171;padding:2rem">Error loading: '+e.message+'</div>';
   }
+}
+
+function deleteCurrentIncidentFile(){
+  if(!currentIncident)return;
+  deleteIncident(currentIncident.id,currentIncident.case_number);
+}
+
+async function deleteIncident(id,caseNum){
+  const confirm=prompt('To permanently delete Case #'+caseNum+', type DELETE:');
+  if(confirm!=='DELETE'){if(confirm!==null)showToast('Deletion cancelled — you must type DELETE','error');return;}
+  try{
+    // Delete related records first
+    await sb.from('incident_medical').delete().eq('incident_id',id);
+    await sb.from('incident_statements').delete().eq('incident_id',id);
+    await sb.from('incident_investigation').delete().eq('incident_id',id);
+    await sb.from('incident_rtw').delete().eq('incident_id',id);
+    // Delete the incident itself
+    const{error}=await sb.from('incidents').delete().eq('id',id);
+    if(error)throw error;
+    showToast('Case #'+caseNum+' permanently deleted','success');
+    // Reset current incident if viewing it
+    if(currentIncident&&currentIncident.id===id){
+      currentIncident=null;currentMedical=null;currentStatements=[];currentInvestigation=null;currentRtw=null;
+      document.getElementById('ifContent').style.display='none';
+      document.getElementById('ifCaseSelect').value='';
+    }
+    // Refresh views
+    loadIncidents();
+    loadIncidentFileList();
+  }catch(e){showToast('Error deleting: '+e.message,'error');}
 }
 
 function showToast(msg,type){
@@ -1406,11 +1561,10 @@ async function generateOSHA301PDF(inc){
 
   // Flatten form so filled values render as visible text
   form.flatten();
-  // Extract only 301 pages (pages 10-11 = index 9-10)
-  const newDoc=await PDFDocument.create();
-  const pages=await newDoc.copyPages(pdfDoc,[9,10]);
-  pages.forEach(p=>newDoc.addPage(p));
-  const outBytes=await newDoc.save();
+  // Keep only 301 pages (pages 10-11 = index 9-10) by removing others
+  const totalPages=pdfDoc.getPageCount();
+  for(let i=totalPages-1;i>=0;i--){if(i!==9&&i!==10)pdfDoc.removePage(i);}
+  const outBytes=await pdfDoc.save();
   downloadBlob(outBytes,'OSHA-301-Case-'+inc.case_number+'.pdf');
   showToast('OSHA 301 downloaded!','success');
 }
@@ -1543,11 +1697,10 @@ async function generateOSHA300PDF(incidents,year){
 
   // Flatten form so filled values render as visible text
   form.flatten();
-  // Extract only 300 pages (pages 7-8 = index 6-7)
-  const newDoc=await PDFDocument.create();
-  const pages=await newDoc.copyPages(pdfDoc,[6,7]);
-  pages.forEach(p=>newDoc.addPage(p));
-  const outBytes=await newDoc.save();
+  // Keep only 300 pages (pages 7-8 = index 6-7) by removing others
+  const totalPages300=pdfDoc.getPageCount();
+  for(let i=totalPages300-1;i>=0;i--){if(i!==6&&i!==7)pdfDoc.removePage(i);}
+  const outBytes=await pdfDoc.save();
   downloadBlob(outBytes,'OSHA-300-Log-'+year+'.pdf');
   showToast('OSHA 300 Log downloaded!','success');
 }
@@ -1648,11 +1801,10 @@ async function generateOSHA300APDF(incidents,year,co){
 
   // Flatten form so filled values render as visible text
   form.flatten();
-  // Extract only 300A pages (pages 8-9 = index 7-8)
-  const newDoc=await PDFDocument.create();
-  const pages=await newDoc.copyPages(pdfDoc,[7,8]);
-  pages.forEach(p=>newDoc.addPage(p));
-  const outBytes=await newDoc.save();
+  // Keep only 300A pages (pages 8-9 = index 7-8) by removing others
+  const totalPages300a=pdfDoc.getPageCount();
+  for(let i=totalPages300a-1;i>=0;i--){if(i!==7&&i!==8)pdfDoc.removePage(i);}
+  const outBytes=await pdfDoc.save();
   downloadBlob(outBytes,'OSHA-300A-Summary-'+year+'.pdf');
   showToast('OSHA 300A Summary downloaded!','success');
 }
@@ -1723,6 +1875,7 @@ async function loadIncidentFile(){
     const yr=inc.incident_date?new Date(inc.incident_date).getFullYear():new Date().getFullYear();
     const displayId=yr+'-'+String(inc.case_number).padStart(4,'0');
     document.getElementById('ifDisplayId').textContent='Incident #'+displayId;
+    document.getElementById('ifDeleteBtn').style.display=isAdmin?'inline-block':'none';
 
     // Load related data in parallel
     const[medRes,stmtRes,invRes,rtwRes]=await Promise.all([
@@ -2236,6 +2389,10 @@ async function saveInvestigation(){
       if(error)throw error;
       currentInvestigation=data[0];
     }
+    // Sync case status on parent incident
+    const caseStatus=invStatus==='closed'?'closed':'submitted';
+    await sb.from('incidents').update({status:caseStatus}).eq('id',currentIncident.id);
+    currentIncident.status=caseStatus;
     showToast('Investigation saved!','success');
     populateSummary();
   }catch(e){showToast('Error: '+e.message,'error');}
