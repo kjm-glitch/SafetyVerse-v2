@@ -1208,16 +1208,12 @@ async function sendIncidentEmailNotification(inc){
       });
     }
     if(recipients.length===0){console.log('No notification recipients configured');return;}
-    // Generate a summary PDF as base64
-    let pdfBase64=null;let pdfFilename=null;
-    try{
-      const pdfBytes=await generateIncidentSummaryPdf(inc);
-      pdfBase64=btoa(String.fromCharCode(...new Uint8Array(pdfBytes)));
-      pdfFilename='Incident-Report-Case-'+inc.case_number+'.pdf';
-    }catch(pdfErr){console.warn('PDF generation for email failed:',pdfErr);}
-    // Call Edge Function
-    const{data,error}=await sb.functions.invoke('send-incident-email',{
-      body:{
+    // Call Railway weather-alerts-server endpoint
+    const INCIDENT_EMAIL_API='https://weather-alerts-server-production.up.railway.app/api/incident/send-email';
+    const resp=await fetch(INCIDENT_EMAIL_API,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
         recipients,
         subject:'New Incident Report - Case #'+inc.case_number+' - '+(inc.site_location||''),
         incident_summary:{
@@ -1229,12 +1225,11 @@ async function sendIncidentEmailNotification(inc){
           severity:inc.severity,
           reporting_party_name:inc.reporting_party_name,
           incident_description:inc.incident_description
-        },
-        pdf_base64:pdfBase64,
-        pdf_filename:pdfFilename
-      }
+        }
+      })
     });
-    if(error)throw error;
+    const result=await resp.json();
+    if(!resp.ok)throw new Error(result.error||'Email send failed');
     showToast('Email notification sent to '+recipients.length+' recipient(s)','success');
   }catch(e){
     console.error('Email notification failed:',e);
@@ -1242,59 +1237,6 @@ async function sendIncidentEmailNotification(inc){
   }
 }
 
-async function generateIncidentSummaryPdf(inc){
-  const{PDFDocument,rgb,StandardFonts}=PDFLib;
-  const doc=await PDFDocument.create();
-  const page=doc.addPage([612,792]);
-  const font=await doc.embedFont(StandardFonts.Helvetica);
-  const fontBold=await doc.embedFont(StandardFonts.HelveticaBold);
-  const sz=10;let y=740;
-  const ln=(text,f,s)=>{page.drawText(text||'',{x:50,y,font:f||font,size:s||sz,color:rgb(0.1,0.1,0.1)});y-=(s||sz)+6;};
-  const gap=()=>{y-=8;};
-
-  ln('SAFETY INCIDENT REPORT',fontBold,16);gap();
-  ln('Case #'+inc.case_number,fontBold,12);
-  ln('Generated: '+new Date().toLocaleString('en-US',{hour12:false}));gap();
-
-  ln('INCIDENT DETAILS',fontBold,11);
-  ln('Date: '+(inc.incident_date||'N/A'));
-  ln('Time: '+(inc.incident_time||'N/A'));
-  ln('Site: '+(inc.site_location||'N/A'));
-  ln('Location: '+(inc.specific_location||'N/A'));
-  ln('Reported By: '+(inc.reporting_party_name||'N/A'));gap();
-
-  ln('INJURED PARTY',fontBold,11);
-  if(inc.no_injury){ln('No injury reported');}
-  else{
-    ln('Name: '+(inc.injured_name||'N/A'));
-    ln('Title: '+(inc.injured_title||'N/A'));
-    ln('Severity: '+(inc.severity||'N/A'));
-    ln('Body Part: '+(inc.body_part||'N/A'));
-    ln('Injury Types: '+((inc.injury_types||[]).join(', ')||'N/A'));
-    ln('Treatment: '+(inc.treatment_type||'N/A'));
-  }
-  gap();
-
-  ln('DESCRIPTION',fontBold,11);
-  const desc=inc.incident_description||'N/A';
-  // Word-wrap description
-  const words=desc.split(' ');let line='';
-  for(const w of words){
-    const test=line?line+' '+w:w;
-    if(font.widthOfTextAtSize(test,sz)>510){ln(line);line=w;}
-    else line=test;
-  }
-  if(line)ln(line);
-  gap();
-
-  ln('WHAT CAUSED HARM',fontBold,11);
-  ln(inc.what_caused_harm||'N/A');gap();
-
-  ln('OSHA CLASSIFICATION',fontBold,11);
-  ln('Outcome: '+(inc.osha_outcome||'Pending').replace(/_/g,' '));
-
-  return await doc.save();
-}
 
 function resetForm(){
   formData={};currentStep=1;witnessCount=0;vehicleApplicable=false;lastSubmitted=null;

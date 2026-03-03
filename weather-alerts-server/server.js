@@ -365,6 +365,60 @@ app.post('/api/admin/test-protocol', async (req, res) => {
   }
 });
 
+// ── Incident Report Email Notification ──────────────────
+
+app.post('/api/incident/send-email', async (req, res) => {
+  try {
+    if (!isEmailConfigured()) {
+      return res.status(400).json({ error: 'Email is not configured. Check Resend API key.' });
+    }
+
+    const { recipients, subject, incident_summary, pdf_base64, pdf_filename } = req.body;
+    if (!recipients || recipients.length === 0) {
+      return res.status(400).json({ error: 'No recipients provided' });
+    }
+
+    const s = incident_summary || {};
+    const desc = (s.incident_description || '').substring(0, 500);
+
+    const html = `
+      <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;">
+        <div style="background:#1e293b;color:#f59e0b;padding:20px;text-align:center;border-radius:8px 8px 0 0;">
+          <h1 style="margin:0;font-size:20px;">Safety Incident Report</h1>
+        </div>
+        <div style="background:#f8fafc;padding:24px;border:1px solid #e2e8f0;">
+          <p style="color:#334155;margin:0 0 16px;">A new incident report has been submitted. Details below:</p>
+          <table style="width:100%;border-collapse:collapse;">
+            <tr><td style="padding:8px 12px;background:#e2e8f0;font-weight:bold;color:#334155;width:40%;">Case #</td><td style="padding:8px 12px;color:#334155;">${s.case_number || 'N/A'}</td></tr>
+            <tr><td style="padding:8px 12px;background:#f1f5f9;font-weight:bold;color:#334155;">Date</td><td style="padding:8px 12px;color:#334155;">${s.incident_date || 'N/A'}</td></tr>
+            <tr><td style="padding:8px 12px;background:#e2e8f0;font-weight:bold;color:#334155;">Time</td><td style="padding:8px 12px;color:#334155;">${s.incident_time || 'N/A'}</td></tr>
+            <tr><td style="padding:8px 12px;background:#f1f5f9;font-weight:bold;color:#334155;">Site</td><td style="padding:8px 12px;color:#334155;">${s.site_location || 'N/A'}</td></tr>
+            <tr><td style="padding:8px 12px;background:#e2e8f0;font-weight:bold;color:#334155;">Injured Party</td><td style="padding:8px 12px;color:#334155;">${s.injured_name || 'No injury reported'}</td></tr>
+            <tr><td style="padding:8px 12px;background:#f1f5f9;font-weight:bold;color:#334155;">Severity</td><td style="padding:8px 12px;color:#334155;">${s.severity || 'N/A'}</td></tr>
+            <tr><td style="padding:8px 12px;background:#e2e8f0;font-weight:bold;color:#334155;">Reported By</td><td style="padding:8px 12px;color:#334155;">${s.reporting_party_name || 'N/A'}</td></tr>
+          </table>
+          <div style="margin-top:16px;padding:12px;background:#fffbeb;border:1px solid #f59e0b;border-radius:6px;color:#92400e;font-size:14px;">
+            <strong>Description:</strong> ${desc}${desc.length >= 500 ? '...' : ''}
+          </div>
+        </div>
+        <div style="background:#1e293b;color:#94a3b8;padding:16px;text-align:center;font-size:12px;border-radius:0 0 8px 8px;">
+          TheSafetyVerse &mdash; Automated Incident Notification
+        </div>
+      </div>`;
+
+    const toList = recipients.join(',');
+    const result = await sendAlertEmail(toList, subject || `Incident Report - Case #${s.case_number || 'New'}`, html);
+
+    if (result.sent) {
+      res.json({ success: true, message: `Email sent to ${recipients.length} recipient(s)`, messageId: result.messageId });
+    } else {
+      res.status(500).json({ success: false, error: result.reason || 'Failed to send email' });
+    }
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // ── Start ───────────────────────────────────────────────
 
 db.initDb().then(() => {
