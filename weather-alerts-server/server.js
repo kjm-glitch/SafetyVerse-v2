@@ -373,13 +373,14 @@ app.post('/api/incident/send-email', async (req, res) => {
       return res.status(400).json({ error: 'Email is not configured. Check Resend API key.' });
     }
 
-    const { recipients, subject, incident_summary, pdf_base64, pdf_filename } = req.body;
+    const { recipients, subject, incident_summary, report_url, pdf_base64, pdf_filename } = req.body;
     if (!recipients || recipients.length === 0) {
       return res.status(400).json({ error: 'No recipients provided' });
     }
 
     const s = incident_summary || {};
-    const desc = (s.incident_description || '').substring(0, 500);
+    const desc = s.incident_description || '';
+    const viewLink = report_url || '';
 
     const html = `
       <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;">
@@ -398,16 +399,21 @@ app.post('/api/incident/send-email', async (req, res) => {
             <tr><td style="padding:8px 12px;background:#e2e8f0;font-weight:bold;color:#334155;">Reported By</td><td style="padding:8px 12px;color:#334155;">${s.reporting_party_name || 'N/A'}</td></tr>
           </table>
           <div style="margin-top:16px;padding:12px;background:#fffbeb;border:1px solid #f59e0b;border-radius:6px;color:#92400e;font-size:14px;">
-            <strong>Description:</strong> ${desc}${desc.length >= 500 ? '...' : ''}
+            <strong>Description:</strong> ${desc}
           </div>
+          ${viewLink ? `
+          <div style="margin-top:20px;text-align:center;">
+            <a href="${viewLink}" style="display:inline-block;padding:12px 28px;background:#f59e0b;color:#0f172a;font-weight:bold;font-size:14px;text-decoration:none;border-radius:8px;">View Full Report on TheSafetyVerse</a>
+          </div>` : ''}
         </div>
         <div style="background:#1e293b;color:#94a3b8;padding:16px;text-align:center;font-size:12px;border-radius:0 0 8px 8px;">
-          TheSafetyVerse &mdash; Automated Incident Notification
+          TheSafetyVerse &mdash; Incident Alert Notification
         </div>
       </div>`;
 
     const toList = recipients.join(',');
-    const result = await sendAlertEmail(toList, subject || `Incident Report - Case #${s.case_number || 'New'}`, html);
+    const incidentFrom = '"SafetyVerse Incident Alert" <alerts@thesafetyverse.com>';
+    const result = await sendAlertEmail(toList, subject || `Incident Report - Case #${s.case_number || 'New'}`, html, incidentFrom);
 
     if (result.sent) {
       res.json({ success: true, message: `Email sent to ${recipients.length} recipient(s)`, messageId: result.messageId });

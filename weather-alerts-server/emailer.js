@@ -769,7 +769,7 @@ function renderBundledAlertEmail(alerts, site, conditions, forecast) {
 // SEND EMAIL via Resend HTTP API
 // ═══════════════════════════════════════════════════════════
 
-async function sendAlertEmail(to, subject, html) {
+async function sendAlertEmail(to, subject, html, fromOverride) {
   if (!isEmailConfigured()) {
     console.log(`[EMAIL SKIPPED] Not configured. Would send to: ${to}`);
     console.log(`  Subject: ${subject}`);
@@ -778,7 +778,7 @@ async function sendAlertEmail(to, subject, html) {
 
   try {
     const apiKey = getResendApiKey();
-    const from = getFromAddress();
+    const from = fromOverride || getFromAddress();
     const toArray = to.split(',').map(e => e.trim()).filter(Boolean);
 
     const response = await fetch(RESEND_API_URL, {

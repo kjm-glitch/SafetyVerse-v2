@@ -302,6 +302,7 @@ body{font-family:'Inter',sans-serif;background:#0f172a;color:#e2e8f0;min-height:
   <div class="step-title">Step 1 of 9</div>
   <div class="step-heading">Who is reporting this incident?</div>
   <div class="sv-field"><label class="sv-label sv-required">Reporting Party Name</label><input type="text" class="sv-input" id="f_rp_name"></div>
+  <div class="sv-field"><label class="sv-label">Title of Reporting Party</label><input type="text" class="sv-input" id="f_rp_title" placeholder="e.g., Site Supervisor, Safety Manager"></div>
   <div class="sv-field"><label class="sv-label sv-required">Site / Location Name</label><select class="sv-input sv-select" id="f_site"><option value="">-- Select site location --</option></select></div>
 </div>
 <div class="wizard-nav"><div></div><button class="wbtn wbtn-next" onclick="nextStep()">Continue</button></div>
@@ -1038,7 +1039,7 @@ function collectStepData(n){
   const r=name=>{const el=document.querySelector(`input[name="${name}"]:checked`);return el?el.value:'';};
   const cbs=id=>[...document.querySelectorAll(`#${id} input:checked`)].map(c=>c.value);
 
-  if(n===1){formData.reporting_party_name=v('f_rp_name');formData.site_location=v('f_site');}
+  if(n===1){formData.reporting_party_name=v('f_rp_name');formData.reporting_party_title=v('f_rp_title');formData.site_location=v('f_site');}
   if(n===2){formData.incident_date=v('f_date');formData.incident_time=v('f_time');formData.specific_location=v('f_specific_loc');formData.visibility=v('f_visibility');formData.surface_conditions=v('f_surface');formData.temperature=v('f_temp');formData.num_people_involved=parseInt(v('f_people'))||1;}
   if(n===3){formData.no_injury=document.getElementById('f_no_injury').checked;formData.injured_name=v('f_inj_name');formData.injured_title=v('f_inj_title');formData.treatment_type=r('treatment');}
   if(n===4){let types=cbs('f_injury_types');const otherText=v('f_injury_other_text');if(otherText&&types.includes('Other')){types=types.map(t=>t==='Other'?'Other: '+otherText:t);}formData.injury_types=types;formData.severity=v('f_severity');formData.body_part=v('f_body_part');formData.injury_comments=v('f_inj_comments');}
@@ -1144,6 +1145,7 @@ async function submitReport(){
 
   const row={
     reporting_party_name:formData.reporting_party_name,
+    reporting_party_title:formData.reporting_party_title||null,
     site_location:formData.site_location,
     incident_date:formData.incident_date||null,
     incident_time:formData.incident_time||null,
@@ -1223,6 +1225,7 @@ async function sendIncidentEmailNotification(inc){
       body:JSON.stringify({
         recipients,
         subject:'New Incident Report - Case #'+inc.case_number+' - '+(inc.site_location||''),
+        report_url:window.location.origin+'/incident-report/',
         incident_summary:{
           case_number:inc.case_number,
           incident_date:inc.incident_date,
@@ -1509,10 +1512,13 @@ async function generateOSHA301PDF(inc){
 
   // Flatten form so filled values render as visible text
   form.flatten();
+  // Save and reload to clean internal cross-references before removing pages
+  const flatBytes=await pdfDoc.save();
+  const cleanDoc=await PDFDocument.load(flatBytes);
   // Keep only 301 pages (pages 10-11 = index 9-10) by removing others
-  const totalPages=pdfDoc.getPageCount();
-  for(let i=totalPages-1;i>=0;i--){if(i!==9&&i!==10)pdfDoc.removePage(i);}
-  const outBytes=await pdfDoc.save();
+  const totalPages=cleanDoc.getPageCount();
+  for(let i=totalPages-1;i>=0;i--){if(i!==9&&i!==10)cleanDoc.removePage(i);}
+  const outBytes=await cleanDoc.save();
   downloadBlob(outBytes,'OSHA-301-Case-'+inc.case_number+'.pdf');
   showToast('OSHA 301 downloaded!','success');
 }
@@ -1645,10 +1651,13 @@ async function generateOSHA300PDF(incidents,year){
 
   // Flatten form so filled values render as visible text
   form.flatten();
+  // Save and reload to clean internal cross-references before removing pages
+  const flatBytes300=await pdfDoc.save();
+  const cleanDoc300=await PDFDocument.load(flatBytes300);
   // Keep only 300 pages (pages 7-8 = index 6-7) by removing others
-  const totalPages300=pdfDoc.getPageCount();
-  for(let i=totalPages300-1;i>=0;i--){if(i!==6&&i!==7)pdfDoc.removePage(i);}
-  const outBytes=await pdfDoc.save();
+  const totalPages300=cleanDoc300.getPageCount();
+  for(let i=totalPages300-1;i>=0;i--){if(i!==6&&i!==7)cleanDoc300.removePage(i);}
+  const outBytes=await cleanDoc300.save();
   downloadBlob(outBytes,'OSHA-300-Log-'+year+'.pdf');
   showToast('OSHA 300 Log downloaded!','success');
 }
@@ -1749,10 +1758,13 @@ async function generateOSHA300APDF(incidents,year,co){
 
   // Flatten form so filled values render as visible text
   form.flatten();
+  // Save and reload to clean internal cross-references before removing pages
+  const flatBytes300a=await pdfDoc.save();
+  const cleanDoc300a=await PDFDocument.load(flatBytes300a);
   // Keep only 300A pages (pages 8-9 = index 7-8) by removing others
-  const totalPages300a=pdfDoc.getPageCount();
-  for(let i=totalPages300a-1;i>=0;i--){if(i!==7&&i!==8)pdfDoc.removePage(i);}
-  const outBytes=await pdfDoc.save();
+  const totalPages300a=cleanDoc300a.getPageCount();
+  for(let i=totalPages300a-1;i>=0;i--){if(i!==7&&i!==8)cleanDoc300a.removePage(i);}
+  const outBytes=await cleanDoc300a.save();
   downloadBlob(outBytes,'OSHA-300A-Summary-'+year+'.pdf');
   showToast('OSHA 300A Summary downloaded!','success');
 }
