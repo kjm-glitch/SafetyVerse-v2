@@ -3,9 +3,17 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <title>Incident Report - TheSafetyVerse</title>
 <link rel="icon" type="image/png" href="logo.png?v=2">
-<style>body { visibility: hidden; opacity: 0; transition: opacity 0.3s; }</style>
+<style>body { visibility: hidden; opacity: 0; transition: opacity 0.3s; }
+.sv-loading{position:fixed;inset:0;background:#0f172a;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:10000;visibility:visible;opacity:1}
+.sv-loading .spinner{width:36px;height:36px;border:3px solid #334155;border-top-color:#f59e0b;border-radius:50%;animation:spin .8s linear infinite}
+.sv-loading p{margin-top:1rem;color:#94a3b8;font-family:'Inter',sans-serif;font-size:.85rem}
+@keyframes spin{to{transform:rotate(360deg)}}
+</style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="../auth/supabase-config.js"></script>
 <script src="../auth/auth-guard.js"></script>
@@ -274,6 +282,7 @@ body{font-family:'Inter',sans-serif;background:#0f172a;color:#e2e8f0;min-height:
 </style>
 </head>
 <body>
+<div class="sv-loading" id="svLoadingOverlay"><div class="spinner"></div><p>Loading Incident Report&hellip;</p></div>
 
 <!-- Header injected by shared/header.js -->
 
@@ -899,6 +908,14 @@ let lastSubmitted=null;
 let vehicleApplicable=false;
 let witnessCount=0;
 let isAdmin=false;
+
+// Remove loading overlay once auth reveals the page
+document.addEventListener('svAuthReady',()=>{
+  const overlay=document.getElementById('svLoadingOverlay');
+  if(overlay)overlay.remove();
+});
+// Fallback: remove overlay after 5s even if auth event missed (e.g., cached session)
+setTimeout(()=>{const o=document.getElementById('svLoadingOverlay');if(o)o.remove();},5000);
 
 // Init
 document.addEventListener('DOMContentLoaded',()=>{
