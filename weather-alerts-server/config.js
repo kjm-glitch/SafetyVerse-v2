@@ -12,7 +12,7 @@ module.exports = {
 
   CRON_SCHEDULE: '*/30 * * * *', // every 30 minutes
 
-  COOLDOWN_HOURS: 4,
+  COOLDOWN_HOURS: 12,
 
   // ── Current condition thresholds (trigger ORANGE watch) ──
   THRESHOLDS: {
@@ -37,7 +37,7 @@ module.exports = {
   SEVERE_STORM_CODES: [95, 96, 99],
 
   // ── Severity tiers ──
-  //   advisory (yellow)  = forecast shows threshold will be crossed in next 24h
+  //   advisory (yellow)  = forecast shows threshold will be crossed in next 24h (48hr removed)
   //   watch    (orange)   = threshold crossed NOW or severe weather forecasted
   //   warning  (red)      = dangerous conditions active NOW or NWS severe alert
   SEVERITY: {

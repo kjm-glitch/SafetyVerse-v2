@@ -91,7 +91,7 @@ function evaluateThresholds(conditions) {
 
 // ═══════════════════════════════════════════════════════════
 // FORECAST LOOKAHEAD → ADVISORY (yellow)
-// Two windows: 48-hour early heads-up + 24-hour reminder
+// 24-hour window only (48-hour advisories removed to reduce email volume)
 // ═══════════════════════════════════════════════════════════
 
 function evaluateForecast(conditions) {
@@ -99,21 +99,11 @@ function evaluateForecast(conditions) {
   const hourlyFull = conditions.hourlyFull || [];
   const now = new Date();
 
-  // Split into two forecast windows
   const next24 = hourlyFull.filter(h => {
     const hoursAhead = (new Date(h.time) - now) / (1000 * 60 * 60);
     return hoursAhead > 0 && hoursAhead <= 24;
   });
 
-  const next24to48 = hourlyFull.filter(h => {
-    const hoursAhead = (new Date(h.time) - now) / (1000 * 60 * 60);
-    return hoursAhead > 24 && hoursAhead <= 48;
-  });
-
-  // Scan both windows — 48hr gets "48hr_" prefix types, 24hr keeps "forecast_" prefix
-  if (next24to48.length > 0) {
-    scanWindow(next24to48, '48hr_', '48-Hour', advisories);
-  }
   if (next24.length > 0) {
     scanWindow(next24, 'forecast_', '24-Hour', advisories);
   }

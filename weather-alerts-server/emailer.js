@@ -420,20 +420,6 @@ function renderAlertEmail(alert, site, conditions, forecast) {
     </p>
   ` : '';
 
-  // Workers' Comp block — only for warning and watch, not advisory
-  const showWorkersComp = alert.severity === 'warning' || alert.severity === 'watch';
-  const workersCompBlock = showWorkersComp ? `
-  <div style="padding:16px;margin:16px 20px 0;background:rgba(37,99,235,0.05);border:1px solid rgba(37,99,235,0.2);border-radius:8px;">
-    <h4 style="margin:0 0 8px;font-size:13px;color:#2563eb;text-transform:uppercase;letter-spacing:0.05em;">Workers' Comp Reminder</h4>
-    <ul style="margin:0;padding-left:18px;font-size:13px;color:#334155;line-height:1.7;">
-      <li>Notify HR immediately for workers' comp processing</li>
-      <li>Provide employee with claim forms before leaving site</li>
-      <li>Route to approved Occupational Clinic</li>
-      <li>Submit all workers' comp paperwork within 24 hours</li>
-    </ul>
-  </div>
-  ` : '';
-
   return `
 <!DOCTYPE html>
 <html>
@@ -544,19 +530,6 @@ function renderAlertEmail(alert, site, conditions, forecast) {
   </div>
   ` : ''}
 
-  <!-- Escalation Protocol -->
-  <div style="padding:16px;margin:16px 20px 0;background:rgba(37,99,235,0.05);border:1px solid rgba(37,99,235,0.2);border-radius:8px;">
-    <h4 style="margin:0 0 8px;font-size:13px;color:#2563eb;text-transform:uppercase;letter-spacing:0.05em;">Escalation (Within 10 Min)</h4>
-    <ul style="margin:0;padding-left:18px;font-size:13px;color:#334155;line-height:1.7;">
-      <li>Notify your Site Supervisor or on-duty Security</li>
-      <li>Supervisor &rarr; Safety Manager &rarr; Site Leadership (phone)</li>
-      <li>Safety Manager &rarr; EHS, HR, and relevant management</li>
-      <li>Share: <strong>WHO, WHAT, WHEN, WHERE, WHY</strong></li>
-      <li>Begin documentation within 1 hour</li>
-    </ul>
-  </div>
-
-  ${workersCompBlock}
 
   <!-- Footer -->
   <div style="padding:20px;text-align:center;color:#94a3b8;font-size:12px;margin-top:20px;border-top:1px solid #e2e8f0;">
