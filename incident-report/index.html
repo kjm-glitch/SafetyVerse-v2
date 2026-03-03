@@ -314,7 +314,7 @@ body{font-family:'Inter',sans-serif;background:#0f172a;color:#e2e8f0;min-height:
   <div class="step-heading">When and where did the incident occur?</div>
   <div class="sv-row">
     <div class="sv-field"><label class="sv-label sv-required">Date of Incident</label><input type="date" class="sv-input" id="f_date"></div>
-    <div class="sv-field"><label class="sv-label sv-required">Time of Incident (24hr)</label><input type="time" class="sv-input" id="f_time" step="60"></div>
+    <div class="sv-field"><label class="sv-label sv-required">Time of Incident (24hr)</label><input type="text" class="sv-input" id="f_time" placeholder="HH:MM (e.g., 14:30)" maxlength="5" pattern="^([01]\d|2[0-3]):[0-5]\d$" oninput="formatMilitaryTime(this)"></div>
   </div>
   <div class="sv-field"><label class="sv-label">Report Filed (24hr)</label><input type="text" class="sv-input" id="f_report_time" readonly style="opacity:.6"></div>
   <div class="sv-field"><label class="sv-label">Specific Location</label><input type="text" class="sv-input" id="f_specific_loc" placeholder="e.g., Loading dock B, north entrance"></div>
@@ -1026,7 +1026,7 @@ function validateStep(n){
     }
   };
   if(n===1){check('f_rp_name');check('f_site');}
-  if(n===2){check('f_date');check('f_time');}
+  if(n===2){check('f_date');check('f_time');const tv=document.getElementById('f_time').value;if(tv&&!/^([01]\d|2[0-3]):[0-5]\d$/.test(tv)){document.getElementById('f_time').classList.add('sv-error');valid=false;showToast('Enter time in 24hr format (e.g., 14:30)','error');}}
   if(n===3&&!document.getElementById('f_no_injury').checked){check('f_inj_name');check('f_inj_title');}
   if(n===5){check('f_description');}
   if(!valid)showToast('Please fill in all required fields','error');
@@ -1079,6 +1079,13 @@ function toggleInjuryOther(){
   const field=document.getElementById('injuryOtherField');
   field.style.display=checked?'block':'none';
   if(!checked)document.getElementById('f_injury_other_text').value='';
+}
+
+function formatMilitaryTime(el){
+  let v=el.value.replace(/[^\d]/g,'');
+  if(v.length>=3){v=v.slice(0,2)+':'+v.slice(2,4);}
+  if(v.length>5)v=v.slice(0,5);
+  el.value=v;
 }
 
 function toggleVehicle(yes){
