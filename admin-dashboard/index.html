@@ -1471,7 +1471,7 @@ async function inviteUser() {
         }]);
 
         // Step 3: Send password reset email so user can set their own password
-        const siteUrl = window.location.origin + window.location.pathname.replace('/admin-dashboard/index.html', '/set-password.html');
+        const siteUrl = window.location.origin + '/set-password.html';
         const { error: resetError } = await sb.auth.resetPasswordForEmail(email, {
             redirectTo: siteUrl
         });

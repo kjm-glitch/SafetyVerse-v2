@@ -11,7 +11,14 @@ function getSafetyVerseSupabase() {
   if (!_svSupabaseClient && window.supabase) {
     _svSupabaseClient = window.supabase.createClient(
       SAFETYVERSE_SUPABASE_URL,
-      SAFETYVERSE_SUPABASE_KEY
+      SAFETYVERSE_SUPABASE_KEY,
+      {
+        auth: {
+          flowType: 'implicit',
+          detectSessionInUrl: true,
+          autoRefreshToken: true
+        }
+      }
     );
   }
   return _svSupabaseClient;

@@ -350,7 +350,7 @@
 
         try {
             var result = await sb.auth.resetPasswordForEmail(email, {
-                redirectTo: window.location.origin + window.location.pathname.replace('login.html', 'set-password.html')
+                redirectTo: window.location.origin + '/set-password.html'
             });
 
             if (result.error) throw result.error;
