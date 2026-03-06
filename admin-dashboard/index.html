@@ -1373,8 +1373,10 @@ async function loadEmployees() {
 function renderUsers(data) {
     const tbody = document.getElementById('userTableBody');
     if (!data.length) { tbody.innerHTML = '<tr><td colspan="6" class="empty-state"><div class="empty-icon">&#128101;</div>No employees found.</td></tr>'; return; }
+    const currentEmail = (window.__svUser && window.__svUser.email) || '';
     tbody.innerHTML = data.map(emp => {
         const dateStr = emp.date_added ? emp.date_added.split('T')[0] : '';
+        const isSelf = currentEmail && emp.email.toLowerCase() === currentEmail.toLowerCase();
         return `<tr>
             <td><strong>${esc(emp.name)}</strong></td>
             <td>${esc(emp.email)}</td>
@@ -1384,6 +1386,7 @@ function renderUsers(data) {
             <td><div class="action-btns">
                 <button class="btn btn-secondary btn-sm" onclick="toggleRole('${emp.id}')">${emp.role === 'Admin' ? 'Make User' : 'Make Admin'}</button>
                 <button class="btn ${emp.status === 'Active' ? 'btn-danger' : 'btn-primary'} btn-sm" onclick="toggleStatus('${emp.id}')">${emp.status === 'Active' ? 'Deactivate' : 'Activate'}</button>
+                ${isSelf ? '' : `<button class="btn btn-danger btn-sm" onclick="deleteUser('${emp.id}')" style="background:#7f1d1d;border-color:#7f1d1d;" title="Permanently delete user">Delete</button>`}
             </div></td>
         </tr>`;
     }).join('');
@@ -1420,6 +1423,22 @@ async function toggleStatus(id) {
     emp.status = newStatus;
     filterUsers();
     showToast(emp.name + ' ' + (newStatus === 'Active' ? 'activated' : 'deactivated'), 'success');
+}
+
+async function deleteUser(id) {
+    const emp = employeesData.find(e => e.id === id);
+    if (!emp) return;
+    if (!confirm('Permanently delete ' + emp.name + ' (' + emp.email + ')?\n\nThis removes their account, profile, and all access. This cannot be undone.')) return;
+
+    const { error } = await sb.rpc('delete_user_account', { target_email: emp.email });
+    if (error) {
+        showToast('Failed to delete: ' + error.message, 'error');
+        return;
+    }
+
+    await loadEmployees();
+    filterUsers();
+    showToast(emp.name + ' has been deleted', 'success');
 }
 
 // ─── Invite User (creates Supabase Auth account + sends password reset email) ───
